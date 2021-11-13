@@ -1,4 +1,4 @@
-# Pattern of clinical coding, risk factors and prediction models for long COVID: analysis using OpenSAFELY platform
+# Risk factors and prediction models for long COVID: analysis using OpenSAFELY
 
 This is the code and configuration for long-COVID-risk-factors-and-prediction.
 
