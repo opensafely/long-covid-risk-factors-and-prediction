@@ -1,7 +1,6 @@
 from cohortextractor import patients
 from codelists import *
 
-
 demographic_variables = dict(
     age_group=patients.categorised_as(
         {
@@ -254,7 +253,10 @@ clinical_variables = dict(
             permanent_immune_codes, on_or_before="index_date - 1 day"
         ),
         temporary_immunodeficiency=patients.with_these_clinical_events(
-            temp_immune_codes, on_or_before="index_date - 1 day"
+            temp_immune_codes, on_or_before = "index_date - 1 day"
         ),
+    ),
+    heart_failure=patients.with_these_clinical_events(
+        heart_failure_codes, on_or_before = "index_date - 1 day"
     ),
 )

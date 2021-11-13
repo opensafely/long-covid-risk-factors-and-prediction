@@ -147,3 +147,14 @@ chronic_liver_disease_codes = codelist_from_csv(
 diabetes_codes = codelist_from_csv(
     "codelists/opensafely-diabetes.csv", system="ctv3", column="CTV3ID"
 )
+
+smoking_codes = codelist_from_csv(
+    "codelists/opensafely-smoking-clear.csv",
+    system="ctv3",
+    column="CTV3Code",
+    category_column="Category",
+)
+
+heart_failure_codes = codelist_from_csv(
+    "codelists/opensafely-heart-failure.csv", system="ctv3", column="CTV3ID"
+)

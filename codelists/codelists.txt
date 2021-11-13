@@ -8,6 +8,7 @@ opensafely/assessment-instruments-and-outcome-measures-for-long-covid/79c0fa8a
 opensafely/ethnicity/2020-04-27
 opensafely/diabetes/2020-04-15
 opensafely/smoking-clear/2020-04-29
+opensafely/smoking-unclear/2020-04-29
 opensafely/direct-acting-oral-anticoagulants-doac/2020-10-05
 opensafely/aplastic-anaemia/2020-04-24
 opensafely/asplenia/2020-06-02
@@ -33,3 +34,6 @@ opensafely/temporary-immunosuppression/2020-04-24
 opensafely/stroke-updated/2020-06-02
 opensafely/warfarin/2020-10-05
 user/alex-walker/post-viral-syndrome/70708fd6
+opensafely/psychosis-schizophrenia-bipolar-affective-disease/0311653f
+opensafely/depression/1c20d874
+opensafely/heart-failure/2020-05-05

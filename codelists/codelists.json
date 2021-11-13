@@ -60,6 +60,12 @@
       "downloaded_at": "2021-03-11 21:27:41.999242Z",
       "sha": "0b5f3afe1db96dcce5141220e893a42ba2e5a8f7"
     },
+    "opensafely-smoking-unclear.csv": {
+      "id": "opensafely/smoking-unclear/2020-04-29",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/smoking-unclear/2020-04-29/",
+      "downloaded_at": "2021-11-13 22:03:48.068764Z",
+      "sha": "d9dad3e9d9491f765863b2617114c521957b6db1"
+    },
     "opensafely-direct-acting-oral-anticoagulants-doac.csv": {
       "id": "opensafely/direct-acting-oral-anticoagulants-doac/2020-10-05",
       "url": "https://codelists.opensafely.org/codelist/opensafely/direct-acting-oral-anticoagulants-doac/2020-10-05/",
@@ -209,6 +215,24 @@
       "url": "https://codelists.opensafely.org/codelist/user/alex-walker/post-viral-syndrome/70708fd6/",
       "downloaded_at": "2021-04-09 11:57:58.300890Z",
       "sha": "d6a2a1eb1cb88fb84af69d57146192e20b8f1eb1"
+    },
+    "opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv": {
+      "id": "opensafely/psychosis-schizophrenia-bipolar-affective-disease/0311653f",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/psychosis-schizophrenia-bipolar-affective-disease/0311653f/",
+      "downloaded_at": "2021-11-13 21:12:33.226740Z",
+      "sha": "c7c23c83a155cab15a41b21e10e26f33ca17bc3f"
+    },
+    "opensafely-depression.csv": {
+      "id": "opensafely/depression/1c20d874",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/depression/1c20d874/",
+      "downloaded_at": "2021-11-13 21:12:33.540985Z",
+      "sha": "654835e97c0cee53307db7ebd8becf48d0e3f31b"
+    },
+    "opensafely-heart-failure.csv": {
+      "id": "opensafely/heart-failure/2020-05-05",
+      "url": "https://codelists.opensafely.org/codelist/opensafely/heart-failure/2020-05-05/",
+      "downloaded_at": "2021-11-13 22:48:39.274594Z",
+      "sha": "6139df4911534868bc5ade1ada53395606651064"
     }
   }
 }
