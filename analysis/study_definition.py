@@ -1,3 +1,4 @@
+# YW added clinical variables from AW, added heart failure, smoking status, a>=18 years
 # YW adapted from AW, 10 November 2021
 
 # Long COVID risk factors and prediction models
