@@ -7,6 +7,7 @@ actions:
 
   generate_study_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition
+      --output-format feather
     outputs:
       highly_sensitive:
-        cohort: output/input.csv
+        cohort: output/input.feather
