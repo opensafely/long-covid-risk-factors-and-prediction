@@ -183,6 +183,7 @@ study = StudyDefinition(
             "date": {"earliest": "2020-12-29", "latest": "today"},
             "incidence": 0.6
         },
+    ),
         
       # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
       covid19_vaccination_date3=patients.with_tpp_vaccination_record(
