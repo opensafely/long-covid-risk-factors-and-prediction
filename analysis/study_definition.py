@@ -183,6 +183,19 @@ study = StudyDefinition(
             "date": {"earliest": "2020-12-29", "latest": "today"},
             "incidence": 0.6
         },
+        
+      # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
+      covid19_vaccination_date2=patients.with_tpp_vaccination_record(
+        # code for TPP only, when using patients.with_tpp_vaccination_record() function
+        target_disease_matches="SARS-2 CORONAVIRUS",
+        on_or_after="covid19_vaccination_date2 + 14 days",  # Allowing for the least days since the 2nd vaccine
+        find_first_match_in_period=True,
+        returning="date",
+        date_format="YYYY-MM-DD",
+        return_expectations={
+            "date": {"earliest": "2021-09-16", "latest": "today"},
+            "incidence": 0.6
+        },
     ),
 
     ###No. primary care consultation in year prior to index date

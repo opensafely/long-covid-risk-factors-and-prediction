@@ -27,7 +27,8 @@ setnames(input,
                  "ra_sle_psoriasis",
                  "other_immunosuppressive_condition",
                  "heart_failure",
-                 "post_viral_fatigue"
+                 "post_viral_fatigue",
+                 "region"
                  ),
          new = c("cov_cat_sex",
                  "cov_cat_smoking_status",
@@ -49,5 +50,7 @@ setnames(input,
                  "cov_cat_psoriasis",
                  "cov_cat_other_immunosuppressive_condition",
                  "cov_cat_heart_failure",
-                 "cov_cat_post_viral_fatigue"))
+                 "cov_cat_post_viral_fatigue",
+                 "cov_cat_region"))
 View(input)
+names(input)
