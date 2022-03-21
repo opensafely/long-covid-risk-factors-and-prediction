@@ -96,6 +96,11 @@ demographic_variables = dict(
             "incidence": 0.75,
         },
     ),
+    ## Healthcare worker    
+    cov_bin_healthcare_worker=patients.with_healthcare_worker_flag_on_covid_vaccine_record(
+            returning='binary_flag', 
+            return_expectations={"incidence": 0.01},
+    ),
     cov_cat_previous_covid=patients.categorised_as(
         {
             "COVID positive": """

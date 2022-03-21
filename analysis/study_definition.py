@@ -81,11 +81,14 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
     # Outcome
-    long_covid=patients.with_these_clinical_events(
+    out_covid_date = patients.minimum_of(
+        "sgss_positive", "primary_care_covid", "hospital_covid"
+    ),
+    out_long_covid=patients.with_these_clinical_events(
         any_long_covid_code,
         return_expectations={"incidence": 0.05},
     ),
-    first_long_covid_date=patients.with_these_clinical_events(
+    out_first_long_covid_date=patients.with_these_clinical_events(
         any_long_covid_code,
         returning="date",
         date_format="YYYY-MM-DD",
@@ -94,6 +97,7 @@ study = StudyDefinition(
     ),
     **loop_over_codes(any_long_covid_code),
     first_long_covid_code=patients.with_these_clinical_events(
+        # when running on real data, any long covid code will be returned 
         any_long_covid_code,
         returning="code",
         find_first_match_in_period=True,
@@ -164,7 +168,7 @@ study = StudyDefinition(
     ),
       ###  COVID vaccination
     # First covid vaccination date (first vaccine given on 8/12/2020 in the UK)
-    covid19_vaccination_date1=patients.with_tpp_vaccination_record(
+    vax_covid_date1=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
         on_or_after="2020-12-07",
@@ -177,10 +181,10 @@ study = StudyDefinition(
         },
     ),
     # Second covid vaccination date (first second dose reported on 29/12/2020 in the UK)
-    covid19_vaccination_date2=patients.with_tpp_vaccination_record(
+    vax_covid_date2=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
-        on_or_after="covid19_vaccination_date1 + 14 days",  # Allowing for less days between 2 vaccination dates
+        on_or_after="vax_covid_date1 + 14 days",  # Allowing for less days between 2 vaccination dates
         find_first_match_in_period=True,
         returning="date",
         date_format="YYYY-MM-DD",
@@ -190,10 +194,10 @@ study = StudyDefinition(
         },
     ),
      # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
-    covid19_vaccination_date3=patients.with_tpp_vaccination_record(
+    vax_covid_date3=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
-        on_or_after="covid19_vaccination_date2 + 14 days",  # Allowing for the least days since the 2nd vaccine
+        on_or_after="vax_covid_date2 + 14 days",  # Allowing for the least days since the 2nd vaccine
         find_first_match_in_period=True,
         returning="date",
         date_format="YYYY-MM-DD",
