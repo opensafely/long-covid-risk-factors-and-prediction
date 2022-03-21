@@ -51,8 +51,8 @@
     "opensafely-diabetes.csv": {
       "id": "opensafely/diabetes/2020-04-15",
       "url": "https://codelists.opensafely.org/codelist/opensafely/diabetes/2020-04-15/",
-      "downloaded_at": "2021-03-11 21:27:41.882089Z",
-      "sha": "605104b3e3770b7ab703d12943f5f15fa8eafe77"
+      "downloaded_at": "2022-03-21 22:59:17.545826Z",
+      "sha": "f2781f0c9a0617b30996d681a798eedd152a09af"
     },
     "opensafely-smoking-clear.csv": {
       "id": "opensafely/smoking-clear/2020-04-29",
