@@ -9,4 +9,5 @@ View(input)
 names(input)
 which(grepl("bmi", names(input))==TRUE)
 names(input)[which(grepl("cov_num", names(input))==TRUE)]
+names(input)[which(grepl("snomed", names(input))==TRUE)]
 

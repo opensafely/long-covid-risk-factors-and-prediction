@@ -101,10 +101,15 @@ study = StudyDefinition(
             "incidence": 0.05,
             "category": {
                 "ratios": {
+                    #Post-COVID-19 syndrome
                     "1325161000000102": 0.2,
+                    #Ongoing symptomatic COVID-19
                     "1325181000000106": 0.2,
+                    #Signposting to Your COVID Recovery
                     "1325021000000106": 0.3,
+                    #Newcastle post-COVID syndrome Follow-up Screening Questionnaire
                     "1325051000000101": 0.2,
+                    #Assessment using Newcastle post-COVID syndrome Follow-up Screening Questionnaire
                     "1325061000000103": 0.1,
                 }
             },
