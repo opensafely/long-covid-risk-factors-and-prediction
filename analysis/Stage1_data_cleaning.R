@@ -2,11 +2,16 @@
 # Author:  Yinghui Wei
 # Content: Prepare variables
 # Output:  input.rds
-library(readr); library(dplyr); library("arrow"); library("data.table"); library(base)
+library(readr); library(dplyr); library("arrow"); library("data.table"); 
+library(lubridate)
 
 input <- read_feather("output/input.feather")
 View(input)
 names(input)
+
+# define cohort start date:
+index_date="2020-11-01"
+input$index_date = index_date
 
 # Step 1. Define variables: COVID infection, long COVID
 # create an indicator variable for covid infection
@@ -33,7 +38,7 @@ vars_to_drop <- c("sgss_positive", "sgss_positive", "primary_care_covid", "hospi
 input = input[,!(names(input) %in% vars_to_drop)]
 
 # partial sorting by variable names in the data frame, keep patient_id and practice_id at the front
-input <- input %>% select(patient_id, practice_id, sort(tidyselect::peek_vars()))
+input <- input %>% select(patient_id, practice_id, index_date, death_date, sort(tidyselect::peek_vars()))
 
 # Step 3. define variable types: factor or numerical or date
 
@@ -41,16 +46,22 @@ input <- input %>% select(patient_id, practice_id, sort(tidyselect::peek_vars())
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
+
+# specify date variables in the format of "%Y-%m-%d"
 vars_dates <- grep("date", names(input))
 vars_dates <- names(input)[vars_dates]
 
-is.date <- function(x) inherits(x, 'Date')
-# for(i in vars_dates){
-#   print(i)
-#   temp = input[,i]
-#   temp = as.Date(as.vector(temp))
-# }
-# is.date(input$death_date)
+convert_to_date <- function(x){
+  as.Date(x,format = "%Y-%m-%d")
+}
+input[vars_dates] = lapply(input[vars_dates], convert_to_date)
+lapply(input[vars_dates], is.Date)
+
+
+
+View(input[,vars_dates])
+
+
 # Step 4. Define eligible population
 
 
