@@ -57,11 +57,9 @@ convert_to_date <- function(x){
 input[vars_dates] = lapply(input[vars_dates], convert_to_date)
 lapply(input[vars_dates], is.Date)
 
-
-
 View(input[,vars_dates])
 
-
+summary(input$cov_num_bmi)
 # Step 4. Define eligible population
 
 
