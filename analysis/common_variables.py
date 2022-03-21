@@ -4,14 +4,14 @@ from codelists import *
 demographic_variables = dict(
     cov_cat_age_group=patients.categorised_as(
         {
-            "0-17": "cov_num_age < 18",
-            "18-24": "cov_num_age >= 18 AND cov_num_age < 25",
-            "25-34": "cov_num_age >= 25 AND cov_num_age < 35",
-            "35-44": "cov_num_age >= 35 AND cov_num_age < 45",
-            "45-54": "cov_num_age >= 45 AND cov_num_age < 55",
-            "55-69": "cov_num_age >= 55 AND cov_num_age < 70",
-            "70-79": "cov_num_age >= 70 AND cov_num_age < 80",
-            "80+": "cov_num_age >= 80",
+            "0-17": "age < 18",
+            "18-24": "age >= 18 AND age < 25",
+            "25-34": "age >= 25 AND age < 35",
+            "35-44": "age >= 35 AND age < 45",
+            "45-54": "age >= 45 AND age < 55",
+            "55-69": "age >= 55 AND age < 70",
+            "70-79": "age >= 70 AND age < 80",
+            "80+": "age >= 80",
             "missing": "DEFAULT",
         },
         return_expectations={
@@ -29,8 +29,9 @@ demographic_variables = dict(
                 }
             },
         },
-        cov_num_age=patients.age_as_of("index_date"),
+        age=patients.age_as_of("index_date"),
     ),
+    cov_num_age = patients.age_as_of("index_date"),
     cov_cat_sex=patients.sex(
         return_expectations={
             "rate": "universal",
@@ -121,12 +122,12 @@ clinical_variables = dict(
     cov_cat_bmi=patients.categorised_as(
         {
             "Not obese": "DEFAULT",
-            "Obese I (30-34.9)": """ cov_num_bmi_value >= 30 AND cov_num_bmi_value < 35""",
-            "Obese II (35-39.9)": """ cov_num_bmi_value >= 35 AND cov_num_bmi_value < 40""",
-            "Obese III (40+)": """ cov_num_bmi_value >= 40 AND cov_num_bmi_value < 100""",
+            "Obese I (30-34.9)": """ bmi_value >= 30 AND bmi_value < 35""",
+            "Obese II (35-39.9)": """ bmi_value >= 35 AND bmi_value < 40""",
+            "Obese III (40+)": """ bmi_value >= 40 AND bmi_value < 100""",
             # set maximum to avoid any impossibly extreme values being classified as obese
         },
-        cov_num_bmi_value=patients.most_recent_bmi(
+        bmi_value=patients.most_recent_bmi(
             on_or_after="index_date - 60 months", minimum_age_at_measurement=16
         ),
         return_expectations={
@@ -141,6 +142,9 @@ clinical_variables = dict(
             },
         },
     ),
+    cov_num_bmi = patients.most_recent_bmi(
+            on_or_after="index_date - 60 months", minimum_age_at_measurement=16
+        ),
     cov_cat_diabetes=patients.with_these_clinical_events(
         diabetes_codes, on_or_before="index_date - 1 day"
     ),
@@ -218,10 +222,10 @@ clinical_variables = dict(
             dementia_codes, on_or_before="index_date - 1 day"
         ),
     ),
-    other_neuro=patients.with_these_clinical_events(
+    cov_cat_other_neuro=patients.with_these_clinical_events(
         other_neuro_codes, on_or_before="index_date - 1 day"
     ),
-    organ_transplant=patients.with_these_clinical_events(
+    cov_cat_organ_transplant=patients.with_these_clinical_events(
         organ_transplant_codes, on_or_before="index_date - 1 day"
     ),
     cov_cat_dysplenia=patients.with_these_clinical_events(
