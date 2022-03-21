@@ -216,6 +216,18 @@
       "downloaded_at": "2021-04-09 11:57:58.300890Z",
       "sha": "d6a2a1eb1cb88fb84af69d57146192e20b8f1eb1"
     },
+    "user-elsie_horne-copd_snomed.csv": {
+      "id": "user/elsie_horne/copd_snomed/419c1000",
+      "url": "https://codelists.opensafely.org/codelist/user/elsie_horne/copd_snomed/419c1000/",
+      "downloaded_at": "2021-11-11 16:06:29.952487Z",
+      "sha": "8621c69b3c52fd62b4ed4811411037eb9a2c9bb1"
+    },
+    "user-elsie_horne-copd_icd10.csv": {
+      "id": "user/elsie_horne/copd_icd10/5aab8335",
+      "url": "https://codelists.opensafely.org/codelist/user/elsie_horne/copd_icd10/5aab8335/",
+      "downloaded_at": "2021-11-11 16:06:30.230695Z",
+      "sha": "06a1624b3719e3185010fa65aa7322d9176f914c"
+    },
     "opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv": {
       "id": "opensafely/psychosis-schizophrenia-bipolar-affective-disease/0311653f",
       "url": "https://codelists.opensafely.org/codelist/opensafely/psychosis-schizophrenia-bipolar-affective-disease/0311653f/",
