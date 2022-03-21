@@ -2,16 +2,16 @@ from cohortextractor import patients
 from codelists import *
 
 demographic_variables = dict(
-    age_group=patients.categorised_as(
+    cov_cat_age_group=patients.categorised_as(
         {
-            "0-17": "age < 18",
-            "18-24": "age >= 18 AND age < 25",
-            "25-34": "age >= 25 AND age < 35",
-            "35-44": "age >= 35 AND age < 45",
-            "45-54": "age >= 45 AND age < 55",
-            "55-69": "age >= 55 AND age < 70",
-            "70-79": "age >= 70 AND age < 80",
-            "80+": "age >= 80",
+            "0-17": "cov_num_age < 18",
+            "18-24": "cov_num_age >= 18 AND cov_num_age < 25",
+            "25-34": "cov_num_age >= 25 AND cov_num_age < 35",
+            "35-44": "cov_num_age >= 35 AND cov_num_age < 45",
+            "45-54": "cov_num_age >= 45 AND cov_num_age < 55",
+            "55-69": "cov_num_age >= 55 AND cov_num_age < 70",
+            "70-79": "cov_num_age >= 70 AND cov_num_age < 80",
+            "80+": "cov_num_age >= 80",
             "missing": "DEFAULT",
         },
         return_expectations={
@@ -29,9 +29,9 @@ demographic_variables = dict(
                 }
             },
         },
-        age=patients.age_as_of("index_date"),
+        cov_num_age=patients.age_as_of("index_date"),
     ),
-    sex=patients.sex(
+    cov_cat_sex=patients.sex(
         return_expectations={
             "rate": "universal",
             "category": {"ratios": {"M": 0.49, "F": 0.51}},
