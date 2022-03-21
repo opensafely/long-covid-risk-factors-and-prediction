@@ -110,7 +110,7 @@ study = StudyDefinition(
             },
         },
     ),
-    post_viral_fatigue=patients.with_these_clinical_events(
+    cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_after=pandemic_start,
         return_expectations={"incidence": 0.05},
