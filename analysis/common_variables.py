@@ -97,7 +97,7 @@ demographic_variables = dict(
         },
     ),
     ## Healthcare worker    
-    cov_bin_healthcare_worker=patients.with_healthcare_worker_flag_on_covid_vaccine_record(
+    cov_cat_healthcare_worker=patients.with_healthcare_worker_flag_on_covid_vaccine_record(
             returning='binary_flag', 
             return_expectations={"incidence": 0.01},
     ),
@@ -208,6 +208,25 @@ clinical_variables = dict(
             between=["index_date - 1 years", "index_date - 1 day"],
             returning="number_of_matches_in_period",
         ),
+    ),
+    ## Chronic obstructive pulmonary disease
+    ### Primary care
+    tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed=patients.with_these_clinical_events(
+        copd_snomed_clinical,
+        returning='binary_flag',
+        on_or_before="index_date - 1 day",
+        return_expectations={"incidence": 0.1},
+    ),
+    ### HES APC
+    tmp_cov_bin_chronic_obstructive_pulmonary_disease_hes=patients.admitted_to_hospital(
+        returning='binary_flag',
+        with_these_diagnoses= copd_icd10,
+        on_or_before="index_date - 1 day",
+        return_expectations={"incidence": 0.1},
+    ),
+    ### Combined
+    cov_cat_chronic_obstructive_pulmonary_disease=patients.maximum_of(
+        "tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed", "tmp_cov_bin_chronic_obstructive_pulmonary_disease_hes",
     ),
     cov_cat_chronic_respiratory_disease=patients.with_these_clinical_events(
         chronic_respiratory_disease_codes, on_or_before="index_date - 1 day"

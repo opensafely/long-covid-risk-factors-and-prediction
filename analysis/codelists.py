@@ -62,6 +62,16 @@ other_neuro_codes = codelist_from_csv(
     system="ctv3",
     column="CTV3ID",
 )
+copd_snomed_clinical = codelist_from_csv(
+    "codelists/user-elsie_horne-copd_snomed.csv",
+    system="snomed",
+    column="code",
+)
+copd_icd10 = codelist_from_csv(
+    "codelists/user-elsie_horne-copd_icd10.csv",
+    system="icd10",
+    column="code",
+)
 chronic_respiratory_disease_codes = codelist_from_csv(
     "codelists/opensafely-chronic-respiratory-disease.csv",
     system="ctv3",
