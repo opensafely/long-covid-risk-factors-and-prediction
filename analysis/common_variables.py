@@ -37,7 +37,7 @@ demographic_variables = dict(
             "category": {"ratios": {"M": 0.49, "F": 0.51}},
         }
     ),
-    region=patients.registered_practice_as_of(
+    cov_cat_region=patients.registered_practice_as_of(
         "index_date",
         returning="nuts1_region_name",
         return_expectations={
@@ -57,7 +57,7 @@ demographic_variables = dict(
             },
         },
     ),
-    imd=patients.categorised_as(
+    cov_cat_imd=patients.categorised_as(
         {
             "0": "DEFAULT",
             "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
@@ -85,7 +85,7 @@ demographic_variables = dict(
             },
         },
     ),
-    ethnicity=patients.with_these_clinical_events(
+    cov_cat_ethnicity=patients.with_these_clinical_events(
         ethnicity_codes,
         returning="category",
         find_last_match_in_period=True,
@@ -95,7 +95,7 @@ demographic_variables = dict(
             "incidence": 0.75,
         },
     ),
-    previous_covid=patients.categorised_as(
+    cov_cat_previous_covid=patients.categorised_as(
         {
             "COVID positive": """
                                 (sgss_positive OR primary_care_covid)
@@ -118,15 +118,15 @@ demographic_variables = dict(
 )
 
 clinical_variables = dict(
-    bmi=patients.categorised_as(
+    cov_cat_bmi=patients.categorised_as(
         {
             "Not obese": "DEFAULT",
-            "Obese I (30-34.9)": """ bmi_value >= 30 AND bmi_value < 35""",
-            "Obese II (35-39.9)": """ bmi_value >= 35 AND bmi_value < 40""",
-            "Obese III (40+)": """ bmi_value >= 40 AND bmi_value < 100""",
+            "Obese I (30-34.9)": """ cov_num_bmi_value >= 30 AND cov_num_bmi_value < 35""",
+            "Obese II (35-39.9)": """ cov_num_bmi_value >= 35 AND cov_num_bmi_value < 40""",
+            "Obese III (40+)": """ cov_num_bmi_value >= 40 AND cov_num_bmi_value < 100""",
             # set maximum to avoid any impossibly extreme values being classified as obese
         },
-        bmi_value=patients.most_recent_bmi(
+        cov_num_bmi_value=patients.most_recent_bmi(
             on_or_after="index_date - 60 months", minimum_age_at_measurement=16
         ),
         return_expectations={
@@ -141,10 +141,10 @@ clinical_variables = dict(
             },
         },
     ),
-    diabetes=patients.with_these_clinical_events(
+    cov_cat_diabetes=patients.with_these_clinical_events(
         diabetes_codes, on_or_before="index_date - 1 day"
     ),
-    cancer=patients.satisfying(
+    cov_cat_cancer=patients.satisfying(
         "other_cancer OR lung_cancer",
         other_cancer=patients.with_these_clinical_events(
             other_cancer_codes, on_or_before="index_date - 1 day"
@@ -153,11 +153,10 @@ clinical_variables = dict(
             lung_cancer_codes, on_or_before="index_date - 1 day"
         ),
     ),
-    haem_cancer=patients.with_these_clinical_events(
+    cov_cat_haem_cancer=patients.with_these_clinical_events(
         haem_cancer_codes, on_or_before="index_date - 1 day"
     ),
-    # egfr
-    asthma=patients.categorised_as(
+    cov_cat_asthma=patients.categorised_as(
         {
             "0": "DEFAULT",
             "1": """
@@ -201,17 +200,16 @@ clinical_variables = dict(
             returning="number_of_matches_in_period",
         ),
     ),
-    chronic_respiratory_disease=patients.with_these_clinical_events(
+    cov_cat_chronic_respiratory_disease=patients.with_these_clinical_events(
         chronic_respiratory_disease_codes, on_or_before="index_date - 1 day"
     ),
-    chronic_cardiac_disease=patients.with_these_clinical_events(
+    cov_cat_chronic_cardiac_disease=patients.with_these_clinical_events(
         chronic_cardiac_disease_codes, on_or_before="index_date - 1 day"
     ),
-    # hypertension/highBP
-    chronic_liver_disease=patients.with_these_clinical_events(
+    cov_cat_chronic_liver_disease=patients.with_these_clinical_events(
         chronic_liver_disease_codes, on_or_before="index_date - 1 day"
     ),
-    stroke_or_dementia=patients.satisfying(
+    cov_cat_stroke_or_dementia=patients.satisfying(
         "stroke OR dementia",
         stroke=patients.with_these_clinical_events(
             stroke_gp_codes, on_or_before="index_date - 1 day"
@@ -226,13 +224,13 @@ clinical_variables = dict(
     organ_transplant=patients.with_these_clinical_events(
         organ_transplant_codes, on_or_before="index_date - 1 day"
     ),
-    dysplenia=patients.with_these_clinical_events(
+    cov_cat_dysplenia=patients.with_these_clinical_events(
         spleen_codes, on_or_before="index_date - 1 day"
     ),
-    ra_sle_psoriasis=patients.with_these_clinical_events(
+    cov_cat_ra_sle_psoriasis=patients.with_these_clinical_events(
         ra_sle_psoriasis_codes, on_or_before="index_date - 1 day"
     ),
-    other_immunosuppressive_condition=patients.satisfying(
+    cov_cat_other_immunosuppressive_condition=patients.satisfying(
         """
            sickle_cell
         OR aplastic_anaemia
@@ -256,7 +254,7 @@ clinical_variables = dict(
             temp_immune_codes, on_or_before = "index_date - 1 day"
         ),
     ),
-    heart_failure=patients.with_these_clinical_events(
+    cov_cat_heart_failure=patients.with_these_clinical_events(
         heart_failure_codes, on_or_before = "index_date - 1 day"
     ),
 )
