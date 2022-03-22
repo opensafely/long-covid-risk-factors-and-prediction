@@ -4,13 +4,9 @@ from codelists import *
 demographic_variables = dict(
     cov_cat_age_group=patients.categorised_as(
         {
-            "0-17": "age < 18",
-            "18-24": "age >= 18 AND age < 25",
-            "25-34": "age >= 25 AND age < 35",
-            "35-44": "age >= 35 AND age < 45",
-            "45-54": "age >= 45 AND age < 55",
-            "55-69": "age >= 55 AND age < 70",
-            "70-79": "age >= 70 AND age < 80",
+            "18-39": "age >= 18 AND age < 40",
+            "40-59": "age >= 40 AND age < 60",
+            "60-79": "age >= 60 AND age < 79",
             "80+": "age >= 80",
             "missing": "DEFAULT",
         },
@@ -18,13 +14,9 @@ demographic_variables = dict(
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "0-17": 0.1,
-                    "18-24": 0.1,
-                    "25-34": 0.1,
-                    "35-44": 0.1,
-                    "45-54": 0.2,
-                    "55-69": 0.2,
-                    "70-79": 0.1,
+                    "18-39": 0.3,
+                    "40-59": 0.3,
+                    "60-79": 0.3,
                     "80+": 0.1,
                 }
             },

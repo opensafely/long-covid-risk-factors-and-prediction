@@ -33,12 +33,14 @@ input$cov_cat_covid_phenotype[index] <- "hospitalised"
 snomed_vars <- names(input)[which(grepl("snomed", names(input))==TRUE)]
 input = input[,!(names(input) %in% snomed_vars)]
 
+tmp_vars <- names(input)[which(grepl("tmp", names(input))==TRUE)]
+input = input[,!(names(input) %in% tmp_vars)]
 vars_to_drop <- c("sgss_positive", "sgss_positive", "primary_care_covid", "hospital_covid",
                   "primary_care_death_date",  "ons_died_from_any_cause_date", "first_post_viral_fatigue_date")
 input = input[,!(names(input) %in% vars_to_drop)]
 
 # partial sorting by variable names in the data frame, keep patient_id and practice_id at the front
-input <- input %>% select(patient_id, practice_id, index_date, death_date, sort(tidyselect::peek_vars()))
+input <- input %>% select(patient_id, practice_id, index_date, death_date,  colnames(input)[grepl("out_",colnames(input))], colnames(input)[grepl("vax_",colnames(input))], sort(tidyselect::peek_vars()))
 
 # Step 3. define variable types: factor or numerical or date
 

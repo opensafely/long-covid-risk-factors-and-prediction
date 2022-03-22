@@ -96,7 +96,7 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
     **loop_over_codes(any_long_covid_code),
-    first_long_covid_code=patients.with_these_clinical_events(
+    out_first_long_covid_code=patients.with_these_clinical_events(
         # when running on real data, any long covid code will be returned 
         any_long_covid_code,
         returning="code",
