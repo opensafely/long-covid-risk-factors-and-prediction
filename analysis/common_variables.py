@@ -14,9 +14,9 @@ demographic_variables = dict(
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "18-39": 0.3,
-                    "40-59": 0.3,
-                    "60-79": 0.3,
+                    "18-39": 0.1,
+                    "40-59": 0.4,
+                    "60-79": 0.4,
                     "80+": 0.1,
                 }
             },
@@ -50,6 +50,7 @@ demographic_variables = dict(
             },
         },
     ),
+     ## Deprivation
     cov_cat_imd=patients.categorised_as(
         {
             "0": "DEFAULT",

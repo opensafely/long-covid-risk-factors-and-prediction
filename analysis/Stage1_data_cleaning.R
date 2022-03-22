@@ -48,10 +48,29 @@ input <- input %>% select(patient_id, practice_id, index_date, death_date,  coln
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
+## cov_cat_imd by quntile
+table(input$cov_cat_imd)
+levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
+levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==1] <-"1 (most deprived)"
+levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==2] <-"2"
+levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==3] <-"3"
+levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==4] <-"4"
+levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==5] <-"5 (least deprived)"
+
+input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("0 (missing)","1 (most deprived)","2","3","4","5 (least deprived)"))
+table(input$cov_cat_imd)
+
+## cov_cat_smoking_status
+table(input$cov_cat_smoking_status)
+levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
+input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
+table(input$cov_cat_smoking_status)
 
 # specify date variables in the format of "%Y-%m-%d"
 vars_dates <- grep("date", names(input))
 vars_dates <- names(input)[vars_dates]
+
+table(input$cov_cat_stroke_or_dementia)
 
 convert_to_date <- function(x){
   as.Date(x,format = "%Y-%m-%d")
@@ -63,18 +82,43 @@ View(input[,vars_dates])
 
 summary(input$cov_num_bmi)
 # Step 4. Define eligible population
+steps <- c("starting point","dead before index date", "missing sex", "missing age", "age <18y", "age>105y", "ethnicity")
+# starting point
+flow_chart_n <- nrow(input)
 
-# Adult, aged between 18 and 105 years 
-input <- input%>%filter(cov_num_age>=18 & cov_num_age <=105)
-hist(input$cov_num_age)
+# Dead: removed if dead before index date
+input <- input%>%filter(death_date > index_date | is.na(death_date))
+flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# known sex
+# Sex: remove if missing
 input <- input%>%filter(!is.na(cov_cat_sex))
 table(input$cov_cat_sex)
+flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# known age
-input <- input%>%filter(!is.na(cov_cat_age))
-table(input$cov_cat_age_group)
+# Age: remove if missing
+input <- input%>%filter(!is.na(cov_num_age))
+table(input$cov_cat_age)
+flow_chart_n <- c(flow_chart_n, nrow(input))
 
+# Adult: remove if age < 18
+input <- input%>%filter(cov_num_age>=18)
+flow_chart_n <- c(flow_chart_n, nrow(input))
 
+# Adult: remove if age > 105 years 
+input <- input%>%filter(cov_num_age <=105)
+flow_chart_n <- c(flow_chart_n, nrow(input))
+
+# Ethnicity: remove if missing
+input <- input%>%filter(!is.na(cov_cat_ethnicity))
+flow_chart_n <- c(flow_chart_n, nrow(input))
+
+# previous covid
+#table(input$cov_cat_previous_covid)
+#input <- input%>%filter(cov_cat_previous_covid == " No COVID code")
+#flow_chart_n <- c(flow_chart_n, nrow(input))
+flow_chart_n
+
+flow_chart<-cbind(steps, flow_chart_n)
+
+write.csv(flow_chart, file="output/flow_chart.csv")
 
