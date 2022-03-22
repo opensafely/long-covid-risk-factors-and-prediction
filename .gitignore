@@ -8,3 +8,5 @@ metadata/*
 venv/
 .DS_Store
 .Rproj.user
+.Rhistory
+flow_chart.csv

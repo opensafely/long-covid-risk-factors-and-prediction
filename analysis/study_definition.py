@@ -55,7 +55,7 @@ study = StudyDefinition(
     },
     index_date="2020-11-01",
     population=patients.satisfying(
-        "registered AND (sex = 'M' OR sex = 'F') AND age >= 18",
+        "registered AND (cov_cat_sex = 'M' OR cov_cat_sex = 'F') AND age >= 18",
         registered=patients.registered_as_of("index_date"),
     ),
     # COVID infection
@@ -82,11 +82,14 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
     # Outcome
-    long_covid=patients.with_these_clinical_events(
+    out_covid_date = patients.minimum_of(
+        "sgss_positive", "primary_care_covid", "hospital_covid"
+    ),
+    out_long_covid=patients.with_these_clinical_events(
         any_long_covid_code,
         return_expectations={"incidence": 0.05},
     ),
-    first_long_covid_date=patients.with_these_clinical_events(
+    out_first_long_covid_date=patients.with_these_clinical_events(
         any_long_covid_code,
         returning="date",
         date_format="YYYY-MM-DD",
@@ -94,7 +97,8 @@ study = StudyDefinition(
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
     **loop_over_codes(any_long_covid_code),
-    first_long_covid_code=patients.with_these_clinical_events(
+    out_first_long_covid_code=patients.with_these_clinical_events(
+        # when running on real data, any long covid code will be returned 
         any_long_covid_code,
         returning="code",
         find_first_match_in_period=True,
@@ -102,16 +106,21 @@ study = StudyDefinition(
             "incidence": 0.05,
             "category": {
                 "ratios": {
+                    #Post-COVID-19 syndrome
                     "1325161000000102": 0.2,
+                    #Ongoing symptomatic COVID-19
                     "1325181000000106": 0.2,
+                    #Signposting to Your COVID Recovery
                     "1325021000000106": 0.3,
+                    #Newcastle post-COVID syndrome Follow-up Screening Questionnaire
                     "1325051000000101": 0.2,
+                    #Assessment using Newcastle post-COVID syndrome Follow-up Screening Questionnaire
                     "1325061000000103": 0.1,
                 }
             },
         },
     ),
-    post_viral_fatigue=patients.with_these_clinical_events(
+    cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_after=pandemic_start,
         return_expectations={"incidence": 0.05},
@@ -160,7 +169,7 @@ study = StudyDefinition(
     ),
       ###  COVID vaccination
     # First covid vaccination date (first vaccine given on 8/12/2020 in the UK)
-    covid19_vaccination_date1=patients.with_tpp_vaccination_record(
+    vax_covid_date1=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
         on_or_after="2020-12-07",
@@ -173,10 +182,10 @@ study = StudyDefinition(
         },
     ),
     # Second covid vaccination date (first second dose reported on 29/12/2020 in the UK)
-    covid19_vaccination_date2=patients.with_tpp_vaccination_record(
+    vax_covid_date2=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
-        on_or_after="covid19_vaccination_date1 + 14 days",  # Allowing for less days between 2 vaccination dates
+        on_or_after="vax_covid_date1 + 14 days",  # Allowing for less days between 2 vaccination dates
         find_first_match_in_period=True,
         returning="date",
         date_format="YYYY-MM-DD",
@@ -186,10 +195,10 @@ study = StudyDefinition(
         },
     ),
      # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
-    covid19_vaccination_date3=patients.with_tpp_vaccination_record(
+    vax_covid_date3=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
-        on_or_after="covid19_vaccination_date2 + 14 days",  # Allowing for the least days since the 2nd vaccine
+        on_or_after="vax_covid_date2 + 14 days",  # Allowing for the least days since the 2nd vaccine
         find_first_match_in_period=True,
         returning="date",
         date_format="YYYY-MM-DD",
@@ -200,7 +209,7 @@ study = StudyDefinition(
     ),
 
     ###No. primary care consultation in year prior to index date
-    cov_n_gp_consultation=patients.with_gp_consultations(
+    cov_num_gp_consultation=patients.with_gp_consultations(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
         return_expectations={
@@ -216,7 +225,7 @@ study = StudyDefinition(
     # ),
     
     # Smoking status
-    smoking_status=patients.categorised_as(
+    cov_cat_smoking_status=patients.categorised_as(
         {
             "S": "most_recent_smoking_code = 'S'",
             "E": """

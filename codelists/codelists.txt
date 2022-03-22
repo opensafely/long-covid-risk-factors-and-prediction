@@ -34,6 +34,8 @@ opensafely/temporary-immunosuppression/2020-04-24
 opensafely/stroke-updated/2020-06-02
 opensafely/warfarin/2020-10-05
 user/alex-walker/post-viral-syndrome/70708fd6
+user/elsie_horne/copd_snomed/419c1000
+user/elsie_horne/copd_icd10/5aab8335
 opensafely/psychosis-schizophrenia-bipolar-affective-disease/0311653f
 opensafely/depression/1c20d874
 opensafely/heart-failure/2020-05-05
