@@ -122,3 +122,5 @@ flow_chart<-cbind(steps, flow_chart_n)
 
 write.csv(flow_chart, file="output/flow_chart.csv")
 
+saveRDS(input, file = "output/input_stage1.rds")
+
