@@ -2,7 +2,7 @@ from cohortextractor import patients
 from codelists import *
 
 demographic_variables = dict(
-    cov_cat_age_group=patients.categorised_as(
+    cov_cat_age=patients.categorised_as(
         {
             "18-39": "age >= 18 AND age < 40",
             "40-59": "age >= 40 AND age < 60",

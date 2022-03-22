@@ -64,11 +64,17 @@ View(input[,vars_dates])
 summary(input$cov_num_bmi)
 # Step 4. Define eligible population
 
+# Adult, aged between 18 and 105 years 
+input <- input%>%filter(cov_num_age>=18 & cov_num_age <=105)
+hist(input$cov_num_age)
 
+# known sex
+input <- input%>%filter(!is.na(cov_cat_sex))
+table(input$cov_cat_sex)
 
-
-
-
+# known age
+input <- input%>%filter(!is.na(cov_cat_age))
+table(input$cov_cat_age_group)
 
 
 
