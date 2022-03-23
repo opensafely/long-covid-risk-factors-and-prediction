@@ -13,11 +13,12 @@ cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
 cov_num_names <- names(input)[grepl("cov_num", names(input))]
 
 #lapply(input[,cov_factor_names], function(x) table(x))
-table1 <- data.frame(characteristic = character(),
+table_1 <- data.frame(variable = character(),
                      number  = numeric(),
                      percent = numeric(),
                      mean    = numeric(),
-                     sd      = numric())
+                     sd      = numeric(), 
+                     stringsAsFactors = FALSE)
 
 levels(input$cov_cat_age)
 
@@ -26,8 +27,17 @@ paste0(cov_factor_names[1], "_", levels(input$cov_cat_age))
 input <- input[, cov_factor_names]
 names(table(input[,1]))
 
-for(i in 1:2){
-  #temp = input[,cov_factor_names[i]]
+#table_1[1,1]="test"
+for(i in 1:length(cov_factor_names)){
   levels = paste0(cov_factor_names[i], "_",  names(table(input[,i])))
+  start = nrow(table_1)+1
+  end = nrow(table_1)+length(levels)
+  table_1[start:end,1] <- c(levels)
   print(levels)
 }
+
+for(i in 1:length(cov_num_names)){
+  index = nrow(table_1)+1
+  table_1[index,1] <- cov_num_names[i]
+}
+
