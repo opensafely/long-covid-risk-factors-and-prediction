@@ -11,3 +11,11 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input.feather
+  table_1:
+    run: r:latest analysis/table_1.R
+    needs:
+    - generate_study_population
+    outputs:
+      moderately_sensitive:
+        Descriptive_Table_CSV: output/table_1.csv
+        Descriptive_Table_HTML: output/table_1.html
