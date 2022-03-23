@@ -6,7 +6,7 @@
 # Output:  table1.csv, table1.html
 
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
-library(lubridate)
+library(lubridate); library(htmlTable)
 
 input <- read_rds("output/input_stage1.rds")
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
@@ -47,3 +47,6 @@ for(i in 1:length(cov_num_names)){
   table_1[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
 }
 
+write.csv(table_1, file="output/table_1.csv")
+
+htmlTable(table_1, file="output/table_1.html")
