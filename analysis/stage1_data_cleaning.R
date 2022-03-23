@@ -7,8 +7,8 @@ library(readr); library(dplyr); library("arrow"); library("data.table");
 library(lubridate)
 
 input <- read_feather("output/input.feather")
-View(input)
-names(input)
+#View(input)
+#names(input)
 
 # define cohort start date:
 index_date="2020-11-01"
@@ -74,7 +74,7 @@ convert_to_date <- function(x){
 input[vars_dates] = lapply(input[vars_dates], convert_to_date)
 lapply(input[vars_dates], is.Date)
 
-View(input[,vars_dates])
+#View(input[,vars_dates])
 
 summary(input$cov_num_bmi)
 # Step 4. Define eligible population--------------------------------------------
