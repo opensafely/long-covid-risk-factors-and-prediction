@@ -98,7 +98,7 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 
 # Age: remove if missing
 input <- input%>%filter(!is.na(cov_num_age))
-table(input$cov_cat_age)
+#table(input$cov_cat_age)
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
 # Adult: remove if age < 18

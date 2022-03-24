@@ -2,28 +2,37 @@ from cohortextractor import patients
 from codelists import *
 
 demographic_variables = dict(
-    cov_cat_age=patients.categorised_as(
-        {
-            "18-39": "age >= 18 AND age < 40",
-            "40-59": "age >= 40 AND age < 60",
-            "60-79": "age >= 60 AND age < 79",
-            "80+": "age >= 80",
-            "missing": "DEFAULT",
+    # cov_cat_age=patients.categorised_as(
+    #     {
+    #         "18-39": "age >= 18 AND age < 40",
+    #         "40-59": "age >= 40 AND age < 60",
+    #         "60-79": "age >= 60 AND age < 79",
+    #         "80+": "age >= 80",
+    #         "missing": "DEFAULT",
+    #     },
+    #     return_expectations={
+    #         "rate": "universal",
+    #         "category": {
+    #             "ratios": {
+    #                 "18-39": 0.1,
+    #                 "40-59": 0.4,
+    #                 "60-79": 0.4,
+    #                 "80+": 0.1,
+    #             }
+    #         },
+    #     },
+    #     age=patients.age_as_of("index_date"),
+    # ),
+    # cov_num_age = patients.age_as_of("index_date"),
+    #     ## Age
+    cov_num_age = patients.age_as_of(
+        "index_date",
+        return_expectations = {
+        "rate": "universal",
+        "int": {"distribution": "population_ages"},
+        "incidence" : 0.001
         },
-        return_expectations={
-            "rate": "universal",
-            "category": {
-                "ratios": {
-                    "18-39": 0.1,
-                    "40-59": 0.4,
-                    "60-79": 0.4,
-                    "80+": 0.1,
-                }
-            },
-        },
-        age=patients.age_as_of("index_date"),
     ),
-    cov_num_age = patients.age_as_of("index_date"),
     cov_cat_sex=patients.sex(
         return_expectations={
             "rate": "universal",
