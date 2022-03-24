@@ -22,7 +22,7 @@ table_1 <- data.frame(variable = character(),
                      sd      = numeric(), 
                      stringsAsFactors = FALSE)
 
-# factor variables: number and percentage-------------------------------------
+# factor variables: number and percentage---------------------------------------
 input_factor_vars <- input[, cov_factor_names]
 for(i in 1:length(cov_factor_names)){
  # levels = paste0(cov_factor_names[i], "_",  names(table(input_factor_vars[,i])))
