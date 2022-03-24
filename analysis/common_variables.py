@@ -158,7 +158,7 @@ clinical_variables = dict(
             # set maximum to avoid any impossibly extreme values being classified as obese
         },
         bmi_value=patients.most_recent_bmi(
-            on_or_after="index_date - 60 months", minimum_age_at_measurement=16
+            on_or_before="index_date - 1 day", minimum_age_at_measurement=16
         ),
         return_expectations={
             "rate": "universal",
@@ -172,9 +172,10 @@ clinical_variables = dict(
             },
         },
     ),
-    cov_num_bmi = patients.most_recent_bmi(
-            on_or_after="index_date - 60 months", minimum_age_at_measurement=16
-        ),
+    # cov_num_bmi = patients.most_recent_bmi(
+    #         on_or_after="index_date - 60 months", minimum_age_at_measurement=16
+    #     ),
+
     cov_cat_diabetes=patients.with_these_clinical_events(
         diabetes_codes, on_or_before="index_date - 1 day"
     ),

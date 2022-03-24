@@ -81,7 +81,6 @@ lapply(input[vars_dates], is.Date)
 
 #View(input[,vars_dates])
 
-summary(input$cov_num_bmi)
 # Step 4. Define eligible population--------------------------------------------
 steps <- c("starting point","dead before index date", "missing sex", "missing age", "age <18y", "age>105y", "ethnicity")
 # starting point
@@ -133,7 +132,11 @@ for(i in 1:length(cov_factor_names)){
   }
 }
 
-input[,cov_factor_names] <- input_factor_vars 
+# # vaccination status is a dynamic variable
+# input[,cov_factor_names] <- input_factor_vars 
+# input$vax_doses <- NULL
+# index = which(!is.na(input$vax_covid_date1)& input$vax_covid_date1  < input$index_date)
+# input$vax_does[index] = 1
 
 saveRDS(input, file = "output/input_stage1.rds")
 

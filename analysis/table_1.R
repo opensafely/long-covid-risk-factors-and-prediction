@@ -25,7 +25,10 @@ table_1 <- data.frame(variable = character(),
 # factor variables: numbers and percentages-------------------------------------
 input_factor_vars <- input[, cov_factor_names]
 for(i in 1:length(cov_factor_names)){
-  levels = paste0(cov_factor_names[i], "_",  names(table(input_factor_vars[,i])))
+ # levels = paste0(cov_factor_names[i], "_",  names(table(input_factor_vars[,i])))
+  levels = names(table(input_factor_vars[,i]))
+  start = nrow(table_1)+1
+  table_1[start,1] = cov_factor_names[i]
   start = nrow(table_1)+1
   end = nrow(table_1)+length(levels)
   table_1[start:end,1] <- c(levels)            # variable name
@@ -55,3 +58,5 @@ table_1[index,2:ncol(table_1)] = "redacted"
 write.csv(table_1, file="output/table_1.csv")
 
 htmlTable(table_1, file="output/table_1.html")
+
+
