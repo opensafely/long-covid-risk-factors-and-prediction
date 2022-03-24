@@ -1,8 +1,8 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
 # Content: Table 1. Baseline characteristics of patients. 
-#          Categorical variables: numbers and percentages
-#          Continuous variables:  numbers and percentages of observations, 
+#          Categorical variables: number and percentage
+#          Continuous variables:  number and percentage of observations, 
 #                                 mean and standard deviation
 # Output:  table1.csv, table1.html
 
@@ -22,7 +22,7 @@ table_1 <- data.frame(variable = character(),
                      sd      = numeric(), 
                      stringsAsFactors = FALSE)
 
-# factor variables: numbers and percentages-------------------------------------
+# factor variables: number and percentage-------------------------------------
 input_factor_vars <- input[, cov_factor_names]
 for(i in 1:length(cov_factor_names)){
  # levels = paste0(cov_factor_names[i], "_",  names(table(input_factor_vars[,i])))
@@ -37,8 +37,7 @@ for(i in 1:length(cov_factor_names)){
   print(levels)
 }
 
-# numerical variables: mean and standard deviations-----------------------------
-input_num_vars <- input[,cov_num_names]
+# numerical variables: number and percentage of observations, mean and standard deviations
 for(i in 1:length(cov_num_names)){
   index = nrow(table_1)+1
   table_1[index,1] <- cov_num_names[i]
