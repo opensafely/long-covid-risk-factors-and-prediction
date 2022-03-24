@@ -1,10 +1,10 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
 # Content: Figure 1. Number of long COVID diagnosis over time
-# Output:  figure1.svg
+# Output:  figure_1.svg
 
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
-library(lubridate); library(htmlTable)
+library(lubridate); library(htmlTable);library(ggplot2)
 
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
@@ -66,7 +66,7 @@ figure_1 <- ggplot(data, aes(x=year_month,
   #
   xlab(label='\nDates')+
   #
-  ylab(label='New long COVID cases\n')+
+  ylab(label='New Long COVID Cases\n')+
   #
   # Specify a theme
   #
@@ -82,6 +82,6 @@ figure_1 <- ggplot(data, aes(x=year_month,
         legend.position = "bottom")
 
 #figure_1
-ggsave(file="output/figure1.svg", plot=figure_1, width=16, height=8)
+ggsave(file="output/figure_1.svg", plot=figure_1, width=16, height=8)
 
 

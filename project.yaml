@@ -18,6 +18,8 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_stage1.rds
+        flow_chart_csv: output/flow_chart.csv
+        flow_chart_html: output/flow_chart.html
   table_1:
     run: r:latest analysis/table_1.R
     needs:
@@ -26,3 +28,10 @@ actions:
       moderately_sensitive:
         Descriptive_Table_CSV: output/table_1.csv
         Descriptive_Table_HTML: output/table_1.html
+  figure_1:
+    run: r:latest analysis/figure_1.R
+    needs:
+    - stage1_data_cleaning
+    outputs:
+      moderately_sensitive:
+        Figure_long_covid_cases: output/figure_1.svg

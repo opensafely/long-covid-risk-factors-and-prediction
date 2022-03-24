@@ -4,7 +4,7 @@
 # Output:  input.rds
 
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
-library(lubridate)
+library(lubridate); library(htmlTable)
 
 input <- read_feather("output/input.feather")
 #View(input)
@@ -120,6 +120,8 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 flow_chart<-cbind(steps, flow_chart_n)
 
 write.csv(flow_chart, file="output/flow_chart.csv")
+htmlTable(flow_chart, file="output/flow_chart.html")
+
 
 # For categorical variables, replace "na" with "Missing" as a category
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
