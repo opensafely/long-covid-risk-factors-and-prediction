@@ -44,7 +44,7 @@ input <- input %>% select(patient_id, practice_id, index_date, death_date,  coln
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
-## cov_cat_imd by quintile-------------------------------------------------------
+# cov_cat_imd by quintile-------------------------------------------------------
 table(input$cov_cat_imd)
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==1] <-"1 (most deprived)"
@@ -52,6 +52,11 @@ levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==2] <-"2"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==3] <-"3"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==4] <-"4"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==5] <-"5 (least deprived)"
+
+# cov_cat_asthma ---------------------------------------------------------------
+levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma)==0] <-"No asthma"
+levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma) == 1 | levels(input$cov_cat_asthma) == 2 ] <-"Asthma"
+
 
 input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("0 (missing)","1 (most deprived)","2","3","4","5 (least deprived)"))
 table(input$cov_cat_imd)
@@ -116,6 +121,19 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 flow_chart<-cbind(steps, flow_chart_n)
 
 write.csv(flow_chart, file="output/flow_chart.csv")
+
+# For categorical variables, replace "na" with "Missing" as a category
+cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+input_factor_vars <- input[,cov_factor_names]
+
+for(i in 1:length(cov_factor_names)){
+  index = which(is.na(input_factor_vars[,i]))
+  if(length(index)>0){
+    input_factor_vars[index,i]="Missing"
+  }
+}
+
+input[,cov_factor_names] <- input_factor_vars 
 
 saveRDS(input, file = "output/input_stage1.rds")
 
