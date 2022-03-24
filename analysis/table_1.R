@@ -38,6 +38,7 @@ for(i in 1:length(cov_factor_names)){
 }
 
 # numerical variables: number and percentage of observations, mean and standard deviations
+input_num_vars <- input[,cov_num_names]
 for(i in 1:length(cov_num_names)){
   index = nrow(table_1)+1
   table_1[index,1] <- cov_num_names[i]
