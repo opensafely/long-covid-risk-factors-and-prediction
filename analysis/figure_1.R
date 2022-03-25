@@ -16,8 +16,6 @@ keep <- c("year", "month", "out_first_long_covid_date")
 input <- input[,keep]
 
 #View(input)
-
-
 # Create a data frame ---------------------------------------------------
 data<- data.frame(matrix(nrow=16, ncol=4))  # 16 months
 colnames(data) <- c("year", "month", "year_month", "count")

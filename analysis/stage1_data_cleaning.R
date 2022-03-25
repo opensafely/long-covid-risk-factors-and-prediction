@@ -112,7 +112,10 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 input <- input%>%filter(!is.na(cov_cat_ethnicity))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# previous covid
+# previous long covid
+#cohort_start = as.Date("2020-12-01", format="%Y-%m-%d")
+#index <- which(input$out_first_long_covid_date < cohort_start)
+
 #table(input$cov_cat_previous_covid)
 #input <- input%>%filter(cov_cat_previous_covid == " No COVID code")
 #flow_chart_n <- c(flow_chart_n, nrow(input))
