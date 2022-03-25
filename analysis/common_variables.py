@@ -126,6 +126,7 @@ demographic_variables = dict(
             returning='binary_flag', 
             return_expectations={"incidence": 0.01},
     ),
+    # Question: Not quite sure whether this is covid history before index date?
     cov_cat_previous_covid=patients.categorised_as(
         {
             "COVID positive": """
