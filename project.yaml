@@ -43,3 +43,10 @@ actions:
       moderately_sensitive:
         incidence_rate_table_CSV: output/table_2.csv
         incidence_rate_talbe_HTML: output/table_2.html
+  suppl_figure_1:
+    run: r:latest analysis/suppl_figure_1.R
+    needs:
+    - stage1_data_cleaning
+    outputs:
+      moderately_sensitive:
+        Figure_long_covid_cases: output/suppl_figure_1.svg     
