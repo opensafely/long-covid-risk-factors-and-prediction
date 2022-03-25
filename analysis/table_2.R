@@ -105,6 +105,7 @@ rm(input)
 
 outcome = "covid"
 outcome = "long covid"
+for(outcome in c("covid", "long covid")){
     for(i in demographics){
           print(i)
           level <- names(table(data[,i]))
@@ -140,5 +141,10 @@ outcome = "long covid"
           }
     }
 
-
+}
 table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
+
+write.csv(table_2, file="output/table_2.csv")
+
+htmlTable(table_2, file="output/table_2.html")
+

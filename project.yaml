@@ -26,8 +26,8 @@ actions:
     - stage1_data_cleaning
     outputs:
       moderately_sensitive:
-        Descriptive_Table_CSV: output/table_1.csv
-        Descriptive_Table_HTML: output/table_1.html
+        descriptive_table_CSV: output/table_1.csv
+        descriptive_table_HTML: output/table_1.html
   figure_1:
     run: r:latest analysis/figure_1.R
     needs:
@@ -35,3 +35,11 @@ actions:
     outputs:
       moderately_sensitive:
         Figure_long_covid_cases: output/figure_1.svg
+  table_2:
+    run: r:latest analysis/table_2.R
+    needs:
+    - stage1_data_cleaning
+    outputs:
+      moderately_sensitive:
+        incidence_rate_table_CSV: output/table_2.csv
+        incidence_rate_talbe_HTML: output/table_2.html
