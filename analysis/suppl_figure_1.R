@@ -12,7 +12,7 @@ input <- read_rds("output/input_stage1.rds")
 snomed_code <- input$out_first_long_covid_code
 
 
-count_data <-table(data)
+count_data <-table(snomed_code)
 
 count_data <- data.frame(count_data)
 names(count_data) <- c("snomed_code", "count")
