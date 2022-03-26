@@ -11,7 +11,6 @@ input <- read_rds("output/input_stage1.rds")
 
 snomed_code <- input$out_first_long_covid_code
 
-
 count_data <-table(snomed_code)
 
 count_data <- data.frame(count_data)
@@ -22,24 +21,29 @@ count_data
 percent_function <- function(x, digits = 1, format = "f", ...) {
   paste0(formatC(100 * x, format = format, digits = digits, ...), "%")
 }
-#library(scales)
 
-#label_percent()(x)
-#count_data$labels = label_percent()(count_data$percent)
 count_data$labels = percent_function(count_data$percent)
-suppl_figure1 <- ggplot(count_data, aes(x = "", y = percent, fill = snomed_code)) +
-  geom_col() +
+
+# Pie Chart
+suppl_figure1 <- ggplot(count_data, aes(x = "", y = count, fill = snomed_code)) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar(theta = "y") +
+  labs(x = "", y = "", fill = "SNOMED Code") + 
   geom_text(aes(label = labels),
             position = position_stack(vjust = 0.5)) +
-  coord_polar(theta = "y") +
-  theme(axis.ticks = element_blank(), 
-          axis.text.y = element_blank(),
-          axis.text.x = element_blank()) 
- suppl_figure1
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.title = element_text(hjust = 0.5, face="bold", size = 10), 
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_blank()) 
 
+suppl_figure1
+
+
+# output underlying count data for supplementary figure 1
+write.csv(count_data, file="output/data_suppl_figure1.csv")
+
+htmlTable(count_data, file="output/data_suppl_figure1.html")
+ 
 #supplementary figure 1
 ggsave(file="output/suppl_figure_1.svg", plot=suppl_figure1, width=16, height=8)
-
-
-
-
