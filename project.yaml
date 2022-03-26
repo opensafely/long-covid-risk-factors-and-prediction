@@ -49,4 +49,4 @@ actions:
     - stage1_data_cleaning
     outputs:
       moderately_sensitive:
-        Figure_long_covid_cases: output/suppl_figure_1.svg     
+        pie_chart_diagnosis_code: output/suppl_figure_1.svg     
