@@ -3,11 +3,6 @@
 # Content: Supplementary figure 2. Monthly long COVID cases by region
 # Output:  suppl_figure_2.svg
 
-# Purpose: Long COVID risk factors and prediction models
-# Author:  Yinghui Wei
-# Content: Figure 1. Number of long COVID diagnosis over time
-# Output:  figure_1.svg
-
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
 library(lubridate); library(htmlTable);library(ggplot2)
 
