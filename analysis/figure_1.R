@@ -25,7 +25,7 @@ data$month <-c(12, seq(1:12), seq(1:3))
 data$year_month <- seq(as.Date("2020/12/01"), as.Date("2022/03/01"), by = "month")
 data$year_month <- as.Date(data$year_month, format = "%Y-%M")
 
-# Caculate the number of long COVID cases by month -----------------------------
+# Calculate the number of long COVID cases by month -----------------------------
 
 for(i in 1:nrow(data)){
   data$count[i]<-length(which(input$year == data$year[i] & input$month == data$month[i]))
