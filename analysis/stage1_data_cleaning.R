@@ -126,17 +126,17 @@ write.csv(flow_chart, file="output/flow_chart.csv")
 htmlTable(flow_chart, file="output/flow_chart.html")
 
 
-# For categorical variables, replace "na" with "Missing" as a category
-cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
-input_factor_vars <- input[,cov_factor_names]
-
-# why this doesn't pick up na in smoking status?
-for(i in 1:length(cov_factor_names)){
-  index = which(is.na(input_factor_vars[,i]))
-  if(length(index)>0){
-    input_factor_vars[index,i]="Missing"
-  }
-}
+# # For categorical variables, replace "na" with "Missing" as a category
+# cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+# input_factor_vars <- input[,cov_factor_names]
+# 
+# # why this doesn't pick up na in smoking status???
+# for(i in 1:length(cov_factor_names)){
+#   index = which(is.na(input_factor_vars[,i]))
+#   if(length(index)>0){
+#     input_factor_vars[index,i]="Missing"
+#   }
+# }
 
 # # vaccination status is a dynamic variable
 # input[,cov_factor_names] <- input_factor_vars 
