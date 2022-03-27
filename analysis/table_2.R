@@ -53,7 +53,7 @@ compute_incidence_rate <- function(event_count, person_days_total){
     ir_lower = round(ir - 1.96 * sqrt(event_count/person_years_total^2),4)
     ir_upper = round(ir + 1.96 * sqrt(event_count/person_years_total^2),4)
   }else{
-    event_count = event_ir = event_ir_lower = event_ir_upper = "redacted"
+    person_years_total = ir = event_count = ir = ir_lower = ir_upper = "redacted"
   }
   return(c(event_count,person_years_total, ir, ir_lower, ir_upper))
 }
