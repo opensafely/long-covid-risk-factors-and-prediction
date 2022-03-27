@@ -101,45 +101,45 @@ nrow(table_2)
 #to improve efficiency
 rm(input)
 
-# outcome = "covid"
-# outcome = "long covid"
-# for(outcome in c("covid", "long covid")){
-#     for(i in demographics){
-#           print(i)
-#           level <- names(table(data[,i]))
-#           print(level)
-#           start = nrow(table_2)+1
-#           end = nrow(table_2)+length(level)
-#           table_2[start:end,1] = rep(outcome, length(level))
-#           table_2[start:end,2] = rep(i, length(level))
-#           table_2$subgrp_level[start:end] = level
-#           index = start
-#           for(j in level){
-#            # index = which(data[,i]==j)
-#             print(j)
-#             sub_data <- data[which(data[,i]==j),]
-#             sub_data <- sub_data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
-#             sub_data <- sub_data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
-#             if(outcome == "covid"){
-#               count <- length(which(sub_data$out_covid_date >= sub_data$index_date &
-#                                           sub_data$out_covid_date <= sub_data$follow_up_end_date))
-#             }
-#             if(outcome=="long covid"){
-#               count <- length(which(sub_data$out_first_long_covid_date >= sub_data$index_date &
-#                                     sub_data$out_first_long_covid_date <= sub_data$follow_up_end_date))
-#               
-#             }
-#             # calculate follow-up days
-#             sub_data <- sub_data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
-#             #hist(data$person_days)
-#             sub_data <- sub_data %>% filter(person_days >= 1 & person_days <= 486)
-#             person_days_total = round(sum(sub_data$person_days, na.rm=TRUE),1)
-#             table_2[index,4:8] <- compute_incidence_rate(count, person_days_total)
-#             index = index+1
-#           }
-#     }
-# 
-# }
+outcome = "covid"
+outcome = "long covid"
+for(outcome in c("covid", "long covid")){
+    for(i in demographics){
+          print(i)
+          level <- names(table(data[,i]))
+          print(level)
+          start = nrow(table_2)+1
+          end = nrow(table_2)+length(level)
+          table_2[start:end,1] = rep(outcome, length(level))
+          table_2[start:end,2] = rep(i, length(level))
+          table_2$subgrp_level[start:end] = level
+          index = start
+          for(j in level){
+           # index = which(data[,i]==j)
+            print(j)
+            sub_data <- data[which(data[,i]==j),]
+            sub_data <- sub_data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
+            sub_data <- sub_data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
+            if(outcome == "covid"){
+              count <- length(which(sub_data$out_covid_date >= sub_data$index_date &
+                                          sub_data$out_covid_date <= sub_data$follow_up_end_date))
+            }
+            if(outcome=="long covid"){
+              count <- length(which(sub_data$out_first_long_covid_date >= sub_data$index_date &
+                                    sub_data$out_first_long_covid_date <= sub_data$follow_up_end_date))
+
+            }
+            # calculate follow-up days
+            sub_data <- sub_data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
+            #hist(data$person_days)
+            sub_data <- sub_data %>% filter(person_days >= 1 & person_days <= 486)
+            person_days_total = round(sum(sub_data$person_days, na.rm=TRUE),1)
+            table_2[index,4:8] <- compute_incidence_rate(count, person_days_total)
+            index = index+1
+          }
+    }
+
+}
 table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 
 write.csv(table_2, file="output/table_2.csv")
