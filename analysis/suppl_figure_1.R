@@ -24,6 +24,10 @@ percent_function <- function(x, digits = 1, format = "f", ...) {
 
 count_data$labels = percent_function(count_data$percent)
 
+# small number suppression
+index <- which(count_data$count < 6)
+count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
+
 # Pie Chart
 suppl_figure1 <- ggplot(count_data, aes(x = "", y = count, fill = snomed_code)) +
   geom_bar(width = 1, stat = "identity") +
@@ -41,8 +45,11 @@ suppl_figure1
 
 
 # output underlying count data for supplementary figure 1
-write.csv(count_data, file="output/data_suppl_figure1.csv")
+# small number suppression
+index <- which(is.na(count_data$count))
+count_data$count[index] = count_data$percent[index] = count_data$labels[index] = "redacted"
 
+write.csv(count_data, file="output/data_suppl_figure1.csv")
 htmlTable(count_data, file="output/data_suppl_figure1.html")
  
 #supplementary figure 1
