@@ -55,41 +55,75 @@ for(i in region){
 
 
 # Produce Supplementary Figure 2--------------------------------------------------------------
-data_region = table_long_covid_count %>% filter(region == "East")
-suppl_figure_2 <- ggplot(data_region, aes(x=year_month, 
-                             y=count))+
-  # Add the number of new long COVID cases as points
-  #
-  geom_point(size = 1.5) +
-  # Add the number of new long COVID cases as a line
-  #
-  geom_line()+
-  #
-  scale_x_date(breaks = seq.Date(from = ymd("2020/12/01"), # Specify limits by hand
-                                 to = ymd("2022/03/01"),
-                                 by = "months"), 
-               date_labels = "%b-%y", 
-               minor_breaks = NULL,
-               limits = ymd("2020-12-01", "2022-03-01")) + # Specify limits by hand
-  #
-  xlab(label='\nDates')+
-  #
-  ylab(label='New Long COVID Cases\n')+
-  #
-  # Specify a theme
-  #
-  theme_bw() +
-  #
-  theme(plot.title = element_text(size = 16),
-        plot.subtitle = element_text(size = 16),
-        plot.caption = element_text(size = 12),
-        axis.title = element_text(size = 14),
-        axis.text = element_text(size = 14),
-        legend.title = element_text(size = 14),
-        legend.text = element_text(size = 14),
-        legend.position = "bottom")
+# approach 1
+# for(i in region){
+#     data_region = table_long_covid_count %>% filter(region == i)
+#     suppl_figure_2 <- ggplot(data_region, aes(x=year_month, 
+#                                  y=count))+
+#       # Add the number of new long COVID cases as points
+#       #
+#       geom_point(size = 1.5) +
+#       # Add the number of new long COVID cases as a line
+#       #
+#       geom_line()+
+#       #
+#       scale_x_date(breaks = seq.Date(from = ymd("2020/12/01"), # Specify limits by hand
+#                                      to = ymd("2022/03/01"),
+#                                      by = "months"), 
+#                    date_labels = "%b-%y", 
+#                    minor_breaks = NULL,
+#                    limits = ymd("2020-12-01", "2022-03-01")) + # Specify limits by hand
+#       #
+#       xlab(label='\nDates')+
+#       #
+#       ylab(label='New Long COVID Cases\n')+
+#       #
+#       # Specify a theme
+#       #
+#       theme_bw() +
+#       #
+#       theme(plot.title = element_text(size = 16),
+#             plot.subtitle = element_text(size = 16),
+#             plot.caption = element_text(size = 12),
+#             axis.title = element_text(size = 14),
+#             axis.text = element_text(size = 14),
+#             legend.title = element_text(size = 14),
+#             legend.text = element_text(size = 14),
+#             legend.position = "bottom")
+#     
+#     suppl_figure_2
+#     ggsave(file=paste0("output/suppl_figure_2", i, ".svg"), plot=suppl_figure_2, width=16, height=8)
+# }    
+#     
 
-suppl_figure_2
-ggsave(file="output/suppl_figure_2.svg", plot=suppl_figure_2, width=16, height=8)
+#--- approach 2 : multiple time series in one plot
+ymax = max(table_long_covid_count$count)
+suppl_figure_2 <- ggplot(table_long_covid_count,aes(x=year_month,y=count,colour=region,group=region)) + 
+                   geom_point(size = 1.5)+ geom_line() +
+                   scale_x_date(breaks = seq.Date(from = ymd("2020/12/01"), # Specify limits by hand
+                                         to = ymd("2022/03/01"),
+                                         by = "months"), 
+                       date_labels = "%b-%y", 
+                       minor_breaks = NULL,
+                       limits = ymd("2020-12-01", "2022-03-01"))+ # Specify limits by hand
+                    lims(y = c(0, ymax)) +
+                    #
+                    xlab(label='\nDates')+
+                    #
+                    ylab(label='New Long COVID Cases\n')+
+                    #
+                    # Specify a theme
+                    #
+                    theme_bw() +
+                    #
+                    theme(plot.title = element_text(size = 16),
+                          plot.subtitle = element_text(size = 16),
+                          plot.caption = element_text(size = 12),
+                          axis.title = element_text(size = 14),
+                          axis.text = element_text(size = 14),
+                          legend.title = element_text(size = 14),
+                          legend.text = element_text(size = 14),
+                          legend.position = "right")
 
-
+ggsave(file=paste0("output/suppl_figure_2", ".svg"), plot=suppl_figure_2, width=16, height=8)
+#ggsave(file=paste0("output/suppl_figure_2", i, ".svg"), plot=suppl_figure_2, width=16, height=8)

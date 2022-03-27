@@ -49,4 +49,12 @@ actions:
     - stage1_data_cleaning
     outputs:
       moderately_sensitive:
-        pie_chart_diagnosis_code: output/suppl_figure_1.svg     
+        pie_chart_diagnosis_code: output/suppl_figure_1.svg  
+  suppl_figure_2:
+    run: r:latest analysis/suppl_figure_2.R
+    needs:
+    - stage1_data_cleaning
+    outputs:
+      moderately_sensitive:
+        number_long_covid_time_series: output/suppl_figure_2.svg     
+        
