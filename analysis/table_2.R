@@ -3,7 +3,6 @@
 # Content: Table 2: Event count, person years and incidence rate
 # Output:  table_2.csv, table_2.html
 
-
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
 library(lubridate); library(htmlTable)
 
@@ -53,7 +52,7 @@ compute_incidence_rate <- function(event_count, person_days_total){
     ir_lower = round(ir - 1.96 * sqrt(event_count/person_years_total^2),4)
     ir_upper = round(ir + 1.96 * sqrt(event_count/person_years_total^2),4)
   }else{
-    person_years_total = ir = event_count = ir = ir_lower = ir_upper = "redacted"
+    person_years_total = event_count = ir = ir_lower = ir_upper = "redacted"
   }
   return(c(event_count,person_years_total, ir, ir_lower, ir_upper))
 }
@@ -96,7 +95,6 @@ keep <- names(data)[!names(data)%in%(drop)]
 data <- input[,keep]
 cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
 data$cohort_end_date = cohort_end
-
 
 nrow(table_2)
 
