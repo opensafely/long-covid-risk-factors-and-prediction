@@ -28,8 +28,9 @@ count_data$labels = percent_function(count_data$percent)
 index <- which(count_data$count < 6)
 count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
 
+count_data_active = count_data%>%filter(count>5)
 # Pie Chart
-suppl_figure1 <- ggplot(count_data, aes(x = "", y = count, fill = snomed_code)) +
+suppl_figure1 <- ggplot(count_data_active, aes(x = "", y = count, fill = snomed_code)) +
   geom_bar(width = 1, stat = "identity") +
   coord_polar(theta = "y") +
   labs(x = "", y = "", fill = "SNOMED Code") + 

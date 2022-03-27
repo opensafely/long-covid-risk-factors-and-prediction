@@ -50,7 +50,9 @@ figure_1 <- ggplot(data, aes(x=year_month,
   geom_point(size = 1.5) +
   # Add the number of new long COVID cases as a line
   #
-  geom_line()+
+  geom_line()+ 
+  #
+  geom_hline(yintercept=6, linetype="dashed", color = "red") +
   #
   scale_x_date(breaks = seq.Date(from = ymd("2020/12/01"), # Specify limits by hand
                                  to = ymd("2022/03/01"),

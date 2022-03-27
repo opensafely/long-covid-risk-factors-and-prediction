@@ -63,7 +63,8 @@ suppl_figure_2 <- ggplot(table_long_covid_count,aes(x=year_month,y=count,colour=
                date_labels = "%b-%y", 
                minor_breaks = NULL,
                limits = ymd("2020-12-01", "2022-03-01"))+ # Specify limits by hand
-  lims(y = c(0, ymax)) +
+  lims(y = c(0, ymax)) + 
+  #geom_hline(yintercept=6, linetype="dashed", color = "red") +
   #
   xlab(label='\nDates')+
   #
