@@ -77,16 +77,16 @@ table_2$subgrp <- table_2$subgrp_level <- subgrp <- subgrp_level
 
 # next step: extend to subgroups by demographics
 input <- read_rds("output/input_stage1.rds")
-# # Define age groups
-# input$cov_cat_age_group <- ""
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_110", input$cov_cat_age_group)
-# demographics <- c("cov_cat_sex", "cov_cat_age_group" , "cov_cat_region", 
-#                   "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
+# Define age groups
+input$cov_cat_age_group <- ""
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_110", input$cov_cat_age_group)
+#demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region",
+#                  "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
 
-demographics <- c("cov_cat_sex", "cov_cat_region", 
+demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
                   "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
 
 keep <-  names(input)[grepl("date", names(input))]
