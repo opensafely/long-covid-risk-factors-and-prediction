@@ -32,6 +32,8 @@ data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - a
 data <- data %>% filter(person_days >= 1 & person_days <= 486)
 person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
 
+write.csv(data, file="output/survival_data.rds")
+
 # long covid count
 long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
                                  data$out_first_long_covid_date <= data$follow_up_end_date))
@@ -154,7 +156,13 @@ run.time
 
 table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 
-write.csv(table_2, file="output/table_2.csv")
+write.csv(table_2, file="output/table_2.csv",row.names=F)
 
-htmlTable(table_2, file="output/table_2.html")
+#htmlTable(table_2, file="output/table_2.html",row.names=F)
+
+
+rmarkdown::render("analysis/compiled_table2_results.Rmd",
+                  output_file="table_2",output_dir="output")
+
+
 
