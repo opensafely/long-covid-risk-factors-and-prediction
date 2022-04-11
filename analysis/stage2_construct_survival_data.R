@@ -41,4 +41,3 @@ data <- data %>% mutate(indicator = ifelse((out_first_long_covid_date <= follow_
 ## Save data
 
 saveRDS(data, file = "output/survival_data.rds")
-
