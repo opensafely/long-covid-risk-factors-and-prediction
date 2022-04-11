@@ -50,7 +50,10 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 flow_chart<-cbind(steps, flow_chart_n)
 
 write.csv(flow_chart, file="output/flow_chart.csv")
-htmlTable(flow_chart, file="output/flow_chart.html")
+
+rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",
+                  output_file=paste0("flow_chart_", population),output_dir="output")
+#htmlTable(flow_chart, file="output/flow_chart.html")
 
 
 # # For categorical variables, replace "na" with "Missing" as a category

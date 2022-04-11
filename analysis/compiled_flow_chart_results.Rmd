@@ -1,0 +1,29 @@
+---
+title: "Flow Chart - Inclusion / Exclusion process"
+output: html_document
+---
+
+Any results with redacted results will be at the top of the results file for easy review.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(DT)
+library(readr)
+knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
+```
+
+## Compiled table3 Sequence count
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#analyses = "main"
+#population = "vaccinated"
+df=read_csv("output/flow_chart.csv")
+df %>%
+    datatable(extensions = 'Buttons',
+              options = list(dom = 'Blfrtip',
+                             buttons = c('copy', 'csv', 'excel', 'pdf', 'print' ),
+                             lengthMenu = list(c(50,-1),
+                                               c(50,"All"))))
+```
