@@ -14,8 +14,6 @@ library(readr)
 knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
 ```
 
-## Compiled table3 Sequence count
-
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"

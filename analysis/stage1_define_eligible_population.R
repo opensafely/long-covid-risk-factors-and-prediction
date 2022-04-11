@@ -6,6 +6,7 @@
 library(readr); library(dplyr); library(htmlTable)
 input <- read_rds("output/input_stage0.rds")
 
+population <- "unvaccianted"
 #View(input[,vars_dates])
 
 # Step 4. Define eligible population--------------------------------------------
@@ -47,9 +48,18 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 #input <- input%>%filter(cov_cat_previous_covid == " No COVID code")
 #flow_chart_n <- c(flow_chart_n, nrow(input))
 
-flow_chart<-cbind(steps, flow_chart_n)
+flow_chart<-data.frame(steps, flow_chart_n)
 
-write.csv(flow_chart, file="output/flow_chart.csv")
+flow_chart$drop <- rep(0, nrow(flow_chart))
+for(i in 2:nrow(flow_chart)){
+  flow_chart$drop[i] = flow_chart$flow_chart_n[i-1] - flow_chart$flow_chart_n[i]
+  if(flow_chart$drop[i]<=5 & flow_chart$drop[i]!=0){
+    flow_chart$drop[i] = "redacted"
+    flow_chart$flow_chart_n[i] = flow_chart$flow_chart_n[i-1]
+  }
+}
+
+write.csv(flow_chart, file="output/flow_chart.csv", row.names = F)
 
 rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",
                   output_file=paste0("flow_chart_", population),output_dir="output")
