@@ -3,28 +3,29 @@
 # Content: Table 2: Event count, person years and incidence rate
 # Output:  table_2.csv, table_2.html
 
-library(readr); library(dplyr); library("arrow"); library("data.table"); 
-library(lubridate); library(htmlTable) 
+library(readr); library(dplyr); library(lubridate)
 
 # Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
+# input <- read_rds("output/input_stage1.rds")
+# 
+# drop <- names(input)[grepl("cov_", names(input))]
+# keep <- names(input)[!names(input)%in%(drop)]
+# drop <- names(input)[grepl("vax_", names(input))]
+# keep <- names(input)[!names(input)%in%(drop)]
+# data <- input[,keep]
+# 
+# # to increase efficiency
+# rm(input)
 
-drop <- names(input)[grepl("cov_", names(input))]
-keep <- names(input)[!names(input)%in%(drop)]
-drop <- names(input)[grepl("vax_", names(input))]
-keep <- names(input)[!names(input)%in%(drop)]
-data <- input[,keep]
+# # study period: index date = "2020-12-01", end date = "2022-03-31"
+# cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+# data$cohort_end_date = cohort_end
+# 
+# # specify follow-up end date
+# data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
+# data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
-# to increase efficiency
-rm(input)
-
-# study period: index date = "2020-12-01", end date = "2022-03-31"
-cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
-data$cohort_end_date = cohort_end
-
-# specify follow-up end date
-data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
-data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
+data <- read_rds("output/survival_data.rds")
 
 # calculate follow-up days
 data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)

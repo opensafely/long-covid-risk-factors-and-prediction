@@ -76,5 +76,11 @@ actions:
       moderately_sensitive:
         figure_monthly_long_covid: output/suppl_figure_2.svg     
         table_csv_monthly_long_covid: output/suppl_figure_2_data.csv  
-        table_html_monthly_long_covid: output/suppl_figure_2_data.html    
-        
+        table_html_monthly_long_covid: output/suppl_figure_2_data.html
+  stage2_construct_survival_data:
+    run: r:latest analysis/stage2_construct_survival_data.R
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        survival_data: output/survival_data.rds     

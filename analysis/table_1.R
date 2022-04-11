@@ -6,10 +6,9 @@
 #                                 mean and standard deviation
 # Output:  table1.csv, table1.html
 
-library(readr); library(dplyr); library("arrow"); library("data.table"); 
-library(lubridate); library(htmlTable)
+library(readr); library(dplyr); library(lubridate)
 
-population ="unvaccinated"
+#population ="unvaccinated"
 
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
