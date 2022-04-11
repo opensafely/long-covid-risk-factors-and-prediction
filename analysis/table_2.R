@@ -9,7 +9,7 @@ library(lubridate); library(htmlTable)
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
-drop <-  names(input)[grepl("cov_", names(input))]
+drop <- names(input)[grepl("cov_", names(input))]
 keep <- names(input)[!names(input)%in%(drop)]
 drop <- names(input)[grepl("vax_", names(input))]
 keep <- names(input)[!names(input)%in%(drop)]

@@ -11,20 +11,25 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input.feather
-  stage1_data_cleaning:
-    run: r:latest analysis/stage1_data_cleaning.R
+  stage0_data_cleaning:
+    run: r:latest analysis/stage0_data_cleaning.R
     needs:
     - generate_study_population
     outputs:
       highly_sensitive:
-        cohort: output/input_stage1.rds
+        cohort: output/input_stage0.rds
+  stage1_define_eligible_population:
+    run: r:latest analysis/stage1_defining_eligible_population.R
+    needs:
+    - stage0_data_cleaning
+    outputs:
       moderately_sensitive:
         flow_chart_csv: output/flow_chart.csv
         flow_chart_html: output/flow_chart.html
   table_1:
     run: r:latest analysis/table_1.R
     needs:
-    - stage1_data_cleaning
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         descriptive_table_CSV: output/table_1.csv
@@ -32,22 +37,30 @@ actions:
   figure_1:
     run: r:latest analysis/figure_1.R
     needs:
-    - stage1_data_cleaning
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         Figure_long_covid_cases: output/figure_1.svg
   table_2:
     run: r:latest analysis/table_2.R
     needs:
-    - stage1_data_cleaning
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         incidence_rate_table_CSV: output/table_2.csv
         incidence_rate_talbe_HTML: output/table_2.html
+  table_3:
+    run: r:latest analysis/table_3.R
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        incidence_rate_table_CSV: output/table_3.csv
+        incidence_rate_talbe_HTML: output/table_3.html
   suppl_figure_1:
     run: r:latest analysis/suppl_figure_1.R
     needs:
-    - stage1_data_cleaning
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         pie_chart_long_covid_code: output/suppl_figure_1.svg 
@@ -56,7 +69,7 @@ actions:
   suppl_figure_2:
     run: r:latest analysis/suppl_figure_2.R
     needs:
-    - stage1_data_cleaning
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         figure_monthly_long_covid: output/suppl_figure_2.svg     

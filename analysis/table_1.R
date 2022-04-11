@@ -9,9 +9,12 @@
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
 library(lubridate); library(htmlTable)
 
+population ="unvaccinated"
+
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+cov_factor_names <- c(cov_factor_names, "sub_cat_covid_history")
 cov_num_names <- names(input)[grepl("cov_num", names(input))]
 
 # Create an empty data frame ---------------------------------------------------
@@ -20,6 +23,9 @@ table_1 <- data.frame(variable = character(),
                      percent = numeric(),
                      mean    = numeric(),
                      sd      = numeric(), 
+                     iqr     = numeric(),
+                     min     = numeric(),
+                     max     = numeric(),
                      stringsAsFactors = FALSE)
 
 # factor variables: number and percentage---------------------------------------
@@ -46,6 +52,9 @@ for(i in 1:length(cov_num_names)){
   table_1[index,3] = table_1[index,2]/nrow(input_num_vars)  # percentage of not missing
   table_1[index,4] <- round(mean(unlist(input_num_vars[,i])),2) # mean
   table_1[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
+  table_1[index,6] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR
+  table_1[index,7] <- round(min(unlist(input_num_vars[,i])),2)  # IQR
+  table_1[index,8] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR  
 }
 
 #testing
@@ -55,8 +64,9 @@ for(i in 1:length(cov_num_names)){
 index <- which(table_1$number<=5)
 table_1[index,2:ncol(table_1)] = "redacted"
 
-write.csv(table_1, file="output/table_1.csv")
+write.csv(table_1, file="output/table_1.csv", row.names = F)
 
-htmlTable(table_1, file="output/table_1.html")
+rmarkdown::render("analysis/compiled_table1_results.Rmd",
+                  output_file=paste0("table1_", population),output_dir="output")
 
 

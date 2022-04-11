@@ -213,8 +213,7 @@ study = StudyDefinition(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
         return_expectations={
-            "int": {"distribution": "normal", "mean": 10, "stddev": 3},
-            "incidence": 1,
+            "int": {"distribution": "poisson", "mean": 5},
         },
     ),
     # # Diabetes
