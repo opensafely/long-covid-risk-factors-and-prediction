@@ -19,10 +19,12 @@ actions:
       highly_sensitive:
         cohort: output/input_stage0.rds
   stage1_define_eligible_population:
-    run: r:latest analysis/stage1_defining_eligible_population.R
+    run: r:latest analysis/stage1_defineopo_eligible_population.R
     needs:
     - stage0_data_cleaning
     outputs:
+    highly_sensitive:
+        cohort: output/input_stage1.rds
       moderately_sensitive:
         flow_chart_csv: output/flow_chart.csv
         flow_chart_html: output/flow_chart.html
