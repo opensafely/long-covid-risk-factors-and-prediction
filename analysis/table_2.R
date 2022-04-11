@@ -3,7 +3,7 @@
 # Content: Table 2: Event count, person years and incidence rate
 # Output:  table_2.csv, table_2.html
 
-library(readr); library(dplyr); library(lubridate)
+library(readr); library(dplyr);library(lubridate)
 
 # Read in data and identify factor variables and numerical variables------------
 # input <- read_rds("output/input_stage1.rds")
@@ -79,31 +79,31 @@ table_2$subgrp <- table_2$subgrp_level <- subgrp <- subgrp_level
 
 
 # next step: extend to subgroups by demographics
-input <- read_rds("output/input_stage1.rds")
+
+# input <- read_rds("output/input_stage1.rds")
 # Define age groups
-input$cov_cat_age_group <- ""
-input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
-input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
-input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
-input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_110", input$cov_cat_age_group)
+# input$cov_cat_age_group <- ""
+# input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
+# input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
+# input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
+# input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_110", input$cov_cat_age_group)
 #demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region",
 #                  "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
+
+#data <- read_rds("output/survival_data.rds")
 
 demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
                   "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
 
-keep <-  names(input)[grepl("date", names(input))]
-data <- input[,c(keep, demographics)]
-drop <- names(data)[grepl("vax_", names(data))]
-keep <- names(data)[!names(data)%in%(drop)]
-data <- input[,keep]
-cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
-data$cohort_end_date = cohort_end
+# keep <-  names(input)[grepl("date", names(input))]
+# data <- input[,c(keep, demographics)]
+# drop <- names(data)[grepl("vax_", names(data))]
+# keep <- names(data)[!names(data)%in%(drop)]
+# data <- input[,keep]
+# cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+# data$cohort_end_date = cohort_end
 
 nrow(table_2)
-
-#to improve efficiency
-rm(input)
 
 outcome = "covid"
 outcome = "long covid"
@@ -159,11 +159,7 @@ table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 
 write.csv(table_2, file="output/table_2.csv",row.names=F)
 
-#htmlTable(table_2, file="output/table_2.html",row.names=F)
-
-
-rmarkdown::render("analysis/compiled_table2_results.Rmd",
-                  output_file="table_2",output_dir="output")
+rmarkdown::render("analysis/compiled_table2_results.Rmd", output_file="table_2",output_dir="output")
 
 
 
