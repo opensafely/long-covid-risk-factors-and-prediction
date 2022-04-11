@@ -56,9 +56,6 @@ for(i in 1:length(cov_num_names)){
   table_1[index,8] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR  
 }
 
-#testing
-#table_1[1,2] = table_1[2,2]=table_1[10,2]=4
-
 # small number suppression if number <=5
 index <- which(table_1$number<=5)
 table_1[index,2:ncol(table_1)] = "redacted"

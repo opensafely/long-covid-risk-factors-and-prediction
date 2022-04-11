@@ -31,8 +31,6 @@ for(i in 1:nrow(data)){
   data$count[i]<-length(which(input$year == data$year[i] & input$month == data$month[i]))
 }
 
-#plot(data$year_month, data$count, ylab="New long COVID cases", xlab="Date")
-
 # Work out the limit for y axis ------------------------------------------------
 count_min <- min(data$count)
 count_max <- max(data$count)
@@ -83,5 +81,3 @@ figure_1 <- ggplot(data, aes(x=year_month,
 
 #figure_1
 ggsave(file="output/figure_1.svg", plot=figure_1, width=16, height=8)
-
-

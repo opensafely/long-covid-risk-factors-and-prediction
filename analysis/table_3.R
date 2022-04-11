@@ -8,8 +8,12 @@
 #                                      6.VAX-No COVID
 # Output:  table_3.csv, table_3.html
 
-library(readr); library(dplyr); 
+library(readr); library(dplyr)
 
+# Read in data and identify factor variables and numerical variables------------
+input <- read_rds("output/input_stage1.rds")
+
+# construct table_3
 table_3 <- as.data.frame(matrix(nrow=6, ncol=3))
 
 names(table_3) <- c("sequence_no","sequence","count")
@@ -18,8 +22,6 @@ table_3$sequence_no <- 1:6
 table_3$sequence <- c("COVID-VAX-Long COVID", "COVID-Long COVID-VAX", "VAX-COVID-Long COVID",
                       "COVID-VAX","VAX-COVID", "VAX-No COVID")
 
-# Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
 # sequence 1: COVID-VAX-Long COVID
 table_3$count[1] <- length(which(input$out_covid_date > input$vax_covid_date1 & 
                         input$out_covid_date  < input$out_first_long_covid_date &

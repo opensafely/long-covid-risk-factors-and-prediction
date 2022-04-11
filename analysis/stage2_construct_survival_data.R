@@ -23,18 +23,22 @@ cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
 data$cohort_end_date = cohort_end
 
 #-------------------------------------------------------------------------------
-## population = "unvaccianted"
+## population = "unvaccinated"
 ## for unvaccianted population, the follow-up start date is the index date
 
 ## specify follow-up end date
-data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
+data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, 
+                                                             death_date, 
+                                                             cohort_end_date,
+                                                             na.rm = TRUE))
+
 data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
-## define days since follow-up to long COVID diagnosis
-data$days <- as.numeric(data$follow_up_end_date - data$index_date)
+## define days since follow-up to long COVID diagnosis, vaccination censored long covid diagnosis
+data$lcovid_surv_vax_c <- as.numeric(data$follow_up_end_date - data$index_date)
 
-## define event indicator
-data <- data %>% mutate(indicator = ifelse((out_first_long_covid_date <= follow_up_end_date & 
+## define event indicator, vaccination censored long covid diagnosis
+data <- data %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= follow_up_end_date & 
                                            out_first_long_covid_date >= index_date &
                                            !is.na(out_first_long_covid_date)), 1, 0))
 #-------------------------------------------------------------------------------
