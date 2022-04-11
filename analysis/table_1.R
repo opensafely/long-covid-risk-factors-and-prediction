@@ -67,6 +67,6 @@ table_1[index,2:ncol(table_1)] = "redacted"
 write.csv(table_1, file="output/table_1.csv", row.names = F)
 
 rmarkdown::render("analysis/compiled_table1_results.Rmd",
-                  output_file=paste0("table1_", population),output_dir="output")
+                  output_file="table_1",output_dir="output")
 
 

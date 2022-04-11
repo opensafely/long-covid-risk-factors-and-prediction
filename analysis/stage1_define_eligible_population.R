@@ -61,8 +61,9 @@ for(i in 2:nrow(flow_chart)){
 
 write.csv(flow_chart, file="output/flow_chart.csv", row.names = F)
 
-rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",
-                  output_file=paste0("flow_chart_", population),output_dir="output")
+rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file ="flow_chart", output_dir = "output")
+                  #output_file=paste0("flow_chart_", population),output_dir="output")
+
 #htmlTable(flow_chart, file="output/flow_chart.html")
 
 
