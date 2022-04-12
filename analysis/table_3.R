@@ -23,7 +23,7 @@ table_3$sequence <- c("COVID-VAX-Long COVID", "COVID-Long COVID-VAX", "VAX-COVID
                       "COVID-VAX","VAX-COVID", "VAX-No COVID")
 
 # sequence 1: COVID-VAX-Long COVID
-table_3$count[1] <- length(which(input$out_covid_date > input$vax_covid_date1 & 
+table_3$count[1] <- length(which(input$out_covid_date < input$vax_covid_date1 & 
                         input$out_covid_date  < input$out_first_long_covid_date &
                         input$vax_covid_date1 < input$out_first_long_covid_date &
                         !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & !is.na(input$out_first_long_covid_date)))
@@ -41,12 +41,12 @@ table_3$count[3] <- length(which(input$out_covid_date > input$vax_covid_date1 &
                        !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & !is.na(input$out_first_long_covid_date)))
 
 # sequence 4: COVID-VAX without long COVID
-table_3$count[4] <- length(which(input$out_covid_date > input$vax_covid_date1 & 
+table_3$count[4] <- length(which(input$out_covid_date < input$vax_covid_date1 & 
                        !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & is.na(input$out_first_long_covid_date)))
 
 
 # sequence 5: VAX-COVID without long COVID
-table_3$count[5] <-length(which(input$out_covid_date < input$vax_covid_date1 & 
+table_3$count[5] <-length(which(input$out_covid_date > input$vax_covid_date1 & 
                         !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & is.na(input$out_first_long_covid_date)))
 
 # sequence 6: COVID, no VAX and no long COVID
