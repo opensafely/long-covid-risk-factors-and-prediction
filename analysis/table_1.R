@@ -52,8 +52,8 @@ for(i in 1:length(cov_num_names)){
   table_1[index,4] <- round(mean(unlist(input_num_vars[,i])),2) # mean
   table_1[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
   table_1[index,6] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR
-  table_1[index,7] <- round(min(unlist(input_num_vars[,i])),2)  # IQR
-  table_1[index,8] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR  
+  table_1[index,7] <- round(min(unlist(input_num_vars[,i])),2)  # min
+  table_1[index,8] <- round(max(unlist(input_num_vars[,i])),2)  # max  
 }
 
 # small number suppression if number <=5
