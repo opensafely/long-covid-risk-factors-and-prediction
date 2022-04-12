@@ -6,25 +6,6 @@
 library(readr); library(dplyr);library(lubridate)
 
 # Read in data and identify factor variables and numerical variables------------
-# input <- read_rds("output/input_stage1.rds")
-# 
-# drop <- names(input)[grepl("cov_", names(input))]
-# keep <- names(input)[!names(input)%in%(drop)]
-# drop <- names(input)[grepl("vax_", names(input))]
-# keep <- names(input)[!names(input)%in%(drop)]
-# data <- input[,keep]
-# 
-# # to increase efficiency
-# rm(input)
-
-# # study period: index date = "2020-12-01", end date = "2022-03-31"
-# cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
-# data$cohort_end_date = cohort_end
-# 
-# # specify follow-up end date
-# data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
-# data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
-
 data <- read_rds("output/survival_data.rds")
 
 # calculate follow-up days
@@ -32,8 +13,6 @@ data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - a
 #hist(data$person_days)
 data <- data %>% filter(person_days >= 1 & person_days <= 486)
 person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
-
-write.csv(data, file="output/survival_data.rds")
 
 # long covid count
 long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
@@ -59,7 +38,6 @@ compute_incidence_rate <- function(event_count, person_days_total){
 }
 
 # create an empty data frame
-
 table_2 <- data.frame(outcome = character(),
                       subgrp = character(),
                       subgrp_level = character(),
@@ -77,33 +55,11 @@ table_2[2,4:8] <- compute_incidence_rate(long_covid_count, person_days_total)
 table_2$outcome <- outcome
 table_2$subgrp <- table_2$subgrp_level <- subgrp <- subgrp_level
 
-
-# next step: extend to subgroups by demographics
-
-# input <- read_rds("output/input_stage1.rds")
-# Define age groups
-# input$cov_cat_age_group <- ""
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
-# input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_110", input$cov_cat_age_group)
-#demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region",
-#                  "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
-
-#data <- read_rds("output/survival_data.rds")
-
+# extend to subgroups by demographics
 demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
                   "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
 
-# keep <-  names(input)[grepl("date", names(input))]
-# data <- input[,c(keep, demographics)]
-# drop <- names(data)[grepl("vax_", names(data))]
-# keep <- names(data)[!names(data)%in%(drop)]
-# data <- input[,keep]
-# cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
-# data$cohort_end_date = cohort_end
-
-nrow(table_2)
+#nrow(table_2)
 
 outcome = "covid"
 outcome = "long covid"
@@ -115,7 +71,7 @@ data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - a
 #hist(data$person_days)
 data <- data %>% filter(person_days >= 1 & person_days <= 486)
 
-start.time = Sys.time()
+#start.time = Sys.time()
 for(outcome in c("covid", "long covid")){
     for(i in demographics){
           print(i)
@@ -146,14 +102,13 @@ for(outcome in c("covid", "long covid")){
             index = index+1
           }
     }
-
 }
 
-end.time = Sys.time()
-
-run.time = end.time - start.time
-
-run.time
+# end.time = Sys.time()
+# 
+# run.time = end.time - start.time
+# 
+# run.time
 
 table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 
