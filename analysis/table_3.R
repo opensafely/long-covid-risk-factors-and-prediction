@@ -15,8 +15,8 @@
 #                                      12. validate long covid count
 #                                      13. checking: COVID na but long COVID is not na
 #                                      14. checking: COVID na and long COVID na
-#                                      15.long COVID !na and COVID !na,
-#                                      16. number of observations,
+#                                      15.long COVID !na and COVID !na
+#                                      16. number of observations
 #                                      17. validate number of observations
 # Output:  table_3.csv, table_3.html
 
@@ -79,11 +79,11 @@ table_3$count[5] <-length(which(input$out_covid_date > input$vax_covid_date1 &
 # sequence 6: COVID, no VAX and no long COVID
 table_3$count[6] <-length(which(!is.na(input$out_covid_date) & is.na(input$vax_covid_date1) & is.na(input$out_first_long_covid_date)))
 
-# 7. counting: long COVID - COVID
+# 7. checking: long COVID - COVID
 table_3$count[7] <-length(which(input$out_covid_date  > input$out_first_long_covid_date &
                                   !is.na(input$out_covid_date) & !is.na(input$out_first_long_covid_date)))
 
-# 8. counting: same day COVID and long COVID
+# 8. checking: same day COVID and long COVID
 table_3$count[8] <-length(which(input$out_covid_date  == input$out_first_long_covid_date &
                                   !is.na(input$out_covid_date) & !is.na(input$out_first_long_covid_date)))
 
@@ -131,6 +131,7 @@ table_3$count[17] <- table_3$count[10] + sum(table_3$count[13:15])
 
 index = which(table_3$count<=5)
 
+# to avoid backward calculation for disclosure
 for(i in index){
   if(i %in% c(7,8,9,10)){
     table_3$count[12] = table_3$count[12] - table_3$count[i]
