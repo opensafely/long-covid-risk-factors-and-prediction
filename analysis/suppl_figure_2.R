@@ -89,8 +89,11 @@ index = which(is.na(table_long_covid_count$count))
 table_long_covid_count$count[index] = "redacted"
 
 write.csv(table_long_covid_count, file="output/suppl_figure_2_data.csv")
-htmlTable(table_long_covid_count, file="output/suppl_figure_2_data.html")
+#htmlTable(table_long_covid_count, file="output/suppl_figure_2_data.html")
 
-# Outpuf supplementary figure 2
+rmarkdown::render("analysis/compiled_suppl_fig2_data.Rmd", output_file="suppl_figure_2_data",output_dir="output")
+
+
+# Output supplementary figure 2
 
 ggsave(file=paste0("output/suppl_figure_2", ".svg"), plot=suppl_figure_2, width=16, height=8)

@@ -31,21 +31,21 @@ table_3 <- as.data.frame(matrix(nrow=17, ncol=2))
 names(table_3) <- c("sequence","count")
 
 #table_3$sequence_no <- 1:17
-table_3$sequence <- c("1.COVID-VAX-Long COVID",
-                      "2.COVID-Long COVID -VAX",
-                      "3.VAX-COVID-Long COVID",
-                      "4.COVID-VAX",
-                      "5.VAX-COVID",
-                      "6.VAX-No COVID",
-                      "7.long COVID-COVID",
-                      "8.same day COVID and long COVID",
-                      "9.COVID-long COVID",
-                      "10.COVID == na but long COVID != na",
-                      "11.long COVID != na",
+table_3$sequence <- c("1. COVID-VAX-Long COVID",
+                      "2. COVID-Long COVID -VAX",
+                      "3. VAX-COVID-Long COVID",
+                      "4. COVID-VAX",
+                      "5. VAX-COVID",
+                      "6. VAX-No COVID",
+                      "7. long COVID-COVID",
+                      "8. same day COVID and long COVID",
+                      "9. COVID-long COVID",
+                      "10. COVID == na but long COVID != na",
+                      "11. long COVID != na",
                       "12. validate long covid count (sum sequence count 7:10)", 
                       "13. COVID != na & long COVID == na",
                       "14. COVID na and long COVID na",
-                      "15.long COVID !na and COVID !na",
+                      "15. long COVID !na and COVID !na",
                       "16. number of observations",
                       "17. validate number of observations (sum sequence count: 10, 13-15)")
 
@@ -100,9 +100,6 @@ table_3$count[10] <-length(which(is.na(input$out_covid_date) &
 # 11. checking: long COVID
 table_3$count[11] <-length(which(!is.na(input$out_first_long_covid_date)))
 
-# small number suppression
-# table_3$count[which(table_3$count <=5)] = "[redacted]"
-
 #table_3
 
 total_long_covid = sum(table_3$count[7:10])
@@ -129,8 +126,23 @@ table_3$count[16] <-nrow(input)
 # 17. validate: number of observations
 table_3$count[17] <- table_3$count[10] + sum(table_3$count[13:15])
 
+# small number suppression
+#table_3$count[which(table_3$count <=5)] = "[redacted]"
+
+index = which(table_3$count<=5)
+
+for(i in index){
+  if(i %in% c(7,8,9,10)){
+    table_3$count[12] = table_3$count[12] - table_3$count[i]
+  }
+  if(i %in% c(10,13,14,15)){
+    table_3$count[17] = table_3$count[17] - table_3$count[i]
+  }
+}
+
+table_3$count[which(table_3$count <=5)] = "[redacted]"
+
 write.csv(table_3,"output/table_3.csv",row.names=F)
 
-rmarkdown::render("analysis/compiled_table3_results.Rmd",
-                  output_file="table_3",output_dir="output")
+rmarkdown::render("analysis/compiled_table3_results.Rmd", output_file="table_3",output_dir="output")
 
