@@ -84,3 +84,11 @@ actions:
         figure_monthly_long_covid: output/suppl_figure_2.svg     
         table_csv_monthly_long_covid: output/suppl_figure_2_data.csv  
         table_html_monthly_long_covid: output/suppl_figure_2_data.html
+  development_cox_model:
+    run: r:latest analysis/stage3_model_development.R
+    needs:
+    - stage2_construct_survival_data
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/hazard_ratio_estimates.csv
+        hazard_ratios_HTML: output/hazard_ratio_estimates.html

@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Figure 2 Data"
+title: "Table for hazard ratio estimates"
 output: html_document
 ---
 
@@ -14,12 +14,12 @@ library(readr)
 knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
 ```
 
-## Compiled table for supplementary figure 2
+## Compiled table for hazard ratio estimates
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"
-df=read_csv("output/estimated_hr.csv")
+df=read_csv("output/hazard_ratio_estimates.csv")
 df %>%
     datatable(extensions = 'Buttons', rownames= FALSE,
               options = list(dom = 'Blfrtip', 

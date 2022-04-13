@@ -27,9 +27,14 @@ non_case_inverse_weight=(nrow(survival_data)-nrow(cases))/nrow(non_cases)
 ## recreate survival_data after sampling
 survival_data <- bind_rows(cases,non_cases)
 
-covariate_names <- names(data)[grep("cov_", names(survival_data))]
+# extract candidate preditors
+covariate_names <- names(survival_data)[grep("cov_", names(survival_data))]
+
 # remove categorical age
 covariate_names <- covariate_names[-grep("cov_cat_age_", covariate_names)]
+
+print("candidate predictors")
+covariate_names
 
 surv_formula <- paste0(
   "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
@@ -56,15 +61,15 @@ fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                         data= survival_data, weight=1,surv = TRUE,x=TRUE,y=TRUE)
 
 # proportional hazards assumption
-cox.zph(fitted_cox_model, "rank")
+#cox.zph(fit_cox_model, "rank")
 
 names(fit_cox_model)
 
 # get robust variance-covariance matrix so that robust standard errors can be used in constructing CI's
-robust_fit_cox_model=rms::robcov(fitted_cox_model, cluster = survival_data$practice_id)
+robust_fit_cox_model=rms::robcov(fit_cox_model, cluster = survival_data$practice_id)
 
 print("Cox output")
-print(fitted_cox_model)
+print(fit_cox_model)
 print("Finished fitting cox model")
 
 ## Result
@@ -81,8 +86,8 @@ results[,2:6] <- round(results[,2:6], 3)
 print("Print results")
 print(results)
 
-write.csv(results, file="output/estimated_hr.csv", row.names=F)
+write.csv(results, file="output/hazard_ratio_estimates.csv", row.names=F)
 
-rmarkdown::render("analysis/compiled_HR_results.Rmd", output_file="estimated_hr",output_dir="output")
+rmarkdown::render("analysis/compiled_HR_results.Rmd", output_file="hazard_ratio_estimates",output_dir="output")
 
 
