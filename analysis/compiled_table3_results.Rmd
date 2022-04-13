@@ -22,8 +22,8 @@ knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
 #population = "vaccinated"
 df=read_csv("output/table_3.csv")
 df %>%
-    datatable(extensions = 'Buttons',
-              options = list(dom = 'Blfrtip',
+    datatable(extensions = 'Buttons', rownames= FALSE,
+              options = list(dom = 'Blfrtip', 
                              buttons = c('copy', 'csv', 'excel', 'pdf', 'print' ),
                              lengthMenu = list(c(50,-1),
                                                c(50,"All"))))
