@@ -24,4 +24,4 @@ results <- rbind(a,b)
 
 rownames(results) <- c("median follow-up", "median survival time")
 
-write.csv(results, file="summarise_survival_data.csv")
+write.csv(results, file="output/summarise_survival_data.csv")
