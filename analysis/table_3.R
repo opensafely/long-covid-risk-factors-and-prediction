@@ -47,7 +47,7 @@ table_3$sequence <- c("1.COVID-VAX-Long COVID",
                       "14. COVID na and long COVID na",
                       "15.long COVID !na and COVID !na",
                       "16. number of observations",
-                      "17. validate number of observations (sum sequence count: 10, 13-15")
+                      "17. validate number of observations (sum sequence count: 10, 13-15)")
 
 # sequence 1: COVID-VAX-Long COVID
 table_3$count[1] <- length(which(input$out_covid_date < input$vax_covid_date1 & 
