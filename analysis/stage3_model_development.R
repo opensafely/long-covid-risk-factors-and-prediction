@@ -33,7 +33,7 @@ covariate_names <- names(survival_data)[grep("cov_", names(survival_data))]
 # remove categorical age
 covariate_names <- covariate_names[-grep("cov_cat_age_", covariate_names)]
 
-# remove previous covid history as covariate
+# remove previous covid history as a covariate
 covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_names)]
 
 print("candidate predictors")
