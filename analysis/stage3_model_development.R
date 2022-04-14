@@ -64,7 +64,7 @@ fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                         data= survival_data, weight=1,surv = TRUE,x=TRUE,y=TRUE)
 
 # proportional hazards assumption
-#cox.zph(fit_cox_model, "rank")
+cox.zph(fit_cox_model, "rank")
 
 names(fit_cox_model)
 
