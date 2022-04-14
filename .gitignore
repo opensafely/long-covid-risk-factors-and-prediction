@@ -12,3 +12,4 @@ venv/
 .csv
 .rds
 .feather
+.RData

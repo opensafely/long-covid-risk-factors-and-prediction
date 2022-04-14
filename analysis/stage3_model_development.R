@@ -27,29 +27,41 @@ non_case_inverse_weight=(nrow(survival_data)-nrow(cases))/nrow(non_cases)
 ## recreate survival_data after sampling
 survival_data <- bind_rows(cases,non_cases)
 
-# extract candidate preditors
+# extract candidate predictors
 covariate_names <- names(survival_data)[grep("cov_", names(survival_data))]
 
-# remove categorical age
-covariate_names <- covariate_names[-grep("cov_cat_age_", covariate_names)]
+# remove categorical and continuous age
+covariate_names <- covariate_names[-grep("age", covariate_names)]
 
 # remove previous covid history as a covariate
 covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_names)]
 
+# # remove cov_cat_healthcare_worker
+# covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_names)]
+
+
 print("candidate predictors")
 covariate_names
+
+#Add inverse probability weights for non-cases
+noncase_ids <- unique(non_cases$patient_id)
+survival_data$cox_weights <- ifelse(survival_data$patient_id %in% noncase_ids,
+                                    non_case_inverse_weight, 1)
 
 surv_formula <- paste0(
   "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
   paste(covariate_names, collapse = "+"),
+  "+rms::rcs(cov_num_age,parms=knot_placement)", 
   "+ cluster(practice_id)"
 )
 
 print(paste0("survival formula: ", surv_formula))
 
+knot_placement=as.numeric(quantile(survival_data$cov_num_age, probs=c(0.1,0.5,0.9)))
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id", 
-                       "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names)
+                       "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
+                       "cov_num_age")
 
 survival_data <- survival_data %>% select(all_of(variables_to_keep))
 
@@ -61,12 +73,15 @@ print("Fitting cox model:")
 
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                        data= survival_data, weight=1,surv = TRUE,x=TRUE,y=TRUE)
+                        data= survival_data, weight=survival_data$cox_weights,surv = TRUE,x=TRUE,y=TRUE)
 
 # proportional hazards assumption
 cox.zph(fit_cox_model, "rank")
 
 names(fit_cox_model)
+
+# C statistics
+concordance(fit_cox_model)
 
 # get robust variance-covariance matrix so that robust standard errors can be used in constructing CI's
 robust_fit_cox_model=rms::robcov(fit_cox_model, cluster = survival_data$practice_id)
@@ -88,6 +103,9 @@ results$robust.se=exp(sqrt(diag(vcov(robust_fit_cox_model))))
 results[,2:6] <- round(results[,2:6], 3)
 print("Print results")
 print(results)
+
+results$concordance <- NA
+results$concordance[1] <- round(concordance(fit_cox_model)$concordance,3)
 
 write.csv(results, file="output/hazard_ratio_estimates.csv", row.names=F)
 
