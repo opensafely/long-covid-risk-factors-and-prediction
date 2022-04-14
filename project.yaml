@@ -90,5 +90,6 @@ actions:
     - stage2_construct_survival_data
     outputs:
       moderately_sensitive:
-        hazard_ratios_CSV: output/hazard_ratio_estimates.csv
-        hazard_ratios_HTML: output/hazard_ratio_estimates.html
+        hazard_ratios_CSV: output/hazard_ratio_estimates_*.csv
+        hazard_ratios_HTML: output/hazard_ratio_estimates_*.html
+        calibration: output/calibration_development_*.svg
