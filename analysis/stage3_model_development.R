@@ -43,11 +43,18 @@ covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_
 print("candidate predictors")
 covariate_names
 
+
 #Add inverse probability weights for non-cases
 noncase_ids <- unique(non_cases$patient_id)
 survival_data$weight <-1
 survival_data$weight <- ifelse(survival_data$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
+# for computational efficiency, only keep the variables needed in fitting the model
+variables_to_keep <- c("patient_id", "practice_id",
+                       "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
+                       "cov_num_age", "weight")
+
+survival_data <- survival_data %>% dplyr::select(all_of(variables_to_keep))
 
 knot_placement=as.numeric(quantile(survival_data$cov_num_age, probs=c(0.1,0.5,0.9)))
 surv_formula <- paste0(
@@ -65,11 +72,7 @@ surv_formula_predictors <- paste0(
 )
 print(paste0("survival formula: ", surv_formula))
 
-## for computational efficiency, only keep the variables needed in fitting the model
-# variables_to_keep <- c("patient_id", "practice_id", 
-#                        "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
-#                        "cov_num_age", "weight")
-#survival_data <- survival_data %>% select(all_of(variables_to_keep))
+
 
 # have to remove the following line eventually
 dd <<- datadist(survival_data)
@@ -120,6 +123,9 @@ print(results)
 results$concordance <- NA
 
 results$concordance[1] <- round(concordance(fit_cox_model)$concordance,3)
+results$concordance[2] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
+results$concordance[3] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
+
 
 write.csv(results, file="output/hazard_ratio_estimates.csv", row.names=F)
 
