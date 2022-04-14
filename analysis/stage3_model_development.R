@@ -3,7 +3,7 @@
 # Content: Development models
 # Output:  hazard ratios and 95% CI
 
-library(readr); library(dplyr); library(rms)
+library(readr); library(dplyr); library(rms); library(MASS)
 
 survival_data <- read_rds("output/survival_data.rds")
 
@@ -45,10 +45,11 @@ covariate_names
 
 #Add inverse probability weights for non-cases
 noncase_ids <- unique(non_cases$patient_id)
-survival_data$cox_weights <-1
-survival_data$cox_weights <- ifelse(survival_data$patient_id %in% noncase_ids,
+survival_data$weight <-1
+survival_data$weight <- ifelse(survival_data$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
 
+knot_placement=as.numeric(quantile(survival_data$cov_num_age, probs=c(0.1,0.5,0.9)))
 surv_formula <- paste0(
   "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
   paste(covariate_names, collapse = "+"),
@@ -56,24 +57,36 @@ surv_formula <- paste0(
   "+ cluster(practice_id)"
 )
 
+surv_formula_predictors <- paste0(
+  " ~ ",
+  paste(covariate_names, collapse = "+"),
+  "+rms::rcs(cov_num_age,parms=knot_placement)", 
+  "+ cluster(practice_id)"
+)
 print(paste0("survival formula: ", surv_formula))
 
-knot_placement=as.numeric(quantile(survival_data$cov_num_age, probs=c(0.1,0.5,0.9)))
 ## for computational efficiency, only keep the variables needed in fitting the model
-variables_to_keep <- c("patient_id", "practice_id", 
-                       "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
-                       "cov_num_age", "cox_weights")
-
-survival_data <- survival_data %>% select(all_of(variables_to_keep))
+# variables_to_keep <- c("patient_id", "practice_id", 
+#                        "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
+#                        "cov_num_age", "weight")
+#survival_data <- survival_data %>% select(all_of(variables_to_keep))
 
 # have to remove the following line eventually
 dd <<- datadist(survival_data)
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 
+#options(datadist="dd")
+
 print("Fitting cox model:")
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                        data= survival_data, weight=survival_data$cox_weights,surv = TRUE,x=TRUE,y=TRUE)
+                        data= survival_data, weight=survival_data$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+
+# k10 <- qchisq(0.20,1,lower.tail=FALSE)
+# backward_fit_cox_model <- stepAIC(fit_cox_model,k=k10,
+#                           scope=list(upper= as.formula((surv_formula_predictors)),
+#                                      lower=~1),direction="backward",trace=TRUE)
 
 # proportional hazards assumption
 cox.zph(fit_cox_model, "rank")
@@ -105,6 +118,7 @@ print("Print results")
 print(results)
 
 results$concordance <- NA
+
 results$concordance[1] <- round(concordance(fit_cox_model)$concordance,3)
 
 write.csv(results, file="output/hazard_ratio_estimates.csv", row.names=F)

@@ -58,8 +58,13 @@ levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma)==0] <-"No asthma"
 levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma) == 1 | levels(input$cov_cat_asthma) == 2 ] <-"Asthma"
 
 
+# ordered categorical factor, the first level is the reference
 input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("0 (missing)","1 (most deprived)","2","3","4","5 (least deprived)"))
 table(input$cov_cat_imd)
+
+input <- input %>% filter(cov_cat_imd != "0 (missing)")
+
+input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("1 (most deprived)","2","3","4","5 (least deprived)"))
 
 ## cov_cat_smoking_status-------------------------------------------------------
 table(input$cov_cat_smoking_status)
