@@ -36,8 +36,8 @@ covariate_names <- covariate_names[-grep("age", covariate_names)]
 # remove previous covid history as a covariate
 covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_names)]
 
-# # remove cov_cat_healthcare_worker
-# covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_names)]
+# remove cov_cat_healthcare_worker
+covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_names)]
 
 
 print("candidate predictors")
@@ -45,6 +45,7 @@ covariate_names
 
 #Add inverse probability weights for non-cases
 noncase_ids <- unique(non_cases$patient_id)
+survival_data$cox_weights <-1
 survival_data$cox_weights <- ifelse(survival_data$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
 
@@ -61,7 +62,7 @@ knot_placement=as.numeric(quantile(survival_data$cov_num_age, probs=c(0.1,0.5,0.
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id", 
                        "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
-                       "cov_num_age")
+                       "cov_num_age", "cox_weights")
 
 survival_data <- survival_data %>% select(all_of(variables_to_keep))
 
@@ -70,7 +71,6 @@ dd <<- datadist(survival_data)
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 
 print("Fitting cox model:")
-
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                         data= survival_data, weight=survival_data$cox_weights,surv = TRUE,x=TRUE,y=TRUE)
