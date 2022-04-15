@@ -8,8 +8,6 @@
 
 library(readr); library(dplyr); library(lubridate)
 
-#population ="unvaccinated"
-
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]

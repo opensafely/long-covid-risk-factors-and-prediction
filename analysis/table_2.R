@@ -5,8 +5,7 @@
 
 library(readr); library(dplyr);library(lubridate)
 
-# Read in data and identify factor variables and numerical variables------------
-#data <- read_rds("output/survival_data.rds")
+## Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
 ## define variables to keep
@@ -17,22 +16,22 @@ keep <- names(input)[!names(input)%in%(drop)]
 data <- input[,keep]
 
 
-# calculate follow-up days
+## calculate follow-up days
 data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
 #hist(data$person_days)
 data <- data %>% filter(person_days >= 1 & person_days <= 486)
 person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
 
-# long covid count
+## long covid count
 long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
                                  data$out_first_long_covid_date <= data$follow_up_end_date))
 
-# covid count
+## covid count
 covid_count <- length(which(data$out_covid_date >= data$index_date &
                                    data$out_covid_date <= data$follow_up_end_date))
 
-# write a function to calculate incidence rate
-# incidence rate for covid infection, do not calculate if event count <= 5
+## write a function to calculate incidence rate
+## incidence rate for covid infection, do not calculate if event count <= 5
 compute_incidence_rate <- function(event_count, person_days_total){
   if(event_count > 5){
     person_years_total = round(person_days_total / 365.2,4)
@@ -46,7 +45,7 @@ compute_incidence_rate <- function(event_count, person_days_total){
   return(c(event_count,person_years_total, ir, ir_lower, ir_upper))
 }
 
-# create an empty data frame
+## create an empty data frame
 table_2 <- data.frame(outcome = character(),
                       subgrp = character(),
                       subgrp_level = character(),
@@ -64,7 +63,7 @@ table_2[2,4:8] <- compute_incidence_rate(long_covid_count, person_days_total)
 table_2$outcome <- outcome
 table_2$subgrp <- table_2$subgrp_level <- subgrp <- subgrp_level
 
-# extend to subgroups by demographics
+## extend to subgroups by demographics
 demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
                   "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
 
@@ -75,12 +74,12 @@ outcome = "long covid"
 
 data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
 data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
-# calculate follow-up days
+## calculate follow-up days
 data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
 #hist(data$person_days)
 data <- data %>% filter(person_days >= 1 & person_days <= 486)
 
-#start.time = Sys.time()
+##start.time = Sys.time()
 for(outcome in c("covid", "long covid")){
     for(i in demographics){
           print(i)
@@ -113,11 +112,6 @@ for(outcome in c("covid", "long covid")){
     }
 }
 
-# end.time = Sys.time()
-# 
-# run.time = end.time - start.time
-# 
-# run.time
 
 table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 

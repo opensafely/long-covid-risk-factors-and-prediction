@@ -22,15 +22,15 @@
 
 library(readr); library(dplyr)
 
-# Read in data and identify factor variables and numerical variables------------
+## Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
-# construct table_3
+## construct table_3
 table_3 <- as.data.frame(matrix(nrow=17, ncol=2))
 
 names(table_3) <- c("sequence","count")
 
-#table_3$sequence_no <- 1:17
+##table_3$sequence_no <- 1:17
 table_3$sequence <- c("1. COVID-VAX-Long COVID",
                       "2. COVID-Long COVID -VAX",
                       "3. VAX-COVID-Long COVID",
@@ -49,89 +49,88 @@ table_3$sequence <- c("1. COVID-VAX-Long COVID",
                       "16. number of observations",
                       "17. validate number of observations (sum sequence count: 10, 13-15)")
 
-# sequence 1: COVID-VAX-Long COVID
+## sequence 1: COVID-VAX-Long COVID
 table_3$count[1] <- length(which(input$out_covid_date < input$vax_covid_date1 & 
                         input$out_covid_date  < input$out_first_long_covid_date &
                         input$vax_covid_date1 < input$out_first_long_covid_date &
                         !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & !is.na(input$out_first_long_covid_date)))
 
-# sequence 2: COVID-Long COVID -VAX
+## sequence 2: COVID-Long COVID -VAX
 table_3$count[2] <-length(which(input$out_covid_date < input$vax_covid_date1 & 
                        input$out_covid_date  < input$out_first_long_covid_date &
                        input$vax_covid_date1 > input$out_first_long_covid_date &
                        !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & !is.na(input$out_first_long_covid_date)))
 
-# sequence 3: VAX-COVID-Long COVID
+## sequence 3: VAX-COVID-Long COVID
 table_3$count[3] <- length(which(input$out_covid_date > input$vax_covid_date1 & 
                        input$out_covid_date  < input$out_first_long_covid_date &
                        input$vax_covid_date1 < input$out_first_long_covid_date &
                        !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & !is.na(input$out_first_long_covid_date)))
 
-# sequence 4: COVID-VAX without long COVID
+## sequence 4: COVID-VAX without long COVID
 table_3$count[4] <- length(which(input$out_covid_date < input$vax_covid_date1 & 
                        !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & is.na(input$out_first_long_covid_date)))
 
 
-# sequence 5: VAX-COVID without long COVID
+## sequence 5: VAX-COVID without long COVID
 table_3$count[5] <-length(which(input$out_covid_date > input$vax_covid_date1 & 
                         !is.na(input$out_covid_date) & !is.na(input$vax_covid_date1) & is.na(input$out_first_long_covid_date)))
 
-# sequence 6: COVID, no VAX and no long COVID
+## sequence 6: COVID, no VAX and no long COVID
 table_3$count[6] <-length(which(!is.na(input$out_covid_date) & is.na(input$vax_covid_date1) & is.na(input$out_first_long_covid_date)))
 
-# 7. checking: long COVID - COVID
+## 7. checking: long COVID - COVID
 table_3$count[7] <-length(which(input$out_covid_date  > input$out_first_long_covid_date &
                                   !is.na(input$out_covid_date) & !is.na(input$out_first_long_covid_date)))
 
-# 8. checking: same day COVID and long COVID
+## 8. checking: same day COVID and long COVID
 table_3$count[8] <-length(which(input$out_covid_date  == input$out_first_long_covid_date &
                                   !is.na(input$out_covid_date) & !is.na(input$out_first_long_covid_date)))
 
-# 9. checking: COVID-long COVID
+## 9. checking: COVID-long COVID
 table_3$count[9] <-length(which(input$out_covid_date  < input$out_first_long_covid_date &
                                    !is.na(input$out_covid_date) & !is.na(input$out_first_long_covid_date)))
 
 
-# 10. checking: COVID na but long COVID is not na
+## 10. checking: COVID na but long COVID is not na
 
 table_3$count[10] <-length(which(is.na(input$out_covid_date) &
                                  !is.na(input$out_first_long_covid_date)))
 
-# 11. checking: long COVID
+## 11. checking: long COVID
 table_3$count[11] <-length(which(!is.na(input$out_first_long_covid_date)))
 
 #table_3
 
 total_long_covid = sum(table_3$count[7:10])
 
-# 12. validate long covid count
+## 12. validate long covid count
 table_3$count[12] = total_long_covid
 
-# 13. checking: long COVID na but COVID is not na
+## 13. checking: long COVID na but COVID is not na
 table_3$count[13] <-length(which(!is.na(input$out_covid_date) &
                                    is.na(input$out_first_long_covid_date)))
 
-# 14. checking: long COVID na and COVID is na
+## 14. checking: long COVID na and COVID is na
 table_3$count[14] <-length(which(is.na(input$out_covid_date) &
                                    is.na(input$out_first_long_covid_date)))
 
 
-# 15. checking: long COVID !na and COVID !na
+## 15. checking: long COVID !na and COVID !na
 table_3$count[15] <-length(which(!is.na(input$out_covid_date) &
                                    !is.na(input$out_first_long_covid_date)))
 
-# 16. output: number of observations
+## 16. output: number of observations
 table_3$count[16] <-nrow(input)
 
-# 17. validate: number of observations
+## 17. validate: number of observations
 table_3$count[17] <- table_3$count[10] + sum(table_3$count[13:15])
 
-# small number suppression
-#table_3$count[which(table_3$count <=5)] = "[redacted]"
+## small number suppression
 
 index = which(table_3$count<=5)
 
-# to avoid backward calculation for disclosure
+## to avoid backward calculation for disclosure
 for(i in index){
   if(i %in% c(7,8,9,10)){
     table_3$count[12] = table_3$count[12] - table_3$count[i]
