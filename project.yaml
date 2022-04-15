@@ -28,12 +28,12 @@ actions:
       moderately_sensitive:
         flow_chart_csv: output/flow_chart.csv
         flow_chart_html: output/flow_chart.html
-  stage2_construct_survival_data:
-    run: r:latest analysis/stage2_construct_survival_data.R
+  stage1_construct_survival_data:
+    run: r:latest analysis/stage1_construct_survival_data.R
     needs:
     - stage1_define_eligible_population
     outputs:
-      moderately_sensitive:
+      highly_sensitive:
         survival_data: output/survival_data.rds     
   table_1:
     run: r:latest analysis/table_1.R
@@ -53,7 +53,7 @@ actions:
   table_2:
     run: r:latest analysis/table_2.R
     needs:
-    - stage2_construct_survival_data
+    - stage1_construct_survival_data
     outputs:
       moderately_sensitive:
         incidence_rate_table_CSV: output/table_2.csv
@@ -87,7 +87,7 @@ actions:
   development_cox_model:
     run: r:latest analysis/stage3_model_development.R
     needs:
-    - stage2_construct_survival_data
+    - stage1_construct_survival_data
     outputs:
       moderately_sensitive:
         hazard_ratios_CSV: output/hazard_ratio_estimates_*.csv

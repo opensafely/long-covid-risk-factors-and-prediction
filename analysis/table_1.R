@@ -24,6 +24,7 @@ table_1 <- data.frame(variable = character(),
                      sd      = numeric(), 
                      iqr     = numeric(),
                      min     = numeric(),
+                     median  = numeric(),
                      max     = numeric(),
                      stringsAsFactors = FALSE)
 
@@ -53,7 +54,8 @@ for(i in 1:length(cov_num_names)){
   table_1[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
   table_1[index,6] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR
   table_1[index,7] <- round(min(unlist(input_num_vars[,i])),2)  # min
-  table_1[index,8] <- round(max(unlist(input_num_vars[,i])),2)  # max  
+  table_1[index,8] <- round(median(unlist(input_num_vars[,i])),2)  # median
+  table_1[index,9] <- round(max(unlist(input_num_vars[,i])),2)  # max  
 }
 
 # small number suppression if number <=5
