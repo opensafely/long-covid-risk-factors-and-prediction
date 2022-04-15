@@ -6,7 +6,14 @@
 
 library(readr); library(dplyr); library(rms); library(MASS)
 
-survival_data <- read_rds("output/survival_data.rds")
+survival_data <- input <- read_rds("output/input_stage1.rds")
+
+# ## define variables to keep
+# drop <- names(input)[grepl("cov_", names(input))]
+# keep <- names(input)[!names(input)%in%(drop)]
+# drop <- names(input)[grepl("vax_covid", names(input))]
+# keep <- names(input)[!names(input)%in%(drop)]
+# survival_data <- input[,keep]
 
 cases <- survival_data %>% filter(!is.na(out_first_long_covid_date) & 
                                   (out_first_long_covid_date == follow_up_end_date))
@@ -84,27 +91,32 @@ fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
 ## backward elimination
 fit_cox_model_vs <- fastbw(fit_cox_model)
 
+print("selected model:")
+fit_cox_model_vs$names.kept
 
-covariate_names <- fit_cox_model_vs$names.kept
+selected_covariate_names <- fit_cox_model_vs$names.kept
 
-if("cov_num_age" %in% covariate_names){
-  covariate_names <- covariate_names[-grep("age", covariate_names)]
-  surv_formula <- paste0(
-    "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement)", 
-    "+ cluster(practice_id)"
-  )
+if(length(selected_covariate_names)>0){
+    if("cov_num_age" %in% covariate_names){
+      covariate_names <- covariate_names[-grep("age", covariate_names)]
+      surv_formula <- paste0(
+        "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
+        paste(covariate_names, collapse = "+"),
+        "+rms::rcs(cov_num_age,parms=knot_placement)", 
+        "+ cluster(practice_id)"
+      )
+    }
+    if(!("cov_num_age" %in% covariate_names)){
+      surv_formula <- paste0(
+        "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
+        paste(covariate_names, collapse = "+"),
+        "+ cluster(practice_id)")
+    }
+  print(surv_formula)
+  fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
+                                    data= survival_data, weight=survival_data$weight,surv = TRUE,x=TRUE,y=TRUE)
 }
-if(!("cov_num_age" %in% covariate_names)){
-  surv_formula <- paste0(
-    "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+ cluster(practice_id)")
-}
 
-fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
-                         data= survival_data, weight=survival_data$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 
 # validate(fit_cox_model,B=100,bw=TRUE) # repeats fastbw 100 times
@@ -163,4 +175,6 @@ cox_output <- function(fit_cox_model, which_model){
 }
 
 cox_output(fit_cox_model, "full")
-cox_output(fit_cox_model_selected, "selected")
+if(length(selected_covariate_names)>0){
+  cox_output(fit_cox_model_selected, "selected")
+}

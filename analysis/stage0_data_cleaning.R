@@ -36,7 +36,10 @@ vars_to_drop <- c("sgss_positive", "sgss_positive", "primary_care_covid", "hospi
 input = input[,!(names(input) %in% vars_to_drop)]
 
 # partial sorting by variable names in the data frame, keep patient_id and practice_id at the front
-input <- input %>% select(patient_id, practice_id, index_date, death_date,  colnames(input)[grepl("out_",colnames(input))], colnames(input)[grepl("vax_",colnames(input))], sort(tidyselect::peek_vars()))
+input <- input %>% select(patient_id, practice_id, index_date, death_date,
+                          colnames(input)[grepl("out_",colnames(input))],
+                          colnames(input)[grepl("vax_",colnames(input))],
+                          sort(tidyselect::peek_vars()))
 
 # Step 3. define variable types: factor or numerical or date--------------------
 
@@ -53,18 +56,22 @@ levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==3] <-"3"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==4] <-"4"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==5] <-"5 (least deprived)"
 
+# ordered categorical factor, the first level is the reference
+input$cov_cat_imd <- ordered(input$cov_cat_imd, 
+                             levels = c("1 (most deprived)","2","3","4","5 (least deprived)", "0 (missing)"))
+
+# for ordered factor, the first level is taken as reference level
+
+#table(input$cov_cat_imd)
+
+
+# input <- input %>% filter(cov_cat_imd != "0 (missing)")
+# 
+# input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("1 (most deprived)","2","3","4","5 (least deprived)"))
+
 # cov_cat_asthma ---------------------------------------------------------------
 levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma)==0] <-"No asthma"
 levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma) == 1 | levels(input$cov_cat_asthma) == 2 ] <-"Asthma"
-
-
-# ordered categorical factor, the first level is the reference
-input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("0 (missing)","1 (most deprived)","2","3","4","5 (least deprived)"))
-table(input$cov_cat_imd)
-
-input <- input %>% filter(cov_cat_imd != "0 (missing)")
-
-input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("1 (most deprived)","2","3","4","5 (least deprived)"))
 
 ## cov_cat_smoking_status-------------------------------------------------------
 table(input$cov_cat_smoking_status)
@@ -96,6 +103,29 @@ lapply(input[vars_dates], is.Date)
 input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
 
 select_variables <- input %>% select(c(sub_cat_covid_history, out_covid_date, index_date))
+
+
+# For categorical variables, replace "na" with "Missing" as a category
+cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+input_factor_vars <- input[,cov_factor_names]
+
+for(i in 1:length(cov_factor_names)){
+  print(table(input_factor_vars[,i]))
+}
+
+for(i in 1:length(cov_factor_names)){
+  index = which(is.na(input_factor_vars[,i]))
+  if(length(index)>0){
+    input_factor_vars[index,i]="Missing"
+  }
+  print(table(input_factor_vars[,i]))
+}
+
+input[,cov_factor_names] <- input_factor_vars
+
+for(i in cov_factor_names){
+  print(table(input[,i]))
+}
 
 saveRDS(input, file = "output/input_stage0.rds")
 

@@ -6,7 +6,16 @@
 library(readr); library(dplyr);library(lubridate)
 
 # Read in data and identify factor variables and numerical variables------------
-data <- read_rds("output/survival_data.rds")
+#data <- read_rds("output/survival_data.rds")
+input <- read_rds("output/input_stage1.rds")
+
+## define variables to keep
+drop <- names(input)[grepl("cov_", names(input))]
+keep <- names(input)[!names(input)%in%(drop)]
+drop <- names(input)[grepl("vax_", names(input))]
+keep <- names(input)[!names(input)%in%(drop)]
+data <- input[,keep]
+
 
 # calculate follow-up days
 data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
