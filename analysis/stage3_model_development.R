@@ -13,7 +13,7 @@ library(readr); library(dplyr); library(rms); library(MASS)
 ####################################################################################################
 
 # load data, with defined weight, and import formula for survival analysis 
-source("analysis/stage3_setup_model_input.R")
+source("analysis/stage3_model_input_set_up.R")
 
 print("Fitting cox model:")
 

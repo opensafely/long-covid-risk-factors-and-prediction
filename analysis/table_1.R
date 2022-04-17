@@ -62,7 +62,9 @@ table_1[index,2:ncol(table_1)] = "redacted"
 
 write.csv(table_1, file="output/table_1.csv", row.names = F)
 
-rmarkdown::render("analysis/compiled_table1_results.Rmd",
+table_ref = "table_1"
+
+rmarkdown::render("analysis/compiled_table_results.Rmd",
                   output_file="table_1",output_dir="output")
 
 
