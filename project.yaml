@@ -86,3 +86,11 @@ actions:
         hazard_ratios_CSV: output/hazard_ratio_estimates_*.csv
         hazard_ratios_HTML: output/hazard_ratio_estimates_*.html
         calibration: output/calibration_development_*.svg
+  evaluation_cox_model:
+    run: r:latest analysis/stage4_model_evaluation.R
+    needs:
+    -  stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        performance_measure_CSV: output/performance_measures_*.csv
+        performance_measure_HTML: output/performance_measures_*.html
