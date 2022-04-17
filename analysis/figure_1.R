@@ -81,3 +81,5 @@ figure_1 <- ggplot(data, aes(x=year_month,
 
 #figure_1
 ggsave(file="output/figure_1.svg", plot=figure_1, width=16, height=8)
+
+# to add: weekly long COVID count

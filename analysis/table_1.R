@@ -64,7 +64,7 @@ write.csv(table_1, file="output/table_1.csv", row.names = F)
 
 table_ref = "table_1"
 
-rmarkdown::render("analysis/compiled_table_results.Rmd",
+rmarkdown::render("analysis/compiled_table1_results.Rmd",
                   output_file="table_1",output_dir="output")
 
 
