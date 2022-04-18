@@ -88,7 +88,7 @@ actions:
       moderately_sensitive:
         hazard_ratios_CSV: output/hazard_ratio_estimates_*.csv
         hazard_ratios_HTML: output/hazard_ratio_estimates_*.html
-        calibration: output/calibration_development_*.svg
+        #calibration: output/calibration_development_*.svg
   evaluation_cox_model:
     run: r:latest analysis/stage4_model_evaluation.R
     needs:
