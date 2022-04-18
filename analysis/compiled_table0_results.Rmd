@@ -17,7 +17,7 @@ library(readr)
 knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
 ```
 
-## Compiled table1 characteristics of patients
+## Compiled table0 Summary data for categorical variables
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"

@@ -150,15 +150,28 @@ rmarkdown::render("analysis/compiled_table0_results.Rmd",
 # # For categorical variables, replace "na" with "Missing" as a category
 ## cov_cat_region if replace with missing causes problem, 
 
-
+#input_factor_vars$cov_cat_region[1:10] =NA
 print("Replace missing values with a Missing category!")
-for(i in cov_factor_names){
-  index = which(is.na(input_factor_vars[,i]))
-  if(length(index)>0){
-    input_factor_vars[index,i]="Missing"
-  }
-  #print(table(input_factor_vars[,i]))
-}
+
+input_factor_vars <- input_factor_vars %>% mutate(cov_cat_region = as.character(cov_cat_region)) %>%
+  mutate(cov_cat_region = replace_na(cov_cat_region, "Missing")) %>%
+  mutate(cov_cat_region = as.factor(cov_cat_region))
+
+print("Fished replacing missing values with a Missing category!")
+
+# for(i in cov_factor_names){
+#   index = which(is.na(input_factor_vars[,i]))
+#   if(length(index)>0){
+#     input_factor_vars[index,i]="Missing"
+#   }
+#   #print(table(input_factor_vars[,i]))
+# }
+
+input_factor_vars$cov_cat_region <- relevel(input_factor_vars$cov_cat_region, ref = "London")
+
+table(input_factor_vars$cov_cat_region)
+
+
 print("Finished replacing missing values with a Missing category successfully!")
 
 input[,cov_factor_names] <- input_factor_vars

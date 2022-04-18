@@ -89,14 +89,14 @@ cox_output <- function(fit_cox_model, which_model){
   
   # Calibration
   # Predicted 365 day survival
-  cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
-            method="boot", u=365, m=50,  B=20,
-            what="observed-predicted"
-            )
-
-  svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model, ".svg"))
-  plot(cal)
-  dev.off()
+  # cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
+  #           method="boot", u=365, m=50,  B=20,
+  #           what="observed-predicted"
+  #           )
+  # 
+  # svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model, ".svg"))
+  # plot(cal)
+  # dev.off()
 
   write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, ".csv"), 
                           row.names=F)
