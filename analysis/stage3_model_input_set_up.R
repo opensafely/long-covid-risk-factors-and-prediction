@@ -20,6 +20,7 @@ cases <- input %>% filter(!is.na(out_first_long_covid_date) &
 non_cases <- input %>% filter(!patient_id %in% cases$patient_id)
 
 ## sample non_cases, size = 5*nrow(cases) if 5*nrow(cases) < nrow(cases)
+set.seed(123456) # to ensure reproducibility
 if(nrow(cases)*5 < nrow(non_cases)){
   non_cases <- non_cases[sample(1:nrow(non_cases), nrow(cases)*5,replace=FALSE), ]
 }else if (nrow(cases)*5 >= nrow(non_cases)){

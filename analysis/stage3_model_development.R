@@ -87,17 +87,17 @@ cox_output <- function(fit_cox_model, which_model){
   results$concordance[2] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
   results$concordance[3] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
   
-  ## Calibration
-  ## Predicted 365 day survival
+  # Calibration
+  # Predicted 365 day survival
   cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
             method="boot", u=365, m=50,  B=20,
             what="observed-predicted"
             )
-  
+
   svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model, ".svg"))
   plot(cal)
   dev.off()
-  
+
   write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, ".csv"), 
                           row.names=F)
   rmarkdown::render(paste0("analysis/compiled_HR_results",".Rmd"), 

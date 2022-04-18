@@ -33,6 +33,7 @@ pm <- data.frame()
 # Calculate apparent discrimination performance
 
 ## Obtain the linear predictor
+#pred_LP <- predict(fit_cox_model,type="lp",reference="sample", na.rm=T)
 pred_LP <- fit_cox_model$linear.predictors
 
 mean(pred_LP)
@@ -68,7 +69,7 @@ pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
-# Plot of apparent separation across 4 groups
+#Plot of apparent separation across 4 groups
 centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.16,0.50,0.84,1)),
                   labels=c(1:4),include.lowest=TRUE)
 
