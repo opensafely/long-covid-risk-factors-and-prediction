@@ -75,7 +75,7 @@ suppl_figure_2 <- ggplot(table_long_covid_count,aes(x=year_month,y=count,colour=
   #
   xlab(label='\nDates')+
   #
-  ylab(label='New Long COVID Cases\n')+
+  ylab(label='Monthly New Long COVID Cases\n')+
   #
   # Specify a theme
   #
