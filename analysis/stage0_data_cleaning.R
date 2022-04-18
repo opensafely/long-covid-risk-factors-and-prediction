@@ -105,9 +105,10 @@ input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TR
 select_variables <- input %>% select(c(sub_cat_covid_history, out_covid_date, index_date))
 
 
-# For categorical variables, replace "na" with "Missing" as a category
-cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
-input_factor_vars <- input[,cov_factor_names]
+## cov_cat_region if replace with missing causes problem, temporarily comment out to run on real data
+# # For categorical variables, replace "na" with "Missing" as a category
+# cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+# input_factor_vars <- input[,cov_factor_names]
 
 for(i in 1:length(cov_factor_names)){
   print(table(input_factor_vars[,i]))
