@@ -150,24 +150,29 @@ output_table_0 <- function(input_factor_vars){
 
 
 # # For categorical variables, replace "na" with "Missing" as a category
-## cov_cat_region if replace with missing causes problem, 
 
+## impose some NA and check if this works
 #input_factor_vars$cov_cat_region[1:10] =NA
 print("Replace missing values with a Missing category!")
 
+## mutate is much quicker
 input_factor_vars <- input_factor_vars %>% mutate(cov_cat_region = as.character(cov_cat_region)) %>%
   mutate(cov_cat_region = replace_na(cov_cat_region, "Missing")) %>%
   mutate(cov_cat_region = as.factor(cov_cat_region))
 
-print("Fished replacing missing values with a Missing category!")
-
 # for(i in cov_factor_names){
+#   print(i)
 #   index = which(is.na(input_factor_vars[,i]))
 #   if(length(index)>0){
+#     input_factor_vars[,i] = as.character(input_factor_vars[,i]) # convert factor to character to allow to change na to "Missing"
 #     input_factor_vars[index,i]="Missing"
+#     input_factor_vars[,i] = as.factor(input_factor_vars[,i]) # convert back to factor
 #   }
+# 
 #   #print(table(input_factor_vars[,i]))
 # }
+
+print("Fished replacing missing values with a Missing category!")
 
 input_factor_vars$cov_cat_region <- relevel(input_factor_vars$cov_cat_region, ref = "London")
 

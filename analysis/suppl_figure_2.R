@@ -9,6 +9,13 @@ library(lubridate); library(htmlTable);library(ggplot2)
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
+# keep only observations where long covid indicator is 1
+input <- input %>% filter(lcovid_i_vax_c == 1)
+
+# computational efficiency: only keep the needed variable
+input <- input %>% select(c("out_first_long_covid_date", "cov_cat_region"))
+
+
 input$year <- format(input$out_first_long_covid_date, format = "%Y")
 input$month <- month(ymd(input$out_first_long_covid_date))
 
@@ -17,7 +24,7 @@ input <- input[,keep]
 
 #View(input)
 
-calculate_long_covid_count<-function(input){
+calculate_long_covid_monthly_count<-function(input){
   # Create a data frame ---------------------------------------------------
   data<- data.frame(matrix(nrow=16, ncol=4))  # 16 months
   colnames(data) <- c("year", "month", "year_month", "count")
@@ -46,7 +53,7 @@ for(i in region){
   input_region <- input%>%filter(cov_cat_region == i)
   start = nrow(table_long_covid_count)+1
   end = nrow(table_long_covid_count) + 16
-  table_long_covid_count[start:end, 1:4] <- calculate_long_covid_count(input_region)
+  table_long_covid_count[start:end, 1:4] <- calculate_long_covid_monthly_count(input_region)
   table_long_covid_count[start:end,5] = rep(i, 16)
 }
 
@@ -89,11 +96,9 @@ index = which(is.na(table_long_covid_count$count))
 table_long_covid_count$count[index] = "redacted"
 
 write.csv(table_long_covid_count, file="output/suppl_figure_2_data.csv")
-#htmlTable(table_long_covid_count, file="output/suppl_figure_2_data.html")
 
 rmarkdown::render("analysis/compiled_suppl_fig2_data.Rmd", output_file="suppl_figure_2_data",output_dir="output")
 
 
 # Output supplementary figure 2
-
 ggsave(file=paste0("output/suppl_figure_2", ".svg"), plot=suppl_figure_2, width=16, height=8)

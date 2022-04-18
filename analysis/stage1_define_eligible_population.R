@@ -64,7 +64,7 @@ write.csv(flow_chart, file="output/flow_chart.csv", row.names = F)
 rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file ="flow_chart", output_dir = "output")
                   #output_file=paste0("flow_chart_", population),output_dir="output")
 
-#---------define follow-up end date
+#---------define follow-up end date---
 
 ## study period: index date = "2020-12-01", end date = "2022-03-31"
 cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
@@ -74,21 +74,60 @@ input$cohort_end_date = cohort_end
 ## population = "unvaccinated"
 ## for unvaccianted population, the follow-up start date is the index date
 
-## specify follow-up end date ----------------------------------------------------------
-input <- input %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, 
-                                                             death_date, 
-                                                             cohort_end_date,
-                                                             na.rm = TRUE))
 
-input <- input %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
+## To improve efficiency: keep only necessary variables
+
+variables_to_keep <-c("patient_id", "out_first_long_covid_date",
+                      "death_date", "cohort_end_date", "index_date")
+
+input_select <- input[,variables_to_keep]
+
+## to increase efficiency
+rm(input)
+
+## specify follow-up end date ----------------------------------------------------------
+input_select <- input_select%>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, 
+                                                               death_date, 
+                                                               cohort_end_date,
+                                                               na.rm = TRUE))
+
+input_select <- input_select %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
 ## define days since follow-up to long COVID diagnosis, vaccination censored long covid diagnosis
-input$lcovid_surv_vax_c <- as.numeric(input$follow_up_end_date - input$index_date)
+input_select$lcovid_surv_vax_c <- as.numeric(input_select$follow_up_end_date - input_select$index_date)
 
 ## define event indicator, vaccination censored long covid diagnosis
-input <- input %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= follow_up_end_date & 
-                                                   out_first_long_covid_date >= index_date &
-                                                   !is.na(out_first_long_covid_date)), 1, 0))
+input_select <- input_select %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= follow_up_end_date & 
+                                                     out_first_long_covid_date >= index_date &
+                                                     !is.na(out_first_long_covid_date)), 1, 0))
+
+variables_to_keep <-c("patient_id", "follow_up_end_date", "cohort_end_date",
+                      "lcovid_surv_vax_c", "lcovid_i_vax_c")
+
+input_select <- input_select[,variables_to_keep]
+
+input <- read_rds("output/input_stage0.rds")
+
+# left join: keep all observations in input_select
+input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
+
+rm(input_select)
+
+# ## specify follow-up end date ----------------------------------------------------------
+# input <- input %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, 
+#                                                              death_date, 
+#                                                              cohort_end_date,
+#                                                              na.rm = TRUE))
+# 
+# input <- input %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
+# 
+# ## define days since follow-up to long COVID diagnosis, vaccination censored long covid diagnosis
+# input$lcovid_surv_vax_c <- as.numeric(input$follow_up_end_date - input$index_date)
+# 
+# ## define event indicator, vaccination censored long covid diagnosis
+# input <- input %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= follow_up_end_date & 
+#                                                    out_first_long_covid_date >= index_date &
+#                                                    !is.na(out_first_long_covid_date)), 1, 0))
 
 saveRDS(input, file = "output/input_stage1.rds")
 

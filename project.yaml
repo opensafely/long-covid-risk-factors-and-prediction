@@ -61,7 +61,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        Figure_long_covid_cases: output/figure_1.svg
+        Figure_long_covid_monthly_count: output/figure_1_monthly_count.svg
+        Figure_long_covid_weekly_count: output/figure_1_weekly_count.svg
   suppl_figure_1:
     run: r:latest analysis/suppl_figure_1.R
     needs:
