@@ -9,6 +9,12 @@ library(lubridate); library(htmlTable); library(ggplot2)
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
+# keep only observations where long covid indicator is 1
+input <- input %>% filter(lcovid_i_vax_c == 1)
+
+# computational efficiency: only keep the needed variable
+input <- input %>% select("out_first_long_covid_code")
+
 snomed_code <- input$out_first_long_covid_code
 
 count_data <-table(snomed_code)
