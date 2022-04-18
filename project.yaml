@@ -18,6 +18,9 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input_stage0.rds
+      moderately_sensitive:
+        table_0_CSV: output/table_0.csv
+        table_0_HTML: output/table_0.html
   stage1_define_eligible_population:
     run: r:latest analysis/stage1_define_eligible_population.R
     needs:

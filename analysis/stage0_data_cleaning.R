@@ -47,6 +47,7 @@ input <- input %>% select(patient_id, practice_id, index_date, death_date,
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
+lapply(input[,cat_factors], is.factor)
 # cov_cat_imd by quintile-------------------------------------------------------
 table(input$cov_cat_imd)
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
@@ -86,6 +87,7 @@ input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39,
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_110", input$cov_cat_age_group)
+input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 
 # specify date variables in the format of "%Y-%m-%d"----------------------------
 vars_dates <- grep("date", names(input))
@@ -104,30 +106,70 @@ input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TR
 
 select_variables <- input %>% select(c(sub_cat_covid_history, out_covid_date, index_date))
 
-
-## cov_cat_region if replace with missing causes problem, temporarily comment out to run on real data
-# # For categorical variables, replace "na" with "Missing" as a category
+## store names of factor variables
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
 input_factor_vars <- input[,cov_factor_names]
 
+lapply(input[,cov_factor_names], is.factor)
+lapply(input_factor_vars, is.factor)
 
-for(i in 1:length(cov_factor_names)){
+## Summary of categorical variables
+print("construct table_0 for data check!")
+table_0<- data.frame()
+for(i in cov_factor_names){
   print(table(input_factor_vars[,i]))
+  table_0[nrow(table_0)+1,1] <- i
+  table_0[nrow(table_0),2] <- length(which(is.na(input_factor_vars[,i])))
+  #table_0[nrow(table_0),3] <- is.factor(input_factor_vars[,i])
+  table_0[nrow(table_0),3] <- NA
+  len = length(names(table(input_factor_vars[,i])))
+  index = nrow(table_0)+1
+  for(j in 1:len){
+    table_0[index-1,4+j-1]<-names(table(input_factor_vars[,i]))[j]
+    table_0[index, 4+j-1] <-table(input_factor_vars[,i])[j]
+    if(table(input_factor_vars[,i])[j] <=5){
+      table_0[index, 4+j-1] <- "[redacted]"
+    }
+  }
 }
 
-for(i in 1:length(cov_factor_names)){
+
+#table_0[,3] <- unlist(lapply(input_factor_vars, is.factor))
+
+names(table_0) <- c("factor variables", "number of missing observations", "is.factor")
+names(table_0)[4:ncol(table_0)] = rep("level name or number of observations", (ncol(table_0)-3))
+
+table_0
+
+print("Finished constructing table_0 successfully!")
+
+write.csv(table_0, file="output/table_0.csv", row.names =F)
+rmarkdown::render("analysis/compiled_table0_results.Rmd",
+                  output_file="table_0",output_dir="output")
+
+# # For categorical variables, replace "na" with "Missing" as a category
+## cov_cat_region if replace with missing causes problem, 
+
+
+print("Replace missing values with a Missing category!")
+for(i in cov_factor_names){
   index = which(is.na(input_factor_vars[,i]))
   if(length(index)>0){
     input_factor_vars[index,i]="Missing"
   }
-  print(table(input_factor_vars[,i]))
+  #print(table(input_factor_vars[,i]))
 }
+print("Finished replacing missing values with a Missing category successfully!")
 
 input[,cov_factor_names] <- input_factor_vars
+
+lapply(input[,cov_factor_names], is.factor)
+
 
 for(i in cov_factor_names){
   print(table(input[,i]))
 }
 
 saveRDS(input, file = "output/input_stage0.rds")
+
 
