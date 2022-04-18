@@ -3,7 +3,7 @@
 # Content: Prepare variables
 # Output:  input_stage0.rds
 
-library(readr); library(dplyr); library("arrow"); library(lubridate)
+library(readr); library(dplyr); library("arrow"); library(lubridate); library(tidyr)
 
 input <- read_feather("output/input.feather")
 #View(input)
@@ -113,39 +113,41 @@ input_factor_vars <- input[,cov_factor_names]
 lapply(input[,cov_factor_names], is.factor)
 lapply(input_factor_vars, is.factor)
 
-## Summary of categorical variables
-print("construct table_0 for data check!")
-table_0<- data.frame()
-for(i in cov_factor_names){
-  print(table(input_factor_vars[,i]))
-  table_0[nrow(table_0)+1,1] <- i
-  table_0[nrow(table_0),2] <- length(which(is.na(input_factor_vars[,i])))
-  #table_0[nrow(table_0),3] <- is.factor(input_factor_vars[,i])
-  table_0[nrow(table_0),3] <- NA
-  len = length(names(table(input_factor_vars[,i])))
-  index = nrow(table_0)+1
-  for(j in 1:len){
-    table_0[index-1,4+j-1]<-names(table(input_factor_vars[,i]))[j]
-    table_0[index, 4+j-1] <-table(input_factor_vars[,i])[j]
-    if(table(input_factor_vars[,i])[j] <=5){
-      table_0[index, 4+j-1] <- "[redacted]"
+output_table_0 <- function(input_factor_vars){
+    ## Summary of categorical variables
+    print("construct table_0 for data check!")
+    table_0<- data.frame()
+    for(i in cov_factor_names){
+      print(table(input_factor_vars[,i]))
+      table_0[nrow(table_0)+1,1] <- i
+      table_0[nrow(table_0),2] <- length(which(is.na(input_factor_vars[,i])))
+      #table_0[nrow(table_0),3] <- is.factor(input_factor_vars[,i])
+      table_0[nrow(table_0),3] <- NA
+      len = length(names(table(input_factor_vars[,i])))
+      index = nrow(table_0)+1
+      for(j in 1:len){
+        table_0[index-1,4+j-1]<-names(table(input_factor_vars[,i]))[j]
+        table_0[index, 4+j-1] <-table(input_factor_vars[,i])[j]
+        if(table(input_factor_vars[,i])[j] <=5){
+          table_0[index, 4+j-1] <- "[redacted]"
+        }
+      }
     }
-  }
+    
+    #table_0[,3] <- unlist(lapply(input_factor_vars, is.factor))
+    
+    names(table_0) <- c("factor variables", "number of missing observations", "is.factor")
+    names(table_0)[4:ncol(table_0)] = rep("level name or number of observations", (ncol(table_0)-3))
+    
+    table_0
+    
+    print("Finished constructing table_0 successfully!")
+    
+    write.csv(table_0, file="output/table_0.csv", row.names =F)
+    rmarkdown::render("analysis/compiled_table0_results.Rmd",
+                      output_file="table_0",output_dir="output")
 }
 
-
-#table_0[,3] <- unlist(lapply(input_factor_vars, is.factor))
-
-names(table_0) <- c("factor variables", "number of missing observations", "is.factor")
-names(table_0)[4:ncol(table_0)] = rep("level name or number of observations", (ncol(table_0)-3))
-
-table_0
-
-print("Finished constructing table_0 successfully!")
-
-write.csv(table_0, file="output/table_0.csv", row.names =F)
-rmarkdown::render("analysis/compiled_table0_results.Rmd",
-                  output_file="table_0",output_dir="output")
 
 # # For categorical variables, replace "na" with "Missing" as a category
 ## cov_cat_region if replace with missing causes problem, 
@@ -178,6 +180,8 @@ input[,cov_factor_names] <- input_factor_vars
 
 lapply(input[,cov_factor_names], is.factor)
 
+print("checking after replacing na with missing!") 
+output_table_0(input)
 
 for(i in cov_factor_names){
   print(table(input[,i]))
