@@ -107,7 +107,8 @@ input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TR
 select_variables <- input %>% select(c(sub_cat_covid_history, out_covid_date, index_date))
 
 ## store names of factor variables
-cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+cov_factor_names <- names(input)[grepl("_cat", names(input))]
+
 input_factor_vars <- input[,cov_factor_names]
 
 lapply(input[,cov_factor_names], is.factor)
@@ -160,6 +161,15 @@ input_factor_vars <- input_factor_vars %>% mutate(cov_cat_region = as.character(
   mutate(cov_cat_region = replace_na(cov_cat_region, "Missing")) %>%
   mutate(cov_cat_region = as.factor(cov_cat_region))
 
+## cov_cat_smoking_status
+input_factor_vars <- input_factor_vars %>% mutate(cov_cat_smoking_status = as.character(cov_cat_smoking_status)) %>%
+  mutate(cov_cat_smoking_status = replace_na(cov_cat_smoking_status, "Missing")) %>%
+  mutate(cov_cat_smoking_status = as.factor(cov_cat_smoking_status))
+
+# sub_cat_covid_history: two categories: false and missing
+input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
+  mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "Missing")) %>%
+  mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
 # for(i in cov_factor_names){
 #   print(i)
 #   index = which(is.na(input_factor_vars[,i]))

@@ -33,8 +33,8 @@ pm <- data.frame()
 # Calculate apparent discrimination performance
 
 ## Obtain the linear predictor
-pred_LP <- predict(fit_cox_model,type="lp",reference="sample", na.rm=T)
-#pred_LP <- fit_cox_model$linear.predictors
+#pred_LP <- predict(fit_cox_model,type="lp",reference="sample", na.rm=T)
+pred_LP <- fit_cox_model$linear.predictors
 
 mean(pred_LP)
 sd(pred_LP)
@@ -51,7 +51,6 @@ pm[nrow(pm)+1,1] <- "C-Statistic-upper"
 pm[nrow(pm),2] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
 
 # D statistic needs library(survcomp)
-
 
 ##################################################
 # Part 3.  assess the models apparent calibration#
@@ -125,74 +124,74 @@ pm[nrow(pm)+1, 1] <- "reculated calibration slope using the shrunken linear pred
 pm[nrow(pm), 2] <- round(fit_cox_model3$coef,3)
 
 
-# plot original predictions (before shrinkage) versus our shrunken model predictions
-# To do this we can plot the KM curve for one high risk patient, and one low risk patient using the original and shrunken model lp
-# lpdat <- cbind(input,pred_LP)
-# patient_high <- subset(lpdat, pred_LP == max(pred_LP)) 
-# patient_low <- subset(lpdat,pred_LP == min(pred_LP))
-# 
+## plot original predictions (before shrinkage) versus our shrunken model predictions
+## To do this we can plot the KM curve for one high risk patient, and one low risk patient using the original and shrunken model lp
+lpdat <- cbind(input,pred_LP)
+patient_high <- subset(lpdat, pred_LP == max(pred_LP))
+patient_low <- subset(lpdat,pred_LP == min(pred_LP))
+
 # # Calculate shrunken LP for these patients
-# patient_high_shrunk <- patient_high
-# patient_high_shrunk$pred_LP <- patient_high$pred_LP*vanH
-# patient_low_shrunk <- patient_low
-# patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
-# 
-# svglite::svglite(file = paste0("output/km_estimates_with_shrunken_LP", which_model, ".svg"))
-# 
-# plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
-# lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
-# lines(survfit(fit_cox_model,newdata=data.frame(patient_low)),col=3,conf.int=FALSE)
-# lines(survfit(fit_cox_model,newdata=data.frame(patient_low_shrunk)),col=4,conf.int=FALSE)
-# legend(1,0.4,c("Original LP - High risk","Shrunken LP - High risk","Original LP - Low risk","Shrunken LP - Low risk"),col=c(1:4),lty=1,bty="n")
-# dev.off()
-# 
+patient_high_shrunk <- patient_high
+patient_high_shrunk$pred_LP <- patient_high$pred_LP*vanH
+patient_low_shrunk <- patient_low
+patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
+
+svglite::svglite(file = paste0("output/km_estimates_with_shrunken_LP", which_model, ".svg"))
+
+plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
+lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
+lines(survfit(fit_cox_model,newdata=data.frame(patient_low)),col=3,conf.int=FALSE)
+lines(survfit(fit_cox_model,newdata=data.frame(patient_low_shrunk)),col=4,conf.int=FALSE)
+legend(1,0.4,c("Original LP - High risk","Shrunken LP - High risk","Original LP - Low risk","Shrunken LP - Low risk"),col=c(1:4),lty=1,bty="n")
+dev.off()
+#
 # # Linear predictor values
-# patient_high$pred_LP
-# patient_high_shrunk$pred_LP
-# 
+patient_high$pred_LP
+patient_high_shrunk$pred_LP
+
 # # obtain an estimate of the baseline survival at a specific time point, for the shrunken model
 # # First obtain an estimate of the baseline survival at 180 days for the original model
-# day180_Cox <- summary(survfit(fit_cox_model),time=180)$surv
-# day180_Cox
-# 
-# # Now calculate the shrunken models baseline survival prob at 180 days by setting the shrunken lp as a offset and predicting the baseline survival
-# shrunk_mod <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp))
-# day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=180)$surv
-# day180_Cox_shrunk
-# #shrunk_mod <- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp),x=TRUE, y=TRUE)
-# #day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=5)$surv
-# #day180_Cox_shrunk
+day180_Cox <- summary(survfit(fit_cox_model),time=180)$surv
+day180_Cox
+
+# Now calculate the shrunken models baseline survival prob at 180 days by setting the shrunken lp as a offset and predicting the baseline survival
+shrunk_mod <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp))
+day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=180)$surv
+day180_Cox_shrunk
+#shrunk_mod <- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp),x=TRUE, y=TRUE)
+#day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=5)$surv
+#day180_Cox_shrunk
 
 # # Estimate the predicted survival probability at 180 days for the high risk patient above
-# prob_HR <- day180_Cox^exp(patient_high$pred_LP)
-# prob_HR
-# prob_HR <- day180_Cox^exp(patient_high$pred_LP)
-# prob_HR
-# prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
-# prob_HR_shrunk
-# 
-# svglite::svglite(file = paste0("output/baseline_survival_curves", which_model, ".svg"))
-# # We can plot the two baseline survival curves
-# plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
-# lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
-# legend(7.5,0.9,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
-# 
-# # abline(h=) adds a line crossing the y-axis at the baseline survival probabilities
-# abline(h=day180_Cox,col="black")
-# abline(h=day180_Cox_shrunk,col="red")
-# abline(v=5,col="red")
-# dev.off()
-# 
+prob_HR <- day180_Cox^exp(patient_high$pred_LP)
+prob_HR
+prob_HR <- day180_Cox^exp(patient_high$pred_LP)
+prob_HR
+prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
+prob_HR_shrunk
+
+svglite::svglite(file = paste0("output/baseline_survival_curves", which_model, ".svg"))
+# We can plot the two baseline survival curves
+plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
+lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
+legend(7.5,0.9,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
+
+# abline(h=) adds a line crossing the y-axis at the baseline survival probabilities
+abline(h=day180_Cox,col="black")
+abline(h=day180_Cox_shrunk,col="red")
+abline(v=5,col="red")
+dev.off()
+
 # svglite::svglite(file = paste0("output/baseline_survival_curves2", which_model, ".svg"))
-# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability at 5yrs 
-# # as calculated above to check they match the predicted survival curves
-# plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
-# lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
-# legend(10,0.9,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
-# abline(h=prob_HR,col="black")
-# abline(h=prob_HR_shrunk,col="red")
-# abline(v=180,col="red")
-# dev.off()
+# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability at 5yrs
+# as calculated above to check they match the predicted survival curves
+plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
+lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
+legend(10,0.9,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
+abline(h=prob_HR,col="black")
+abline(h=prob_HR_shrunk,col="red")
+abline(v=180,col="red")
+dev.off()
 
 ##########################################################
 # Part 6. Internal validation using bootstrap validation  #

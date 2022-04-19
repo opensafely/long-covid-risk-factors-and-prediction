@@ -83,7 +83,7 @@ cox_output <- function(fit_cox_model, which_model){
   results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate CI
   results$robust.conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
   results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
-  results$robust.se=exp(sqrt(diag(vcov(robust_fit_cox_model))))
+  results$robust.se=round(exp(sqrt(diag(vcov(robust_fit_cox_model)))),3)
   
   results[,2:9] <- round(results[,2:9], 3)
   print("Print results")
