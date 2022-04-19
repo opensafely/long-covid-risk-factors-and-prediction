@@ -71,13 +71,18 @@ cox_output <- function(fit_cox_model, which_model){
   ## Result
   results=as.data.frame(names(fit_cox_model$coefficients))
   colnames(results)="term"
-  results$estimate=exp(fit_cox_model$coefficients)
-  results$conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate CI
-  results$conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
+  results$hazard_ratio=exp(fit_cox_model$coefficients)
   results$std.error=exp(sqrt(diag(vcov(fit_cox_model))))
-  results$robust.se=exp(sqrt(diag(vcov(robust_fit_cox_model))))
+  results$p.value = round(pnorm(abs(fit_cox_model$coefficients/sqrt(diag(fit_cox_model$var))),lower.tail=F)*2,3)
+  results$conf.low = exp(fit_cox_model$coefficients - 1.96* sqrt(diag(vcov(fit_cox_model))))
+  results$conf.high = exp(fit_cox_model$coefficients + 1.96* sqrt(diag(vcov(fit_cox_model))))                                                   
   
-  results[,2:6] <- round(results[,2:6], 3)
+  results$robust.se=exp(sqrt(diag(vcov(robust_fit_cox_model))))
+  results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate CI
+  results$robust.conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
+  results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
+  
+  results[,2:9] <- round(results[,2:9], 3)
   print("Print results")
   print(results) 
   
@@ -87,16 +92,16 @@ cox_output <- function(fit_cox_model, which_model){
   results$concordance[2] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
   results$concordance[3] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
   
-  # Calibration
-  # Predicted 365 day survival
-  # cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
-  #           method="boot", u=365, m=50,  B=20,
-  #           what="observed-predicted"
-  #           )
-  # 
-  # svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model, ".svg"))
-  # plot(cal)
-  # dev.off()
+  ## Calibration
+  ## Predicted 365 day survival
+  cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
+            method="boot", u=365, m=50,  B=20,
+            what="observed-predicted"
+            )
+
+  svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model, ".svg"))
+  plot(cal)
+  dev.off()
 
   write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, ".csv"), 
                           row.names=F)
