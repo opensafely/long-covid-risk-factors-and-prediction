@@ -23,5 +23,8 @@ b <- surv_time[1]$quantiles.survival[3,] # median survival time
 results <- rbind(a,b)
 
 rownames(results) <- c("median follow-up", "median survival time")
+#colnames(results) <- c("quartile")
+write.csv(results, file="output/summarise_survival_data.csv")
 
-saveRDS(results, file="output/survival_data.rds")
+rmarkdown::render("analysis/compiled_summarsied_survival_data.Rmd",
+                  output_file="summarise_survival_data",output_dir="output")

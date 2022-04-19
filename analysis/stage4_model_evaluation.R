@@ -72,7 +72,7 @@ pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.16,0.50,0.84,1), na.rm=T),
                   labels=c(1:4),include.lowest=TRUE)
 
-svglite::svglite(file = paste0("output/km_estimates", which_model, ".svg"))
+svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, ".svg"))
 # Graph the KM curves in the 4 risk groups to visually assess separation
 plot(survfit(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~centile_LP),
      main="Kaplan-Meier survival estimates",
@@ -136,13 +136,13 @@ patient_high_shrunk$pred_LP <- patient_high$pred_LP*vanH
 patient_low_shrunk <- patient_low
 patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
 
-svglite::svglite(file = paste0("output/km_estimates_with_shrunken_LP", which_model, ".svg"))
+svglite::svglite(file = paste0("output/surival_plot_with_shrunken_LP_", which_model, ".svg"))
 
 plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_low)),col=3,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_low_shrunk)),col=4,conf.int=FALSE)
-legend(1,0.4,c("Original LP - High risk","Shrunken LP - High risk","Original LP - Low risk","Shrunken LP - Low risk"),col=c(1:4),lty=1,bty="n")
+legend(1,0.3,c("Original LP - High risk","Shrunken LP - High risk","Original LP - Low risk","Shrunken LP - Low risk"),col=c(1:4),lty=1,bty="n")
 dev.off()
 #
 # # Linear predictor values
@@ -170,24 +170,24 @@ prob_HR
 prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
 prob_HR_shrunk
 
-svglite::svglite(file = paste0("output/baseline_survival_curves", which_model, ".svg"))
+svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves_", which_model, ".svg"))
 # We can plot the two baseline survival curves
 plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
-legend(7.5,0.9,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
+legend(7.5,0.3,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
 
 # abline(h=) adds a line crossing the y-axis at the baseline survival probabilities
 abline(h=day180_Cox,col="black")
 abline(h=day180_Cox_shrunk,col="red")
-abline(v=5,col="red")
+abline(v=180,col="red")
 dev.off()
 
-# svglite::svglite(file = paste0("output/baseline_survival_curves2", which_model, ".svg"))
+svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves2_", which_model, ".svg"))
 # # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability at 5yrs
 # as calculated above to check they match the predicted survival curves
 plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
-legend(10,0.9,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
+legend(10,0.3,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
 abline(h=prob_HR,col="black")
 abline(h=prob_HR_shrunk,col="red")
 abline(v=180,col="red")
@@ -260,6 +260,7 @@ pm[nrow(pm),2] <- round((boot_2[3,4]+1)/2,3)
 pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
 pm[nrow(pm),2] <- round((boot_2[3,5]+1)/2,3)
 
+names(pm) <- c("performance measure", "value")
 write.csv(pm, file=paste0("output/performance_measures_", which_model, ".csv"), 
           row.names=F)
 

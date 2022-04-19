@@ -6,6 +6,14 @@
 library(readr); library(dplyr); library(arrow); library(data.table) 
 library(lubridate); library(htmlTable);library(ggplot2)
 
+## Load functios to calculate long covid cases
+
+source("analysis/function_lc_count.R")
+
+#############################################
+#Part 1. Monthly long covid count by region #
+#############################################
+
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
@@ -14,7 +22,6 @@ input <- input %>% filter(lcovid_i_vax_c == 1)
 
 # computational efficiency: only keep the needed variable
 input <- input %>% select("out_first_long_covid_date")
-
 # monthly count
 
 input$year <- format(input$out_first_long_covid_date, format = "%Y")
@@ -25,31 +32,44 @@ input <- input[,keep]
 
 #View(input)
 # Create a data frame ---------------------------------------------------
-data<- data.frame(matrix(nrow=16, ncol=4))  # 16 months
-colnames(data) <- c("year", "month", "year_month", "count")
-data$year <- c(2020, rep(2021, 12), rep(2022,3))
-data$month <-c(12, seq(1:12), seq(1:3))
+#data<- data.frame(matrix(nrow=16, ncol=4))  # 16 months
+# colnames(data) <- c("year", "month", "year_month", "count")
+# data$year <- c(2020, rep(2021, 12), rep(2022,3))
+# data$month <-c(12, seq(1:12), seq(1:3))
+# 
+# data$year_month <- seq(as.Date("2020/12/01"), as.Date("2022/03/01"), by = "month")
+# data$year_month <- as.Date(data$year_month, format = "%Y-%M")
+# 
+# # Calculate the number of long COVID cases by month -----------------------------
+# 
+# for(i in 1:nrow(data)){
+#   data$count[i]<-length(which(input$year == data$year[i] & input$month == data$month[i]))
+# }
+# 
+# # Work out the limit for y axis ------------------------------------------------
+# count_min <- min(data$count)
+# count_max <- max(data$count)
+# 
+# y_min = count_min - count_min%%10
+# y_max = count_max - count_max%%10 + 10
+# interval = round((y_max - y_min)/10,0)
 
-data$year_month <- seq(as.Date("2020/12/01"), as.Date("2022/03/01"), by = "month")
-data$year_month <- as.Date(data$year_month, format = "%Y-%M")
+table_lc_monthly_count <- data.frame(year = numeric(),
+                                     month  = numeric(),
+                                     year_month = Date(),
+                                     count    = numeric()
+                                     )
 
-# Calculate the number of long COVID cases by month -----------------------------
+table_lc_monthly_count <- calculate_long_covid_monthly_cases(input)
 
-for(i in 1:nrow(data)){
-  data$count[i]<-length(which(input$year == data$year[i] & input$month == data$month[i]))
-}
+index = which(table_lc_monthly_count$count <6)
+table_lc_monthly_count$count[index] = NA
 
-# Work out the limit for y axis ------------------------------------------------
-count_min <- min(data$count)
-count_max <- max(data$count)
-
-y_min = count_min - count_min%%10
-y_max = count_max - count_max%%10 + 10
-interval = round((y_max - y_min)/10,0)
-
+#---small number supression ---------------------
+table_lc_monthly_count$count[which(table_lc_monthly_count$count <=5)] = NA
 
 # Produce Figure 1--------------------------------------------------------------
-figure_1 <- ggplot(data, aes(x=year_month, 
+figure_1 <- ggplot(table_lc_monthly_count, aes(x=year_month, 
                  y=count))+
   # Add the number of new long COVID cases as points
   #
@@ -90,37 +110,62 @@ figure_1 <- ggplot(data, aes(x=year_month,
 # figure_1
 ggsave(file="output/figure_1_monthly_count.svg", plot=figure_1, width=16, height=8)
 
-#-------------------------------------------------------------------------------
-# weekly long COVID count
 
-input$week <- week(ymd(input$out_first_long_covid_date))
+#############################################
+#Part 2. Weekly long covid count by region  #
+#############################################
 
-diff_in_weeks = difftime(ymd("2022/03/31"), ymd("2020/12/01"), units = "weeks") # weeks
-no_weeks = round(diff_in_weeks,0)+1
+# input$week <- week(ymd(input$out_first_long_covid_date))
+# 
+# diff_in_weeks = difftime(ymd("2022/03/31"), ymd("2020/12/01"), units = "weeks") # weeks
+# no_weeks = round(diff_in_weeks,0)+1
+# 
+# data_weekly<- data.frame(matrix(NA, nrow=no_weeks))  # 70 weeks
+# 
+# 
+# data_weekly$year <- c(rep(2020,52-48+1), rep(2021, 52), rep(2022,13))
+# data_weekly$week <-c(48:52, seq(1:52), seq(1:13))
+# 
+# data_weekly$year_week <- seq(as.Date("2020/12/01"), as.Date("2022/03/31"), by = "week")
+# data_weekly$year_week <- as.Date(data_weekly$year_week, format = "%Y-%M")
+# 
+# #View(data_weekly)
+# # Calculate the number of long COVID cases by month -----------------------------
+# 
+# for(i in 1:nrow(data_weekly)){
+#   data_weekly$count[i]<-length(which(input$year == data_weekly$year[i] & 
+#                                     input$week == data_weekly$week[i]))
+# }
+# 
+# data_weekly <- data_weekly[,2:5]
 
-data_weekly<- data.frame(matrix(NA, nrow=no_weeks))  # 70 weeks
+# Read in data and identify factor variables and numerical variables------------
+input <- read_rds("output/input_stage1.rds")
 
+# keep only observations where long covid indicator is 1
+input <- input %>% filter(lcovid_i_vax_c == 1)
 
-data_weekly$year <- c(rep(2020,52-48+1), rep(2021, 52), rep(2022,13))
-data_weekly$week <-c(48:52, seq(1:52), seq(1:13))
+# computational efficiency: only keep the needed variable
+input <- input %>% select("out_first_long_covid_date")
+table_lc_weekly_count <- data.frame(year = numeric(),
+                                    week  = numeric(),
+                                    year_weekly = Date(),
+                                    count    = numeric()
+                                    )
 
-data_weekly$year_week <- seq(as.Date("2020/12/01"), as.Date("2022/03/31"), by = "week")
-data_weekly$year_week <- as.Date(data_weekly$year_week, format = "%Y-%M")
+table_lc_weekly_count <- calculate_long_covid_weekly_cases(input)
 
-#View(data_weekly)
-# Calculate the number of long COVID cases by month -----------------------------
+index = which(table_lc_weekly_count$count <6)
+table_lc_weekly_count$count[index] = NA
 
-for(i in 1:nrow(data_weekly)){
-  data_weekly$count[i]<-length(which(input$year == data_weekly$year[i] & 
-                                    input$week == data_weekly$week[i]))
-}
+#---small number supression ---------------------
+table_lc_weekly_count$count[which(table_lc_weekly_count$count <=5)] = NA
+#---small number suppression------------------
+table_lc_weekly_count$count[which(table_lc_weekly_count$count <=5)] = NA
 
-data_weekly <- data_weekly[,2:5]
-data_weekly$count[which(data_weekly$count <=5)] = NA
-
-plot(data_weekly$count)
+#plot(data_weekly$count)
 # Produce Figure 1 Weekly count----------------------------------------------------
-figure_1_weekly <- ggplot(data_weekly, aes(x=year_week, 
+figure_1_weekly <- ggplot(table_lc_weekly_count, aes(x=year_week, 
                              y=count))+
   # Add the number of new long COVID cases as points
   #
@@ -160,8 +205,22 @@ figure_1_weekly
 # figure_1_weekly_count
 ggsave(file="output/figure_1_weekly_count.svg", plot=figure_1_weekly, width=16, height=8)
 
-write.csv(data,file="long_covid_monthly_count.csv", row.names = F)
-write.csv(data,file="long_covid_weekly_count.csv", row.names = F)
 
+#-- output count as additional check ---------------
+time_interval = "monthly"
+region="all"
+table_lc_monthly_count$count[is.na(table_lc_monthly_count$count)] = "[redacted]"
+write.csv(table_lc_monthly_count,file="output/long_covid_count_monthly_all.csv", row.names = F)
+rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+                  output_file="long_covid_count_monthly_all",output_dir="output")
+
+
+#-- output count as additional check ---------------
+time_interval = "weekly"
+region="all"
+table_lc_weekly_count$count[is.na(table_lc_weekly_count$count)] = "[redacted]"
+write.csv(table_lc_weekly_count,file="output/long_covid_count_weekly_all.csv", row.names = F)
+rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+                  output_file="long_covid_count_weekly_all",output_dir="output")
 
 

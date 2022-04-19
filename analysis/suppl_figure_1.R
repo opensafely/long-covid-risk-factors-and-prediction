@@ -57,7 +57,10 @@ index <- which(is.na(count_data$count))
 count_data$count[index] = count_data$percent[index] = count_data$labels[index] = "redacted"
 
 write.csv(count_data, file="output/suppl_figure_1_data.csv")
-htmlTable(count_data, file="output/suppl_figure_1_data.html")
+#htmlTable(count_data, file="output/suppl_figure_1_data.html")
+
+rmarkdown::render("analysis/compiled_snomed_count.Rmd",
+                  output_file="suppl_figure_1_data",output_dir="output")
  
 #supplementary figure 1
 ggsave(file="output/suppl_figure_1.svg", plot=suppl_figure1, width=16, height=8)

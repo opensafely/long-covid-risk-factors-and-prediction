@@ -1,5 +1,5 @@
 ---
-title: "Supplementary Figure 2 Data"
+title: "Table for long covid count"
 output: html_document
 ---
 
@@ -14,16 +14,15 @@ library(readr)
 knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
 ```
 
-## Compiled table for supplementary figure 2
+## Compiled table for hazard ratio estimates
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"
-df=read_csv("output/suppl_figure_2_data.csv")
+df=read_csv(paste0("output/long_covid_count_", time_interval,"_", region,".csv"))
 df %>%
     datatable(extensions = 'Buttons', rownames= FALSE,
               options = list(dom = 'Blfrtip', 
                              buttons = c('copy', 'csv', 'excel', 'pdf', 'print' ),
                              lengthMenu = list(c(50,-1),
                                                c(50,"All"))))
-```

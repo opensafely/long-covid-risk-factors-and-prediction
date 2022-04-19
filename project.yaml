@@ -61,8 +61,9 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        Figure_long_covid_monthly_count: output/figure_1_monthly_count.svg
-        Figure_long_covid_weekly_count: output/figure_1_weekly_count.svg
+        figure_long_covid_count_all: output/figure_1_*.svg
+        table_csv_long_covid_count_all: output/long_covid_count_*_all.csv  
+        table_html_long_covid_count_all: output/long_covid_count_*_all.html
   suppl_figure_1:
     run: r:latest analysis/suppl_figure_1.R
     needs:
@@ -78,16 +79,17 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        figure_monthly_long_covid: output/suppl_figure_2.svg     
-        table_csv_monthly_long_covid: output/suppl_figure_2_data.csv  
-        table_html_monthly_long_covid: output/suppl_figure_2_data.html
+        figure_long_covid_count_region: output/suppl_figure_2_*.svg     
+        table_csv_long_covid_count_region: output/long_covid_count_*.csv  
+        table_html_long_covid_region: output/long_covid_count_*.html
   summarise_survival_data:
     run: r:latest analysis/stage2_summarise_survival_data.R
     needs:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        summary_survival_data: output/survival_data.rds     
+        summary_survival_data_CSV: output/summarise_survival_data.csv
+        summary_survival_data_HTML: output/summarise_survival_data.html       
   development_cox_model:
     run: r:latest analysis/stage3_model_development.R
     needs:
@@ -105,3 +107,4 @@ actions:
       moderately_sensitive:
         performance_measure_CSV: output/performance_measures_*.csv
         performance_measure_HTML: output/performance_measures_*.html
+        survival_plot: output/survival_plot_*.svg
