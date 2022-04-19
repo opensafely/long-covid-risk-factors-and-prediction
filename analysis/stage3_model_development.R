@@ -71,16 +71,19 @@ cox_output <- function(fit_cox_model, which_model){
   ## Result
   results=as.data.frame(names(fit_cox_model$coefficients))
   colnames(results)="term"
+  
+  # Hazard ratio and 95% CI, P-value and S.E.
   results$hazard_ratio=exp(fit_cox_model$coefficients)
-  results$std.error=exp(sqrt(diag(vcov(fit_cox_model))))
-  results$p.value = round(pnorm(abs(fit_cox_model$coefficients/sqrt(diag(fit_cox_model$var))),lower.tail=F)*2,3)
   results$conf.low = exp(fit_cox_model$coefficients - 1.96* sqrt(diag(vcov(fit_cox_model))))
   results$conf.high = exp(fit_cox_model$coefficients + 1.96* sqrt(diag(vcov(fit_cox_model))))                                                   
+  results$p.value = round(pnorm(abs(fit_cox_model$coefficients/sqrt(diag(fit_cox_model$var))),lower.tail=F)*2,3)
+  results$std.error=exp(sqrt(diag(vcov(fit_cox_model))))
   
-  results$robust.se=exp(sqrt(diag(vcov(robust_fit_cox_model))))
+  # Hazard ratio and robust estimation for variance, and the resulting 95% CI, P-value and S.E.
   results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate CI
   results$robust.conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
   results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
+  results$robust.se=exp(sqrt(diag(vcov(robust_fit_cox_model))))
   
   results[,2:9] <- round(results[,2:9], 3)
   print("Print results")
