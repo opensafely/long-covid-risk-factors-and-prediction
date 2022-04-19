@@ -264,13 +264,26 @@ clinical_variables = dict(
     cov_cat_chronic_liver_disease=patients.with_these_clinical_events(
         chronic_liver_disease_codes, on_or_before="index_date - 1 day"
     ),
-    cov_cat_stroke_or_dementia=patients.satisfying(
-        "stroke OR dementia",
+    # cov_cat_stroke_or_dementia=patients.satisfying(
+    #     "stroke OR dementia",
+    #     stroke=patients.with_these_clinical_events(
+    #         stroke_gp_codes, on_or_before="index_date - 1 day"
+    #     ),
+    #     dementia=patients.with_these_clinical_events(
+    #         dementia_codes, on_or_before="index_date - 1 day"
+    #     ),
+    # ),
+
+    cov_cat_dementia=patients.satisfying(
+        "dementia",
+        dementia=patients.with_these_clinical_events(
+        dementia_codes, on_or_before="index_date - 1 day"
+        ),
+    ),
+    cov_cat_stroke=patients.satisfying(
+        "stroke",
         stroke=patients.with_these_clinical_events(
             stroke_gp_codes, on_or_before="index_date - 1 day"
-        ),
-        dementia=patients.with_these_clinical_events(
-            dementia_codes, on_or_before="index_date - 1 day"
         ),
     ),
     cov_cat_other_neuro=patients.with_these_clinical_events(
@@ -311,5 +324,23 @@ clinical_variables = dict(
     ),
     cov_cat_heart_failure=patients.with_these_clinical_events(
         heart_failure_codes, on_or_before = "index_date - 1 day"
+    ),
+    cov_cat_hypertension=patients.with_these_clinical_events(
+        hypertension_codes, on_or_before = "index_date - 1 day"
+    ),
+    cov_cat_mental_health=patients.with_these_clinical_events(
+        mental_health_codes, on_or_before = "index_date - 1 day"
+    ),
+    cov_cat_rheumatoid_arthritis=patients.with_these_clinical_events(
+        rheumatoid_arthritis_codes, on_or_before = "index_date - 1 day"
+    ),
+    cov_cat_chronic_kidney_disease=patients.with_these_clinical_events(
+        chronic_kidney_disease_codes, on_or_before = "index_date - 1 day"
+    ),
+    cov_cat_sle=patients.with_these_clinical_events(
+        sle_codes, on_or_before = "index_date - 1 day"
+    ),
+    cov_cat_psoriasis=patients.with_these_clinical_events(
+        psoriasis_codes, on_or_before = "index_date - 1 day"
     ),
 )

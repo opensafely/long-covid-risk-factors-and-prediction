@@ -168,3 +168,31 @@ smoking_codes = codelist_from_csv(
 heart_failure_codes = codelist_from_csv(
     "codelists/opensafely-heart-failure.csv", system="ctv3", column="CTV3ID"
 )
+hypertension_codes = codelist_from_csv(
+    "codelists/opensafely-hypertension.csv", system="ctv3", column="CTV3ID"
+)
+mental_health_codes = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-sev_mental.csv", 
+    system="snomed",
+    column="code",
+)
+rheumatoid_arthritis_codes = codelist_from_csv(
+    "codelists/opensafely-rheumatoid-arthritis.csv", 
+    system="ctv3",
+    column="CTV3ID",
+)
+chronic_kidney_disease_codes = codelist_from_csv(
+    "codelists/opensafely-chronic-kidney-disease-snomed.csv", 
+    system="snomed",
+    column="id",
+)
+sle_codes = codelist_from_csv(
+    "codelists/opensafely-systemic-lupus-erythematosus-sle.csv", 
+    system="ctv3",
+    column="CTV3ID",
+)
+psoriasis_codes = codelist_from_csv(
+    "codelists/opensafely-psoriasis.csv", 
+    system="ctv3",
+    column="code",
+)

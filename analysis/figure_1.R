@@ -12,7 +12,7 @@ library(lubridate); library(htmlTable);library(ggplot2)
 source("analysis/function_long_covid_count.R")
 
 #############################################
-#Part 1. Monthly long covid count by region #
+#Part 1. Monthly long covid count           #
 #############################################
 
 # Read in data and identify factor variables and numerical variables------------
@@ -97,7 +97,7 @@ ggsave(file="output/figure_1_long_covid_monthly_count.svg",
        plot=figure_1, width=16, height=8)
 
 #############################################
-#Part 2. Weekly long covid count by region  #
+#Part 2. Weekly long covid count            #
 #############################################
 
 # Read in data and identify factor variables and numerical variables------------
