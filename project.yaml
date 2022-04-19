@@ -53,8 +53,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/table_3.csv
-        incidence_rate_talbe_HTML: output/table_3.html
+        table_CSV: output/table_3.csv
+        talbe_HTML: output/table_3.html
   figure_1:
     run: r:latest analysis/figure_1.R
     needs:
