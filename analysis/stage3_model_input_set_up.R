@@ -44,9 +44,11 @@ covariate_names <- covariate_names[-grep("age", covariate_names)]
 ## remove previous covid history as a covariate
 covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_names)]
 
-## remove cov_cat_healthcare_worker
-covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_names)]
+### remove cov_cat_healthcare_worker
+# covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_names)]
 
+## remove covid_phenotype as a covariate as this would not have been available at baseline
+covariate_names <- covariate_names[-grep("cov_cat_covid_phenotype", covariate_names)]
 
 print("candidate predictors")
 covariate_names

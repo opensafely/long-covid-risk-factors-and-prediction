@@ -4,7 +4,7 @@
 
 
 library(readr); library(dplyr); library(rms); library(MASS)
-# library(survcomp) ## not yet available
+# library(survcomp) ## not yet available in opensafely
 
 ################################################################################
 # Part 1: load data, define inverse probability weighting                       #
@@ -264,7 +264,7 @@ names(pm) <- c("performance measure", "value")
 write.csv(pm, file=paste0("output/performance_measures_", which_model, ".csv"), 
           row.names=F)
 
-rmarkdown::render(paste0("analysis/compiled_PM_table",".Rmd"), 
+rmarkdown::render(paste0("analysis/compiled_performance_measure_table",".Rmd"), 
                   output_file=paste0("performance_measures_", which_model),
                   output_dir="output")
 # validate(fit_cox_model,B=100,bw=TRUE) # repeats fastbw 100 times
