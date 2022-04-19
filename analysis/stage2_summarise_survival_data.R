@@ -5,7 +5,7 @@
 
 library(prodlim);library(readr); library(dplyr); library(survival)
 
-data <- read_rds("output/survival_data.rds")
+data <- read_rds("output/input_stage1.rds")
 
 attach(data)
 #select <- data.frame(lcovid_surv_vax_c, lcovid_i_vax_c)
@@ -24,4 +24,4 @@ results <- rbind(a,b)
 
 rownames(results) <- c("median follow-up", "median survival time")
 
-write.csv(results, file="output/summarise_survival_data.csv")
+saveRDS(results, file="output/survival_data.rds")

@@ -81,6 +81,13 @@ actions:
         figure_monthly_long_covid: output/suppl_figure_2.svg     
         table_csv_monthly_long_covid: output/suppl_figure_2_data.csv  
         table_html_monthly_long_covid: output/suppl_figure_2_data.html
+  summarise_survival_data:
+    run: r:latest analysis/stage2_summarise_survival_data.R
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        summary_survival_data: output/survival_data.rds     
   development_cox_model:
     run: r:latest analysis/stage3_model_development.R
     needs:

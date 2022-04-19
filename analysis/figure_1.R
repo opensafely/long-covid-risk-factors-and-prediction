@@ -160,3 +160,8 @@ figure_1_weekly
 # figure_1_weekly_count
 ggsave(file="output/figure_1_weekly_count.svg", plot=figure_1_weekly, width=16, height=8)
 
+write.csv(data,file="long_covid_monthly_count.csv", row.names = F)
+write.csv(data,file="long_covid_weekly_count.csv", row.names = F)
+
+
+
