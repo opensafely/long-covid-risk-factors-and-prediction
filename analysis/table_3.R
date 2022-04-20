@@ -98,7 +98,7 @@ table_3$count[10] <-length(which(is.na(input$out_covid_date) &
                                  !is.na(input$out_first_long_covid_date)))
 
 ## 11. checking: long COVID
-table_3$count[11] <-length(which(!is.na(input$out_first_long_covid_date)))
+table_3$count[11] <-sum(!is.na(input$out_first_long_covid_date))
 
 #table_3
 
@@ -129,18 +129,19 @@ table_3$count[17] <- table_3$count[10] + sum(table_3$count[13:15])
 ## small number suppression
 
 index = which(table_3$count<=5)
+table_3$count[index] = "[redacted]"
 
 ## to avoid backward calculation for disclosure
 for(i in index){
   if(i %in% c(7,8,9,10)){
-    table_3$count[12] = table_3$count[12] - table_3$count[i]
+    #table_3$count[12] = table_3$count[12] - table_3$count[i]
+    table_3$count[12] = "[redacted]"
   }
   if(i %in% c(10,13,14,15)){
-    table_3$count[17] = table_3$count[17] - table_3$count[i]
+    #table_3$count[17] = table_3$count[17] - table_3$count[i]
+    table_3$count[17] = "[redacted]"
   }
 }
-
-table_3$count[which(table_3$count <=5)] = "[redacted]"
 
 write.csv(table_3,"output/table_3.csv",row.names=F)
 

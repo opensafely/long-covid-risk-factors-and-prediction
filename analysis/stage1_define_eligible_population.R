@@ -111,8 +111,26 @@ input <- read_rds("output/input_stage0.rds")
 # left join: keep all observations in input_select
 input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
 
+## for individuals whose first long covid date is after follow-up end, set first long covid date as na
+index <- which(input$out_first_long_covid_date > input$follow_up_end_date)
+input$out_first_long_covid_date[index] <- NA
+
+sum(!is.na(input$out_first_long_covid_date))
+
 rm(input_select)
 
+condition_names <- names(input)[grepl("cov_cat", names(input))]
+not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_worker",
+                     "cov_cat_imd","cov_cat_region","cov_cat_smoking_status",
+                     "cov_cat_covid_phenotype", "cov_cat_previous_covid",
+                     "cov_cat_ethnicity")
+
+condition_names <- condition_names[!condition_names%in%not_a_condition]
+
+input_select <- input %>% select(patient_id, condition_names)
+View(input_select)
+
+#input_select <- input_select %>% mutate(multimorbidity = 
 # ## specify follow-up end date ----------------------------------------------------------
 # input <- input %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, 
 #                                                              death_date, 
