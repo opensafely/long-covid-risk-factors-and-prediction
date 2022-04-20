@@ -66,8 +66,6 @@ demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region",
 outcome = "covid"
 outcome = "long covid"
 
-# data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
-# data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 ## calculate follow-up days
 data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
 #hist(data$person_days)
@@ -121,4 +119,3 @@ table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 write.csv(table_2, file="output/table_2.csv",row.names=F)
 
 rmarkdown::render("analysis/compiled_table2_results.Rmd", output_file="table_2",output_dir="output")
-
