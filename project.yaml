@@ -48,7 +48,7 @@ actions:
         incidence_rate_table_CSV: output/table_2.csv
         incidence_rate_talbe_HTML: output/table_2.html
   table_3:
-    run: r:latest analysis/table_3_elsie.R
+    run: r:latest analysis/table_3.R
     needs:
     - stage1_define_eligible_population
     outputs:
