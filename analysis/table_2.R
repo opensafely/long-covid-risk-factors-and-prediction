@@ -5,6 +5,9 @@
 
 library(readr); library(dplyr);library(lubridate)
 
+# function for small number suppression
+source("analysis/functions/redactor2.R")
+
 ## Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
@@ -26,18 +29,13 @@ long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_da
 covid_count <- length(which(data$out_covid_date >= data$index_date &
                                    data$out_covid_date <= data$follow_up_end_date))
 
-## write a function to calculate incidence rate
-## incidence rate for covid infection, do not calculate if event count <= 5
+## function to calculate incidence rate for covid infection, do not calculate if event count <= 5
 compute_incidence_rate <- function(event_count, person_days_total){
-  if(event_count > 5){
     person_years_total = round(person_days_total / 365.2,4)
     # ir = incidence rate
     ir = round(event_count/person_years_total,4)
     ir_lower = round(ir - 1.96 * sqrt(event_count/person_years_total^2),4)
     ir_upper = round(ir + 1.96 * sqrt(event_count/person_years_total^2),4)
-  }else{
-    person_years_total = event_count = ir = ir_lower = ir_upper = "redacted"
-  }
   return(c(event_count,person_years_total, ir, ir_lower, ir_upper))
 }
 
@@ -109,11 +107,18 @@ for(outcome in c("covid", "long covid")){
 }
 
 
+
+table_2$event_count <- redactor2(table_2$event_count)
+
+# impose an NA for testing
+#table_2$event_count[1:2] = NA
+
+col_names <- c("event_count", "person_years", "ir", "ir_lower", "ir_upper")
+table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
+
 table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 
 write.csv(table_2, file="output/table_2.csv",row.names=F)
 
 rmarkdown::render("analysis/compiled_table2_results.Rmd", output_file="table_2",output_dir="output")
-
-
 
