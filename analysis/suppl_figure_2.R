@@ -12,6 +12,9 @@ library(lubridate); library(htmlTable);library(ggplot2)
 
 source("analysis/function_long_covid_count.R")
 
+# function for small number suppression
+source("analysis/functions/redactor2.R")
+
 #############################################
 #Part 1. Monthly long covid count by region #
 #############################################
@@ -42,7 +45,8 @@ for(i in region){
 }
 
 #---small number suppression ---------------------------------------------------
-table_lc_monthly_count$count[which(table_lc_monthly_count$count <=5)] = NA 
+# use redactor function as it suppresses small numbers until total suppressed is > threshold
+table_lc_monthly_count$count <- redactor2(table_lc_monthly_count$count)
 
 # Multiple time series in one plot  --------------------------------------------
 ymax = max(table_lc_monthly_count$count)
@@ -153,6 +157,8 @@ suppl_figure_2_weekly <- ggplot(table_lc_weekly_count,
                                       legend.position = "right")
 
 #---small number suppression ---------------------------------------------------
+# use redactor function as it suppresses small numbers until total suppressed is > threshold
+table_lc_weekly_count$count <- redactor2(table_lc_weekly_count$count)
 index = which(is.na(table_lc_weekly_count$count))
 table_lc_weekly_count$count[index] = "[redacted]"
 
