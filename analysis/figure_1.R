@@ -67,7 +67,7 @@ figure_1 <- ggplot(table_lc_monthly_count, aes(x=year_month,
                 #
                 geom_line()+ 
                 #
-                geom_hline(yintercept=6, linetype="dashed", color = "red") +
+                #geom_hline(yintercept=6, linetype="dashed", color = "red") +
                 #
                 scale_x_date(breaks = seq.Date(from = ymd("2020/12/01"), # Specify limits by hand
                                                to = ymd("2022/03/01"),
@@ -136,7 +136,7 @@ figure_1_weekly <- ggplot(table_lc_weekly_count, aes(x=year_week,
                           #
                           geom_line()+ 
                           #
-                          geom_hline(yintercept=6, linetype="dashed", color = "red") +
+                          #geom_hline(yintercept=6, linetype="dashed", color = "red") +
                           #
                           scale_x_date(breaks = seq.Date(from = ymd("2020/12/01"), # Specify limits by hand
                                                          to = ymd("2022/03/01"),

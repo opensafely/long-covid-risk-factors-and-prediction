@@ -1,6 +1,5 @@
 library(tidyverse)
 
-start.time = Sys.time()
 input <- read_rds("output/input_stage1.rds")
 
 covariate_names <- names(input)[grepl("cov_", names(input))]
@@ -100,13 +99,7 @@ table3<- table3 %>%
 
 write.csv(table3,file="output/table_3.csv",row.names=F)
 
-csv_file ="table3"
+csv_file ="table_3"
 rmarkdown::render("analysis/compiled_table3_results.Rmd", output_file="table_3",
                   output_dir="output")
 
-
-end.time = Sys.time()
-
-run.time = end.time - start.time
-
-run.time

@@ -22,8 +22,6 @@
 
 library(readr); library(dplyr)
 
-start.time = Sys.time()
-
 ## Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
 
@@ -149,8 +147,3 @@ write.csv(table_3,"output/table_3.csv",row.names=F)
 csv_file ="table_3"
 rmarkdown::render("analysis/compiled_table3_results.Rmd", output_file="table_3",output_dir="output")
 
-end.time = Sys.time()
-
-run.time = end.time - start.time
-
-run.time
