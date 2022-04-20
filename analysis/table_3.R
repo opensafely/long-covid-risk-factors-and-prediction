@@ -36,7 +36,7 @@ table_3$sequence <- c("1. COVID-VAX-Long COVID",
                       "3. VAX-COVID-Long COVID",
                       "4. COVID-VAX",
                       "5. VAX-COVID",
-                      "6. VAX-No COVID",
+                      "6. COVID != na & VAX == na & long COVID == na",
                       "7. long COVID-COVID",
                       "8. same day COVID and long COVID",
                       "9. COVID-long COVID",
@@ -92,7 +92,7 @@ table_3$count[9] <-length(which(input$out_covid_date  < input$out_first_long_cov
                                    !is.na(input$out_covid_date) & !is.na(input$out_first_long_covid_date)))
 
 
-## 10. checking: COVID na but long COVID is not na
+## 10. checking: COVID na but long COVID is !na
 
 table_3$count[10] <-length(which(is.na(input$out_covid_date) &
                                  !is.na(input$out_first_long_covid_date)))
@@ -107,7 +107,7 @@ total_long_covid = sum(table_3$count[7:10])
 ## 12. validate long covid count
 table_3$count[12] = total_long_covid
 
-## 13. checking: long COVID na but COVID is not na
+## 13. checking: long COVID na but COVID !na
 table_3$count[13] <-length(which(!is.na(input$out_covid_date) &
                                    is.na(input$out_first_long_covid_date)))
 
@@ -145,5 +145,6 @@ for(i in index){
 
 write.csv(table_3,"output/table_3.csv",row.names=F)
 
+csv_file ="table_3"
 rmarkdown::render("analysis/compiled_table3_results.Rmd", output_file="table_3",output_dir="output")
 

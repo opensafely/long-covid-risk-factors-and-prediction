@@ -12,6 +12,9 @@ library(lubridate); library(htmlTable);library(ggplot2)
 
 source("analysis/function_long_covid_count.R")
 
+# function for small number suppression
+source("analysis/functions/redactor2.R")
+
 #############################################
 #Part 1. Monthly long covid count by region #
 #############################################
@@ -42,7 +45,8 @@ for(i in region){
 }
 
 #---small number suppression ---------------------------------------------------
-table_lc_monthly_count$count[which(table_lc_monthly_count$count <=5)] = NA 
+# use redactor function as it suppresses small numbers until total suppressed is > threshold
+table_lc_monthly_count$count <- redactor2(table_lc_monthly_count$count)
 
 # Multiple time series in one plot  --------------------------------------------
 ymax = max(table_lc_monthly_count$count)
@@ -75,17 +79,6 @@ suppl_figure_2 <- ggplot(table_lc_monthly_count,
                               legend.text = element_text(size = 14),
                               legend.position = "right")
 
-#---small number suppression ---------------------------------------------------
-table_lc_monthly_count$count[which(table_lc_monthly_count$count <=5)] = "[redacted]"
-
-# Output underlying count data for supplementary figure 2 ----------------------
-write.csv(table_lc_monthly_count, file="output/long_covid_count_monthly_by_region.csv")
-
-time_interval = "monthly"
-region = "by_region"
-rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
-                  output_file="long_covid_count_monthly_by_region",
-                  output_dir="output")
 
 # Output supplementary figure 2
 ggsave(file=paste0("output/suppl_figure_2_monthly_by_region", ".svg"), 
@@ -121,6 +114,10 @@ for(i in region){
   table_lc_weekly_count[start:end,5] = rep(i, 70)
 }
 
+#---small number suppression ---------------------------------------------------
+# use redactor function as it suppresses small numbers until total suppressed is > threshold
+table_lc_weekly_count$count <- redactor2(table_lc_weekly_count$count)
+
 # Multiple time series in one plot  --------------------------------------------
 ymax = max(table_lc_weekly_count$count)
 suppl_figure_2_weekly <- ggplot(table_lc_weekly_count,
@@ -152,19 +149,31 @@ suppl_figure_2_weekly <- ggplot(table_lc_weekly_count,
                                       legend.text = element_text(size = 14),
                                       legend.position = "right")
 
-#---small number suppression ---------------------------------------------------
-index = which(is.na(table_lc_weekly_count$count))
-table_lc_weekly_count$count[index] = "[redacted]"
 
-# Output underlying count data for supplementary figure 2 ----------------------
+# index = which(is.na(table_lc_weekly_count$count))
+# table_lc_weekly_count$count[index] = "[redacted]"
+
+# Output supplementary figure 2-------------------------------------------------
+ggsave(file=paste0("output/suppl_figure_2_weekly", ".svg"), 
+       plot=suppl_figure_2, width=16, height=8)
+
+# Output underlying monthly count data for supplementary figure 2 ----------------------
+table_lc_monthly_count$count[is.na(table_lc_monthly_count$count)] = "[redacted]"
+write.csv(table_lc_monthly_count, file="output/long_covid_count_monthly_by_region.csv")
+
+time_interval = "monthly"
+region = "by_region"
+rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+                  output_file="long_covid_count_monthly_by_region",
+                  output_dir="output")
+
+# Output underlying weekly count data for supplementary figure 2 ----------------------
+table_lc_weekly_count$count[is.na(table_lc_weekly_count$count)] = "[redacted]"
 write.csv(table_lc_weekly_count, file="output/long_covid_count_weekly_by_region.csv")
-
 time_interval = "weekly"
 region = "by_region"
 rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
                   output_file="long_covid_count_weekly_by_region",output_dir="output")
 
-# Output supplementary figure 2-------------------------------------------------
-ggsave(file=paste0("output/suppl_figure_2_weekly", ".svg"), 
-       plot=suppl_figure_2, width=16, height=8)
+
 
