@@ -9,17 +9,13 @@ library(readr); library(dplyr);library(lubridate)
 input <- read_rds("output/input_stage1.rds")
 
 ## define variables to keep
-drop <- names(input)[grepl("cov_", names(input))]
-keep <- names(input)[!names(input)%in%(drop)]
-drop <- names(input)[grepl("vax_", names(input))]
-keep <- names(input)[!names(input)%in%(drop)]
+vax <- names(input)[grepl("vax_covid_", names(input))]
+keep <- names(input)[!names(input)%in%(vax)]
 data <- input[,keep]
 
-
 ## calculate follow-up days
-data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
-#hist(data$person_days)
-data <- data %>% filter(person_days >= 1 & person_days <= 486)
+data <- data %>% rename(person_days = lcovid_surv_vax_c) # days from time origin to follow-up end date, previously calculated
+hist(data$person_days)
 person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
 
 ## long covid count
@@ -72,8 +68,8 @@ demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region",
 outcome = "covid"
 outcome = "long covid"
 
-data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
-data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
+# data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
+# data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 ## calculate follow-up days
 data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
 #hist(data$person_days)

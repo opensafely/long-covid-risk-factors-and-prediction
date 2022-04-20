@@ -93,7 +93,9 @@ input_select <- input_select%>% rowwise() %>% mutate(follow_up_end_date=min(out_
 input_select <- input_select %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
 ## define days since follow-up to long COVID diagnosis, vaccination censored long covid diagnosis
-input_select$lcovid_surv_vax_c <- as.numeric(input_select$follow_up_end_date - input_select$index_date)
+input_select$lcovid_surv_vax_c <- as.numeric(input_select$follow_up_end_date - input_select$index_date)+1
+
+input_select <- input_select %>% filter(lcovid_surv_vax_c >= 1 & lcovid_surv_vax_c<= 486)
 
 ## define event indicator, vaccination censored long covid diagnosis
 input_select <- input_select %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= follow_up_end_date & 
