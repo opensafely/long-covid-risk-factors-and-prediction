@@ -23,7 +23,7 @@ calculate_long_covid_monthly_cases<-function(input){
     data$count[i]<-length(which(input$year == data$year[i] & input$month == data$month[i]))
   }
   #---small number suppression------------------
-  data$count[which(data$count <=5)] = NA
+  # data$count[which(data$count <=5)] = NA
   return(data)
 }
 
@@ -56,7 +56,7 @@ calculate_long_covid_weekly_cases<-function(input){
   data_weekly <- data_weekly[,2:ncol(data_weekly)]
   
   # #---small number suppression------------------
-  data_weekly$count[which(data_weekly$count <=5)] = NA
+  # data_weekly$count[which(data_weekly$count <=5)] = NA
   return(data_weekly)
 }
 
