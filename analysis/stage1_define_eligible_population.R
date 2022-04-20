@@ -128,7 +128,7 @@ not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_work
 condition_names <- condition_names[!condition_names%in%not_a_condition]
 
 input_select <- input %>% select(patient_id, condition_names)
-View(input_select)
+#View(input_select)
 
 #input_select <- input_select %>% mutate(multimorbidity = 
 # ## specify follow-up end date ----------------------------------------------------------
