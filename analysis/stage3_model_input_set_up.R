@@ -7,10 +7,9 @@
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 
-####################################################################################################
-# Part 1: load data, define inverse probability weighting, fit cox model and assess PH assumption  #
-#         variable selection using backward elimination                                            #
-####################################################################################################
+################################################################################
+# Part 1: load data, define inverse probability weighting,                     #
+################################################################################
 
 input <- read_rds("output/input_stage1.rds")
 
@@ -50,6 +49,9 @@ covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_nam
 ## remove covid_phenotype as a covariate as this would not have been available at baseline
 covariate_names <- covariate_names[-grep("cov_cat_covid_phenotype", covariate_names)]
 
+## remove as a covariate as this would not have been available at baseline
+#covariate_names <- covariate_names[-grep("cov_num_multimorbidity", covariate_names)]
+
 print("candidate predictors")
 covariate_names
 
@@ -66,10 +68,21 @@ variables_to_keep <- c("patient_id", "practice_id",
 input <- input %>% dplyr::select(all_of(variables_to_keep))
 
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
+
+################################################################################
+# Part 2: define survival analysis formula                                     #
+################################################################################
 surv_formula <- paste0(
   "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
   paste(covariate_names, collapse = "+"),
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
+  "+ cluster(practice_id)"
+)
+
+surv_formula_lp <- paste0(
+  "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
+  paste(covariate_names, collapse = "+"),
+  "+ cov_num_age", 
   "+ cluster(practice_id)"
 )
 
@@ -79,9 +92,36 @@ surv_formula_predictors <- paste0(
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
   "+ cluster(practice_id)"
 )
+
+surv_formula_predictors_lp <- paste0(
+  " ~ ",
+  paste(covariate_names, collapse = "+"),
+  "+ cov_num_age", 
+  "+ cluster(practice_id)"
+)
+
 print(paste0("survival formula: ", surv_formula))
 
 dd <<- datadist(input)
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 
+################################################################################
+# Part 3: Assess if non-linear term is needed for continuous age  
+#         and redefine the survival analysis formula
+################################################################################
+
+
+fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
+                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
+                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
+  surv_formula = surv_formula_lp
+  surv_formula_predictors = surv_formula_predictors_lp
+}
+
+print(paste0("The formula for fitting Cox model is: ", surv_formula))
+print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
 

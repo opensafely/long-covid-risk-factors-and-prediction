@@ -7,7 +7,7 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available in opensafely
 
 ################################################################################
-# Part 1: load data, define inverse probability weighting                       #
+# Part 1: load data, fit Cox model                                             #
 ################################################################################
 
 # load data, with defined weight, and import formula for survival analysis 
@@ -17,6 +17,10 @@ print("Fitting cox model:")
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+# check proportional hazards assumption
+
+cox.zph(fit_cox_model)
 
 which_model="full"
 
