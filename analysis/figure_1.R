@@ -11,6 +11,9 @@ library(lubridate); library(htmlTable);library(ggplot2)
 
 source("analysis/function_long_covid_count.R")
 
+# function for small number suppression
+source("analysis/functions/redactor2.R")
+
 #############################################
 #Part 1. Monthly long covid count           #
 #############################################
@@ -43,7 +46,8 @@ table_lc_monthly_count <- calculate_long_covid_monthly_cases(input)
 
 
 #---small number suppression ----------------------------------------------------
-table_lc_monthly_count$count[which(table_lc_monthly_count$count <=5)] = NA
+# use redactor function as it suppresses small numbers until total suppressed is > threshold
+table_lc_monthly_count$count <- redactor2(table_lc_monthly_count$count)
 
 # # Work out the limit for y axis ------------------------------------------------
 # count_min <- min(data$count)
@@ -119,7 +123,8 @@ table_lc_weekly_count <- data.frame(year = numeric(),
 table_lc_weekly_count <- calculate_long_covid_weekly_cases(input)
 
 #---small number suppression ---------------------------------------------------
-table_lc_weekly_count$count[which(table_lc_weekly_count$count <=5)] = NA
+# use redactor function as it suppresses small numbers until total suppressed is > threshold
+table_lc_weekly_count$count <- redactor2(table_lc_weekly_count$count)
 
 # Produce Figure 1 Weekly count-------------------------------------------------
 figure_1_weekly <- ggplot(table_lc_weekly_count, aes(x=year_week, 
