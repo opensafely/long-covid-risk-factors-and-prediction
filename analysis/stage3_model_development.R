@@ -107,7 +107,9 @@ cox_output <- function(fit_cox_model, which_model){
   plot(cal)
   dev.off()
   }
-
+  
+  results <-results %>% dplyr::select(-contains("robust"))
+  
   write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, ".csv"), 
                           row.names=F)
   rmarkdown::render(paste0("analysis/compiled_HR_results",".Rmd"), 
