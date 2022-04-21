@@ -3,8 +3,10 @@
 # Content: Supplementary figure 1. Pie chart of snomed code for long COVID
 # Output:  suppl_figure_1.svg
 
-library(readr); library(dplyr); library("arrow"); library("data.table"); 
-library(lubridate); library(htmlTable); library(ggplot2)
+# function for small number suppression
+source("analysis/functions/redactor2.R")
+
+library(readr); library(dplyr); library(lubridate)
 
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
@@ -20,6 +22,8 @@ snomed_code <- input$out_first_long_covid_code
 count_data <-table(snomed_code)
 
 count_data <- data.frame(count_data)
+
+
 names(count_data) <- c("snomed_code", "count")
 count_data
 count_data$percent = round(count_data$count / sum(count_data$count),3)
@@ -30,7 +34,12 @@ percent_function <- function(x, digits = 1, format = "f", ...) {
 
 count_data$labels = percent_function(count_data$percent)
 
-# small number suppression
+count_data$count <- redactor2(count_data$count)
+index = which(is.na(count_data$count))
+col_names <- c("count","percent","labels")
+count_data[index,col_names]= NA
+
+# use redactor for small number suppression
 index <- which(count_data$count < 6)
 count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
 
@@ -50,14 +59,12 @@ suppl_figure1 <- ggplot(count_data_active, aes(x = "", y = count, fill = snomed_
 
 suppl_figure1
 
-
 # output underlying count data for supplementary figure 1
-# small number suppression
-index <- which(is.na(count_data$count))
-count_data$count[index] = count_data$percent[index] = count_data$labels[index] = "redacted"
+
+# small number suppression - indicate NA as redacted
+count_data[which(is.na(count_data$count)),col_names]="[redacted]" 
 
 write.csv(count_data, file="output/suppl_figure_1_data.csv")
-#htmlTable(count_data, file="output/suppl_figure_1_data.html")
 
 rmarkdown::render("analysis/compiled_snomed_count.Rmd",
                   output_file="suppl_figure_1_data",output_dir="output")
