@@ -6,7 +6,7 @@
 # function for small number suppression
 source("analysis/functions/redactor2.R")
 
-library(readr); library(dplyr); library(lubridate)
+library(readr); library(dplyr); library(ggplot2)
 
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1.rds")
@@ -59,6 +59,10 @@ suppl_figure1 <- ggplot(count_data_active, aes(x = "", y = count, fill = snomed_
 
 suppl_figure1
 
+#supplementary figure 1
+ggsave(file="output/suppl_figure_1.svg", plot=suppl_figure1, width=16, height=8)
+
+
 # output underlying count data for supplementary figure 1
 
 # small number suppression - indicate NA as redacted
@@ -69,5 +73,3 @@ write.csv(count_data, file="output/suppl_figure_1_data.csv")
 rmarkdown::render("analysis/compiled_snomed_count.Rmd",
                   output_file="suppl_figure_1_data",output_dir="output")
  
-#supplementary figure 1
-ggsave(file="output/suppl_figure_1.svg", plot=suppl_figure1, width=16, height=8)
