@@ -17,7 +17,6 @@ input$index_date = as.Date(index_date)
 # create an indicator variable for covid infection
 input$out_covid <- ifelse(is.na(input$out_covid_date), FALSE, TRUE)
 
-
 # create a categorical variable to indicate covid phenotype: -------------------
 # no infection, non-hospitalised covid and hospitalised covid
 input$cov_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), "no_infection", "non_hospitalised")
@@ -42,7 +41,6 @@ input <- input %>% dplyr::select(patient_id, practice_id, index_date, death_date
                           sort(tidyselect::peek_vars()))
 
 # Step 3. define variable types: factor or numerical or date--------------------
-
 # For categorical factors, specify references-----------------------------------
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
@@ -62,17 +60,6 @@ input$cov_cat_imd <- ordered(input$cov_cat_imd,
                              levels = c("1 (most deprived)","2","3","4","5 (least deprived)", "0 (missing)"))
 
 # for ordered factor, the first level is taken as reference level
-
-#table(input$cov_cat_imd)
-
-
-# input <- input %>% filter(cov_cat_imd != "0 (missing)")
-# 
-# input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("1 (most deprived)","2","3","4","5 (least deprived)"))
-
-# cov_cat_asthma ---------------------------------------------------------------
-# levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma)==0] <-"No asthma"
-# levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma) == 1 | levels(input$cov_cat_asthma) == 2 ] <-"Asthma"
 
 ## cov_cat_smoking_status-------------------------------------------------------
 table(input$cov_cat_smoking_status)

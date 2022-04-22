@@ -6,9 +6,10 @@
 library(readr); library(dplyr); library(htmlTable)
 input <- read_rds("output/input_stage0.rds")
 
-population <- "unvaccianted"
+###############################################################################
+#Part 1. Define eligible population                                           #
+###############################################################################
 
-# Define eligible population--------------------------------------------
 steps <- c("starting point","dead before index date", "missing sex", "missing age", "age <18y", "age>105y", "ethnicity")
 # starting point
 flow_chart_n <- nrow(input)
@@ -63,15 +64,13 @@ write.csv(flow_chart, file="output/flow_chart.csv", row.names = F)
 rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file ="flow_chart", 
                   output_dir = "output")
 
-#---------define follow-up end date---------------------------------------------
+###############################################################################
+#Part 2. Define follow-up end date and contruct survival data for long covid  #
+###############################################################################
 
 ## study period: index date = "2020-12-01", end date = "2022-03-31"
 cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
 input$cohort_end_date = cohort_end
-
-#-------------------------------------------------------------------------------
-## population = "unvaccinated"
-## for unvaccianted population, the follow-up start date is the index date
 
 
 ## To improve efficiency: keep only necessary variables
@@ -79,7 +78,9 @@ input$cohort_end_date = cohort_end
 variables_to_keep <-c("patient_id", "out_first_long_covid_date",
                       "death_date", "cohort_end_date", "index_date")
 
-input_select <- input[,variables_to_keep]
+#input_select <- input[,variables_to_keep]
+
+input_select <- input%>% dplyr::select(all_of(variables_to_keep))
 
 ## to increase efficiency
 rm(input)
@@ -92,12 +93,13 @@ input_select <- input_select%>% rowwise() %>% mutate(follow_up_end_date=min(out_
 
 input_select <- input_select %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
-## define days since follow-up to long COVID diagnosis
+
+## Definition 1. time to long COVID without censoring for vaccination ----------         
+##days since index date to long COVID diagnosis, without censoring for vaccination
 input_select$lcovid_surv<- as.numeric(input_select$follow_up_end_date - input_select$index_date)+1
-
-input_select <- input_select %>% filter(lcovid_surv >= 1 & lcovid_surv<= 486)
-
-## define event indicator
+max_fup <- as.numeric(cohort_end - input_select$index_date[1])+1
+input_select <- input_select %>% filter(lcovid_surv >= 0 & lcovid_surv<= max_fup) 
+## define event indicator, without censoring for vaccination
 input_select <- input_select %>% mutate(lcovid_i = ifelse((out_first_long_covid_date <= follow_up_end_date & 
                                                      out_first_long_covid_date >= index_date &
                                                      !is.na(out_first_long_covid_date)), 1, 0))

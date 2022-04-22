@@ -1,12 +1,12 @@
 library(tidyverse)
 
+source("analysis/functions/redactor2.R")
+
 input <- read_rds("output/input_stage1.rds")
 
 covariate_names <- names(input)[grepl("cov_", names(input))]
 variables_to_keep <-names(input)[!names(input)%in%(covariate_names)]
 input <- input[,variables_to_keep]
-
-source("analysis/functions/redactor2.R")
 
 # transform data to long format and calculate sequence of events
 input_long_1 <- input %>% 
