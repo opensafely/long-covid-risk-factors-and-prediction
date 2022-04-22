@@ -20,7 +20,7 @@ source("analysis/functions/redactor2.R")
 #############################################
 
 # Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 
 # keep only observations where long covid indicator is 1
 input <- input %>% filter(lcovid_i == 1)

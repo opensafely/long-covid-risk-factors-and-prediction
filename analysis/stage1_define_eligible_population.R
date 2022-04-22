@@ -1,7 +1,7 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
 # Content: define eligible population
-# Output:  input_stage1.rds
+# Output:  input_stage1_all.rds; input_stage1_vaccinated.rds
 
 library(readr); library(dplyr); library(htmlTable)
 input <- read_rds("output/input_stage0.rds")

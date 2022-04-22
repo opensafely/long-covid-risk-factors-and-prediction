@@ -106,8 +106,6 @@ for(outcome in c("covid", "long covid")){
     }
 }
 
-
-
 table_2$event_count <- redactor2(table_2$event_count)
 
 # impose an NA for testing

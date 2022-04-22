@@ -3,7 +3,7 @@
 ## Content: Prepare variables
 ## Output:  input_stage0.rds
 
-## naming principles: 
+## Naming principles: 
 ## 1. variable names starting with "cov_cat_" indicate categorical covariates
 ## 2. variable names starting with "cov_num_" indicate numerical covariates
 ## 3. variable names starting with "out_" indicate outcome variables
