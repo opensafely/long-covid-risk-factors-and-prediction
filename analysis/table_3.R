@@ -2,7 +2,7 @@ library(tidyverse)
 
 source("analysis/functions/redactor2.R")
 
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 
 covariate_names <- names(input)[grepl("cov_", names(input))]
 variables_to_keep <-names(input)[!names(input)%in%(covariate_names)]

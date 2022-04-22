@@ -8,7 +8,6 @@ library(readr); library(dplyr); library(arrow); library(data.table)
 library(lubridate); library(htmlTable);library(ggplot2)
 
 ## Load functions to calculate long covid cases
-
 source("analysis/function_long_covid_count.R")
 
 # function for small number suppression
@@ -19,7 +18,7 @@ source("analysis/functions/redactor2.R")
 #############################################
 
 # Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 
 # keep only observations where long covid indicator is 1
 input <- input %>% filter(lcovid_i == 1)
@@ -105,7 +104,7 @@ ggsave(file="output/figure_1_long_covid_monthly_count.svg",
 #############################################
 
 # Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 
 # keep only observations where long covid indicator is 1
 input <- input %>% filter(lcovid_i == 1)

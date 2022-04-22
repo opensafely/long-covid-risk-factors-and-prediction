@@ -11,10 +11,10 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # Part 1: load data, define inverse probability weighting,                     #
 ################################################################################
 
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 
 cases <- input %>% filter(!is.na(out_first_long_covid_date) & 
-                                  (out_first_long_covid_date == follow_up_end_date))
+                                  (out_first_long_covid_date == fup_end_date))
 
 non_cases <- input %>% filter(!patient_id %in% cases$patient_id)
 
@@ -37,20 +37,9 @@ input <- bind_rows(cases,non_cases)
 ## extract candidate predictors
 covariate_names <- names(input)[grep("cov_", names(input))]
 
-## remove categorical and continuous age
+## remove categorical and continuous age, as continuous age will be added
+## later as with a spline function
 covariate_names <- covariate_names[-grep("age", covariate_names)]
-
-## remove previous covid history as a covariate
-covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_names)]
-
-### remove cov_cat_healthcare_worker
-# covariate_names <- covariate_names[-grep("cov_cat_healthcare_worker", covariate_names)]
-
-## remove covid_phenotype as a covariate as this would not have been available at baseline
-covariate_names <- covariate_names[-grep("cov_cat_covid_phenotype", covariate_names)]
-
-## remove as a covariate as this would not have been available at baseline
-#covariate_names <- covariate_names[-grep("multimorbidity", covariate_names)]
 
 print("candidate predictors")
 covariate_names
@@ -72,6 +61,9 @@ knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 ################################################################################
 # Part 2: define survival analysis formula                                     #
 ################################################################################
+
+## linear predictors + a restricted cubic spline for age + clustering effect 
+## for practice 
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_i) ~ ",
   paste(covariate_names, collapse = "+"),
@@ -79,6 +71,7 @@ surv_formula <- paste0(
   "+ cluster(practice_id)"
 )
 
+## age is added as a linear predictor
 surv_formula_lp <- paste0(
   "Surv(lcovid_surv, lcovid_i) ~ ",
   paste(covariate_names, collapse = "+"),
@@ -86,6 +79,7 @@ surv_formula_lp <- paste0(
   "+ cluster(practice_id)"
 )
 
+## only predictors
 surv_formula_predictors <- paste0(
   " ~ ",
   paste(covariate_names, collapse = "+"),
@@ -93,6 +87,7 @@ surv_formula_predictors <- paste0(
   "+ cluster(practice_id)"
 )
 
+## only linear predictors
 surv_formula_predictors_lp <- paste0(
   " ~ ",
   paste(covariate_names, collapse = "+"),
@@ -102,6 +97,7 @@ surv_formula_predictors_lp <- paste0(
 
 print(paste0("survival formula: ", surv_formula))
 
+## set up before using rms::cph
 dd <<- datadist(input)
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 
@@ -109,7 +105,6 @@ options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 # Part 3: Assess if non-linear term is needed for continuous age  
 #         and redefine the survival analysis formula
 ################################################################################
-
 
 fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)

@@ -5,7 +5,7 @@
 
 library(prodlim);library(readr); library(dplyr); library(survival)
 
-data <- read_rds("output/input_stage1.rds")
+data <- read_rds("output/input_stage1_all.rds")
 
 attach(data)
 #select <- data.frame(lcovid_surv, lcovid_i)

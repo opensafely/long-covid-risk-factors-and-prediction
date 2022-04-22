@@ -23,11 +23,11 @@ person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
 
 ## long covid count
 long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
-                                 data$out_first_long_covid_date <= data$follow_up_end_date))
+                                 data$out_first_long_covid_date <= data$fup_end_date))
 
 ## covid count
 covid_count <- length(which(data$out_covid_date >= data$index_date &
-                                   data$out_covid_date <= data$follow_up_end_date))
+                                   data$out_covid_date <= data$fup_end_date))
 
 ## function to calculate incidence rate for covid infection, do not calculate if event count <= 5
 compute_incidence_rate <- function(event_count, person_days_total){
@@ -66,10 +66,10 @@ demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region",
 outcome = "covid"
 outcome = "long covid"
 
-# data <- data %>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
-# data <- data %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
+# data <- data %>% rowwise() %>% mutate(fup_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
+# data <- data %>% filter(fup_end_date >= index_date & fup_end_date != Inf)
 ## calculate follow-up days
-data <- data %>% mutate(person_days = as.numeric(as.Date(follow_up_end_date) - as.Date(index_date))+1)
+data <- data %>% mutate(person_days = as.numeric(as.Date(fup_end_date) - as.Date(index_date))+1)
 #hist(data$person_days)
 data <- data %>% filter(person_days >= 1 & person_days <= 486)
 
@@ -91,11 +91,11 @@ for(outcome in c("covid", "long covid")){
             sub_data <- data[which(data[,i]==j),]
             if(outcome == "covid"){
               count <- length(which(sub_data$out_covid_date >= sub_data$index_date &
-                                          sub_data$out_covid_date <= sub_data$follow_up_end_date))
+                                          sub_data$out_covid_date <= sub_data$fup_end_date))
             }
             if(outcome=="long covid"){
               count <- length(which(sub_data$out_first_long_covid_date >= sub_data$index_date &
-                                    sub_data$out_first_long_covid_date <= sub_data$follow_up_end_date))
+                                    sub_data$out_first_long_covid_date <= sub_data$fup_end_date))
 
             }
             # calculate total follow-up days

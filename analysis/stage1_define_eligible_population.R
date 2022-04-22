@@ -7,46 +7,47 @@ library(readr); library(dplyr); library(htmlTable)
 input <- read_rds("output/input_stage0.rds")
 
 ###############################################################################
-#Part 1. Define eligible population                                           #
+## Part 1. Define eligible population                                           #
 ###############################################################################
 
-steps <- c("starting point","dead before index date", "missing sex", "missing age", "age <18y", "age>105y", "ethnicity")
-# starting point
+steps <- c("starting point","dead before index date", "missing sex", 
+           "missing age", "age <18y", "age>105y", "ethnicity")
+## starting point
 flow_chart_n <- nrow(input)
 
-# Dead: removed if dead before index date
+#] Dead: removed if dead before index date
 input <- input%>%filter(death_date > index_date | is.na(death_date))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# Sex: remove if missing
+#] Sex: remove if missing
 input <- input%>%filter(!is.na(cov_cat_sex))
 table(input$cov_cat_sex)
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# Age: remove if missing
+#] Age: remove if missing
 input <- input%>%filter(!is.na(cov_num_age))
 #table(input$cov_cat_age)
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# Adult: remove if age < 18
+## Adult: remove if age < 18
 input <- input%>%filter(cov_num_age>=18)
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# Adult: remove if age > 105 years
+## Adult: remove if age > 105 years
 input <- input%>%filter(cov_num_age <=105)
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# Ethnicity: remove if missing
+## Ethnicity: remove if missing
 input <- input%>%filter(!is.na(cov_cat_ethnicity))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-# previous long covid
+## previous long covid
 #cohort_start = as.Date("2020-12-01", format="%Y-%m-%d")
 #index <- which(input$out_first_long_covid_date < cohort_start)
 
-#table(input$cov_cat_previous_covid)
-#input <- input%>%filter(cov_cat_previous_covid == "No COVID code")
-#flow_chart_n <- c(flow_chart_n, nrow(input))
+##table(input$cov_cat_previous_covid)
+##input <- input%>%filter(cov_cat_previous_covid == "No COVID code")
+##flow_chart_n <- c(flow_chart_n, nrow(input))
 
 flow_chart<-data.frame(steps, flow_chart_n)
 
@@ -72,13 +73,9 @@ rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file ="flow_
 cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
 input$cohort_end_date = cohort_end
 
-
 ## To improve efficiency: keep only necessary variables
-
-variables_to_keep <-c("patient_id", "out_first_long_covid_date",
+variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
                       "death_date", "cohort_end_date", "index_date")
-
-#input_select <- input[,variables_to_keep]
 
 input_select <- input%>% dplyr::select(all_of(variables_to_keep))
 
@@ -86,84 +83,114 @@ input_select <- input%>% dplyr::select(all_of(variables_to_keep))
 rm(input)
 
 ## specify follow-up end date ----------------------------------------------------------
-input_select <- input_select%>% rowwise() %>% mutate(follow_up_end_date=min(out_first_long_covid_date, 
+input_select <- input_select%>% rowwise() %>% mutate(fup_end_date=min(out_first_long_covid_date, 
                                                                death_date, 
                                                                cohort_end_date,
                                                                na.rm = TRUE))
+input_select <- input_select %>% filter(fup_end_date >= index_date & fup_end_date != Inf)
 
-input_select <- input_select %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
+## Construct time to long COVID for analysis 1, analysis 2 and analysis 3-------
 
-## Definition 1. time to long COVID without censoring for vaccination ----------         
-##days since index date to long COVID diagnosis, without censoring for vaccination
-input_select$lcovid_surv<- as.numeric(input_select$follow_up_end_date - input_select$index_date)+1
+## Define survival data for analysis 1-----------------------------------------------------
+## lcovid_surv: days from index date to long COVID, without censoring by vaccination 
+## lcovid_i   : indicator for long covid                            
+input_select$lcovid_surv<- as.numeric(input_select$fup_end_date - input_select$index_date)+1
 max_fup <- as.numeric(cohort_end - input_select$index_date[1])+1
 input_select <- input_select %>% filter(lcovid_surv >= 0 & lcovid_surv<= max_fup) 
 ## define event indicator, without censoring for vaccination
-input_select <- input_select %>% mutate(lcovid_i = ifelse((out_first_long_covid_date <= follow_up_end_date & 
+input_select <- input_select %>% mutate(lcovid_i = ifelse((out_first_long_covid_date <= fup_end_date & 
                                                      out_first_long_covid_date >= index_date &
                                                      !is.na(out_first_long_covid_date)), 1, 0))
 
-variables_to_keep <-c("patient_id", "follow_up_end_date", "cohort_end_date",
-                      "lcovid_surv", "lcovid_i")
+## Define survival data for analysis 2-----------------------------------------------------
+## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
+## lcovid_i_vax_c   : indicator for long covid   
+input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
+                                                                      vax_covid_date1,
+                                                                      death_date, 
+                                                                      cohort_end_date,
+                                                                      na.rm = TRUE))
+input_select$lcovid_surv_vax_c<- as.numeric(input_select$fup_end_date_vax_c - input_select$index_date)+1
+input_select <- input_select %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= fup_end_date_vax_c & 
+                                                             out_first_long_covid_date >= index_date &
+                                                             !is.na(out_first_long_covid_date)), 1, 0))
+
+## Define survival data for analysis 3-----------------------------------------------------
+## input_vaccinated: data for population with at least 1st vaccination
+## lcovid_surv: days from 1st vaccination to long COVID 
+## lcovid_i   : indicator for long covid 
+input_vaccinated <- input_select%>% dplyr::select(all_of(variables_to_keep))
+input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
+                                     vax_covid_date1 >= index_date &
+                                     vax_covid_date1 <= cohort_end_date)
+input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_start_date = vax_covid_date1)
+input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date =min(out_first_long_covid_date, 
+                                                                            death_date, 
+                                                                            cohort_end_date,
+                                                                            na.rm = TRUE))
+input_vaccinated <- input_vaccinated %>% mutate(lcovid_surv = as.numeric(fup_end_date - fup_start_date)+1,
+                                                lcovid_i = ifelse((out_first_long_covid_date <= fup_end_date & 
+                                                                     out_first_long_covid_date >= fup_start_date &
+                                                                     !is.na(out_first_long_covid_date)), 1, 0))
+## Create data set for analysis 1 and analysis 2
+
+variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date",
+                      "lcovid_surv", "lcovid_i","lcovid_surv_vax_c", "lcovid_i_vax_c")
 
 input_select <- input_select[,variables_to_keep]
 
 input <- read_rds("output/input_stage0.rds")
 
-# left join: keep all observations in input_select
+## left join: keep all observations in input_select
 input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
 
 rm(input_select)
 
 ## for individuals whose first long covid date is after follow-up end, set first long covid date as na
-index <- which(input$out_first_long_covid_date > input$follow_up_end_date)
+index <- which(input$out_first_long_covid_date > input$fup_end_date)
 input$out_first_long_covid_date[index] <- NA
 
 sum(!is.na(input$out_first_long_covid_date))
 
-#----------define multimorbidity: need to be carefully checked -------------------
-
-condition_names <- names(input)[grepl("cov_cat", names(input))]
-not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_worker",
-                     "cov_cat_imd","cov_cat_region","cov_cat_smoking_status",
-                     "cov_cat_covid_phenotype", "cov_cat_previous_covid",
-                     "cov_cat_ethnicity")
-
-condition_names <- condition_names[!condition_names%in%not_a_condition]
-
-input_select <- input %>% dplyr::select(c(patient_id, condition_names))
-input_select<- as_tibble(
-  data.matrix(input_select)
-        )
-
-for(i in condition_names){
-  input_select[, i] =ifelse(input_select[,i]==1, 0, 1) 
-}
-
-input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , condition_names]))
-
-input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, 2,
-                                                                ifelse(cov_num_multimorbidity==1, 1, 0)))
-
-input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
-
-#-----------------end of definition for multimorbidity -------------------------
-
-# left join: keep all observations in input_select
-input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
-
-rm(input_select)
-
-#View(input_select)
-
-# redefine age group
+## redefine age group
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
 input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 
+## Data set for analysis 1 and analysis 2
+## Time origin: index date; fup end: long covid or death or end of cohort, with / without censoring by 1st vax
+saveRDS(input, file = "output/input_stage1_all.rds")
 
-saveRDS(input, file = "output/input_stage1.rds")
+print("Date set for analyses 1 and 2 created successfully!")
 
+## create data set for analysis 3
+variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date", "fup_start_date",
+                      "lcovid_surv", "lcovid_i")
+
+input_vaccinated <- input_vaccinated[,variables_to_keep]
+
+input <- read_rds("output/input_stage0.rds")
+
+## left join: keep all observations in input_select
+input <- merge(x = input_vaccinated, y = input, by = "patient_id", all.x = TRUE)
+
+rm(input_vaccinated)
+
+## for individuals whose first long covid date is after follow-up end, set first long covid date as na
+index <- which(input$out_first_long_covid_date > input$fup_end_date)
+input$out_first_long_covid_date[index] <- NA
+
+sum(!is.na(input$out_first_long_covid_date))
+
+## redefine age group
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
+input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
+input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
+
+## Data set for analysis 3: time origin: 1st vaccination, end fup: long covid or death or end of cohort
+saveRDS(input, file = "output/input_stage1_vaccinated.rds")
