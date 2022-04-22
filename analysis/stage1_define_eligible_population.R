@@ -15,16 +15,16 @@ steps <- c("starting point","dead before index date", "missing sex",
 ## starting point
 flow_chart_n <- nrow(input)
 
-#] Dead: removed if dead before index date
+## Dead: removed if dead before index date
 input <- input%>%filter(death_date > index_date | is.na(death_date))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-#] Sex: remove if missing
+## Sex: remove if missing
 input <- input%>%filter(!is.na(cov_cat_sex))
 table(input$cov_cat_sex)
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-#] Age: remove if missing
+## Age: remove if missing
 input <- input%>%filter(!is.na(cov_num_age))
 #table(input$cov_cat_age)
 flow_chart_n <- c(flow_chart_n, nrow(input))

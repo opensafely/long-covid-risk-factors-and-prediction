@@ -27,7 +27,7 @@ actions:
     - stage0_data_cleaning
     outputs:
       highly_sensitive:
-        cohort: output/input_stage1.rds
+        cohort: output/input_stage1_*.rds
       moderately_sensitive:
         flow_chart_csv: output/flow_chart.csv
         flow_chart_html: output/flow_chart.html   
