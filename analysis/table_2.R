@@ -121,4 +121,3 @@ table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
 write.csv(table_2, file="output/table_2.csv",row.names=F)
 
 rmarkdown::render("analysis/compiled_table2_results.Rmd", output_file="table_2",output_dir="output")
-
