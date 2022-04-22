@@ -92,18 +92,18 @@ input_select <- input_select%>% rowwise() %>% mutate(follow_up_end_date=min(out_
 
 input_select <- input_select %>% filter(follow_up_end_date >= index_date & follow_up_end_date != Inf)
 
-## define days since follow-up to long COVID diagnosis, vaccination censored long covid diagnosis
-input_select$lcovid_surv_vax_c <- as.numeric(input_select$follow_up_end_date - input_select$index_date)+1
+## define days since follow-up to long COVID diagnosis
+input_select$lcovid_surv<- as.numeric(input_select$follow_up_end_date - input_select$index_date)+1
 
-input_select <- input_select %>% filter(lcovid_surv_vax_c >= 1 & lcovid_surv_vax_c<= 486)
+input_select <- input_select %>% filter(lcovid_surv >= 1 & lcovid_surv<= 486)
 
-## define event indicator, vaccination censored long covid diagnosis
-input_select <- input_select %>% mutate(lcovid_i_vax_c = ifelse((out_first_long_covid_date <= follow_up_end_date & 
+## define event indicator
+input_select <- input_select %>% mutate(lcovid_i = ifelse((out_first_long_covid_date <= follow_up_end_date & 
                                                      out_first_long_covid_date >= index_date &
                                                      !is.na(out_first_long_covid_date)), 1, 0))
 
 variables_to_keep <-c("patient_id", "follow_up_end_date", "cohort_end_date",
-                      "lcovid_surv_vax_c", "lcovid_i_vax_c")
+                      "lcovid_surv", "lcovid_i")
 
 input_select <- input_select[,variables_to_keep]
 
@@ -120,7 +120,6 @@ input$out_first_long_covid_date[index] <- NA
 
 sum(!is.na(input$out_first_long_covid_date))
 
-
 #----------define multimorbidity: need to be carefully checked -------------------
 
 condition_names <- names(input)[grepl("cov_cat", names(input))]
@@ -131,25 +130,21 @@ not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_work
 
 condition_names <- condition_names[!condition_names%in%not_a_condition]
 
-input_select <- input %>% select(patient_id, condition_names)
+input_select <- input %>% dplyr::select(c(patient_id, condition_names))
 input_select<- as_tibble(
   data.matrix(input_select)
         )
 
-# asthma is defined in a different way
-condition_names <- condition_names[-grep("cov_cat_asthma", condition_names)]
-
 for(i in condition_names){
-  input_select[, i] =ifelse(input_select[,i]==1, 0, 1)  # greater than 
+  input_select[, i] =ifelse(input_select[,i]==1, 0, 1) 
 }
-
-input_select$cov_cat_asthma <- ifelse(input_select$cov_cat_asthma == 1, 1,0)
 
 input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , condition_names]))
 
-input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>1, 1,0))
+input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, 2,
+                                                                ifelse(cov_num_multimorbidity==1, 1, 0)))
 
-input_select <- input_select %>% select(c(patient_id, cov_cat_multimorbidity))
+input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
 
 #-----------------end of definition for multimorbidity -------------------------
 
@@ -169,3 +164,4 @@ input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 
 
 saveRDS(input, file = "output/input_stage1.rds")
+

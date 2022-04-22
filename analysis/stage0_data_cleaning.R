@@ -36,7 +36,7 @@ vars_to_drop <- c("sgss_positive", "sgss_positive", "primary_care_covid", "hospi
 input = input[,!(names(input) %in% vars_to_drop)]
 
 # partial sorting by variable names in the data frame, keep patient_id and practice_id at the front
-input <- input %>% select(patient_id, practice_id, index_date, death_date,
+input <- input %>% dplyr::select(patient_id, practice_id, index_date, death_date,
                           colnames(input)[grepl("out_",colnames(input))],
                           colnames(input)[grepl("vax_",colnames(input))],
                           sort(tidyselect::peek_vars()))
@@ -71,8 +71,8 @@ input$cov_cat_imd <- ordered(input$cov_cat_imd,
 # input$cov_cat_imd <- ordered(input$cov_cat_imd, levels = c("1 (most deprived)","2","3","4","5 (least deprived)"))
 
 # cov_cat_asthma ---------------------------------------------------------------
-levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma)==0] <-"No asthma"
-levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma) == 1 | levels(input$cov_cat_asthma) == 2 ] <-"Asthma"
+# levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma)==0] <-"No asthma"
+# levels(input$cov_cat_asthma)[levels(input$cov_cat_asthma) == 1 | levels(input$cov_cat_asthma) == 2 ] <-"Asthma"
 
 ## cov_cat_smoking_status-------------------------------------------------------
 table(input$cov_cat_smoking_status)
@@ -93,8 +93,6 @@ input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 vars_dates <- grep("date", names(input))
 vars_dates <- names(input)[vars_dates]
 
-table(input$cov_cat_stroke_or_dementia)
-
 convert_to_date <- function(x){
   as.Date(x,format = "%Y-%m-%d")
 }
@@ -104,7 +102,7 @@ lapply(input[vars_dates], is.Date)
 # define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
 input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
 
-select_variables <- input %>% select(c(sub_cat_covid_history, out_covid_date, index_date))
+select_variables <- input %>% dplyr::select(c(sub_cat_covid_history, out_covid_date, index_date))
 
 ## store names of factor variables
 cov_factor_names <- names(input)[grepl("_cat", names(input))]
@@ -170,6 +168,7 @@ input_factor_vars <- input_factor_vars %>% mutate(cov_cat_smoking_status = as.ch
 input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
   mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "Missing")) %>%
   mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
+
 # for(i in cov_factor_names){
 #   print(i)
 #   index = which(is.na(input_factor_vars[,i]))

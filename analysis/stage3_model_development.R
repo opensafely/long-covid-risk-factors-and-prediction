@@ -108,7 +108,7 @@ cox_output <- function(fit_cox_model, which_model){
   dev.off()
   }
   
-  results <-results %>% dplyr::select(-contains("robust"))
+  # results <-results %>% dplyr::select(-contains("robust"))
   
   write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, ".csv"), 
                           row.names=F)

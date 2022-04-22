@@ -17,7 +17,7 @@ keep <- names(input)[!names(input)%in%(vax)]
 data <- input[,keep]
 
 ## calculate follow-up days
-data <- data %>% rename(person_days = lcovid_surv_vax_c) # days from time origin to follow-up end date, previously calculated
+data <- data %>% rename(person_days = lcovid_surv) # days from time origin to follow-up end date, previously calculated
 hist(data$person_days)
 person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
 

@@ -192,35 +192,59 @@ clinical_variables = dict(
     cov_cat_haem_cancer=patients.with_these_clinical_events(
         haem_cancer_codes, on_or_before="index_date - 1 day"
     ),
-    cov_cat_asthma=patients.categorised_as(
-        {
-            "0": "DEFAULT",
-            "1": """
-            (
-              recent_asthma_code OR (
-                asthma_code_ever AND NOT
-                copd_code_ever
-              )
-            ) AND (
-              prednisolone_last_year = 0 OR 
-              prednisolone_last_year > 4
+    # cov_cat_asthma=patients.categorised_as(
+    #     {
+    #         "0": "DEFAULT",
+    #         "1": """
+    #         (
+    #           recent_asthma_code OR (
+    #             asthma_code_ever AND NOT
+    #             copd_code_ever
+    #           )
+    #         ) AND (
+    #           prednisolone_last_year = 0 OR 
+    #           prednisolone_last_year > 4
+    #         )
+    #     """,
+    #         "2": """
+    #         (
+    #           recent_asthma_code OR (
+    #             asthma_code_ever AND NOT
+    #             copd_code_ever
+    #           )
+    #         ) AND
+    #         prednisolone_last_year > 0 AND
+    #         prednisolone_last_year < 5
+            
+    #     """,
+    #     },
+    #     return_expectations={
+    #         "category": {"ratios": {"0": 0.8, "1": 0.1, "2": 0.1}},
+    #         "incidence": 1,
+    #     },
+    #     recent_asthma_code=patients.with_these_clinical_events(
+    #         asthma_codes,
+    #         between=["index_date - 3 years", "index_date - 1 day"],
+    #     ),
+    #     asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
+    #     copd_code_ever=patients.with_these_clinical_events(
+    #         chronic_respiratory_disease_codes
+    #     ),
+    #     prednisolone_last_year=patients.with_these_medications(
+    #         prednisolone_codes,
+    #         between=["index_date - 1 years", "index_date - 1 day"],
+    #         returning="number_of_matches_in_period",
+    #     ),
+    # ),
+    cov_cat_asthma=patients.satisfying(
+        """
+            recent_asthma_code OR (
+              asthma_code_ever AND NOT
+              copd_code_ever
             )
         """,
-            "2": """
-            (
-              recent_asthma_code OR (
-                asthma_code_ever AND NOT
-                copd_code_ever
-              )
-            ) AND
-            prednisolone_last_year > 0 AND
-            prednisolone_last_year < 5
-            
-        """,
-        },
         return_expectations={
-            "category": {"ratios": {"0": 0.8, "1": 0.1, "2": 0.1}},
-            "incidence": 1,
+            "incidence": 0.05,
         },
         recent_asthma_code=patients.with_these_clinical_events(
             asthma_codes,
@@ -229,11 +253,6 @@ clinical_variables = dict(
         asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
         copd_code_ever=patients.with_these_clinical_events(
             chronic_respiratory_disease_codes
-        ),
-        prednisolone_last_year=patients.with_these_medications(
-            prednisolone_codes,
-            between=["index_date - 1 years", "index_date - 1 day"],
-            returning="number_of_matches_in_period",
         ),
     ),
     ## Chronic obstructive pulmonary disease
@@ -328,8 +347,12 @@ clinical_variables = dict(
     cov_cat_hypertension=patients.with_these_clinical_events(
         hypertension_codes, on_or_before = "index_date - 1 day"
     ),
+    # cov_cat_mental_health=patients.with_these_clinical_events(
+    #     mental_health_codes, on_or_before = "index_date - 1 day"
+    # ),
     cov_cat_mental_health=patients.with_these_clinical_events(
-        mental_health_codes, on_or_before = "index_date - 1 day"
+        combine_codelists(psychosis_schizophrenia_bipolar_codes, depression_codes),
+        on_or_before="index_date - 1 day",
     ),
     cov_cat_rheumatoid_arthritis=patients.with_these_clinical_events(
         rheumatoid_arthritis_codes, on_or_before = "index_date - 1 day"

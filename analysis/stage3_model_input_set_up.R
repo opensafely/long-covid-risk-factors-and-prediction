@@ -50,7 +50,7 @@ covariate_names <- covariate_names[-grep("cov_cat_previous_covid", covariate_nam
 covariate_names <- covariate_names[-grep("cov_cat_covid_phenotype", covariate_names)]
 
 ## remove as a covariate as this would not have been available at baseline
-#covariate_names <- covariate_names[-grep("cov_num_multimorbidity", covariate_names)]
+#covariate_names <- covariate_names[-grep("multimorbidity", covariate_names)]
 
 print("candidate predictors")
 covariate_names
@@ -62,7 +62,7 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
-                       "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
+                       "lcovid_surv", "lcovid_i", covariate_names,
                        "cov_num_age", "weight")
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
@@ -73,14 +73,14 @@ knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 # Part 2: define survival analysis formula                                     #
 ################################################################################
 surv_formula <- paste0(
-  "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
+  "Surv(lcovid_surv, lcovid_i) ~ ",
   paste(covariate_names, collapse = "+"),
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
   "+ cluster(practice_id)"
 )
 
 surv_formula_lp <- paste0(
-  "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
+  "Surv(lcovid_surv, lcovid_i) ~ ",
   paste(covariate_names, collapse = "+"),
   "+ cov_num_age", 
   "+ cluster(practice_id)"

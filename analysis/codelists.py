@@ -171,11 +171,11 @@ heart_failure_codes = codelist_from_csv(
 hypertension_codes = codelist_from_csv(
     "codelists/opensafely-hypertension.csv", system="ctv3", column="CTV3ID"
 )
-mental_health_codes = codelist_from_csv(
-    "codelists/primis-covid19-vacc-uptake-sev_mental.csv", 
-    system="snomed",
-    column="code",
-)
+# mental_health_codes = codelist_from_csv(
+#     "codelists/primis-covid19-vacc-uptake-sev_mental.csv", 
+#     system="snomed",
+#     column="code",
+# )
 rheumatoid_arthritis_codes = codelist_from_csv(
     "codelists/opensafely-rheumatoid-arthritis.csv", 
     system="ctv3",
@@ -195,4 +195,12 @@ psoriasis_codes = codelist_from_csv(
     "codelists/opensafely-psoriasis.csv", 
     system="ctv3",
     column="code",
+)
+psychosis_schizophrenia_bipolar_codes = codelist_from_csv(
+    "codelists/opensafely-psychosis-schizophrenia-bipolar-affective-disease.csv",
+    system="ctv3",
+    column="CTV3Code",
+)
+depression_codes = codelist_from_csv(
+    "codelists/opensafely-depression.csv", system="ctv3", column="CTV3Code"
 )

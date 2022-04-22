@@ -61,7 +61,7 @@ pm[nrow(pm),2] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((conc
 ##################################################
 
 ## Calibration slope
-fit_cox_model2<- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~pred_LP,
+fit_cox_model2<- cph(Surv(input$lcovid_surv,input$lcovid_i)~pred_LP,
                      x=TRUE, y=TRUE)
 pm[nrow(pm)+1,1] <- "Calibration slope"
 pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
@@ -78,7 +78,7 @@ centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.16,0.50,0.84,1),
 
 svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, ".svg"))
 # Graph the KM curves in the 4 risk groups to visually assess separation
-plot(survfit(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~centile_LP),
+plot(survfit(Surv(input$lcovid_surv,input$lcovid_i)~centile_LP),
      main="Kaplan-Meier survival estimates",
      xlab="analysis time",col=c(1:4))
 legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
@@ -121,7 +121,7 @@ min(heuristic_lp)
 max(heuristic_lp)
 
 # Now recalculate the calibration slope using the shrunken linear predictor
-fit_cox_model3 <- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~heuristic_lp)
+fit_cox_model3 <- cph(Surv(input$lcovid_surv,input$lcovid_i)~heuristic_lp)
 # calibration slope
 fit_cox_model3$coef
 pm[nrow(pm)+1, 1] <- "reculated calibration slope using the shrunken linear predictor"
@@ -159,10 +159,10 @@ day180_Cox <- summary(survfit(fit_cox_model),time=180)$surv
 day180_Cox
 
 # Now calculate the shrunken models baseline survival prob at 180 days by setting the shrunken lp as a offset and predicting the baseline survival
-shrunk_mod <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp))
+shrunk_mod <- coxph(Surv(input$lcovid_surv,input$lcovid_i)~offset(heuristic_lp))
 day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=180)$surv
 day180_Cox_shrunk
-#shrunk_mod <- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp),x=TRUE, y=TRUE)
+#shrunk_mod <- cph(Surv(input$lcovid_surv,input$lcovid_i)~offset(heuristic_lp),x=TRUE, y=TRUE)
 #day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=5)$surv
 #day180_Cox_shrunk
 
