@@ -9,7 +9,7 @@ library(readr); library(dplyr);library(lubridate)
 source("analysis/functions/redactor2.R")
 
 ## Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 
 ## define variables to keep
 vax <- names(input)[grepl("vax_covid_", names(input))]

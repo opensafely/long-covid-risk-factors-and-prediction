@@ -13,7 +13,7 @@ library(readr); library(dplyr); library(lubridate)
 source("analysis/functions/redactor2.R")
 
 # Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1.rds")
+input <- read_rds("output/input_stage1_all.rds")
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
 cov_factor_names <- c(cov_factor_names, "sub_cat_covid_history")
 cov_num_names <- names(input)[grepl("cov_num", names(input))]
