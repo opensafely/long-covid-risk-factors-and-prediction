@@ -1,14 +1,14 @@
 ## Purpose: Long COVID risk factors and prediction models
 ## Author:  Yinghui Wei
 ## Content: Prepare variables
-## Output:  input_stage0.rds
+## Output:  input_stage0.rds; table_0.csv; table_0.html
 
-## Naming principles: 
-## 1. variable names starting with "cov_cat_" indicate categorical covariates
-## 2. variable names starting with "cov_num_" indicate numerical covariates
-## 3. variable names starting with "out_" indicate outcome variables
-## 4. variable names containing "_date" indicate date variables
-## 5. variable names starting with "sub_" indicate patient characteristics which are not included
+##Variable naming principles: 
+## 1. starting with "cov_cat_" indicate categorical covariates
+## 2. starting with "cov_num_" indicate numerical covariates
+## 3. starting with "out_" indicate outcome variables
+## 4. containing "_date" indicate date variables
+## 5. starting with "sub_" indicate patient characteristics which are not included
 ##    in the analysis / modelling, but are of interest in exploration
 
 library(readr); library(dplyr); library("arrow"); library(lubridate); library(tidyr)
@@ -17,25 +17,24 @@ input <- read_feather("output/input.feather")
 #View(input)
 
 ################################################################################
-## Part 1. define index date and remove variables
-#################################################################################
+## Part 1. define index date and remove variables                              #
+################################################################################
 ## define cohort start date:
 index_date=as.Date("2020-12-01")
 input$index_date = as.Date(index_date)
 
-# Step 1. Define variables: COVID infection-------------------------
+# Step 1. Define variables: COVID infection-------------------------------------
 # create an indicator variable for covid infection
 input$out_covid <- ifelse(is.na(input$out_covid_date), FALSE, TRUE)
 
-## create a categorical variable to indicate covid phenotype: -------------------
+## create a categorical variable to indicate covid phenotype: ------------------
 ## no infection, non-hospitalised covid and hospitalised covid
 ## this variable is not included in the Cox model but will create and keep it for now
-input$sub_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), 
-                                        "no_infection", "non_hospitalised")
+input$sub_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), "no_infection", "non_hospitalised")
 index = which(!is.na(input$hospital_covid))  # index for hospitalised covid
 input$sub_cat_covid_phenotype[index] <- "hospitalised"
 
-## Step 2. Remove variables which are not included in the prediction---------------
+## Step 2. Remove variables which are not included in the prediction------------
 ## remove variables start with snomed
 snomed_vars <- names(input)[which(grepl("snomed", names(input))==TRUE)]
 input = input[,!(names(input) %in% snomed_vars)]
@@ -54,16 +53,16 @@ input <- input %>% dplyr::select(patient_id, practice_id, index_date, death_date
                           sort(tidyselect::peek_vars()))
 
 ################################################################################
-## Part 2. define variable types: factor or numerical or date
-#################################################################################
+## Part 2. define variable types: factor or numerical or date                  #
+################################################################################
 
 # For categorical factors, specify the most frequently occurred level as the reference group
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
-lapply(input[,cat_factors], is.factor)
+#lapply(input[,cat_factors], is.factor)
 
-## cov_cat_imd by quintile-------------------------------------------------------
+## cov_cat_imd by quintile------------------------------------------------------
 table(input$cov_cat_imd)
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
 levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==1] <-"1 (most deprived)"
@@ -76,14 +75,13 @@ levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==5] <-"5 (least deprived)"
 input$cov_cat_imd <- ordered(input$cov_cat_imd, 
                              levels = c("1 (most deprived)","2","3","4","5 (least deprived)", "0 (missing)"))
 
-
 ## cov_cat_smoking_status-------------------------------------------------------
 table(input$cov_cat_smoking_status)
 levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
 input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
 table(input$cov_cat_smoking_status)
 
-## cov_cat_age_group-------------------------------------------------------------
+## cov_cat_age_group------------------------------------------------------------
 ## Define age groups
 input$cov_cat_age_group <- ""
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
@@ -142,7 +140,6 @@ rm(input_select)
 
 ## View(input_select)
 
-
 #################################################################################
 ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
 #################################################################################
@@ -190,9 +187,9 @@ for(i in cov_factor_names){
   print(table(input[,i]))
 }
 
-#################################################################################
-## Part 5. Output data set                                                       #
-#################################################################################
+################################################################################
+## Part 5. Output datasets                                                     #
+################################################################################
 
 ## Table_0 is mainly for data check 
 output_table_0 <- function(input_factor_vars){
@@ -217,7 +214,6 @@ output_table_0 <- function(input_factor_vars){
   }
   names(table_0) <- c("factor variables", "number of missing observations", "is.factor")
   names(table_0)[4:ncol(table_0)] = rep("level name or number of observations", (ncol(table_0)-3))
-  
   #table_0
   
   print("Finished constructing table_0 successfully!")
@@ -227,12 +223,8 @@ output_table_0 <- function(input_factor_vars){
                     output_file="table_0",output_dir="output")
 }
 
-print("Output data set!") 
-
 output_table_0(input)
-
 print("table_0 is saved successfully!") 
 
 saveRDS(input, file = "output/input_stage0.rds")
-
 print("input_stage0 is saved successfully!") 

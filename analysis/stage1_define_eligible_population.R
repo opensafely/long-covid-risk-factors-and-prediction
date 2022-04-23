@@ -6,9 +6,9 @@
 library(readr); library(dplyr); library(htmlTable)
 input <- read_rds("output/input_stage0.rds")
 
-###############################################################################
-## Part 1. Define eligible population                                           #
-###############################################################################
+################################################################################
+## Part 1. Define eligible population                                          #
+################################################################################
 
 steps <- c("starting point","dead before index date", "missing sex", 
            "missing age", "age <18y", "age>105y", "ethnicity", "long covid before cohort start")
@@ -41,7 +41,6 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 input <- input%>%filter(!is.na(cov_cat_ethnicity))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-
 # ##table(input$cov_cat_previous_covid)
 # input <- input%>%filter(sub_cat_previous_covid == "No COVID code")
 # flow_chart_n <- c(flow_chart_n, nrow(input))
@@ -65,7 +64,6 @@ input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79,
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
 input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 
-
 ################################################################################
 #Part 2. Define follow-up end date and construct survival data for long covid  #
 ################################################################################
@@ -80,9 +78,9 @@ variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date
 
 input_select <- input%>% dplyr::select(all_of(variables_to_keep))
 
-## Construct time to long COVID for analysis 1, analysis 2 and analysis 3-------
+## Construct time to long COVID for analysis 1, analysis 2 and analysis 3-----------------
 
-## Define survival data for analysis 1-----------------------------------------------------
+## Define survival data for analysis 1----------------------------------------------------
 ## lcovid_surv: days from index date to long COVID, without censoring by vaccination 
 ## lcovid_cens: indicator for long covid          
 
@@ -170,9 +168,10 @@ input <- merge(x = input_vaccinated, y = input, by = "patient_id", all.x = TRUE)
 
 rm(input_vaccinated)
 
-
 ## Data set for analysis 3: time origin: 1st vaccination, end fup: long covid or death or end of cohort
 saveRDS(input, file = "output/input_stage1_vaccinated.rds")
+
+print("Date set for analysis 3 created successfully!")
 
 ################################################################################
 # Part 4. Flowchart output                                                     #
@@ -198,3 +197,4 @@ write.csv(flow_chart, file="output/flow_chart.csv", row.names = F)
 rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file ="flow_chart", 
                   output_dir = "output")
 
+print("Flowchart table is saved successfully!")
