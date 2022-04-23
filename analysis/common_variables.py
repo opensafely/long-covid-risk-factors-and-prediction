@@ -126,27 +126,27 @@ demographic_variables = dict(
             returning='binary_flag', 
             return_expectations={"incidence": 0.01},
     ),
-    # Question: Not quite sure whether this is covid history before index date?
-    sub_cat_previous_covid=patients.categorised_as(
-        {
-            "COVID positive": """
-                                (sgss_positive OR primary_care_covid)
-                                AND NOT hospital_covid
-                                """,
-            "COVID hospitalised": "hospital_covid",
-            "No COVID code": "DEFAULT",
-        },
-        return_expectations={
-            "incidence": 1,
-            "category": {
-                "ratios": {
-                    "COVID positive": 0.4,
-                    "COVID hospitalised": 0.4,
-                    "No COVID code": 0.2,
-                }
-            },
-        },
-    ),
+    # # Question: Not quite sure whether this is covid history before index date?
+    # sub_cat_previous_covid=patients.categorised_as(
+    #     {
+    #         "COVID positive": """
+    #                             (sgss_positive OR primary_care_covid)
+    #                             AND NOT hospital_covid
+    #                             """,
+    #         "COVID hospitalised": "hospital_covid",
+    #         "No COVID code": "DEFAULT",
+    #     },
+    #     return_expectations={
+    #         "incidence": 1,
+    #         "category": {
+    #             "ratios": {
+    #                 "COVID positive": 0.4,
+    #                 "COVID hospitalised": 0.4,
+    #                 "No COVID code": 0.2,
+    #             }
+    #         },
+    #     },
+    # ),
 )
 
 clinical_variables = dict(

@@ -57,7 +57,7 @@ input <- input %>% dplyr::select(patient_id, practice_id, index_date, death_date
 ## Part 2. define variable types: factor or numerical or date
 #################################################################################
 
-# For categorical factors, specify references-----------------------------------
+# For categorical factors, specify the most frequently occurred level as the reference group
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
@@ -76,7 +76,6 @@ levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==5] <-"5 (least deprived)"
 input$cov_cat_imd <- ordered(input$cov_cat_imd, 
                              levels = c("1 (most deprived)","2","3","4","5 (least deprived)", "0 (missing)"))
 
-## for ordered factor, the first level is taken as reference level
 
 ## cov_cat_smoking_status-------------------------------------------------------
 table(input$cov_cat_smoking_status)
@@ -109,27 +108,27 @@ input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TR
 #select_variables <- input %>% dplyr::select(c(sub_cat_covid_history, out_covid_date, index_date))
 
 ################################################################################
-## Part 3. define multimorbidity: need to be carefully checked                 #
+## Part 3. define multimorbidity                                               #
 ################################################################################
 
 condition_names <- names(input)[grepl("cov_cat", names(input))]
 not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_worker",
                      "cov_cat_imd","cov_cat_region","cov_cat_smoking_status",
-                     "cov_cat_covid_phenotype", "cov_cat_previous_covid",
-                     "cov_cat_ethnicity")
+                     "cov_cat_covid_phenotype", "cov_cat_ethnicity")
 
 condition_names <- condition_names[!condition_names%in%not_a_condition]
 
-input_select <- input %>% dplyr::select(c(patient_id, condition_names))
-input_select<- as_tibble(
-  data.matrix(input_select)
-)
+input_select <- input %>% dplyr::select(c(patient_id, all_of(condition_names)))
 
-for(i in condition_names){
-  input_select[, i] =ifelse(input_select[,i]==1, 0, 1) 
-}
+input_select <- input_select %>% mutate(cov_cat_bmi = as.character(cov_cat_bmi)) %>%
+  mutate(cov_cat_bmi = ifelse(cov_cat_bmi == "Not obese", FALSE, TRUE)) %>%
+  mutate(cov_cat_bmi = as.factor(cov_cat_bmi))
 
-input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , condition_names]))
+input_select <- input_select %>% mutate_if(is.factor, as.logical.factor)
+
+logical_cols <- input_select %>% select(where(is.logical)) %>% names()
+
+input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
 
 input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, 2,
                                                                        ifelse(cov_num_multimorbidity==1, 1, 0)))
@@ -173,18 +172,6 @@ input_factor_vars <- input_factor_vars %>% mutate(cov_cat_smoking_status = as.ch
 input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
   mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "Missing")) %>%
   mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
-
-# for(i in cov_factor_names){
-#   print(i)
-#   index = which(is.na(input_factor_vars[,i]))
-#   if(length(index)>0){
-#     input_factor_vars[,i] = as.character(input_factor_vars[,i]) # convert factor to character to allow to change na to "Missing"
-#     input_factor_vars[index,i]="Missing"
-#     input_factor_vars[,i] = as.factor(input_factor_vars[,i]) # convert back to factor
-#   }
-# 
-#   #print(table(input_factor_vars[,i]))
-# }
 
 print("Fished replacing missing values with a Missing category!")
 

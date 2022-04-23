@@ -11,7 +11,7 @@ input <- read_rds("output/input_stage0.rds")
 ###############################################################################
 
 steps <- c("starting point","dead before index date", "missing sex", 
-           "missing age", "age <18y", "age>105y", "ethnicity")
+           "missing age", "age <18y", "age>105y", "ethnicity", "long covid before cohort start")
 ## starting point
 flow_chart_n <- nrow(input)
 
@@ -41,13 +41,10 @@ flow_chart_n <- c(flow_chart_n, nrow(input))
 input <- input%>%filter(!is.na(cov_cat_ethnicity))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
-## previous long covid
-#cohort_start = as.Date("2020-12-01", format="%Y-%m-%d")
-#index <- which(input$out_first_long_covid_date < cohort_start)
 
-##table(input$cov_cat_previous_covid)
-##input <- input%>%filter(cov_cat_previous_covid == "No COVID code")
-##flow_chart_n <- c(flow_chart_n, nrow(input))
+# ##table(input$cov_cat_previous_covid)
+# input <- input%>%filter(sub_cat_previous_covid == "No COVID code")
+# flow_chart_n <- c(flow_chart_n, nrow(input))
 
 ## for individuals whose first long covid date is after follow-up end, set first long covid date as na
 index <- which(input$out_first_long_covid_date > input$fup_end_date)
@@ -55,16 +52,18 @@ input$out_first_long_covid_date[index] <- NA
 
 sum(!is.na(input$out_first_long_covid_date))
 
+## previous long covid
+cohort_start = as.Date("2020-12-01", format="%Y-%m-%d")
+input <- input%>%filter(input$out_first_long_covid_date >= cohort_start |
+                          is.na(out_first_long_covid_date))
+flow_chart_n <- c(flow_chart_n, nrow(input))
+
 ## redefine age group
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
 input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
-
-
-## Data set
-#saveRDS(input, file = "output/input_stage1.rds")
 
 
 ################################################################################
@@ -120,7 +119,14 @@ input_select <- input_select %>% mutate(lcovid_cens_vax_c = ifelse((out_first_lo
 input_vaccinated <- input_select%>% dplyr::select(all_of(variables_to_keep))
 input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
                                      vax_covid_date1 >= index_date &
-                                     vax_covid_date1 <= cohort_end_date)
+                                     vax_covid_date1 <= cohort_end_date &
+                                     (out_first_long_covid_date >= index_date |
+                                      is.na(out_first_long_covid_date)))
+
+input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
+                                                vax_covid_date1 >= index_date &
+                                                vax_covid_date1 <= cohort_end_date)
+
 input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_start_date = vax_covid_date1)
 input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date =min(out_first_long_covid_date, 
                                                                             death_date, 
@@ -181,6 +187,12 @@ for(i in 2:nrow(flow_chart)){
     flow_chart$flow_chart_n[i] = flow_chart$flow_chart_n[i-1]
   }
 }
+
+# function for small number suppression
+# source("analysis/functions/redactor2.R")
+# flow_chart$drop <- redactor2(flow_chart$drop)
+# flow_chart[is.na(flow_chart$drop),2:3] = "[redacted]"
+
 write.csv(flow_chart, file="output/flow_chart.csv", row.names = F)
 
 rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file ="flow_chart", 
