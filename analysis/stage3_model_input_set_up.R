@@ -51,7 +51,7 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
-                       "lcovid_surv", "lcovid_i", covariate_names,
+                       "lcovid_surv", "lcovid_cens", covariate_names,
                        "cov_num_age", "weight")
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
@@ -65,7 +65,7 @@ knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 ## linear predictors + a restricted cubic spline for age + clustering effect 
 ## for practice 
 surv_formula <- paste0(
-  "Surv(lcovid_surv, lcovid_i) ~ ",
+  "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
   "+ cluster(practice_id)"
@@ -73,7 +73,7 @@ surv_formula <- paste0(
 
 ## age is added as a linear predictor
 surv_formula_lp <- paste0(
-  "Surv(lcovid_surv, lcovid_i) ~ ",
+  "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+ cov_num_age", 
   "+ cluster(practice_id)"

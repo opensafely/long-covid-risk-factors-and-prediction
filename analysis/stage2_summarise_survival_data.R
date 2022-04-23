@@ -8,16 +8,16 @@ library(prodlim);library(readr); library(dplyr); library(survival)
 data <- read_rds("output/input_stage1_all.rds")
 
 attach(data)
-#select <- data.frame(lcovid_surv, lcovid_i)
+#select <- data.frame(lcovid_surv, lcovid_cens)
 #View(select)
 
 # Summarise follow-up, scaled to years, reverse the event indicator to summarise follow-up
 
-fup <- quantile(prodlim(Hist(lcovid_surv,lcovid_i)~1,reverse=TRUE))
+fup <- quantile(prodlim(Hist(lcovid_surv,lcovid_cens)~1,reverse=TRUE))
 a <- fup[1]$quantiles.survival[3,] # median follow-up time
 
 # Median time to long covid diagnosis
-surv_time <- quantile(prodlim(Hist(lcovid_surv,lcovid_i)~1,reverse=FALSE))
+surv_time <- quantile(prodlim(Hist(lcovid_surv,lcovid_cens)~1,reverse=FALSE))
 b <- surv_time[1]$quantiles.survival[3,] # median survival time
 
 results <- rbind(a,b)

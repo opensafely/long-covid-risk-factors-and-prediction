@@ -58,14 +58,14 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
-                       "lcovid_surv_vax_c", "lcovid_i_vax_c", covariate_names,
+                       "lcovid_surv_vax_c", "lcovid_cens_vax_c", covariate_names,
                        "cov_num_age", "weight")
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
 
 ## define survival formula
 surv_formula <- paste0(
-    "Surv(lcovid_surv_vax_c, lcovid_i_vax_c) ~ ",
+    "Surv(lcovid_surv_vax_c, lcovid_cens_vax_c) ~ ",
     paste(covariate_names, collapse = "+"),
     "+ cluster(practice_id)"
   )
@@ -125,7 +125,7 @@ summary(fit_cox_model)$concordance[1]+(1.96*summary(fit_cox_model)$concordance[2
 
 # Calculate & interpret the D statistic, R_D^2 and R_D^2 
 # To obtain the Royston & Sauerbrei's D
-D <- D.index(pred_LP,surv.time=input$lcovid_surv_vax_c,surv.event=input$lcovid_i_vax_c)$coef
+D <- D.index(pred_LP,surv.time=input$lcovid_surv_vax_c,surv.event=input$lcovid_cens_vax_c)$coef
 D
 
 # And R^2D
@@ -140,8 +140,8 @@ r2D
 ##################################################
 
 ## Calibration slope
-#fit_cox_model2<- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~pred_LP)
-fit_cox_model2<- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~pred_LP, x=TRUE,y=TRUE)
+#fit_cox_model2<- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_cens_vax_c)~pred_LP)
+fit_cox_model2<- cph(Surv(input$lcovid_surv_vax_c,input$lcovid_cens_vax_c)~pred_LP, x=TRUE,y=TRUE)
 fit_cox_model2$coef
 
 ####################
@@ -155,7 +155,7 @@ centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.16,0.50,0.84,1))
                   labels=c(1:4),include.lowest=TRUE)
 
 # Graph the KM curves in the 4 risk groups to visually assess separation
-plot(survfit(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~centile_LP),
+plot(survfit(Surv(input$lcovid_surv_vax_c,input$lcovid_cens_vax_c)~centile_LP),
      main="Kaplan-Meier survival estimates",
      xlab="analysis time",col=c(1:4))
 legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
@@ -194,7 +194,7 @@ min(heuristic_lp)
 max(heuristic_lp)
 
 # Now recalculate the calibration slope using the shrunken linear predictor
-fit_cox_model3 <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~heuristic_lp)
+fit_cox_model3 <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_cens_vax_c)~heuristic_lp)
 fit_cox_model3$coef
 
 # plot original predictions (before shrinkage) versus our shrunken model predictions
@@ -225,7 +225,7 @@ day180_Cox <- summary(survfit(fit_cox_model),time=180)$surv
 day180_Cox
 
 # Now calculate the shrunken models baseline survival prob at 5 years by setting the shrunken lp as a offset and predicting the baseline survival
-shrunk_mod <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_i_vax_c)~offset(heuristic_lp))
+shrunk_mod <- coxph(Surv(input$lcovid_surv_vax_c,input$lcovid_cens_vax_c)~offset(heuristic_lp))
 day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=5)$surv
 day180_Cox_shrunk
 

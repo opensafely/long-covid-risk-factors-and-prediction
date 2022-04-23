@@ -23,7 +23,7 @@ source("analysis/functions/redactor2.R")
 input <- read_rds("output/input_stage1_all.rds")
 
 # keep only observations where long covid indicator is 1
-input <- input %>% filter(lcovid_i == 1)
+input <- input %>% filter(lcovid_cens == 1)
 
 # computational efficiency: only keep the needed variable
 input <- input %>% select(c("out_first_long_covid_date", "cov_cat_region"))
@@ -93,7 +93,7 @@ ggsave(file=paste0("output/suppl_figure_1_monthly_by_region", ".svg"),
 input <- read_rds("output/input_stage1_all.rds")
 
 # keep only observations where long covid indicator is 1
-input <- input %>% filter(lcovid_i == 1)
+input <- input %>% filter(lcovid_cens == 1)
 
 # computational efficiency: only keep the needed variable
 input <- input %>% select(c("out_first_long_covid_date", "cov_cat_region"))
