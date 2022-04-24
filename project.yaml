@@ -1,9 +1,16 @@
 version: '3.0'
 
 expectations:
+
   population_size: 10000
 
 actions:
+
+  ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+  ## DO NOT EDIT project.yaml DIRECTLY 
+  ## This file is created by create_project_actions.R 
+  ## Edit and run create_project_actions.R to update the project.yaml 
+  ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
   generate_study_population:
     run: cohortextractor:latest generate_cohort --study-definition study_definition
@@ -11,6 +18,7 @@ actions:
     outputs:
       highly_sensitive:
         cohort: output/input.feather
+
   stage0_data_cleaning:
     run: r:latest analysis/stage0_data_cleaning.R
     needs:
@@ -19,8 +27,9 @@ actions:
       highly_sensitive:
         cohort: output/input_stage0.rds
       moderately_sensitive:
-        table_0_CSV: output/table_0.csv
-        table_0_HTML: output/table_0.html
+        variable_check_table_CSV: output/table_0.csv
+        variable_check_table_HTML: output/table_0.html
+
   stage1_define_eligible_population:
     run: r:latest analysis/stage1_define_eligible_population.R
     needs:
@@ -30,7 +39,8 @@ actions:
         cohort: output/input_stage1_*.rds
       moderately_sensitive:
         flow_chart_csv: output/flow_chart.csv
-        flow_chart_html: output/flow_chart.html   
+        flow_chart_html: output/flow_chart.html
+
   table_1:
     run: r:latest analysis/table_1.R
     needs:
@@ -39,22 +49,25 @@ actions:
       moderately_sensitive:
         descriptive_table_CSV: output/table_1.csv
         descriptive_table_HTML: output/table_1.html
+
   table_2:
     run: r:latest analysis/table_2.R
     needs:
-    -  stage1_define_eligible_population
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         incidence_rate_table_CSV: output/table_2.csv
         incidence_rate_talbe_HTML: output/table_2.html
+
   table_3:
     run: r:latest analysis/table_3.R
     needs:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        table_CSV: output/table_3.csv
-        talbe_HTML: output/table_3.html
+        sequence_count_table_CSV: output/table_3.csv
+        sequence_count_table_HTML: output/table_3.html
+
   figure_1:
     run: r:latest analysis/figure_1.R
     needs:
@@ -62,26 +75,29 @@ actions:
     outputs:
       moderately_sensitive:
         figure_long_covid_count_all: output/figure_1_*.svg
-        table_csv_long_covid_count_all: output/long_covid_count_*_all.csv  
+        table_csv_long_covid_count_all: output/long_covid_count_*_all.csv
         table_html_long_covid_count_all: output/long_covid_count_*_all.html
+
   suppl_table_1:
     run: r:latest analysis/suppl_table_1.R
     needs:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        pie_chart_long_covid_code: output/suppl_figure_pie.svg 
+        pie_chart_long_covid_code: output/suppl_figure_pie.svg
         table_csv_long_covid_code: output/suppl_table_1.csv
         table_html_long_covid_code: output/suppl_table_1.html
+
   suppl_figure_1:
     run: r:latest analysis/suppl_figure_1.R
     needs:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_region: output/suppl_figure_1_*.svg     
-        table_csv_long_covid_count_region: output/long_covid_count_*.csv  
+        figure_long_covid_count_region: output/suppl_figure_1_*.svg
+        table_csv_long_covid_count_region: output/long_covid_count_*.csv
         table_html_long_covid_region: output/long_covid_count_*.html
+
   summarise_survival_data:
     run: r:latest analysis/stage2_summarise_survival_data.R
     needs:
@@ -89,22 +105,25 @@ actions:
     outputs:
       moderately_sensitive:
         summary_survival_data_CSV: output/summarise_survival_data.csv
-        summary_survival_data_HTML: output/summarise_survival_data.html       
+        summary_survival_data_HTML: output/summarise_survival_data.html
+
   development_cox_model:
     run: r:latest analysis/stage3_model_development.R
     needs:
-    -  stage1_define_eligible_population
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         hazard_ratios_CSV: output/hazard_ratio_estimates_*.csv
         hazard_ratios_HTML: output/hazard_ratio_estimates_*.html
         calibration: output/calibration_development_*.svg
+
   evaluation_cox_model:
     run: r:latest analysis/stage4_model_evaluation.R
     needs:
-    -  stage1_define_eligible_population
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/performance_measures_*.csv
-        performance_measure_HTML: output/performance_measures_*.html
+        performance_measure_HTML: output/output/performance_measures_*.html
         survival_plot: output/survival_plot_*.svg
+
