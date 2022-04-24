@@ -2,29 +2,6 @@ from cohortextractor import patients
 from codelists import *
 
 demographic_variables = dict(
-    # cov_cat_age=patients.categorised_as(
-    #     {
-    #         "18-39": "age >= 18 AND age < 40",
-    #         "40-59": "age >= 40 AND age < 60",
-    #         "60-79": "age >= 60 AND age < 79",
-    #         "80+": "age >= 80",
-    #         "missing": "DEFAULT",
-    #     },
-    #     return_expectations={
-    #         "rate": "universal",
-    #         "category": {
-    #             "ratios": {
-    #                 "18-39": 0.1,
-    #                 "40-59": 0.4,
-    #                 "60-79": 0.4,
-    #                 "80+": 0.1,
-    #             }
-    #         },
-    #     },
-    #     age=patients.age_as_of("index_date"),
-    # ),
-    # cov_num_age = patients.age_as_of("index_date"),
-    #     ## Age
     cov_num_age = patients.age_as_of(
         "index_date",
         return_expectations = {
@@ -173,10 +150,6 @@ clinical_variables = dict(
             },
         },
     ),
-    # cov_num_bmi = patients.most_recent_bmi(
-    #         on_or_after="index_date - 60 months", minimum_age_at_measurement=16
-    #     ),
-
     cov_cat_diabetes=patients.with_these_clinical_events(
         diabetes_codes, on_or_before="index_date - 1 day"
     ),
@@ -192,50 +165,6 @@ clinical_variables = dict(
     cov_cat_haem_cancer=patients.with_these_clinical_events(
         haem_cancer_codes, on_or_before="index_date - 1 day"
     ),
-    # cov_cat_asthma=patients.categorised_as(
-    #     {
-    #         "0": "DEFAULT",
-    #         "1": """
-    #         (
-    #           recent_asthma_code OR (
-    #             asthma_code_ever AND NOT
-    #             copd_code_ever
-    #           )
-    #         ) AND (
-    #           prednisolone_last_year = 0 OR 
-    #           prednisolone_last_year > 4
-    #         )
-    #     """,
-    #         "2": """
-    #         (
-    #           recent_asthma_code OR (
-    #             asthma_code_ever AND NOT
-    #             copd_code_ever
-    #           )
-    #         ) AND
-    #         prednisolone_last_year > 0 AND
-    #         prednisolone_last_year < 5
-            
-    #     """,
-    #     },
-    #     return_expectations={
-    #         "category": {"ratios": {"0": 0.8, "1": 0.1, "2": 0.1}},
-    #         "incidence": 1,
-    #     },
-    #     recent_asthma_code=patients.with_these_clinical_events(
-    #         asthma_codes,
-    #         between=["index_date - 3 years", "index_date - 1 day"],
-    #     ),
-    #     asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
-    #     copd_code_ever=patients.with_these_clinical_events(
-    #         chronic_respiratory_disease_codes
-    #     ),
-    #     prednisolone_last_year=patients.with_these_medications(
-    #         prednisolone_codes,
-    #         between=["index_date - 1 years", "index_date - 1 day"],
-    #         returning="number_of_matches_in_period",
-    #     ),
-    # ),
     cov_cat_asthma=patients.satisfying(
         """
             recent_asthma_code OR (
@@ -283,16 +212,6 @@ clinical_variables = dict(
     cov_cat_chronic_liver_disease=patients.with_these_clinical_events(
         chronic_liver_disease_codes, on_or_before="index_date - 1 day"
     ),
-    # cov_cat_stroke_or_dementia=patients.satisfying(
-    #     "stroke OR dementia",
-    #     stroke=patients.with_these_clinical_events(
-    #         stroke_gp_codes, on_or_before="index_date - 1 day"
-    #     ),
-    #     dementia=patients.with_these_clinical_events(
-    #         dementia_codes, on_or_before="index_date - 1 day"
-    #     ),
-    # ),
-
     cov_cat_dementia=patients.satisfying(
         "dementia",
         dementia=patients.with_these_clinical_events(
@@ -347,9 +266,7 @@ clinical_variables = dict(
     cov_cat_hypertension=patients.with_these_clinical_events(
         hypertension_codes, on_or_before = "index_date - 1 day"
     ),
-    # cov_cat_mental_health=patients.with_these_clinical_events(
-    #     mental_health_codes, on_or_before = "index_date - 1 day"
-    # ),
+
     cov_cat_mental_health=patients.with_these_clinical_events(
         combine_codelists(psychosis_schizophrenia_bipolar_codes, depression_codes),
         on_or_before="index_date - 1 day",

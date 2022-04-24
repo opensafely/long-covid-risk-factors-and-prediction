@@ -216,13 +216,6 @@ study = StudyDefinition(
             "int": {"distribution": "poisson", "mean": 5},
         },
     ),
-    # # Diabetes
-    # diabetes=patients.with_these_clinical_events(
-    #     diabetes_codes,
-    #     on_or_before=pandemic_start,
-    #     return_expectations={"incidence": 0.05},
-    # ),
-    
     # Smoking status
     cov_cat_smoking_status=patients.categorised_as(
         {
