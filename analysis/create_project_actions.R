@@ -207,7 +207,7 @@ actions_list <- splice(
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       performance_measure_CSV = glue("output/performance_measures_*.csv"),
-      performance_measure_HTML = glue("output/output/performance_measures_*.html"),
+      performance_measure_HTML = glue("output/performance_measures_*.html"),
       survival_plot = glue("output/survival_plot_*.svg")
     )
   )

@@ -124,6 +124,6 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/performance_measures_*.csv
-        performance_measure_HTML: output/output/performance_measures_*.html
+        performance_measure_HTML: output/performance_measures_*.html
         survival_plot: output/survival_plot_*.svg
 
