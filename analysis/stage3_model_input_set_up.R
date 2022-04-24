@@ -1,8 +1,7 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
-# Content: Cox model: model development and internal evaluation
-# Output:  hazard ratios and 95% CI
-#          two CSV files, Two HTML files, and TWO SVG files
+# Content: Cox model: input set up, define survival formula through variables selection and AIC
+# Output:  survival formula for selected model
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
@@ -117,6 +116,7 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
   surv_formula_predictors = surv_formula_predictors_lp
 }
 
+print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))
 print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
 
