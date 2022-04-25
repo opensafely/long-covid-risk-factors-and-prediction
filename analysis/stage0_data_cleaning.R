@@ -53,7 +53,7 @@ input <- input %>% dplyr::select(patient_id, practice_id, index_date, death_date
                           sort(tidyselect::peek_vars()))
 
 ################################################################################
-## Part 3. define multimorbidity                                               #
+## Part 2. define multimorbidity                                               #
 ################################################################################
 
 condition_names <- names(input)[grepl("cov_cat", names(input))]
