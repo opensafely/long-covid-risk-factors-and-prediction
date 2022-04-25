@@ -1,7 +1,7 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
-# Content: Supplementary figure 1. Pie chart of snomed code for long COVID
-# Output:  suppl_table_1.csv
+# Content: Count and pie chart of snomed code for long COVID diagnosis
+# Output:  suppl_table_1.csv, suppl_table_1.html, suppl_figure_pie.svg
 
 # function for small number suppression
 source("analysis/functions/redactor2.R")
@@ -62,7 +62,7 @@ suppl_figure_pie
 #supplementary figure - pie chart
 ggsave(file="output/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
 
-# output underlying count data for supplementary figure 1
+# output underlying count data for supplementary figure - pie chart
 
 # small number suppression - indicate NA as redacted
 count_data[which(is.na(count_data$count)),col_names]="[redacted]" 
