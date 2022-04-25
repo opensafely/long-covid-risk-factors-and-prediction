@@ -33,6 +33,10 @@ non_case_inverse_weight=(nrow(input)-nrow(cases))/nrow(non_cases)
 ## recreate input after sampling
 input <- bind_rows(cases,non_cases)
 
+## remove region 
+
+input <- rename(input, sub_cat_region = "cov_cat_region")
+
 ## extract candidate predictors
 covariate_names <- names(input)[grep("cov_", names(input))]
 
@@ -40,8 +44,9 @@ covariate_names <- names(input)[grep("cov_", names(input))]
 ## later as with a spline function
 covariate_names <- covariate_names[-grep("age", covariate_names)]
 
+
 print("candidate predictors")
-covariate_names
+print(covariate_names)
 
 ## Add inverse probability weights for non-cases
 noncase_ids <- unique(non_cases$patient_id)
@@ -51,7 +56,7 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "lcovid_surv", "lcovid_cens", covariate_names,
-                       "cov_num_age", "weight")
+                       "cov_num_age", "weight", "sub_cat_region")
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
 

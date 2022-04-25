@@ -53,7 +53,42 @@ input <- input %>% dplyr::select(patient_id, practice_id, index_date, death_date
                           sort(tidyselect::peek_vars()))
 
 ################################################################################
-## Part 2. define variable types: factor or numerical or date                  #
+## Part 3. define multimorbidity                                               #
+################################################################################
+
+condition_names <- names(input)[grepl("cov_cat", names(input))]
+not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_worker",
+                     "cov_cat_imd","cov_cat_region","cov_cat_smoking_status",
+                     "cov_cat_covid_phenotype", "cov_cat_ethnicity")
+
+condition_names <- condition_names[!condition_names%in%not_a_condition]
+
+input_select <- input %>% dplyr::select(c(patient_id, all_of(condition_names)))
+
+input_select <- input_select %>% mutate(cov_cat_bmi = as.character(cov_cat_bmi)) %>%
+  mutate(cov_cat_bmi = ifelse(cov_cat_bmi == "Not obese", FALSE, TRUE)) %>%
+  mutate(cov_cat_bmi = as.factor(cov_cat_bmi))
+
+input_select <- input_select %>% mutate_if(is.factor, as.logical.factor)
+
+logical_cols <- input_select %>% dplyr::select(where(is.logical)) %>% names()
+
+input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
+
+input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, 2,
+                                                                       ifelse(cov_num_multimorbidity==1, 1, 0)))
+
+input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
+
+## left join: keep all observations in input_select
+input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
+
+rm(input_select)
+
+## View(input_select)
+
+################################################################################
+## Part 3. define variable types: factor or numerical or date                  #
 ################################################################################
 
 # For categorical factors, specify the most frequently occurred level as the reference group
@@ -105,40 +140,6 @@ input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TR
 
 #select_variables <- input %>% dplyr::select(c(sub_cat_covid_history, out_covid_date, index_date))
 
-################################################################################
-## Part 3. define multimorbidity                                               #
-################################################################################
-
-condition_names <- names(input)[grepl("cov_cat", names(input))]
-not_a_condition <- c("cov_cat_age_group", "cov_cat_sex","cov_cat_healthcare_worker",
-                     "cov_cat_imd","cov_cat_region","cov_cat_smoking_status",
-                     "cov_cat_covid_phenotype", "cov_cat_ethnicity")
-
-condition_names <- condition_names[!condition_names%in%not_a_condition]
-
-input_select <- input %>% dplyr::select(c(patient_id, all_of(condition_names)))
-
-input_select <- input_select %>% mutate(cov_cat_bmi = as.character(cov_cat_bmi)) %>%
-  mutate(cov_cat_bmi = ifelse(cov_cat_bmi == "Not obese", FALSE, TRUE)) %>%
-  mutate(cov_cat_bmi = as.factor(cov_cat_bmi))
-
-input_select <- input_select %>% mutate_if(is.factor, as.logical.factor)
-
-logical_cols <- input_select %>% select(where(is.logical)) %>% names()
-
-input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
-
-input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, 2,
-                                                                       ifelse(cov_num_multimorbidity==1, 1, 0)))
-
-input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
-
-## left join: keep all observations in input_select
-input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
-
-rm(input_select)
-
-## View(input_select)
 
 #################################################################################
 ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
