@@ -144,6 +144,10 @@ variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date",
                       "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
                       "fup_end_date_vax_c")
 
+# warnings if non-neg follow-up time
+if (!all(input_select$lcovid_surv>=0)) warning("lcovid_surv should be  >= 0 in input_select")
+if (!all(input_select$lcovid_cens>=0)) warning("lcovid_surv should be  >= 0 in input_select")
+
 input_select <- input_select[,variables_to_keep]
 
 ## left join: keep all observations in input_select
@@ -163,6 +167,9 @@ variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date", "fup_star
                       "lcovid_surv", "lcovid_cens")
 
 input_vaccinated <- input_vaccinated[,variables_to_keep]
+
+# warnings if non-neg follow-up time
+if (!all(input_vaccinated$lcovid_surv>=0)) warning("lcovid_surv should be  >= 0 in input_vaccinated")
 
 ## left join: keep all observations in input_select
 input <- merge(x = input_vaccinated, y = input, by = "patient_id", all.x = TRUE)
