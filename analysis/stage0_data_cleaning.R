@@ -41,7 +41,7 @@ input = input[,!(names(input) %in% snomed_vars)]
 
 tmp_vars <- names(input)[which(grepl("tmp", names(input))==TRUE)]
 input = input[,!(names(input) %in% tmp_vars)]
-vars_to_drop <- c("sgss_positive", "sgss_positive", "primary_care_covid", "hospital_covid",
+vars_to_drop <- c("sgss_positive", "primary_care_covid", "hospital_covid",
                   "primary_care_death_date",  "ons_died_from_any_cause_date", 
                   "first_post_viral_fatigue_date")
 input = input[,!(names(input) %in% vars_to_drop)]
