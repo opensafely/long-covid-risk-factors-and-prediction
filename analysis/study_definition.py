@@ -96,6 +96,14 @@ study = StudyDefinition(
         find_first_match_in_period=True,
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
+    # Please provide an annotation here to explain what "loop_over_codes" will return.
+    # My understanding is that for every individual long-covid snomed code, it will
+    # return two variables - one giving the number of times it's recorded in the patient's
+    # record after the start date, and the date of the first occurence. Is this correct?
+    # Also if this is the case, I think out_long_covid, out_first_long_covid_date and 
+    # out_first_long_covid_code could all be derived in R using this the data extracted with 
+    # loop_over_codes(any_long_covid_code). Doesn't really matter, but would reduce the size of 
+    # input.feather and study_definition runtime.
     **loop_over_codes(any_long_covid_code),
     out_first_long_covid_code=patients.with_these_clinical_events(
         # when running on real data, any long covid code will be returned 
@@ -120,6 +128,10 @@ study = StudyDefinition(
             },
         },
     ),
+    # As above, I think that cov_cat_post_viral_fatigue and first_post_viral_fatigue_date
+    # could both be derived using the information extracted by 
+    # loop_over_codes(post_viral_fatigue_codes). No need to change for this study definition, 
+    # but something to consider, especially if you were doing this for many vairables.
     cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_after=pandemic_start,
@@ -143,6 +155,11 @@ study = StudyDefinition(
         },
     ),
     
+    #Death date selecting min date from primary care and ONS data
+    death_date=patients.minimum_of(
+        "primary_care_death_date", "ons_died_from_any_cause_date",
+    # If you don't need to distinguish between primary_care_death_date and 
+    # ons_died_from_any_cause_date elsewhere, define in here to reduce clutter.
     #Death date (primary care)
     primary_care_death_date=patients.with_death_recorded_in_primary_care(
         on_or_after="index_date",
@@ -163,9 +180,6 @@ study = StudyDefinition(
             "rate": "exponential_increase",
         },
     ),
-    #Death date selecting min date from primary care and ONS data
-    death_date=patients.minimum_of(
-        "primary_care_death_date", "ons_died_from_any_cause_date"
     ),
       ###  COVID vaccination
     # First covid vaccination date (first vaccine given on 8/12/2020 in the UK)

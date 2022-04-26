@@ -68,11 +68,11 @@ demographic_variables = dict(
     cov_cat_ethnicity=patients.categorised_as(
         {
             "Missing": "DEFAULT",
-            "White": """ ethnicity_code=1 """,
-            "Mixed": """ ethnicity_code=2 """,
-            "South Asian": """ ethnicity_code=3 """,
-            "Black": """ ethnicity_code=4 """,
-            "Other": """ ethnicity_code=5 """,
+            "White": "ethnicity_code=1",
+            "Mixed": "ethnicity_code=2",
+            "South Asian": "ethnicity_code=3",
+            "Black": "ethnicity_code=4",
+            "Other": "ethnicity_code=5",
         },
         return_expectations={
             "rate": "universal",
@@ -104,6 +104,10 @@ demographic_variables = dict(
             return_expectations={"incidence": 0.01},
     ),
     # # Question: Not quite sure whether this is covid history before index date?
+    ### This wouldn't necessarily be before index date, as you didn't specify this
+    ### constraint when you define these variables in study_definition.py
+    ### Also, in the absence of a positive test in SGSS, I think primary_care_covid
+    ### would typically be classified as "probably COVID".
     # sub_cat_previous_covid=patients.categorised_as(
     #     {
     #         "COVID positive": """
@@ -185,6 +189,12 @@ clinical_variables = dict(
         ),
     ),
     ## Chronic obstructive pulmonary disease
+    ### Combined
+    cov_cat_chronic_obstructive_pulmonary_disease=patients.maximum_of(
+        "tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed", 
+        "tmp_cov_bin_chronic_obstructive_pulmonary_disease_hes",
+    # If these variables with prefix tmp aren't needed elsewhere, can just
+    # define them in the "maximum_of" function to reduce clutter.
     ### Primary care
     tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed=patients.with_these_clinical_events(
         copd_snomed_clinical,
@@ -199,9 +209,6 @@ clinical_variables = dict(
         on_or_before="index_date - 1 day",
         return_expectations={"incidence": 0.1},
     ),
-    ### Combined
-    cov_cat_chronic_obstructive_pulmonary_disease=patients.maximum_of(
-        "tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed", "tmp_cov_bin_chronic_obstructive_pulmonary_disease_hes",
     ),
     cov_cat_chronic_respiratory_disease=patients.with_these_clinical_events(
         chronic_respiratory_disease_codes, on_or_before="index_date - 1 day"
