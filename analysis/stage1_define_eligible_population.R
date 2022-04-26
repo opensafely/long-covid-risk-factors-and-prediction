@@ -130,6 +130,7 @@ input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date =min(o
                                                                             death_date, 
                                                                             cohort_end_date,
                                                                             na.rm = TRUE))
+# lcovid_surv may be negative here - maybe you want to add some conditions to avoid this?
 input_vaccinated <- input_vaccinated %>% mutate(lcovid_surv = as.numeric(fup_end_date - fup_start_date)+1,
                                                 lcovid_cens = ifelse((out_first_long_covid_date <= fup_end_date & 
                                                                      out_first_long_covid_date >= fup_start_date &
