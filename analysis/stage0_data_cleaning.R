@@ -91,7 +91,7 @@ rm(input_select)
 ## Part 3. define variable types: factor or numerical or date                  #
 ################################################################################
 
-# For categorical factors, specify the most frequently occurred level as the reference group
+## For categorical factors, specify the most frequently occurred level as the reference group
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
@@ -149,7 +149,7 @@ input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TR
 cov_factor_names <- names(input)[grepl("_cat", names(input))]
 
 input_factor_vars <- input[,cov_factor_names]
-
+#
 lapply(input[,cov_factor_names], is.factor)
 lapply(input_factor_vars, is.factor)
 
@@ -209,7 +209,7 @@ output_table_0 <- function(input_factor_vars){
       table_0[index-1,4+j-1]<-names(table(input_factor_vars[,i]))[j]
       table_0[index, 4+j-1] <-table(input_factor_vars[,i])[j]
       if(table(input_factor_vars[,i])[j] <=5){
-        table_0[index, 4+j-1] <- "[redacted]"
+        table_0[index, 4+j-1] <- "[redacted]" #
       }
     }
   }
