@@ -210,6 +210,17 @@ actions_list <- splice(
       performance_measure_HTML = glue("output/performance_measures_*.html"),
       survival_plot = glue("output/survival_plot_*.svg")
     )
+  ),
+  #comment("Validation Cox model"),
+  action(
+    name = "validation_cox_model",
+    run = "r:latest analysis/stage5_model_validation.R",
+    needs = list("stage1_define_eligible_population"),
+    moderately_sensitive = list(
+      val_performance_measure_CSV = glue("output/val_performance_measures.csv"),
+      val_cal_plot = glue("output/val_cal_plot_*.svg"),
+      val_re_cal_plot = glue("output/val_re_cal_plot_*.svg")
+    )
   )
 )
   ## combine everything ----
