@@ -52,8 +52,8 @@ input$out_first_long_covid_date[index] <- NA
 sum(!is.na(input$out_first_long_covid_date))
 
 ## previous long covid
-cohort_start = as.Date("2020-12-01", format="%Y-%m-%d")
-input <- input%>%filter(input$out_first_long_covid_date >= cohort_start |
+cohort_start = as.Date("2020-12-01", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
+input <- input%>%filter(out_first_long_covid_date >= cohort_start |
                           is.na(out_first_long_covid_date))
 flow_chart_n <- c(flow_chart_n, nrow(input))
 
@@ -90,8 +90,8 @@ input_select <- input_select%>% rowwise() %>% mutate(fup_end_date=min(out_first_
                                                                        na.rm = TRUE))
 input_select <- input_select %>% filter(fup_end_date >= index_date & fup_end_date != Inf)
 input_select$lcovid_surv<- as.numeric(input_select$fup_end_date - input_select$index_date)+1
-max_fup <- as.numeric(cohort_end - input_select$index_date[1])+1
-input_select <- input_select %>% filter(lcovid_surv >= 0 & lcovid_surv<= max_fup) 
+# max_fup <- as.numeric(cohort_end - input_select$index_date[1])+1 
+# input_select <- input_select %>% filter(lcovid_surv >= 0 & lcovid_surv<= max_fup) 
 ## define event indicator, without censoring for vaccination
 input_select <- input_select %>% mutate(lcovid_cens = ifelse((out_first_long_covid_date <= fup_end_date & 
                                                      out_first_long_covid_date >= index_date &
@@ -121,9 +121,9 @@ input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) &
                                      (out_first_long_covid_date >= index_date |
                                       is.na(out_first_long_covid_date)))
 
-input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
-                                                vax_covid_date1 >= index_date &
-                                                vax_covid_date1 <= cohort_end_date)
+# input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
+#                                                 vax_covid_date1 >= index_date &
+#                                                 vax_covid_date1 <= cohort_end_date)
 
 input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_start_date = vax_covid_date1)
 input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date =min(out_first_long_covid_date, 
@@ -141,7 +141,8 @@ input_vaccinated <- input_vaccinated %>% mutate(lcovid_surv = as.numeric(fup_end
 ## Create data set for analysis 1 and analysis 2
 
 variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date",
-                      "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c")
+                      "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
+                      "fup_end_date_vax_c")
 
 input_select <- input_select[,variables_to_keep]
 
