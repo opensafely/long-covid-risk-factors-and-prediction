@@ -15,7 +15,9 @@ defaults_list <- list(
   expectations= list(population_size=10000L)
 )
 
-analyses <- c("all", "vax_c", "vaccinated")
+#analyses <- c("all", "vax_c", "vaccinated")
+
+analysis <- c("all", "vax_c")
 
 # create action functions ----
 
@@ -68,8 +70,56 @@ convert_comment_actions <-function(yaml.txt){
     str_replace_all("([^\\'])\\\n(\\s*)\\#\\#", "\\1\n\n\\2\\#\\#") %>%
     str_replace_all("\\#\\#\\'\\\n", "\n")
 }
+apply_development_cox_model <- function(analysis){
+  splice(
+    comment(glue("Development Cox Model - {analysis}")),
+    action(
+      name = glue("development_cox_model_{analysis}"),
+      run = "r:latest analysis/stage3_model_development.R",
+      arguments = c(analysis),
+      needs = list("stage1_define_eligible_population"),
+      moderately_sensitive = list(
+        hazard_ratios_CSV = glue("output/hazard_ratio_estimates_*_{analysis}.csv"),
+        hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*_{analysis}.html"),
+        calibration = glue("output/calibration_development_*_{analysis}.svg")
+      )
+    )
+  )
+}
 
+apply_evaluation_cox_model <- function(analysis){
+  splice(
+    comment(glue("Evaluation Cox Model - {analysis}")),
+    action(
+      name = glue("evaluation_cox_model_{analysis}"),
+      run = "r:latest analysis/stage4_model_evaluation.R",
+      arguments = c(analysis),
+      needs = list("stage1_define_eligible_population"),
+      moderately_sensitive = list(
+        performance_measure_CSV = glue("output/performance_measures_*_{analysis}.csv"),
+        performance_measure_HTML = glue("output/performance_measures_*_{analysis}.html"),
+        survival_plot = glue("output/survival_plot_*_{analysis}.svg")
+      )
+    )
+  )
+}
 
+apply_validation_cox_model <- function(analysis){
+  splice(
+    comment(glue("Validation Cox Model - {analysis}")),
+    action(
+      name = glue("validation_cox_model_{analysis}"),
+      run = "r:latest analysis/stage5_model_validation.R",
+      arguments = c(analysis),
+      needs = list("stage1_define_eligible_population"),
+      moderately_sensitive = list(
+        val_performance_measure_CSV = glue("output/val_performance_measures_{analysis}.csv"),
+        val_cal_plot = glue("output/val_cal_plot_*_{analysis}.svg"),
+        val_re_cal_plot = glue("output/val_re_cal_plot_*_{analysis}.svg")
+      )
+    )
+  )
+}
 ##########################################################
 ## Define and combine all actions into a list of actions #
 ##########################################################
@@ -200,37 +250,42 @@ actions_list <- splice(
     )
   ),
   #comment("Development Cox model"),
-  action(
-    name = "development_cox_model",
-    run = "r:latest analysis/stage3_model_development.R",
-    needs = list("stage1_define_eligible_population"),
-    moderately_sensitive = list(
-      hazard_ratios_CSV = glue("output/hazard_ratio_estimates_*.csv"),
-      hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*.html"),
-      calibration = glue("output/calibration_development_*.svg")
-    )
+  splice(
+    # over outcomes
+    unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
   ),
+  # #comment("Evaluation Cox model"),
+  # action(
+  #   name = "evaluation_cox_model",
+  #   run = "r:latest analysis/stage4_model_evaluation.R",
+  #   needs = list("stage1_define_eligible_population"),
+  #   moderately_sensitive = list(
+  #     performance_measure_CSV = glue("output/performance_measures_*.csv"),
+  #     performance_measure_HTML = glue("output/performance_measures_*.html"),
+  #     survival_plot = glue("output/survival_plot_*.svg")
+  #   )
+  # ),
+  
   #comment("Evaluation Cox model"),
-  action(
-    name = "evaluation_cox_model",
-    run = "r:latest analysis/stage4_model_evaluation.R",
-    needs = list("stage1_define_eligible_population"),
-    moderately_sensitive = list(
-      performance_measure_CSV = glue("output/performance_measures_*.csv"),
-      performance_measure_HTML = glue("output/performance_measures_*.html"),
-      survival_plot = glue("output/survival_plot_*.svg")
-    )
+  splice(
+    # over outcomes
+    unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
   ),
+  # #comment("Validation Cox model"),
+  # action(
+  #   name = "validation_cox_model",
+  #   run = "r:latest analysis/stage5_model_validation.R",
+  #   needs = list("stage1_define_eligible_population"),
+  #   moderately_sensitive = list(
+  #     val_performance_measure_CSV = glue("output/val_performance_measures.csv"),
+  #     val_cal_plot = glue("output/val_cal_plot_*.svg"),
+  #     val_re_cal_plot = glue("output/val_re_cal_plot_*.svg")
+  #   )
+  # )
   #comment("Validation Cox model"),
-  action(
-    name = "validation_cox_model",
-    run = "r:latest analysis/stage5_model_validation.R",
-    needs = list("stage1_define_eligible_population"),
-    moderately_sensitive = list(
-      val_performance_measure_CSV = glue("output/val_performance_measures.csv"),
-      val_cal_plot = glue("output/val_cal_plot_*.svg"),
-      val_re_cal_plot = glue("output/val_re_cal_plot_*.svg")
-    )
+  splice(
+    # over outcomes
+    unlist(lapply(analysis, function(x) apply_validation_cox_model(analysis = x)), recursive = FALSE)
   )
 )
   ## combine everything ----

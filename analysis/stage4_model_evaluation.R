@@ -76,7 +76,7 @@ pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.16,0.50,0.84,1), na.rm=T),
                   labels=c(1:4),include.lowest=TRUE)
 
-svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, ".svg"))
+svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
 # Graph the KM curves in the 4 risk groups to visually assess separation
 plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
      main="Kaplan-Meier survival estimates",
@@ -265,11 +265,13 @@ pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
 pm[nrow(pm),2] <- round((boot_2[3,5]+1)/2,3)
 
 names(pm) <- c("performance measure", "value")
-write.csv(pm, file=paste0("output/performance_measures_", which_model, ".csv"), 
+which_model="full"
+
+write.csv(pm, file=paste0("output/performance_measures_", which_model, "_", analysis, ".csv"), 
           row.names=F)
 
 rmarkdown::render(paste0("analysis/compiled_performance_measure_table",".Rmd"), 
-                  output_file=paste0("performance_measures_", which_model),
+                  output_file=paste0("performance_measures_", which_model,"_", analysis),
                   output_dir="output")
 # validate(fit_cox_model,B=100,bw=TRUE) # repeats fastbw 100 times
 # cal <-calibrate(fit_cox_model,B=100,bw=TRUE) # also repeats fastbw

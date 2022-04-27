@@ -34,7 +34,6 @@ make_df <- function(nrow) {
 } 
 pm_val <- make_df(length(region))
 
-i= 1
 for(i in 1:length(region)){
     pm_val$region_left_out[i] = region[i]
     input_train <- input %>% filter(sub_cat_region != region[i])
@@ -101,7 +100,7 @@ for(i in 1:length(region)){
                          S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
                          u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
     
-    svg(paste0("output/val_cal_plot_",region[i], ".svg"))
+    svg(paste0("output/val_cal_plot_",region[i],"_", analysis, ".svg"))
     plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
     groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
             g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
@@ -122,7 +121,7 @@ for(i in 1:length(region)){
                           S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
                           u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
     
-    svg(paste0("output/val_re_cal_plot_",region[i], ".svg"))
+    svg(paste0("output/val_re_cal_plot_",region[i],"_", analysis, ".svg"))
     plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
     groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
             g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
@@ -130,4 +129,4 @@ for(i in 1:length(region)){
     dev.off()
 }
 
-write.csv(pm_val, file = "output/val_performance_measures.csv", row.names = F)
+write.csv(pm_val, file = paste0("output/val_performance_measures_", analysis,".csv"), row.names = F)

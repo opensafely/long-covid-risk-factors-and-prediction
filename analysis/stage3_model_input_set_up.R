@@ -5,12 +5,35 @@
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
+args <- commandArgs(trailingOnly=TRUE)
+
+if(length(args)==0){
+  analysis <- "all"
+  #analysis <- "vax_c"
+  #analysis <- "vaccinated"
+}else{
+  analysis <- args[[1]]
+}
 
 ################################################################################
 # Part 1: load data, define inverse probability weighting,                     #
 ################################################################################
 
-input <- read_rds("output/input_stage1_all.rds")
+## Analysis 1: all eligible patients, without censoring individuals by vaccination
+if(analysis == "all"){
+  input <- read_rds("output/input_stage1_all.rds")
+}
+
+## Analysis 2: all eligible patients, but censoring individuals by vaccination
+if(analysis == "vax_c"){
+  input <- read_rds("output/input_stage1_all.rds")
+  input <- input %>% dplyr::select(-lcovid_surv, -lcovid_cens) %>%
+    dplyr::rename(lcovid_surv = lcovid_surv_vax_c, lcovid_cens = lcovid_cens_vax_c)
+}
+## Analysis 3: time origin is first vaccination
+if(analysis == "vaccinated"){
+  input <- read_rds("output/input_stage1_vaccinated.rds")
+}
 
 cases <- input %>% filter(!is.na(out_first_long_covid_date) & 
                                   (out_first_long_covid_date == fup_end_date))
@@ -33,8 +56,7 @@ non_case_inverse_weight=(nrow(input)-nrow(cases))/nrow(non_cases)
 ## recreate input after sampling
 input <- bind_rows(cases,non_cases)
 
-## remove region 
-
+## remove region as a covariate
 input <- rename(input, sub_cat_region = "cov_cat_region")
 
 ## extract candidate predictors
@@ -43,7 +65,6 @@ covariate_names <- names(input)[grep("cov_", names(input))]
 ## remove categorical and continuous age, as continuous age will be added
 ## later as with a spline function
 covariate_names <- covariate_names[-grep("age", covariate_names)]
-
 
 print("candidate predictors")
 print(covariate_names)

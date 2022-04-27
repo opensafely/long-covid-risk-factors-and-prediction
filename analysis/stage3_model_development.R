@@ -103,17 +103,17 @@ cox_output <- function(fit_cox_model, which_model){
             what="observed-predicted"
             )
   
-  svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model, ".svg"))
+  svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model,"_", analysis, ".svg"))
   plot(cal)
   dev.off()
   }
   
   # results <-results %>% dplyr::select(-contains("robust"))
   
-  write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, ".csv"), 
+  write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
                           row.names=F)
   rmarkdown::render(paste0("analysis/compiled_HR_results",".Rmd"), 
-                    output_file=paste0("hazard_ratio_estimates_", which_model),
+                    output_file=paste0("hazard_ratio_estimates_", which_model, "_", analysis),
                     output_dir="output")
 }
 
