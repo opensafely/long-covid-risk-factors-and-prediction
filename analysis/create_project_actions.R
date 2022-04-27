@@ -157,6 +157,16 @@ actions_list <- splice(
       table_html_long_covid_count_all = glue("output/long_covid_count_*_all.html")
     )
   ),
+  #comment("Figure_2 - days from covid to long covid"),
+  action(
+    name = "figure_2",
+    run = "r:latest analysis/figure_2.R",
+    needs = list("stage1_define_eligible_population"),
+    moderately_sensitive = list(
+      figure_days_c_to_lc = glue("output/figure_hist.svg"),
+      table_csv_summary= glue("output/summary_days_c_to_long.csv")
+    )
+  ),
   #comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
   action(
     name = "suppl_table_1",

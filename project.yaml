@@ -78,6 +78,15 @@ actions:
         table_csv_long_covid_count_all: output/long_covid_count_*_all.csv
         table_html_long_covid_count_all: output/long_covid_count_*_all.html
 
+  figure_2:
+    run: r:latest analysis/figure_2.R
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        figure_days_c_to_lc: output/figure_hist.svg
+        table_csv_summary: output/summary_days_c_to_long.csv
+
   suppl_table_1:
     run: r:latest analysis/suppl_table_1.R
     needs:
