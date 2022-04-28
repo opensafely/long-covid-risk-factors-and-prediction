@@ -22,7 +22,7 @@ fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
 
 cox.zph(fit_cox_model)
 
-which_model="full"
+which_model="full"  # will allow for selected model in future updated script
 
 print("Finished fitting cox model!")
 

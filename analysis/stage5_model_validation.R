@@ -13,6 +13,18 @@ source("analysis/stage3_model_input_set_up.R")
 # Assumption: linear term is selected for age
 surv_formula = surv_formula_lp
 
+## If restricted cubic spline is selected for age - need to come back to this, have tested that
+## the following code can be used to create the spline function
+##save the following code for now for extracting spline functions##
+## x1 = input$cov_num_age  ## though input should be input_test
+# r1 = rcs(x1,parms=knot_placement)
+# a <- data.matrix(r1)
+# a1 <- a[,1]
+# a2 <- a[,2]
+# a <- data.frame(a1,a2)
+# names(a) <- c("rcs1","rcs2")
+## save the above code for now for extracting spline functions##
+
 region <- levels(input$sub_cat_region)
 region
 make_df <- function(nrow) {
@@ -111,7 +123,7 @@ for(i in 1:length(region)){
     y_recal_1y <- summary(survfit(recal_mod),time=time_point)$surv
     y_recal_1y
     
-    # Calculate new predicted probabilities at 5 years (linear predictor stays the same but needs centering)
+    # Calculate new predicted probabilities at 1 year (linear predictor stays the same but needs centering)
     pred_surv_prob2=y_recal_1y^exp(input_test_select$lin_pred-mean(input_test_select$lin_pred))
     mean(pred_surv_prob2)
     sd(pred_surv_prob2)

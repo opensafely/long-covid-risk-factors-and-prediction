@@ -31,7 +31,8 @@ fit_cox_model_vs$names.kept
 selected_covariate_names <- fit_cox_model_vs$names.kept
 
 if(length(selected_covariate_names)>0){
-    if("cov_num_age" %in% covariate_names){
+    # if("cov_num_age" %in% covariate_names){
+    if(grepl("rms::rcs", surv_formula) == TRUE){
       covariate_names <- covariate_names[-grep("age", covariate_names)]
       surv_formula <- paste0(
         "Surv(lcovid_surv, lcovid_cen) ~ ",
@@ -40,10 +41,12 @@ if(length(selected_covariate_names)>0){
         "+ cluster(practice_id)"
       )
     }
-    if(!("cov_num_age" %in% covariate_names)){
+   # if(!("cov_num_age" %in% covariate_names)){
+  if(grepl("rms::rcs", surv_formula) == FALSE){
       surv_formula <- paste0(
         "Surv(lcovid_surv, lcovid_cen) ~ ",
         paste(covariate_names, collapse = "+"),
+        "+ cov_num_age",
         "+ cluster(practice_id)")
     }
   print(surv_formula)
@@ -51,8 +54,7 @@ if(length(selected_covariate_names)>0){
                                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }
 
-## assess proportional hazards assumption
-cox.zph(fit_cox_model, "rank")
+
 
 names(fit_cox_model)
 
@@ -61,6 +63,11 @@ names(fit_cox_model)
 
 cox_output <- function(fit_cox_model, which_model){
 
+  ## assess proportional hazards assumption
+  ph_test_result <- cox.zph(fit_cox_model, "rank")$table
+  ph_test_result[,c(1,3)] <- round(ph_test_result[,c(1,3)], 3)
+  write.csv(ph_test_result, file=paste0("output/PH_test_", which_model, "_", analysis, ".csv"), row.names=F)
+  
   ## get robust variance-covariance matrix so that robust standard errors can be used in constructing CI's
   robust_fit_cox_model=rms::robcov(fit_cox_model, cluster = input$practice_id)
   

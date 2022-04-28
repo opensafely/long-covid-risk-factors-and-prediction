@@ -30,7 +30,7 @@ if(analysis == "vax_c"){
   input <- input %>% dplyr::select(-lcovid_surv, -lcovid_cens) %>%
     dplyr::rename(lcovid_surv = lcovid_surv_vax_c, lcovid_cens = lcovid_cens_vax_c)
 }
-## Analysis 3: time origin is first vaccination
+## Analysis 3: time origin is the first vaccination
 if(analysis == "vaccinated"){
   input <- read_rds("output/input_stage1_vaccinated.rds")
 }
@@ -74,6 +74,7 @@ noncase_ids <- unique(non_cases$patient_id)
 input$weight <-1
 input$weight <- ifelse(input$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
+
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "lcovid_surv", "lcovid_cens", covariate_names,
@@ -145,4 +146,5 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
 print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))
 print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
+
 
