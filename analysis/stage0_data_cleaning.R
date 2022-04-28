@@ -125,6 +125,7 @@ input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79,
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
 input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 
+
 ## specify date variables in the format of "%Y-%m-%d"----------------------------
 vars_dates <- grep("date", names(input))
 vars_dates <- names(input)[vars_dates]
@@ -137,6 +138,7 @@ lapply(input[vars_dates], is.Date)
 
 ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
 input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
+
 
 #select_variables <- input %>% dplyr::select(c(sub_cat_covid_history, out_covid_date, index_date))
 

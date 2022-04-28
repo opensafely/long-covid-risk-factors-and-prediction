@@ -23,7 +23,6 @@ count_data <-table(snomed_code)
 
 count_data <- data.frame(count_data)
 
-
 names(count_data) <- c("snomed_code", "count")
 count_data
 count_data$percent = round(count_data$count / sum(count_data$count),3)

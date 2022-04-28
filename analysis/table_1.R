@@ -55,6 +55,7 @@ for(i in 1:length(cov_num_names)){
 # small number suppression if number <=5
 table_1$number[index] = redactor2(table_1$number[index])
 
+
 # index <- which(table_1$number<=5)
 # table_1[index,2:ncol(table_1)] = "redacted"
 

@@ -64,6 +64,7 @@ input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79,
 input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
 input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
 
+
 ################################################################################
 #Part 2. Define follow-up end date and construct survival data for long covid  #
 ################################################################################
