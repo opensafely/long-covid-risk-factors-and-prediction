@@ -95,6 +95,18 @@ rm(input_select)
 cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
 input[,cat_factors] <- lapply(input[,cat_factors], function(x) factor(x, ordered = FALSE))
 
+calculate_mode <- function(x) {
+  uniqx <- unique(na.omit(x))
+  uniqx[which.max(tabulate(match(x, uniqx)))]
+}
+
+input[,cat_factors] <- lapply(input[,cat_factors], 
+                              function(x){
+                                x <- relevel(x, ref = as.character(calculate_mode(x)))
+                                x
+                                }
+                              )
+
 #lapply(input[,cat_factors], is.factor)
 
 ## cov_cat_imd by quintile------------------------------------------------------

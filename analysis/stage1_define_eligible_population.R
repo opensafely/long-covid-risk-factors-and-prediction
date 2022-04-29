@@ -118,7 +118,9 @@ input_vaccinated <- input_select%>% dplyr::select(all_of(variables_to_keep))
 input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
                                      vax_covid_date1 >= index_date &
                                      vax_covid_date1 <= cohort_end_date &
-                                     (out_first_long_covid_date >= index_date |
+                                     (death_date >= vax_covid_date1 |
+                                          is.na(death_date)) &
+                                     (out_first_long_covid_date >= vax_covid_date1 |
                                       is.na(out_first_long_covid_date)))
 
 # input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
@@ -126,7 +128,7 @@ input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) &
 #                                                 vax_covid_date1 <= cohort_end_date)
 
 input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_start_date = vax_covid_date1)
-input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date =min(out_first_long_covid_date, 
+input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date = min(out_first_long_covid_date, 
                                                                             death_date, 
                                                                             cohort_end_date,
                                                                             na.rm = TRUE))
