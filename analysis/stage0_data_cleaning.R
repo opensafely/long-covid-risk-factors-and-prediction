@@ -183,7 +183,7 @@ input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.cha
   mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "Missing")) %>%
   mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
 
-print("Fished replacing missing values with a Missing category!")
+print("Finished replacing missing values with a Missing category!")
 
 input_factor_vars$cov_cat_region <- relevel(input_factor_vars$cov_cat_region, ref = "London")
 
