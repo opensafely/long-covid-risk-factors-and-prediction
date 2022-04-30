@@ -103,31 +103,6 @@ demographic_variables = dict(
             returning='binary_flag', 
             return_expectations={"incidence": 0.01},
     ),
-    # # Question: Not quite sure whether this is covid history before index date?
-    ### This wouldn't necessarily be before index date, as you didn't specify this
-    ### constraint when you define these variables in study_definition.py
-    ### Also, in the absence of a positive test in SGSS, I think primary_care_covid
-    ### would typically be classified as "probably COVID".
-    # sub_cat_previous_covid=patients.categorised_as(
-    #     {
-    #         "COVID positive": """
-    #                             (sgss_positive OR primary_care_covid)
-    #                             AND NOT hospital_covid
-    #                             """,
-    #         "COVID hospitalised": "hospital_covid",
-    #         "No COVID code": "DEFAULT",
-    #     },
-    #     return_expectations={
-    #         "incidence": 1,
-    #         "category": {
-    #             "ratios": {
-    #                 "COVID positive": 0.4,
-    #                 "COVID hospitalised": 0.4,
-    #                 "No COVID code": 0.2,
-    #             }
-    #         },
-    #     },
-    # ),
 )
 
 clinical_variables = dict(
@@ -193,8 +168,7 @@ clinical_variables = dict(
     cov_cat_chronic_obstructive_pulmonary_disease=patients.maximum_of(
         "tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed", 
         "tmp_cov_bin_chronic_obstructive_pulmonary_disease_hes",
-    # If these variables with prefix tmp aren't needed elsewhere, can just
-    # define them in the "maximum_of" function to reduce clutter.
+    # define variables with prefix tmp in the "maximum_of" function to reduce clutter.
     ### Primary care
     tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed=patients.with_these_clinical_events(
         copd_snomed_clinical,
