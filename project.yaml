@@ -127,7 +127,6 @@ actions:
         ph_test_CSV: output/PH_test_*_all.csv
         hazard_ratios_CSV: output/hazard_ratio_estimates_*_all.csv
         hazard_ratios_HTML: output/hazard_ratio_estimates_*_all.html
-        calibration: output/calibration_development_*_all.svg
 
   ## Development Cox Model - vax_c 
 
@@ -140,7 +139,6 @@ actions:
         ph_test_CSV: output/PH_test_*_vax_c.csv
         hazard_ratios_CSV: output/hazard_ratio_estimates_*_vax_c.csv
         hazard_ratios_HTML: output/hazard_ratio_estimates_*_vax_c.html
-        calibration: output/calibration_development_*_vax_c.svg
 
   ## Evaluation Cox Model - all 
 

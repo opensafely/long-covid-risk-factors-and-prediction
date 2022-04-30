@@ -12,52 +12,15 @@ library(readr); library(dplyr); library(rms); library(MASS)
 #         variable selection using backward elimination                                            #
 ####################################################################################################
 
-# load data, with defined weight, and import formula for survival analysis 
-source("analysis/stage3_model_input_set_up.R")
-
-print("Fitting cox model:")
-
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
-print("Finished fitting cox model!")
-
-## backward elimination
-fit_cox_model_vs <- fastbw(fit_cox_model)
-
-print("selected model:")
-fit_cox_model_vs$names.kept
-
-selected_covariate_names <- fit_cox_model_vs$names.kept
-
+# # load data, with defined weight, and import formula for survival analysis 
+source("analysis/stage3_model_selection.R")
+ 
 if(length(selected_covariate_names)>0){
-    # if("cov_num_age" %in% covariate_names){
-    if(grepl("rms::rcs", surv_formula) == TRUE){
-      covariate_names <- covariate_names[-grep("age", covariate_names)]
-      surv_formula <- paste0(
-        "Surv(lcovid_surv, lcovid_cens) ~ ",
-        paste(covariate_names, collapse = "+"),
-        "+rms::rcs(cov_num_age,parms=knot_placement)", 
-        "+ cluster(practice_id)"
-      )
-    }
-   # if(!("cov_num_age" %in% covariate_names)){
-  if(grepl("rms::rcs", surv_formula) == FALSE){
-      surv_formula <- paste0(
-        "Surv(lcovid_surv, lcovid_cens) ~ ",
-        paste(covariate_names, collapse = "+"),
-        "+ cov_num_age",
-        "+ cluster(practice_id)")
-    }
-  print(surv_formula)
   fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
                                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }
 
-
-
-names(fit_cox_model)
-
+#names(fit_cox_model)
 
 ##  extract and save cox model output------------------------------------------                                 
 
@@ -102,18 +65,18 @@ cox_output <- function(fit_cox_model, which_model){
   results$concordance[2] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
   results$concordance[3] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
   
-  ## Calibration
-  ## Predicted 365 day survival
-  if(which_model == "full"){
-  cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
-            method="boot", u=365, m=50,  B=20,
-            what="observed-predicted"
-            )
-  
-  svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model,"_", analysis, ".svg"))
-  plot(cal)
-  dev.off()
-  }
+  # ## Calibration
+  # ## Predicted 365 day survival
+  # if(which_model == "full"){
+  # cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
+  #           method="boot", u=365, m=50,  B=20,
+  #           what="observed-predicted"
+  #           )
+  # 
+  # svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model,"_", analysis, ".svg"))
+  # plot(cal)
+  # dev.off()
+  # }
   
   # results <-results %>% dplyr::select(-contains("robust"))
   

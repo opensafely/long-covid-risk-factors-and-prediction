@@ -5,6 +5,7 @@
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
+
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
@@ -30,7 +31,8 @@ if(analysis == "vax_c"){
   input <- input %>% dplyr::select(-lcovid_surv, -lcovid_cens) %>%
     dplyr::rename(lcovid_surv = lcovid_surv_vax_c, lcovid_cens = lcovid_cens_vax_c)
 }
-## Analysis 3: time origin is the first vaccination
+## Analysis 3: time origin is the first vaccination 
+# (please ignore analysis 3 for now as the study definition needs to be revised for this population)
 if(analysis == "vaccinated"){
   input <- read_rds("output/input_stage1_vaccinated.rds")
 }

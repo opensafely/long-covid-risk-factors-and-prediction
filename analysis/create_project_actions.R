@@ -81,8 +81,8 @@ apply_development_cox_model <- function(analysis){
       moderately_sensitive = list(
         ph_test_CSV = glue("output/PH_test_*_{analysis}.csv"),
         hazard_ratios_CSV = glue("output/hazard_ratio_estimates_*_{analysis}.csv"),
-        hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*_{analysis}.html"),
-        calibration = glue("output/calibration_development_*_{analysis}.svg")
+        hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*_{analysis}.html")
+        #calibration = glue("output/calibration_development_*_{analysis}.svg")
       )
     )
   )

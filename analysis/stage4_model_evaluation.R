@@ -11,18 +11,22 @@ library(readr); library(dplyr); library(rms); library(MASS)
 ################################################################################
 
 # load data, with defined weight, and import formula for survival analysis 
-source("analysis/stage3_model_input_set_up.R")
+source("analysis/stage3_model_selection.R")
 
-print("Fitting cox model:")
-
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# print("Fitting cox model:")
+# 
+# fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 # check proportional hazards assumption
 
-cox.zph(fit_cox_model)
+#cox.zph(fit_cox_model)
 
-which_model="full"  # will allow for selected model in future updated script
+if(length(selected_covariate_names)>0){
+  which_model = "selected"
+}else{
+  which_model="full"  
+}
 
 print("Finished fitting cox model!")
 
@@ -73,7 +77,7 @@ pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
 #Plot of apparent separation across 4 groups
-centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.16,0.50,0.84,1), na.rm=T),
+centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                   labels=c(1:4),include.lowest=TRUE)
 
 svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
@@ -273,6 +277,8 @@ write.csv(pm, file=paste0("output/performance_measures_", which_model, "_", anal
 rmarkdown::render(paste0("analysis/compiled_performance_measure_table",".Rmd"), 
                   output_file=paste0("performance_measures_", which_model,"_", analysis),
                   output_dir="output")
+
 # validate(fit_cox_model,B=100,bw=TRUE) # repeats fastbw 100 times
 # cal <-calibrate(fit_cox_model,B=100,bw=TRUE) # also repeats fastbw
 # plot(cal)
+
