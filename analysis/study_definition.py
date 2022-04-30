@@ -96,6 +96,8 @@ study = StudyDefinition(
         find_first_match_in_period=True,
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
+    #"loop_over_codes" provides any long covid code that a patient has been given and the first time that the specific code is given.
+    # because of this, the first long covid date can also be derived outside study definition
     **loop_over_codes(any_long_covid_code),
     out_first_long_covid_code=patients.with_these_clinical_events(
         # when running on real data, any long covid code will be returned 
@@ -120,6 +122,8 @@ study = StudyDefinition(
             },
         },
     ),
+     #"loop_over_codes" provides any post viral fatigue code that a patient has been given and the first time that the specific code is given.
+     # because of this, the post viral fatigue date can also be derived outside study definition
     cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_after=pandemic_start,
@@ -143,7 +147,11 @@ study = StudyDefinition(
         },
     ),
     
-    #Death date (primary care)
+    #Death date selecting min date from primary care and ONS data
+    death_date=patients.minimum_of(
+        "primary_care_death_date", "ons_died_from_any_cause_date",
+    # Define primary_care_death_date and ons_died_from_any_cause_date here to reduce clutter, as we do not need to distinguish them
+    # Death date (primary care)
     primary_care_death_date=patients.with_death_recorded_in_primary_care(
         on_or_after="index_date",
         returning="date_of_death",
@@ -163,9 +171,6 @@ study = StudyDefinition(
             "rate": "exponential_increase",
         },
     ),
-    #Death date selecting min date from primary care and ONS data
-    death_date=patients.minimum_of(
-        "primary_care_death_date", "ons_died_from_any_cause_date"
     ),
       ###  COVID vaccination
     # First covid vaccination date (first vaccine given on 8/12/2020 in the UK)
