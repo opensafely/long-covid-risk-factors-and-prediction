@@ -35,7 +35,7 @@ if(length(selected_covariate_names)>0){
     if(grepl("rms::rcs", surv_formula) == TRUE){
       covariate_names <- covariate_names[-grep("age", covariate_names)]
       surv_formula <- paste0(
-        "Surv(lcovid_surv, lcovid_cen) ~ ",
+        "Surv(lcovid_surv, lcovid_cens) ~ ",
         paste(covariate_names, collapse = "+"),
         "+rms::rcs(cov_num_age,parms=knot_placement)", 
         "+ cluster(practice_id)"
@@ -44,7 +44,7 @@ if(length(selected_covariate_names)>0){
    # if(!("cov_num_age" %in% covariate_names)){
   if(grepl("rms::rcs", surv_formula) == FALSE){
       surv_formula <- paste0(
-        "Surv(lcovid_surv, lcovid_cen) ~ ",
+        "Surv(lcovid_surv, lcovid_cens) ~ ",
         paste(covariate_names, collapse = "+"),
         "+ cov_num_age",
         "+ cluster(practice_id)")
