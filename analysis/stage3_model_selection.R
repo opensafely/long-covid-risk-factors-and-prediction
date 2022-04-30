@@ -41,6 +41,4 @@ if(length(selected_covariate_names)>0){
       "+ cluster(practice_id)")
   }
   print(surv_formula)
-  # fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
-  #                                   data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }

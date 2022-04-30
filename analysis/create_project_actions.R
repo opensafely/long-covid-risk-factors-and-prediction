@@ -15,9 +15,8 @@ defaults_list <- list(
   expectations= list(population_size=10000L)
 )
 
-#analyses <- c("all", "vax_c", "vaccinated")
-
-analysis <- c("all", "vax_c")
+analysis <- c("all", "vax_c") ## all_vax_td is not yet ready for validation and evaluation
+analysis_development <- c("all", "vax_c", "all_vax_td")
 
 # create action functions ----
 
@@ -70,18 +69,18 @@ convert_comment_actions <-function(yaml.txt){
     str_replace_all("([^\\'])\\\n(\\s*)\\#\\#", "\\1\n\n\\2\\#\\#") %>%
     str_replace_all("\\#\\#\\'\\\n", "\n")
 }
-apply_development_cox_model <- function(analysis){
+apply_development_cox_model <- function(analysis_development){
   splice(
-    comment(glue("Development Cox Model - {analysis}")),
+    comment(glue("Development Cox Model - {analysis_development}")),
     action(
-      name = glue("development_cox_model_{analysis}"),
+      name = glue("development_cox_model_{analysis_development}"),
       run = "r:latest analysis/stage3_model_development.R",
-      arguments = c(analysis),
+      arguments = c(analysis_development),
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
-        ph_test_CSV = glue("output/PH_test_*_{analysis}.csv"),
-        hazard_ratios_CSV = glue("output/hazard_ratio_estimates_*_{analysis}.csv"),
-        hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*_{analysis}.html")
+        ph_test_CSV = glue("output/PH_test_*_{analysis_development}.csv"),
+        hazard_ratios_CSV = glue("output/hazard_ratio_estimates_*_{analysis_development}.csv"),
+        hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*_{analysis_development}.html")
         #calibration = glue("output/calibration_development_*_{analysis}.svg")
       )
     )
@@ -253,37 +252,13 @@ actions_list <- splice(
   #comment("Development Cox model"),
   splice(
     # over outcomes
-    unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
+    unlist(lapply(analysis_development, function(x) apply_development_cox_model(analysis_development = x)), recursive = FALSE)
   ),
-  # #comment("Evaluation Cox model"),
-  # action(
-  #   name = "evaluation_cox_model",
-  #   run = "r:latest analysis/stage4_model_evaluation.R",
-  #   needs = list("stage1_define_eligible_population"),
-  #   moderately_sensitive = list(
-  #     performance_measure_CSV = glue("output/performance_measures_*.csv"),
-  #     performance_measure_HTML = glue("output/performance_measures_*.html"),
-  #     survival_plot = glue("output/survival_plot_*.svg")
-  #   )
-  # ),
-  
   #comment("Evaluation Cox model"),
   splice(
     # over outcomes
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
   ),
-  # #comment("Validation Cox model"),
-  # action(
-  #   name = "validation_cox_model",
-  #   run = "r:latest analysis/stage5_model_validation.R",
-  #   needs = list("stage1_define_eligible_population"),
-  #   moderately_sensitive = list(
-  #     val_performance_measure_CSV = glue("output/val_performance_measures.csv"),
-  #     val_cal_plot = glue("output/val_cal_plot_*.svg"),
-  #     val_re_cal_plot = glue("output/val_re_cal_plot_*.svg")
-  #   )
-  # )
-  #comment("Validation Cox model"),
   splice(
     # over outcomes
     unlist(lapply(analysis, function(x) apply_validation_cox_model(analysis = x)), recursive = FALSE)

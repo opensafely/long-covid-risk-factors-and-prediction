@@ -9,9 +9,12 @@ library(readr); library(dplyr); library(rms); library(MASS)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  analysis <- "all"
-  #analysis <- "vax_c"
-  #analysis <- "vaccinated"
+  analysis <- "all"         # all eligible population
+  #analysis <- "vax_c"       # all eligible population but censored them by vaccination
+  #analysis <- "vaccinated"  # please ignore this one for now, as I will revise the study definition for this
+  #analysis <- "all_vax_td"  # this refers to the newly added analysis 4 in the protocol, 
+                             # vaccination status is included as a time-dependent covariate, 
+                             # please ignore evaluation and validation for analysis 4 for now as they haven't been fully set up and tested for analysis 4
 }else{
   analysis <- args[[1]]
 }
@@ -21,7 +24,7 @@ if(length(args)==0){
 ################################################################################
 
 ## Analysis 1: all eligible patients, without censoring individuals by vaccination
-if(analysis == "all"){
+if(analysis == "all" | analysis == "all_vax_td"){
   input <- read_rds("output/input_stage1_all.rds")
 }
 
@@ -37,6 +40,7 @@ if(analysis == "vaccinated"){
   input <- read_rds("output/input_stage1_vaccinated.rds")
 }
 
+#--specify inverse probability weighting
 cases <- input %>% filter(!is.na(out_first_long_covid_date) & 
                                   (out_first_long_covid_date == fup_end_date))
 
@@ -58,6 +62,21 @@ non_case_inverse_weight=(nrow(input)-nrow(cases))/nrow(non_cases)
 ## recreate input after sampling
 input <- bind_rows(cases,non_cases)
 
+## Add inverse probability weights for non-cases
+noncase_ids <- unique(non_cases$patient_id)
+input$weight <-1
+input$weight <- ifelse(input$patient_id %in% noncase_ids,
+                                    non_case_inverse_weight, 1)
+
+if(analysis == "all_vax_td"){
+  z <- ie.setup(input$lcovid_surv, input$lcovid_cens, input$vax1_surv)
+  S <- z$S
+  ie.status <- z$ie.status
+  input <- input[z$subs,] # replicates all variables
+}
+
+## handling variables
+
 ## remove region as a covariate
 input <- rename(input, sub_cat_region = "cov_cat_region")
 
@@ -70,27 +89,21 @@ covariate_names <- covariate_names[-grep("age", covariate_names)]
 
 print("candidate predictors")
 print(covariate_names)
-
-## Add inverse probability weights for non-cases
-noncase_ids <- unique(non_cases$patient_id)
-input$weight <-1
-input$weight <- ifelse(input$patient_id %in% noncase_ids,
-                                    non_case_inverse_weight, 1)
-
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "lcovid_surv", "lcovid_cens", covariate_names,
                        "cov_num_age", "weight", "sub_cat_region")
 
+if(analysis == "all_vax_td"){
+  variables_to_keep <- c(variables_to_keep, "vax1_surv")
+}
+
 input <- input %>% dplyr::select(all_of(variables_to_keep))
-
-knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
-
 ################################################################################
 # Part 2: define survival analysis formula                                     #
 ################################################################################
-
 ## linear predictors + a restricted cubic spline for age + clustering effect 
+knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 ## for practice 
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
@@ -123,6 +136,36 @@ surv_formula_predictors_lp <- paste0(
   "+ cluster(practice_id)"
 )
 
+if(analysis == "all_vax_td"){
+  surv_formula <- paste0(
+    "Surv(lcovid_surv, lcovid_cens) ~ ",
+    paste(covariate_names, collapse = "+"),
+    "+rms::rcs(cov_num_age,parms=knot_placement)", 
+    "+ ie.status",
+    "+ cluster(practice_id)"
+  )
+  ## age is added as a linear predictor
+  surv_formula_lp <- paste0(
+    "Surv(lcovid_surv, lcovid_cens) ~ ",
+    paste(covariate_names, collapse = "+"),
+    "+ cov_num_age", "+ ie.status",
+    "+ cluster(practice_id)"
+  )
+  ## only predictors
+  surv_formula_predictors <- paste0(
+    " ~ ",
+    paste(covariate_names, collapse = "+"),
+    "+rms::rcs(cov_num_age,parms=knot_placement)", "+ ie.status",
+    "+ cluster(practice_id)"
+  )
+  ## only linear predictors
+  surv_formula_predictors_lp <- paste0(
+    " ~ ",
+    paste(covariate_names, collapse = "+"),
+    "+ cov_num_age", "+ ie.status",
+    "+ cluster(practice_id)"
+  )
+}
 print(paste0("survival formula: ", surv_formula))
 
 ## set up before using rms::cph

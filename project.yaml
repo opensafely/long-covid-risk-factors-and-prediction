@@ -140,6 +140,18 @@ actions:
         hazard_ratios_CSV: output/hazard_ratio_estimates_*_vax_c.csv
         hazard_ratios_HTML: output/hazard_ratio_estimates_*_vax_c.html
 
+  ## Development Cox Model - all_vax_td 
+
+  development_cox_model_all_vax_td:
+    run: r:latest analysis/stage3_model_development.R all_vax_td
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        ph_test_CSV: output/PH_test_*_all_vax_td.csv
+        hazard_ratios_CSV: output/hazard_ratio_estimates_*_all_vax_td.csv
+        hazard_ratios_HTML: output/hazard_ratio_estimates_*_all_vax_td.html
+
   ## Evaluation Cox Model - all 
 
   evaluation_cox_model_all:

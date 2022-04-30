@@ -92,6 +92,7 @@ z <- ie.setup(dframe$failure.time, dframe$event, dframe$ie.time)
 S <- z$S
 ie.status <- z$ie.status
 attach(dframe[z$subs,])    # replicates all variables
+dframe <- dframe[z$subs,]    # replicates all variables
 
 f <- cph(S ~ age + ie.status, x=TRUE, y=TRUE)  
 #Must use x=TRUE,y=TRUE to get survival curves with time-dep. covariables

@@ -55,15 +55,15 @@ cox_output <- function(fit_cox_model, which_model){
   results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
   results$robust.se=round(exp(sqrt(diag(vcov(robust_fit_cox_model)))),3)
   
-  results[,2:9] <- round(results[,2:9], 3)
-  print("Print results")
-  print(results) 
-  
-  results$concordance <- NA
+  results$concordance <- results$concordance.lower <- results$concordance.upper <- NA
   
   results$concordance[1] <- round(concordance(fit_cox_model)$concordance,3)
-  results$concordance[2] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
-  results$concordance[3] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
+  results$concordance.lower[1] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
+  results$concordance.upper[1] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
+  
+  results[,2:ncol(results)] <- round(results[,2:ncol(results)], 3)
+  print("Print results")
+  print(results) 
   
   # ## Calibration
   # ## Predicted 365 day survival
