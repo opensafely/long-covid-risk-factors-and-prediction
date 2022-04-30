@@ -69,23 +69,34 @@ pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
 #Plot of apparent separation across 4 groups
+centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
+                  labels=c(1:4),include.lowest=TRUE)
+
+svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
+# Graph the KM curves in the 4 risk groups to visually assess separation
+plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
+     main="Kaplan-Meier survival estimates",
+     xlab="analysis time",col=c(1:4))
+legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
+dev.off()
 
 # if only ie.status is included in the model, the construction of centile_LP is not possible
-if(analysis == "all_vax_td"){
-if((fit_cox_model_vs$names.kept != "ie.status" | length(fit_cox_model_vs$names.kept)==0)){
-    centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
-                      labels=c(1:4),include.lowest=TRUE)
-    
-    
-    svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
-    # Graph the KM curves in the 4 risk groups to visually assess separation
-    plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
-         main="Kaplan-Meier survival estimates",
-         xlab="analysis time",col=c(1:4))
-    legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
-    dev.off()
-}
-}
+# if(analysis == "all_vax_td"){
+#   if((fit_cox_model_vs$names.kept != "ie.status" | length(fit_cox_model_vs$names.kept)==0)){
+#       centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
+#                         labels=c(1:4),include.lowest=TRUE)
+#       
+#       
+#       svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
+#       # Graph the KM curves in the 4 risk groups to visually assess separation
+#       plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
+#            main="Kaplan-Meier survival estimates",
+#            xlab="analysis time",col=c(1:4))
+#       legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
+#       dev.off()
+#   }
+# }
+
 
 ###############################
 # Part 5. Assess for Optimism #
