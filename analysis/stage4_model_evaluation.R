@@ -83,7 +83,7 @@ if(which_model == "full"){
 }
 
 if(which_model == "selected"){
-  if(selected_covariate_names != "ie.status"){
+  if(selected_covariate_names != "cov_cat_ie.status"){
     centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                       labels=c(1:4),include.lowest=TRUE)
     svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
@@ -285,8 +285,3 @@ write.csv(pm, file=paste0("output/performance_measures_", which_model, "_", anal
 rmarkdown::render(paste0("analysis/compiled_performance_measure_table",".Rmd"), 
                   output_file=paste0("performance_measures_", which_model,"_", analysis),
                   output_dir="output")
-
-# validate(fit_cox_model,B=100,bw=TRUE) # repeats fastbw 100 times
-# cal <-calibrate(fit_cox_model,B=100,bw=TRUE) # also repeats fastbw
-# plot(cal)
-

@@ -73,6 +73,7 @@ if(analysis == "all_vax_td"){
   S <- z$S
   ie.status <- z$ie.status
   input <- input[z$subs,] # replicates all variables
+  input$cov_cat_ie.status <- as.factor(ie.status)
 }
 
 ## handling variables
@@ -141,28 +142,31 @@ if(analysis == "all_vax_td"){
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     paste(covariate_names, collapse = "+"),
     "+rms::rcs(cov_num_age,parms=knot_placement)", 
-    "+ ie.status",
+#    "+ ie.status",
     "+ cluster(practice_id)"
   )
   ## age is added as a linear predictor
   surv_formula_lp <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     paste(covariate_names, collapse = "+"),
-    "+ cov_num_age", "+ ie.status",
+    "+ cov_num_age", 
+#    "+ ie.status",
     "+ cluster(practice_id)"
   )
   ## only predictors
   surv_formula_predictors <- paste0(
     " ~ ",
     paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement)", "+ ie.status",
+    "+rms::rcs(cov_num_age,parms=knot_placement)", 
+#    "+ ie.status",
     "+ cluster(practice_id)"
   )
   ## only linear predictors
   surv_formula_predictors_lp <- paste0(
     " ~ ",
     paste(covariate_names, collapse = "+"),
-    "+ cov_num_age", "+ ie.status",
+    "+ cov_num_age", 
+#    "+ ie.status",
     "+ cluster(practice_id)"
   )
 }

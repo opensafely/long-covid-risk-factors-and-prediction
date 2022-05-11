@@ -50,6 +50,10 @@ for(i in 1:length(region)){
     pm_val$region_left_out[i] = region[i]
     input_train <- input %>% filter(sub_cat_region != region[i])
     input_test <- input %>% filter(sub_cat_region == region[i])
+    if(analysis == "all_vax_td"){
+      input_test$patient_id <- seq.int(nrow(input_test))  # reset patient id as they are not unique in this case
+    }
+    
     
     train_cox_model <-rms::cph(formula= as.formula(surv_formula),
                              data= input_train, weight=input_train$weight,surv = TRUE,x=TRUE,y=TRUE)
@@ -71,7 +75,10 @@ for(i in 1:length(region)){
     start = ncol(input_test)+1
     #names(input_test_select)[start:ncol(input_test_select)]
     
+
     input_test_select <- input_test_select %>% dplyr::select(c(patient_id, all_of(pred_name_level)))
+   
+    
     # predictors_wide=as.data.frame(transpose(data.frame(train_cox_model$coefficients)))
     # names(predictors_wide) = paste0(pred_name_level,".coeff")
     
