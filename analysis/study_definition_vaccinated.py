@@ -14,7 +14,11 @@ from cohortextractor import (
 
 ## Import codelists from codelist.py (which pulls them from the codelist folder)
 from codelists import *
-from common_variables import demographic_variables, clinical_variables
+from common_variables_dynamic import generate_common_variables
+(
+    demographic_variables,
+    clinical_variables
+) = generate_common_variables(index_date_variable = " vax_covid_date2 + 14 days")
 
 pandemic_start = "2020-02-01"
 
