@@ -97,11 +97,12 @@ input_select <- input_select %>% mutate(lcovid_cens = ifelse((out_first_long_cov
                                                      out_first_long_covid_date >= index_date &
                                                      !is.na(out_first_long_covid_date)), 1, 0)) %>%
 ## define 1st vaccination as an intervening event - a time-dependent variable
+## add 14 days as buffer to allow vaccination to take effects
                                 mutate(vax1_surv = ifelse(vax_covid_date1 >= index_date & 
-                                                          vax_covid_date1 <= fup_end_date &
+                                                          (vax_covid_date1 + 14) <= fup_end_date &
                                                           !is.na(vax_covid_date1) & 
-                                                          (vax_covid_date1 <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
-                                                          as.numeric(vax_covid_date1 - index_date), NA))
+                                                          ((vax_covid_date1+14) <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
+                                                          as.numeric(vax_covid_date1 - index_date)+14, NA))
 
 ## Define survival data for analysis 2-----------------------------------------------------
 ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
