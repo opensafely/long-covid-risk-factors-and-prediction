@@ -118,7 +118,7 @@ def generate_common_variables(index_date_variable):
                 # set maximum to avoid any impossibly extreme values being classified as obese
             },
             bmi_value=patients.most_recent_bmi(
-                on_or_before= "f"{index_date_variable}" - 1 day", minimum_age_at_measurement=16
+                on_or_before=f"{index_date_variable - 1 day}", minimum_age_at_measurement=16
             ),
             return_expectations={
                 "rate": "universal",
@@ -133,19 +133,19 @@ def generate_common_variables(index_date_variable):
             },
         ),
         cov_cat_diabetes=patients.with_these_clinical_events(
-            diabetes_codes, on_or_before= "f"{index_date_variable}" - 1 day"
+            diabetes_codes, on_or_before=f"{index_date_variable - 1 day}"
         ),
         cov_cat_cancer=patients.satisfying(
             "other_cancer OR lung_cancer",
             other_cancer=patients.with_these_clinical_events(
-                other_cancer_codes, on_or_before= "f"{index_date_variable}" - 1 day"
+                other_cancer_codes, on_or_before=f"{index_date_variable - 1 day}"
             ),
             lung_cancer=patients.with_these_clinical_events(
-                lung_cancer_codes, on_or_before= "f"{index_date_variable}" - 1 day"
+                lung_cancer_codes, on_or_before=f"{index_date_variable - 1 day}"
             ),
         ),
         cov_cat_haem_cancer=patients.with_these_clinical_events(
-            haem_cancer_codes, on_or_before= "f"{index_date_variable}" - 1 day"
+            haem_cancer_codes, on_or_before=f"{index_date_variable - 1 day}"
         ),
         cov_cat_asthma=patients.satisfying(
             """
@@ -159,7 +159,7 @@ def generate_common_variables(index_date_variable):
             },
             recent_asthma_code=patients.with_these_clinical_events(
                 asthma_codes,
-                between=["f"{index_date_variable}" - 3 years", "f"{index_date_variable}" - 1 day"],
+                between=["f"{index_date_variable}" - 3 years",f"{index_date_variable - 1 day}"],
             ),
             asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
             copd_code_ever=patients.with_these_clinical_events(
@@ -176,30 +176,30 @@ def generate_common_variables(index_date_variable):
         tmp_cov_bin_chronic_obstructive_pulmonary_disease_snomed=patients.with_these_clinical_events(
             copd_snomed_clinical,
             returning='binary_flag',
-            on_or_before= "f"{index_date_variable}" - 1 day",
+            on_or_before=f"{index_date_variable - 1 day}",
             return_expectations={"incidence": 0.1},
         ),
         ### HES APC
         tmp_cov_bin_chronic_obstructive_pulmonary_disease_hes=patients.admitted_to_hospital(
             returning='binary_flag',
             with_these_diagnoses= copd_icd10,
-            on_or_before= "f"{index_date_variable}" - 1 day",
+            on_or_before=f"{index_date_variable - 1 day}",
             return_expectations={"incidence": 0.1},
         ),
         ),
         cov_cat_chronic_respiratory_disease=patients.with_these_clinical_events(
-            chronic_respiratory_disease_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            chronic_respiratory_disease_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_chronic_cardiac_disease=patients.with_these_clinical_events(
-            chronic_cardiac_disease_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            chronic_cardiac_disease_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_chronic_liver_disease=patients.with_these_clinical_events(
-            chronic_liver_disease_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            chronic_liver_disease_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_dementia=patients.satisfying(
             "dementia",
             dementia=patients.with_these_clinical_events(
-            dementia_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            dementia_codes, on_or_before =f"{index_date_variable - 1 day}"
             ),
         ),
         cov_cat_stroke=patients.satisfying(
@@ -209,16 +209,16 @@ def generate_common_variables(index_date_variable):
             ),
         ),
         cov_cat_other_neuro=patients.with_these_clinical_events(
-            other_neuro_codes, on_or_before =  "f"{index_date_variable}" - 1 day"
+            other_neuro_codes, on_or_before = f"{index_date_variable - 1 day}"
         ),
         cov_cat_organ_transplant=patients.with_these_clinical_events(
-            organ_transplant_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            organ_transplant_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_dysplenia=patients.with_these_clinical_events(
-            spleen_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            spleen_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_ra_sle_psoriasis=patients.with_these_clinical_events(
-            ra_sle_psoriasis_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            ra_sle_psoriasis_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_other_immunosuppressive_condition=patients.satisfying(
             """
@@ -229,26 +229,26 @@ def generate_common_variables(index_date_variable):
             OR temporary_immunodeficiency
             """,
             sickle_cell=patients.with_these_clinical_events(
-                sickle_cell_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+                sickle_cell_codes, on_or_before =f"{index_date_variable - 1 day}"
             ),
             aplastic_anaemia=patients.with_these_clinical_events(
-                aplastic_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+                aplastic_codes, on_or_before =f"{index_date_variable - 1 day}"
             ),
             hiv=patients.with_these_clinical_events(
-                hiv_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+                hiv_codes, on_or_before =f"{index_date_variable - 1 day}"
             ),
             permanent_immunodeficiency=patients.with_these_clinical_events(
-                permanent_immune_codes, on_or_before= "f"{index_date_variable}" - 1 day"
+                permanent_immune_codes, on_or_before=f"{index_date_variable - 1 day}"
             ),
             temporary_immunodeficiency=patients.with_these_clinical_events(
-                temp_immune_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+                temp_immune_codes, on_or_before =f"{index_date_variable - 1 day}"
             ),
         ),
         cov_cat_heart_failure=patients.with_these_clinical_events(
-            heart_failure_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            heart_failure_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_hypertension=patients.with_these_clinical_events(
-            hypertension_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            hypertension_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
 
         cov_cat_mental_health=patients.with_these_clinical_events(
@@ -256,16 +256,16 @@ def generate_common_variables(index_date_variable):
             on_or_before="f"{index_date_variable}" - 1 day",
         ),
         cov_cat_rheumatoid_arthritis=patients.with_these_clinical_events(
-            rheumatoid_arthritis_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            rheumatoid_arthritis_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_chronic_kidney_disease=patients.with_these_clinical_events(
-            chronic_kidney_disease_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            chronic_kidney_disease_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_sle=patients.with_these_clinical_events(
-            sle_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            sle_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
         cov_cat_psoriasis=patients.with_these_clinical_events(
-            psoriasis_codes, on_or_before = "f"{index_date_variable}" - 1 day"
+            psoriasis_codes, on_or_before =f"{index_date_variable - 1 day}"
         ),
     )
     return demographic_variables, clinical_variables
