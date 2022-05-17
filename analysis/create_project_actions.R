@@ -16,6 +16,7 @@ defaults_list <- list(
 )
 
 analysis <- c("all", "vax_c") ## all_vax_td is not yet ready for validation and evaluation
+cohort <- c("all", "vaccinated")
 analysis_development <- c("all", "vax_c", "all_vax_td")
 
 # create action functions ----
@@ -60,7 +61,6 @@ comment <- function(...){
   comments
 }
 
-
 ## create function to convert comment "actions" in a yaml string into proper comments
 convert_comment_actions <-function(yaml.txt){
   yaml.txt %>%
@@ -69,6 +69,7 @@ convert_comment_actions <-function(yaml.txt){
     str_replace_all("([^\\'])\\\n(\\s*)\\#\\#", "\\1\n\n\\2\\#\\#") %>%
     str_replace_all("\\#\\#\\'\\\n", "\n")
 }
+
 apply_development_cox_model <- function(analysis_development){
   splice(
     comment(glue("Development Cox Model - {analysis_development}")),
@@ -132,12 +133,12 @@ actions_list <- splice(
           "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"
   ),
   
-  #comment("Generate dummy data for study_definition"),
+  comment("Generate dummy data for study_definition for all eligible population"),
   action(
-    name = "generate_study_population",
-    run = "cohortextractor:latest generate_cohort --study-definition study_definition --output-format feather",
+    name = "generate_study_population_all",
+    run = "cohortextractor:latest generate_cohort --study-definition study_definition_all --output-format feather",
     highly_sensitive = list(
-      cohort = glue("output/input.feather")
+      cohort = glue("output/input_all.feather")
     )
   ),
   comment("Generate dummy data for study_definition - vaccinated"),
@@ -148,17 +149,18 @@ actions_list <- splice(
       cohort = glue("output/input_vaccinated.feather")
     )
   ),
+
   #comment("Stage 0 - Data cleaning"),
   action(
     name = "stage0_data_cleaning",
-    run = "r:latest analysis/stage0_data_cleaning.R",
-    needs = list("generate_study_population"),
+    run = "r:latest analysis/stage0_data_cleaning.R both",
+    needs = list("generate_study_population_all", "generate_study_population_vaccinated"),
     moderately_sensitive = list(
-      variable_check_table_CSV = glue("output/table_0.csv"),
-      variable_check_table_HTML = glue("output/table_0.html")
+      variable_check_table_CSV = glue("output/table_0_*.csv"),
+      variable_check_table_HTML = glue("output/table_0_*.html")
     ),
     highly_sensitive = list(
-      cohort = glue("output/input_stage0.rds")
+      cohort = glue("output/input_stage0_*.rds")
     )
   ),
   #comment("Stage 1 - Define eligible population"),

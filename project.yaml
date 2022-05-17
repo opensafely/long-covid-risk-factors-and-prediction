@@ -11,13 +11,14 @@ actions:
   ## This file is created by create_project_actions.R 
   ## Edit and run create_project_actions.R to update the project.yaml 
   ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+  ## Generate dummy data for study_definition for all eligible population 
 
-  generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition
+  generate_study_population_all:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_all
       --output-format feather
     outputs:
       highly_sensitive:
-        cohort: output/input.feather
+        cohort: output/input_all.feather
 
   ## Generate dummy data for study_definition - vaccinated 
 
@@ -29,15 +30,16 @@ actions:
         cohort: output/input_vaccinated.feather
 
   stage0_data_cleaning:
-    run: r:latest analysis/stage0_data_cleaning.R
+    run: r:latest analysis/stage0_data_cleaning.R both
     needs:
-    - generate_study_population
+    - generate_study_population_all
+    - generate_study_population_vaccinated
     outputs:
       highly_sensitive:
-        cohort: output/input_stage0.rds
+        cohort: output/input_stage0_*.rds
       moderately_sensitive:
-        variable_check_table_CSV: output/table_0.csv
-        variable_check_table_HTML: output/table_0.html
+        variable_check_table_CSV: output/table_0_*.csv
+        variable_check_table_HTML: output/table_0_*.html
 
   stage1_define_eligible_population:
     run: r:latest analysis/stage1_define_eligible_population.R
