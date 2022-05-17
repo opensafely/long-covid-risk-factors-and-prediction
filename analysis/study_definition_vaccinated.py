@@ -18,7 +18,7 @@ from common_variables_dynamic import generate_common_variables
 (
     demographic_variables,
     clinical_variables
-) = generate_common_variables(index_date_variable = "vax_covid_date2 + 14 days")
+) = generate_common_variables(index_date_variable = "vax_covid_date2 + 13 days", index_date_variable_3y = "vax_covid_date2 - 3 years")
 
 pandemic_start = "2020-02-01"
 

@@ -3,7 +3,7 @@ from codelists import *
 
 # Define command variables function
 
-def generate_common_variables(index_date_variable):
+def generate_common_variables(index_date_variable, index_date_variable_3y):
     demographic_variables = dict(
         cov_num_age = patients.age_as_of(
             f"{index_date_variable}",
@@ -147,25 +147,26 @@ def generate_common_variables(index_date_variable):
         cov_cat_haem_cancer=patients.with_these_clinical_events(
             haem_cancer_codes, on_or_before=f"{index_date_variable}"
         ),
-        # # cov_cat_asthma=patients.satisfying(
-        # #     """
-        # #         recent_asthma_code OR (
-        # #         asthma_code_ever AND NOT
-        # #         copd_code_ever
-        # #         )
-        # #     """,
-        # #     return_expectations={
-        # #         "incidence": 0.05,
-        # #    },
-        # #     recent_asthma_code=patients.with_these_clinical_events(
-        # #         asthma_codes,
-        # #         between=[f"{index_date_variable - 3 years}",f"{index_date_variable}"],
-        # #     ),
-        # #     asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
-        # #     copd_code_ever=patients.with_these_clinical_events(
-        # #         chronic_respiratory_disease_codes
-        # #     ),
-        # # ),
+        cov_cat_asthma=patients.satisfying(
+            """
+                recent_asthma_code OR (
+                asthma_code_ever AND NOT
+                copd_code_ever
+                )
+            """,
+            return_expectations={
+                "incidence": 0.05,
+           },
+            recent_asthma_code=patients.with_these_clinical_events(
+                asthma_codes,
+                # between=[f"{index_date_variable - 3 years}",f"{index_date_variable}"],
+                between=[f"{index_date_variable_3y}",f"{index_date_variable}"],
+            ),
+            asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
+            copd_code_ever=patients.with_these_clinical_events(
+                chronic_respiratory_disease_codes
+            ),
+        ),
         ## Chronic obstructive pulmonary disease
         # define variables with prefix tmp in the "maximum_of" function to reduce clutter.
         ### Primary care
@@ -250,7 +251,6 @@ def generate_common_variables(index_date_variable):
         cov_cat_hypertension=patients.with_these_clinical_events(
             hypertension_codes, on_or_before =f"{index_date_variable}"
         ),
-
         cov_cat_mental_health=patients.with_these_clinical_events(
             combine_codelists(psychosis_schizophrenia_bipolar_codes, depression_codes),
             on_or_before=f"{index_date_variable}",
