@@ -128,34 +128,6 @@ stage1_eligibility <- function(cohort){
                                                                out_first_long_covid_date >= index_date &
                                                                !is.na(out_first_long_covid_date)), 1, 0))
   
-  # ## Define survival data for analysis 3-----------------------------------------------------
-  # ## input_vaccinated: data for population with at least 1st vaccination
-  # ## lcovid_surv: days from 1st vaccination to long COVID 
-  # ## lcovid_cens   : indicator for long covid 
-  # input_vaccinated <- input_select%>% dplyr::select(all_of(variables_to_keep))
-  # input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
-  #                                      vax_covid_date1 >= index_date &
-  #                                      vax_covid_date1 <= cohort_end_date &
-  #                                      (death_date >= vax_covid_date1 |
-  #                                           is.na(death_date)) &
-  #                                      (out_first_long_covid_date >= vax_covid_date1 |
-  #                                       is.na(out_first_long_covid_date)))
-  # 
-  # # input_vaccinated <- input_vaccinated%>%filter(!is.na(vax_covid_date1) & 
-  # #                                                 vax_covid_date1 >= index_date &
-  # #                                                 vax_covid_date1 <= cohort_end_date)
-  # 
-  # input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_start_date = vax_covid_date1)
-  # input_vaccinated <- input_vaccinated%>% rowwise() %>% mutate(fup_end_date = min(out_first_long_covid_date, 
-  #                                                                             death_date, 
-  #                                                                             cohort_end_date,
-  #                                                                             na.rm = TRUE))
-  # # lcovid_surv may be negative here - maybe you want to add some conditions to avoid this?
-  # input_vaccinated <- input_vaccinated %>% mutate(lcovid_surv = as.numeric(fup_end_date - fup_start_date)+1,
-  #                                                 lcovid_cens = ifelse((out_first_long_covid_date <= fup_end_date & 
-  #                                                                      out_first_long_covid_date >= fup_start_date &
-  #                                                                      !is.na(out_first_long_covid_date)), 1, 0))
-  
   ################################################################################
   # Part 3. Create and output datasets                                           #
   ################################################################################
@@ -189,24 +161,6 @@ stage1_eligibility <- function(cohort){
     print("Stage 1 date set for vaccinated population created successfully!")
   }
   
-  # ## create data set for analysis 3
-  # variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date", "fup_start_date",
-  #                       "lcovid_surv", "lcovid_cens")
-  # 
-  # input_vaccinated <- input_vaccinated[,variables_to_keep]
-  # 
-  # # warnings if non-neg follow-up time
-  # if (!all(input_vaccinated$lcovid_surv>=0)) warning("lcovid_surv should be  >= 0 in input_vaccinated")
-  # 
-  # ## left join: keep all observations in input_select
-  # input <- merge(x = input_vaccinated, y = input, by = "patient_id", all.x = TRUE)
-  # 
-  # rm(input_vaccinated)
-  # 
-  # ## Data set for analysis 3: time origin: 1st vaccination, end fup: long covid or death or end of cohort
-  # saveRDS(input, file = "output/input_stage1_vaccinated.rds")
-  # 
-  # print("Date set for analysis 3 created successfully!")
   
   ################################################################################
   # Part 4. Flowchart output                                                     #
