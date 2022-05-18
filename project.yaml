@@ -89,6 +89,8 @@ actions:
         sequence_count_table_CSV: output/table_3.csv
         sequence_count_table_HTML: output/table_3.html
 
+  ## Figure_1 - long covid count 
+
   figure_1:
     run: r:latest analysis/figure_1.R
     needs:
@@ -231,6 +233,18 @@ actions:
         performance_measure_HTML: output/performance_measures_*_vaccinated.html
         survival_plot: output/survival_plot_*_vaccinated.svg
 
+  ## Evaluation Cox Model - all_vax_td 
+
+  evaluation_cox_model_all_vax_td:
+    run: r:latest analysis/stage4_model_evaluation.R all_vax_td
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        performance_measure_CSV: output/performance_measures_*_all_vax_td.csv
+        performance_measure_HTML: output/performance_measures_*_all_vax_td.html
+        survival_plot: output/survival_plot_*_all_vax_td.svg
+
   ## Validation Cox Model - all 
 
   validation_cox_model_all:
@@ -266,4 +280,16 @@ actions:
         val_performance_measure_CSV: output/val_performance_measures_vaccinated.csv
         val_cal_plot: output/val_cal_plot_*_vaccinated.svg
         val_re_cal_plot: output/val_re_cal_plot_*_vaccinated.svg
+
+  ## Validation Cox Model - all_vax_td 
+
+  validation_cox_model_all_vax_td:
+    run: r:latest analysis/stage5_model_validation.R all_vax_td
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        val_performance_measure_CSV: output/val_performance_measures_all_vax_td.csv
+        val_cal_plot: output/val_cal_plot_*_all_vax_td.svg
+        val_re_cal_plot: output/val_re_cal_plot_*_all_vax_td.svg
 

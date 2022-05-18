@@ -15,7 +15,7 @@ defaults_list <- list(
   expectations= list(population_size=10000L)
 )
 
-analysis <- c("all", "vax_c", "vaccinated") ## all_vax_td is not yet ready for validation and evaluation
+analysis <- c("all", "vax_c", "vaccinated", "all_vax_td") 
 cohort <- c("all", "vaccinated")
 analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td")
 
