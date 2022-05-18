@@ -12,55 +12,71 @@ library(readr); library(dplyr); library(lubridate)
 # function for small number suppression
 source("analysis/functions/redactor2.R")
 
-# Read in data and identify factor variables and numerical variables------------
-input <- read_rds("output/input_stage1_all.rds")
-cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
-cov_factor_names <- c(cov_factor_names, "sub_cat_covid_history")
-cov_num_names <- names(input)[grepl("cov_num", names(input))]
+args <- commandArgs(trailingOnly=TRUE)
 
-# Create an empty data frame ---------------------------------------------------
-table_1 <- data.frame(variable = character(),
-                     number  = numeric(),
-                     percent = numeric(),
-                     mean    = numeric(),
-                     sd      = numeric(), 
-                     inter_quartile_range     = numeric(),
-                     stringsAsFactors = FALSE)
-
-# factor variables: number and percentage---------------------------------------
-input_factor_vars <- input[, cov_factor_names]
-for(i in 1:length(cov_factor_names)){
-  levels = names(table(input_factor_vars[,i]))
-  start = nrow(table_1)+1
-  table_1[start,1] = cov_factor_names[i]
-  start = nrow(table_1)+1
-  end = nrow(table_1)+length(levels)
-  table_1[start:end,1] <- c(levels)            # variable name
-  table_1[start:end,2] <- c(table(input_factor_vars[,i]))  # number
-  table_1[start:end,3] <- 100*round(c(table(input_factor_vars[,i]))/nrow(input_factor_vars),4)  # percentage
-  print(levels)
+if(length(args)==0){
+  cohort <- "all"          # all eligible population
+  #cohort <- "vaccinated"   # please ignore this one for now, as I will revise the study definition for this
+}else{
+  cohort <- args[[1]]
 }
 
-# numerical variables: number and percentage of observations, mean and standard deviations
-input_num_vars <- input[,cov_num_names]
-for(i in 1:length(cov_num_names)){
-  index = nrow(table_1)+1
-  table_1[index,1] <- cov_num_names[i]
-  table_1[index,2] <- length(which(!is.na(unlist(input_num_vars[,2])))) # number of observations
-  table_1[index,4] <- round(mean(unlist(input_num_vars[,i])),2) # mean
-  table_1[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
-  table_1[index,6] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR
+table1_creation <- function(cohort){
+  # Read in data and identify factor variables and numerical variables------------
+  input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
+  cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
+  cov_factor_names <- c(cov_factor_names, "sub_cat_covid_history")
+  cov_num_names <- names(input)[grepl("cov_num", names(input))]
+  
+  # Create an empty data frame ---------------------------------------------------
+  table_1 <- data.frame(variable = character(),
+                       number  = numeric(),
+                       percent = numeric(),
+                       mean    = numeric(),
+                       sd      = numeric(), 
+                       inter_quartile_range     = numeric(),
+                       stringsAsFactors = FALSE)
+  
+  # factor variables: number and percentage---------------------------------------
+  input_factor_vars <- input[, cov_factor_names]
+  for(i in 1:length(cov_factor_names)){
+    levels = names(table(input_factor_vars[,i]))
+    start = nrow(table_1)+1
+    table_1[start,1] = cov_factor_names[i]
+    start = nrow(table_1)+1
+    end = nrow(table_1)+length(levels)
+    table_1[start:end,1] <- c(levels)            # variable name
+    table_1[start:end,2] <- c(table(input_factor_vars[,i]))  # number
+    table_1[start:end,3] <- 100*round(c(table(input_factor_vars[,i]))/nrow(input_factor_vars),4)  # percentage
+    print(levels)
+  }
+  
+  # numerical variables: number and percentage of observations, mean and standard deviations
+  input_num_vars <- input[,cov_num_names]
+  for(i in 1:length(cov_num_names)){
+    index = nrow(table_1)+1
+    table_1[index,1] <- cov_num_names[i]
+    table_1[index,2] <- length(which(!is.na(unlist(input_num_vars[,2])))) # number of observations
+    table_1[index,4] <- round(mean(unlist(input_num_vars[,i])),2) # mean
+    table_1[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
+    table_1[index,6] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR
+  }
+  
+  # small number suppression if number <=5
+  table_1$number[index] = redactor2(table_1$number[index])
+  
+  # index <- which(table_1$number<=5)
+  # table_1[index,2:ncol(table_1)] = "redacted"
+  
+  write.csv(table_1, file=paste0("output/table_1_",cohort, ".csv"), row.names = F)
+  
+  rmarkdown::render("analysis/compiled_table1_results.Rmd",
+                    output_file=paste0("table_1_", cohort),output_dir="output")
 }
 
-# small number suppression if number <=5
-table_1$number[index] = redactor2(table_1$number[index])
-
-# index <- which(table_1$number<=5)
-# table_1[index,2:ncol(table_1)] = "redacted"
-
-write.csv(table_1, file="output/table_1.csv", row.names = F)
-
-rmarkdown::render("analysis/compiled_table1_results.Rmd",
-                  output_file="table_1",output_dir="output")
-
-
+if (cohort == "both") {
+  table1_creation("all")
+  table1_creation("vaccinated")
+} else{
+  table1_creation(cohort)
+}

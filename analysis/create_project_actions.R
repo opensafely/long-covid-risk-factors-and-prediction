@@ -179,11 +179,11 @@ actions_list <- splice(
   #comment("table_1 - Patient characteristics"),  
   action(
     name = "table_1",
-    run = "r:latest analysis/table_1.R",
+    run = "r:latest analysis/table_1.R both",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      descriptive_table_CSV = glue("output/table_1.csv"),
-      descriptive_table_HTML = glue("output/table_1.html")
+      descriptive_table_CSV = glue("output/table_1_*.csv"),
+      descriptive_table_HTML = glue("output/table_1_*.html")
     )
   ),
   #comment("table_2 - event count and incidence rate"),  

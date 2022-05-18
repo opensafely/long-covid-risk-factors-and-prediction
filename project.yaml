@@ -53,13 +53,13 @@ actions:
         flow_chart_html: output/flow_chart_*.html
 
   table_1:
-    run: r:latest analysis/table_1.R
+    run: r:latest analysis/table_1.R both
     needs:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        descriptive_table_CSV: output/table_1.csv
-        descriptive_table_HTML: output/table_1.html
+        descriptive_table_CSV: output/table_1_*.csv
+        descriptive_table_HTML: output/table_1_*.html
 
   table_2:
     run: r:latest analysis/table_2.R
