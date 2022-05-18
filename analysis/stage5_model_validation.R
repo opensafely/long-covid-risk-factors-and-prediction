@@ -11,11 +11,15 @@ library(rms); library(fastDummies)
 source("analysis/stage3_model_input_set_up.R")
 
 # Assumption: linear term is selected for age
-surv_formula = surv_formula_lp
+#surv_formula = surv_formula_lp
+
+# Assumption: spline function is selected for age - extract estimated parameters from fit_cox_model_splines
+#splines_for_age = TRUE
+splines_for_age = grepl("rms::rcs", surv_formula)
 
 ## If restricted cubic spline is selected for age - need to come back to this, have tested that
-## the following code can be used to create the spline function
-##save the following code for now for extracting spline functions##
+## the following code can be used to create spline functions 
+##save the following code for now for extracting spline functions ##
 ## x1 = input$cov_num_age  ## though input should be input_test
 # r1 = rcs(x1,parms=knot_placement)
 # a <- data.matrix(r1)
@@ -75,7 +79,18 @@ for(i in 1:length(region)){
     start = ncol(input_test)+1
     #names(input_test_select)[start:ncol(input_test_select)]
     
-
+    if(splines_for_age == TRUE){
+      x1 = input_test_select$cov_num_age 
+      r1 = rcs(x1,parms=knot_placement)
+      a <- data.matrix(r1)
+      a1 <- a[,1]
+      a2 <- a[,2]
+      a <- data.frame(a1,a2)
+      names(a) <- c("rcs1","rcs2")
+      input_test_select$cov_num_age_rcs2 = c(a[,2])
+      rm(a)
+      names(input_test_select)[grep("cov_num_age_rcs2", names(input_test_select))] = "cov_num_age'"
+    }
     input_test_select <- input_test_select %>% dplyr::select(c(patient_id, all_of(pred_name_level)))
    
     

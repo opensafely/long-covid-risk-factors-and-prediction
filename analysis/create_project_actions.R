@@ -33,7 +33,6 @@ action <- function(
   highly_sensitive=NULL,
   moderately_sensitive=NULL
 ){
-  
   outputs <- list(
     highly_sensitive = highly_sensitive,
     moderately_sensitive = moderately_sensitive
@@ -204,7 +203,7 @@ actions_list <- splice(
       sequence_count_table_HTML = glue("output/table_3.html")
     )
   ),
-  #comment("Figure_1 - long covid count"),
+  comment("Figure_1 - long covid count"),
   action(
     name = "figure_1",
     run = "r:latest analysis/figure_1.R",
