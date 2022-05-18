@@ -9,12 +9,10 @@ library(readr); library(dplyr); library(rms); library(MASS)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #analysis <- "all"         # all eligible population
-  #analysis <- "vax_c"       # all eligible population but censored them by vaccination
-  #analysis <- "vaccinated"  # please ignore this one for now, as I will revise the study definition for this
-  analysis <- "all_vax_td"  # this refers to the newly added analysis 4 in the protocol, 
-                             # vaccination status is included as a time-dependent covariate, 
-                             # please ignore evaluation and validation for analysis 4 for now as they haven't been fully set up and tested for analysis 4
+  #analysis <- "all"          # all eligible population
+  #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
+  analysis <- "vaccinated"    # vaccinated population
+  #analysis <- "all_vax_td"   # vaccination status is included as a time-dependent covariate
 }else{
   analysis <- args[[1]]
 }
@@ -195,5 +193,3 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
 print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))
 print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
-
-

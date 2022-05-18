@@ -15,9 +15,9 @@ defaults_list <- list(
   expectations= list(population_size=10000L)
 )
 
-analysis <- c("all", "vax_c") ## all_vax_td is not yet ready for validation and evaluation
+analysis <- c("all", "vax_c", "vaccinated") ## all_vax_td is not yet ready for validation and evaluation
 cohort <- c("all", "vaccinated")
-analysis_development <- c("all", "vax_c", "all_vax_td")
+analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td")
 
 # create action functions ----
 
@@ -132,7 +132,6 @@ actions_list <- splice(
           "Edit and run create_project_actions.R to update the project.yaml",
           "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"
   ),
-  
   comment("Generate dummy data for study_definition for all eligible population"),
   action(
     name = "generate_study_population_all",
@@ -149,8 +148,7 @@ actions_list <- splice(
       cohort = glue("output/input_vaccinated.feather")
     )
   ),
-
-  #comment("Stage 0 - Data cleaning"),
+  comment("Stage 0 - Data cleaning"),
   action(
     name = "stage0_data_cleaning",
     run = "r:latest analysis/stage0_data_cleaning.R both",
@@ -163,7 +161,7 @@ actions_list <- splice(
       cohort = glue("output/input_stage0_*.rds")
     )
   ),
-  #comment("Stage 1 - Define eligible population"),
+  comment("Stage 1 - Define eligible population"),
   action(
     name = "stage1_define_eligible_population",
     run = "r:latest analysis/stage1_define_eligible_population.R both",
@@ -176,7 +174,7 @@ actions_list <- splice(
       cohort = glue("output/input_stage1_*.rds")
     )
   ),
-  #comment("table_1 - Patient characteristics"),  
+  comment("table_1 - Patient characteristics"),  
   action(
     name = "table_1",
     run = "r:latest analysis/table_1.R both",
@@ -186,7 +184,7 @@ actions_list <- splice(
       descriptive_table_HTML = glue("output/table_1_*.html")
     )
   ),
-  #comment("table_2 - event count and incidence rate"),  
+  comment("table_2 - event count and incidence rate"),  
   action(
     name = "table_2",
     run = "r:latest analysis/table_2.R both",
@@ -196,7 +194,7 @@ actions_list <- splice(
       incidence_rate_talbe_HTML = glue("output/table_2_*.html")
     ),
   ),
-  #comment("table_3 - sequence count"),
+  comment("table_3 - sequence count"),
   action(
     name = "table_3",
     run = "r:latest analysis/table_3.R",
@@ -217,7 +215,7 @@ actions_list <- splice(
       table_html_long_covid_count_all = glue("output/long_covid_count_*_all.html")
     )
   ),
-  #comment("Figure_2 - days from covid to long covid"),
+  comment("Figure_2 - days from covid to long covid"),
   action(
     name = "figure_2",
     run = "r:latest analysis/figure_2.R",
@@ -227,7 +225,7 @@ actions_list <- splice(
       table_csv_summary= glue("output/summary_days_c_to_long.csv")
     )
   ),
-  #comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
+  comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
   action(
     name = "suppl_table_1",
     run = "r:latest analysis/suppl_table_1.R",
@@ -238,7 +236,7 @@ actions_list <- splice(
       table_html_long_covid_code = glue("output/suppl_table_1.html")
     )
   ),
-  #comment("Suppl_figure_1 - long covid count by region"),
+  comment("Suppl_figure_1 - long covid count by region"),
   action(
     name = "suppl_figure_1",
     run = "r:latest analysis/suppl_figure_1.R",
@@ -249,7 +247,7 @@ actions_list <- splice(
       table_html_long_covid_region = glue("output/long_covid_count_*.html")
     )
   ),
-  #comment("Summarise survival data"),
+  comment("Summarise survival data"),
   action(
     name = "summarise_survival_data",
     run = "r:latest analysis/stage2_summarise_survival_data.R",
@@ -259,12 +257,12 @@ actions_list <- splice(
       summary_survival_data_HTML = glue("output/summarise_survival_data.html")
     )
   ),
-  #comment("Development Cox model"),
+  comment("Development Cox model"),
   splice(
     # over outcomes
     unlist(lapply(analysis_development, function(x) apply_development_cox_model(analysis_development = x)), recursive = FALSE)
   ),
-  #comment("Evaluation Cox model"),
+  comment("Evaluation Cox model"),
   splice(
     # over outcomes
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
