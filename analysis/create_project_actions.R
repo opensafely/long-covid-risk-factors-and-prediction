@@ -189,11 +189,11 @@ actions_list <- splice(
   #comment("table_2 - event count and incidence rate"),  
   action(
     name = "table_2",
-    run = "r:latest analysis/table_2.R",
+    run = "r:latest analysis/table_2.R both",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      incidence_rate_table_CSV = glue("output/table_2.csv"),
-      incidence_rate_talbe_HTML = glue("output/table_2.html")
+      incidence_rate_table_CSV = glue("output/table_2_*.csv"),
+      incidence_rate_talbe_HTML = glue("output/table_2_*.html")
     ),
   ),
   #comment("table_3 - sequence count"),

@@ -62,13 +62,13 @@ actions:
         descriptive_table_HTML: output/table_1_*.html
 
   table_2:
-    run: r:latest analysis/table_2.R
+    run: r:latest analysis/table_2.R both
     needs:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/table_2.csv
-        incidence_rate_talbe_HTML: output/table_2.html
+        incidence_rate_table_CSV: output/table_2_*.csv
+        incidence_rate_talbe_HTML: output/table_2_*.html
 
   table_3:
     run: r:latest analysis/table_3.R
