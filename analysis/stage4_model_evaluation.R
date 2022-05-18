@@ -69,16 +69,16 @@ pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
 #Plot of apparent separation across 4 groups
+svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
 if(which_model == "full"){
   centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                     labels=c(1:4),include.lowest=TRUE)
-  svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
+
   # Graph the KM curves in the 4 risk groups to visually assess separation
   plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
        main="Kaplan-Meier survival estimates",
        xlab="analysis time",col=c(1:4))
   legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
-  dev.off()
 
 }
 
@@ -86,16 +86,16 @@ if(which_model == "selected"){
   if(selected_covariate_names != "cov_cat_ie.status"){
     centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                       labels=c(1:4),include.lowest=TRUE)
-    svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
+   # svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
     # Graph the KM curves in the 4 risk groups to visually assess separation
     plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
          main="Kaplan-Meier survival estimates",
          xlab="analysis time",col=c(1:4))
     legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
-    dev.off()
+   # dev.off()
   }
 }
-
+dev.off()
 
 
 ###############################
@@ -186,7 +186,7 @@ prob_HR
 prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
 prob_HR_shrunk
 
-svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves_", which_model, ".svg"))
+svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves_", which_model,"_", analysis, ".svg"))
 # We can plot the two baseline survival curves
 plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
@@ -198,7 +198,7 @@ abline(h=day180_Cox_shrunk,col="red")
 abline(v=180,col="red")
 dev.off()
 
-svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves2_", which_model, ".svg"))
+svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
 # # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability at 5yrs
 # as calculated above to check they match the predicted survival curves
 plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
