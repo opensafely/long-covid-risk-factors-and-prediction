@@ -16,7 +16,12 @@ from cohortextractor import (
 
 ## Import codelists from codelist.py (which pulls them from the codelist folder)
 from codelists import *
-from common_variables import demographic_variables, clinical_variables
+#from common_variables import demographic_variables, clinical_variables
+from common_variables_dynamic import generate_common_variables
+(
+    demographic_variables,
+    clinical_variables
+) = generate_common_variables(index_date_variable = "index_date - 1 day", index_date_variable_3y = "index_date - 3 years")
 
 pandemic_start = "2020-02-01"
 
@@ -65,7 +70,7 @@ study = StudyDefinition(
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}}, 
     ),
     primary_care_covid=patients.with_these_clinical_events(
         any_primary_care_code,

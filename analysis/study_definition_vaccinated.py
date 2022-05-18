@@ -83,14 +83,16 @@ study = StudyDefinition(
         find_first_match_in_period=True,
         return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
-    # Outcome
+    # first covid infection date
     out_covid_date = patients.minimum_of(
         "sgss_positive", "primary_care_covid", "hospital_covid"
     ),
+    # long covid diagnosis
     out_long_covid=patients.with_these_clinical_events(
         any_long_covid_code,
         return_expectations={"incidence": 0.05},
     ),
+    # first long covid diagnosis date
     out_first_long_covid_date=patients.with_these_clinical_events(
         any_long_covid_code,
         returning="date",
