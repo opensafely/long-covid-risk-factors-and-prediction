@@ -166,11 +166,11 @@ actions_list <- splice(
   #comment("Stage 1 - Define eligible population"),
   action(
     name = "stage1_define_eligible_population",
-    run = "r:latest analysis/stage1_define_eligible_population.R",
+    run = "r:latest analysis/stage1_define_eligible_population.R both",
     needs = list("stage0_data_cleaning"),
     moderately_sensitive = list(
-      flow_chart_csv = glue("output/flow_chart.csv"),
-      flow_chart_html = glue("output/flow_chart.html")
+      flow_chart_csv = glue("output/flow_chart_*.csv"),
+      flow_chart_html = glue("output/flow_chart_*.html")
     ),
     highly_sensitive = list(
       cohort = glue("output/input_stage1_*.rds")

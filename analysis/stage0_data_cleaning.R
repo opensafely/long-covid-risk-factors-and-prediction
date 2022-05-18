@@ -22,14 +22,6 @@ if(length(args)==0){
   cohort <- args[[1]]
 }
 
-# if(cohort == "all"){
-#   input <- read_feather("output/input.feather")
-# }
-# if(cohort == "vaccinated"){
-#   input <- read_feather("output/input_vaccinated.feather")
-# }
-#View(input)
-
 stage0_data_cleaning <- function(cohort){
   input <- read_feather(paste0("output/input_", cohort, ".feather"))
   ################################################################################
