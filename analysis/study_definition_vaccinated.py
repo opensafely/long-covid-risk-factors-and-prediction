@@ -20,7 +20,7 @@ from common_variables_dynamic import generate_common_variables
     clinical_variables
 ) = generate_common_variables(index_date_variable = "vax_covid_date2 + 13 days", index_date_variable_3y = "vax_covid_date2 - 3 years")
 
-pandemic_start = "2020-02-01"
+pandemic_start = "2020-01-29" # the first two COVID cases in the UK
 
 def make_variable(code):
     return {
@@ -67,21 +67,24 @@ study = StudyDefinition(
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
     ),
     primary_care_covid=patients.with_these_clinical_events(
         any_primary_care_code,
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
     ),
     hospital_covid=patients.admitted_to_hospital(
         with_these_diagnoses=covid_codes,
         returning="date_admitted",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        #return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
     ),
     # first covid infection date
     out_covid_date = patients.minimum_of(
@@ -203,7 +206,7 @@ study = StudyDefinition(
             "incidence": 0.6
         },
     ),
-     # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
+    # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
     vax_covid_date3=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",

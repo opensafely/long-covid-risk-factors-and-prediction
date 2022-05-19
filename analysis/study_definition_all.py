@@ -70,21 +70,24 @@ study = StudyDefinition(
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}}, 
+       # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}}, 
+       return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}}, 
     ),
     primary_care_covid=patients.with_these_clinical_events(
         any_primary_care_code,
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
     ),
     hospital_covid=patients.admitted_to_hospital(
         with_these_diagnoses=covid_codes,
         returning="date_admitted",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        #return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
     ),
     # Outcome
     out_covid_date = patients.minimum_of(
