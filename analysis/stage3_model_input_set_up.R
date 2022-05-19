@@ -18,7 +18,7 @@ if(length(args)==0){
 }
 
 ################################################################################
-# Part 1: load data, define inverse probability weighting,                     #
+# Part 1: load data, define inverse probability weighting                      #
 ################################################################################
 
 ## Analysis 1: all eligible patients, without censoring individuals by vaccination
@@ -98,6 +98,7 @@ if(analysis == "all_vax_td"){
 }
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
+print("Part 1: load data, define inverse probability weighting is completed!")
 ################################################################################
 # Part 2: define survival analysis formula                                     #
 ################################################################################
@@ -174,9 +175,10 @@ print(paste0("survival formula: ", surv_formula))
 dd <<- datadist(input)
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 
+print("Part 2: define survival analysis formula is completed!")
 ################################################################################
-# Part 3: Assess if non-linear term is needed for continuous age  
-#         and redefine the survival analysis formula
+# Part 3: Assess if non-linear term is needed for continuous age               #
+#         and redefine the survival analysis formula                           #
 ################################################################################
 
 fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
@@ -193,4 +195,4 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
 print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))
 print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
-
+print("Part 3 is completed!")

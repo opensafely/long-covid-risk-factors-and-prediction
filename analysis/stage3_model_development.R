@@ -30,6 +30,7 @@ cox_output <- function(fit_cox_model, which_model){
   ph_test_result <- cox.zph(fit_cox_model, "rank")$table
   ph_test_result[,c(1,3)] <- round(ph_test_result[,c(1,3)], 3)
   write.csv(ph_test_result, file=paste0("output/PH_test_", which_model, "_", analysis, ".csv"), row.names=F)
+  print(paste0("Results from proportional hazards test are saved successfully for ", which_model, " ", analysis, "!"))
   
   ## get robust variance-covariance matrix so that robust standard errors can be used in constructing CI's
   robust_fit_cox_model=rms::robcov(fit_cox_model, cluster = input$practice_id)
@@ -85,6 +86,7 @@ cox_output <- function(fit_cox_model, which_model){
   rmarkdown::render(paste0("analysis/compiled_HR_results",".Rmd"), 
                     output_file=paste0("hazard_ratio_estimates_", which_model, "_", analysis),
                     output_dir="output")
+  print(paste0("Hazard ratio estimates are saved successfully for ", which_model, " ", analysis, "!"))
 }
 
 cox_output(fit_cox_model, "full")

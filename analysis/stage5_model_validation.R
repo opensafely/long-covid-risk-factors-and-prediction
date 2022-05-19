@@ -17,17 +17,6 @@ source("analysis/stage3_model_input_set_up.R")
 #splines_for_age = TRUE
 splines_for_age = grepl("rms::rcs", surv_formula)
 
-## If restricted cubic spline is selected for age - need to come back to this, have tested that
-## the following code can be used to create spline functions 
-##save the following code for now for extracting spline functions ##
-## x1 = input$cov_num_age  ## though input should be input_test
-# r1 = rcs(x1,parms=knot_placement)
-# a <- data.matrix(r1)
-# a1 <- a[,1]
-# a2 <- a[,2]
-# a <- data.frame(a1,a2)
-# names(a) <- c("rcs1","rcs2")
-## save the above code for now for extracting spline functions##
 
 region <- levels(input$sub_cat_region)
 region
@@ -49,6 +38,8 @@ make_df <- function(nrow) {
   temp_df
 } 
 pm_val <- make_df(length(region))
+
+print("Data frame for pm is created successfully!")
 
 for(i in 1:length(region)){
     pm_val$region_left_out[i] = region[i]
@@ -78,7 +69,7 @@ for(i in 1:length(region)){
     input_test_select <- dummy_cols(input_test, select_columns = factor_covars)
     start = ncol(input_test)+1
     #names(input_test_select)[start:ncol(input_test_select)]
-    
+    print("extract covariate name if splines are selected for age!")
     if(splines_for_age == TRUE){
       x1 = input_test_select$cov_num_age 
       r1 = rcs(x1,parms=knot_placement)
@@ -90,9 +81,9 @@ for(i in 1:length(region)){
       input_test_select$cov_num_age_rcs2 = c(a[,2])
       rm(a)
       names(input_test_select)[grep("cov_num_age_rcs2", names(input_test_select))] = "cov_num_age'"
+      print("Covariate names for age (splines) have been extracted successfully!")
     }
     input_test_select <- input_test_select %>% dplyr::select(c(patient_id, all_of(pred_name_level)))
-   
     
     # predictors_wide=as.data.frame(transpose(data.frame(train_cox_model$coefficients)))
     # names(predictors_wide) = paste0(pred_name_level,".coeff")
@@ -119,6 +110,7 @@ for(i in 1:length(region)){
     pm_val$c_stat_lower[i] = round(concordance(test_cox_model)$concordance - 1.96*sqrt((concordance(test_cox_model))$var),3)
     pm_val$c_stat_upper[i] = round(concordance(test_cox_model)$concordance + 1.96*sqrt((concordance(test_cox_model))$var),3)
     
+    print("Calculation for the C-statistic is completed!")
     # Calibration slope
     pm_val$cal_slope[i] = round(test_cox_model$coef,3)
     
@@ -140,6 +132,7 @@ for(i in 1:length(region)){
             g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
     legend(0.0,0.8,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
     dev.off()
+    print("Calibration plot is created successfully!")
     # Recalibration of the baseline survival function
     recal_mod <- coxph(Surv(input_test$lcovid_surv,input_test$lcovid_cens)~offset(input_test_select$lin_pred))
     y_recal_1y <- summary(survfit(recal_mod),time=time_point)$surv
@@ -161,6 +154,7 @@ for(i in 1:length(region)){
             g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
     legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
     dev.off()
+    print("Re-calibration plot is created successfully!")
 }
 
 write.csv(pm_val, file = paste0("output/val_performance_measures_", analysis,".csv"), row.names = F)

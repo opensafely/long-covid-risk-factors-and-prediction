@@ -8,8 +8,8 @@ library(readr); library(dplyr); library(htmlTable)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"          # all eligible population
-  cohort <- "vaccinated"   # please ignore this one for now, as I will revise the study definition for this
+  cohort <- "all"          # all eligible population
+  #cohort <- "vaccinated"   # please ignore this one for now, as I will revise the study definition for this
 }else{
   cohort <- args[[1]]
 }
@@ -133,7 +133,7 @@ stage1_eligibility <- function(cohort){
   ################################################################################
   ## Create data set for analysis 1 and analysis 2
   
-  variables_to_keep <-c("patient_id", "fup_end_date", "cohort_end_date",
+  variables_to_keep <-c("patient_id", "fup_end_date",
                         "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
                         "fup_end_date_vax_c", "vax1_surv")
   

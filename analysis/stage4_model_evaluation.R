@@ -20,7 +20,7 @@ if(length(selected_covariate_names)>0){
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
-print("Finished fitting cox model!")
+print("Part 1. Finished fitting cox model!")
 
 # create output table for performance measures
 
@@ -52,6 +52,8 @@ pm[nrow(pm),2] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((conc
 
 # D statistic needs library(survcomp)
 
+print("Part 2. Calculate apparent discrimination performance is completed successfully!")
+
 ##################################################
 # Part 3.  assess the models apparent calibration#
 ##################################################
@@ -62,10 +64,13 @@ fit_cox_model2<- cph(Surv(input$lcovid_surv,input$lcovid_cens)~pred_LP,
 pm[nrow(pm)+1,1] <- "Calibration slope"
 pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
 
+print("Part 3. Assess the models apparent calibration is completed successfully!")
+
 ####################
 # Part 4. Plotting #
 ####################
 
+print("Stage4_model_evaluation.R, startting Part 4 Plotting!")
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
 #Plot of apparent separation across 4 groups
@@ -83,10 +88,9 @@ if(which_model == "full"){
 }
 
 if(which_model == "selected"){
-  if(selected_covariate_names != "cov_cat_ie.status"){
+  if(selected_covariate_names != "cov_cat_ie.status" | length(selected_covariate_names)>1){
     centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                       labels=c(1:4),include.lowest=TRUE)
-   # svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
     # Graph the KM curves in the 4 risk groups to visually assess separation
     plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
          main="Kaplan-Meier survival estimates",
@@ -97,6 +101,7 @@ if(which_model == "selected"){
 }
 dev.off()
 
+print(paste0("Part 4. Survival plot by risk groups have been saved successfully for ", which_model, " ", analysis, "!" ))
 
 ###############################
 # Part 5. Assess for Optimism #
@@ -209,9 +214,11 @@ abline(h=prob_HR_shrunk,col="red")
 abline(v=180,col="red")
 dev.off()
 
-##########################################################
+print(paste0("Part 5. Assess for optimism is completed successfully for ", which_model, " ", analysis, "!"))
+
+###########################################################
 # Part 6. Internal validation using bootstrap validation  #
-##########################################################
+###########################################################
 
 #  perform internal validation using bootstrap validation. 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
@@ -239,6 +246,8 @@ pm[nrow(pm),2] <- round((boot_1[3,4]+1)/2,3)
 pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
 pm[nrow(pm),2] <- round((boot_1[3,5]+1)/2,3)
 
+print(paste0("Part 6. Internal validation using bootstrap validation is completed successfully for ",
+             which_model, " ", analysis, "!"))
 
 ###############################################################
 # Part 7. Shrinkage & Optimism adjusted performance measures #
@@ -285,3 +294,6 @@ write.csv(pm, file=paste0("output/performance_measures_", which_model, "_", anal
 rmarkdown::render(paste0("analysis/compiled_performance_measure_table",".Rmd"), 
                   output_file=paste0("performance_measures_", which_model,"_", analysis),
                   output_dir="output")
+
+print(paste0("Part 7. Shrinkage & Optimism adjusted performance measures is completed successfully for",
+             which_model, " ", analysis, "!"))
