@@ -17,7 +17,7 @@ selected_covariate_names <- fit_cox_model_vs$names.kept
 
 if(length(selected_covariate_names)>0){
   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == TRUE){
-    selected_covariate_names <- selected_covariate_name[-grep("age", selected_covariate_names)]
+    selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
     surv_formula <- paste0(
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
