@@ -19,7 +19,6 @@ median(data_1$lcovid_surv)
 data_2 <- data %>% filter(lcovid_cens == 0)
 median(data_2$lcovid_surv)
 
-print(fit)
 # Summarise follow-up, reverse the event indicator to summarise follow-up
 fup <- quantile(prodlim(Hist(lcovid_surv,lcovid_cens)~1,reverse=TRUE))
 a <- fup[1]$quantiles.survival[3,] # median follow-up time
