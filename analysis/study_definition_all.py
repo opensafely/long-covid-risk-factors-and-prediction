@@ -14,6 +14,10 @@ from cohortextractor import (
     codelist_from_csv,
 )
 
+# set seed so that dummy data can be reproduced
+import numpy as np
+np.random.seed(4366)
+
 ## Import codelists from codelist.py (which pulls them from the codelist folder)
 from codelists import *
 #from common_variables import demographic_variables, clinical_variables
