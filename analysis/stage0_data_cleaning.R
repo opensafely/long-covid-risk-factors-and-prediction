@@ -17,7 +17,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
   cohort <- "all"          # all eligible population
-  #cohort <- "vaccinated"   # please ignore this one for now, as I will revise the study definition for this
+  #cohort <- "vaccinated"   # vaccinated population
 }else{
   cohort <- args[[1]]
 }
