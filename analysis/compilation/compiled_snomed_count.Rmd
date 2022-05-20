@@ -1,5 +1,5 @@
 ---
-title: "Table for summary statistics for survival data"
+title: "Table for snomed code count"
 output: html_document
 ---
 
@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(DT)
 library(readr)
-knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
+knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```
 
 ## Compiled table for hazard ratio estimates
@@ -19,7 +19,7 @@ knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"
-df=read_csv(paste0("output/summarise_survival_data", ".csv"))
+df=read_csv(paste0("output/suppl_table_1", ".csv"))
 df %>%
     datatable(extensions = 'Buttons', rownames= FALSE,
               options = list(dom = 'Blfrtip', 

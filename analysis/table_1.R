@@ -70,7 +70,7 @@ table1_creation <- function(cohort){
   
   write.csv(table_1, file=paste0("output/table_1_",cohort, ".csv"), row.names = F)
   
-  rmarkdown::render("analysis/compiled_table1_results.Rmd",
+  rmarkdown::render("analysis/compilation/compiled_table1_results.Rmd",
                     output_file=paste0("table_1_", cohort),output_dir="output")
 }
 

@@ -6,7 +6,7 @@
 library(prodlim);library(readr); library(dplyr); library(survival)
 
 data <- read_rds("output/input_stage1_all.rds")
-data <- data %>% select(lcovid_surv, lcovid_cens)
+data <- data %>% dplyr::select(lcovid_surv, lcovid_cens)
 attach(data)
 #select <- data.frame(lcovid_surv, lcovid_cens)
 #View(select)
@@ -25,5 +25,5 @@ rownames(results) <- c("median follow-up", "median survival time")
 #colnames(results) <- c("quartile")
 write.csv(results, file="output/summarise_survival_data.csv")
 
-rmarkdown::render("analysis/compiled_summarsied_survival_data.Rmd",
+rmarkdown::render("analysis/compilation/compiled_summarsied_survival_data.Rmd",
                   output_file="summarise_survival_data",output_dir="output")

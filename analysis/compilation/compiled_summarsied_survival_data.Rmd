@@ -1,5 +1,5 @@
 ---
-title: "Flow Chart - Inclusion / Exclusion process"
+title: "Table for summary statistics for survival data"
 output: html_document
 ---
 
@@ -11,18 +11,18 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(DT)
 library(readr)
-knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
+knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```
+
+## Compiled table for hazard ratio estimates
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"
-#df=read_csv("output/flow_chart.csv")
-df=read_csv(paste0("output/flow_chart_", cohort,".csv"))
+df=read_csv(paste0("output/summarise_survival_data", ".csv"))
 df %>%
-    datatable(extensions = 'Buttons',
-              options = list(dom = 'Blfrtip',
+    datatable(extensions = 'Buttons', rownames= FALSE,
+              options = list(dom = 'Blfrtip', 
                              buttons = c('copy', 'csv', 'excel', 'pdf', 'print' ),
                              lengthMenu = list(c(50,-1),
                                                c(50,"All"))))
-```

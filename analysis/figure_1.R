@@ -8,7 +8,7 @@ library(readr); library(dplyr); library(arrow); library(data.table)
 library(lubridate); library(htmlTable);library(ggplot2)
 
 ## Load functions to calculate long covid cases
-source("analysis/function_long_covid_count.R")
+source("analysis/functions/function_long_covid_count.R")
 
 # function for small number suppression
 source("analysis/functions/redactor2.R")
@@ -24,7 +24,7 @@ input <- read_rds("output/input_stage1_all.rds")
 input <- input %>% filter(lcovid_cens == 1)
 
 # computational efficiency: only keep the needed variable
-input <- input %>% select("out_first_long_covid_date")
+input <- input %>% dplyr::select("out_first_long_covid_date")
 
 
 input$year <- format(input$out_first_long_covid_date, format = "%Y")
@@ -110,7 +110,7 @@ input <- read_rds("output/input_stage1_all.rds")
 input <- input %>% filter(lcovid_cens == 1)
 
 # computational efficiency: only keep the needed variable
-input <- input %>% select("out_first_long_covid_date")
+input <- input %>% dplyr::select("out_first_long_covid_date")
 
 # create a data frame
 table_lc_weekly_count <- data.frame(year = numeric(),
@@ -175,7 +175,7 @@ table_lc_monthly_count$count[is.na(table_lc_monthly_count$count)] = "[redacted]"
 write.csv(table_lc_monthly_count,file="output/long_covid_count_monthly_all.csv", 
           row.names = F)
 
-rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
                   output_file="long_covid_count_monthly_all",output_dir="output")
 
 
@@ -185,5 +185,5 @@ region="all"  # all regions
 table_lc_weekly_count$count[is.na(table_lc_weekly_count$count)] = "[redacted]"
 write.csv(table_lc_weekly_count,file="output/long_covid_count_weekly_all.csv", 
           row.names = F)
-rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
                   output_file="long_covid_count_weekly_all",output_dir="output")

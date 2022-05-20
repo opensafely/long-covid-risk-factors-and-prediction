@@ -183,7 +183,7 @@ stage1_eligibility <- function(cohort){
   
   write.csv(flow_chart, file=paste0("output/flow_chart_", cohort, ".csv"), row.names = F)
   
-  rmarkdown::render("analysis/compiled_flow_chart_results.Rmd",output_file =paste0("flow_chart_", cohort), 
+  rmarkdown::render("analysis/compilation/compiled_flow_chart_results.Rmd",output_file =paste0("flow_chart_", cohort), 
                     output_dir = "output")
   
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))

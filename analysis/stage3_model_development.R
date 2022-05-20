@@ -83,7 +83,7 @@ cox_output <- function(fit_cox_model, which_model){
   
   write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
                           row.names=F)
-  rmarkdown::render(paste0("analysis/compiled_HR_results",".Rmd"), 
+  rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
                     output_file=paste0("hazard_ratio_estimates_", which_model, "_", analysis),
                     output_dir="output")
   print(paste0("Hazard ratio estimates are saved successfully for ", which_model, " ", analysis, "!"))

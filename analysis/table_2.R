@@ -12,7 +12,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
   #cohort <- "all"          # all eligible population
-  cohort <- "vaccinated"   # please ignore this one for now, as I will revise the study definition for this
+  cohort <- "vaccinated"    # vaccinated population
 }else{
   cohort <- args[[1]]
 }
@@ -128,7 +128,7 @@ table2_creation <- function(cohort){
   
   write.csv(table_2, file=paste0("output/table_2_", cohort,".csv"),row.names=F)
   
-  rmarkdown::render("analysis/compiled_table2_results.Rmd", output_file=paste0("table_2_", cohort),output_dir="output")
+  rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", output_file=paste0("table_2_", cohort),output_dir="output")
 }
 
 if(cohort == "both") {

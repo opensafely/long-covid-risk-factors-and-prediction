@@ -241,7 +241,7 @@ stage0_data_cleaning <- function(cohort){
     print(paste0("cohort is ", cohort))
     
     write.csv(table_0, file=paste0("output/table_0_", cohort, ".csv"), row.names =F)
-    rmarkdown::render("analysis/compiled_table0_results.Rmd",
+    rmarkdown::render("analysis/compilation/compiled_table0_results.Rmd",
                       output_file=paste0("table_0_", cohort),output_dir="output")
   }
   

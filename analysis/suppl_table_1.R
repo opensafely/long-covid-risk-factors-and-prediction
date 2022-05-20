@@ -15,7 +15,7 @@ input <- read_rds("output/input_stage1_all.rds")
 input <- input %>% filter(lcovid_cens == 1)
 
 # computational efficiency: only keep the needed variable
-input <- input %>% select("out_first_long_covid_code")
+input <- input %>% dplyr::select("out_first_long_covid_code")
 
 snomed_code <- input$out_first_long_covid_code
 
@@ -69,6 +69,6 @@ count_data[which(is.na(count_data$count)),col_names]="[redacted]"
 
 write.csv(count_data, file="output/suppl_table_1.csv")
 
-rmarkdown::render("analysis/compiled_snomed_count.Rmd",
+rmarkdown::render("analysis/compilation/compiled_snomed_count.Rmd",
                   output_file="suppl_table_1",output_dir="output")
  

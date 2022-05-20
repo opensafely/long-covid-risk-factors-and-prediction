@@ -1,8 +1,10 @@
 ---
-title: "Table 3"
+title: "Table 0"
 output: html_document
 ---
-Table 3. Sequence count
+Table 0. Summary data for categorical variables
+
+checking if categorical variables are specified correctly as factors
 
 Any results with redacted results will be at the top of the results file for easy review.
 
@@ -12,18 +14,19 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(DT)
 library(readr)
-knitr::opts_knit$set(root.dir = gsub("/analysis","",getwd()))
+knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```
 
-## Compiled table3 Sequence count
+## Compiled table0 Summary data for categorical variables
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"
-df=read_csv(paste0("output/", csv_file, ".csv"))
+#df=read_csv("output/table_0.csv")
+df = read_csv(paste0("output/table_0_",cohort, ".csv" ))
 df %>%
-    datatable(extensions = 'Buttons', rownames= FALSE,
-              options = list(dom = 'Blfrtip', 
+    datatable(extensions = 'Buttons',
+              options = list(dom = 'Blfrtip',
                              buttons = c('copy', 'csv', 'excel', 'pdf', 'print' ),
                              lengthMenu = list(c(50,-1),
                                                c(50,"All"))))

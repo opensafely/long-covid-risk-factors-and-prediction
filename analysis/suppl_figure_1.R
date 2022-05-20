@@ -10,7 +10,7 @@ library(lubridate); library(htmlTable);library(ggplot2)
 
 ## Load functions to calculate long covid cases
 
-source("analysis/function_long_covid_count.R")
+source("analysis/functions/function_long_covid_count.R")
 
 # function for small number suppression
 source("analysis/functions/redactor2.R")
@@ -163,7 +163,7 @@ write.csv(table_lc_monthly_count, file="output/long_covid_count_monthly_by_regio
 
 time_interval = "monthly"
 region = "by_region"
-rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
                   output_file="long_covid_count_monthly_by_region",
                   output_dir="output")
 
@@ -172,7 +172,7 @@ table_lc_weekly_count$count[is.na(table_lc_weekly_count$count)] = "[redacted]"
 write.csv(table_lc_weekly_count, file="output/long_covid_count_weekly_by_region.csv")
 time_interval = "weekly"
 region = "by_region"
-rmarkdown::render("analysis/compiled_long_covid_count.Rmd",
+rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
                   output_file="long_covid_count_weekly_by_region",output_dir="output")
 
 

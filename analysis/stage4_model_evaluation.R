@@ -291,7 +291,7 @@ which_model="full"
 write.csv(pm, file=paste0("output/performance_measures_", which_model, "_", analysis, ".csv"), 
           row.names=F)
 
-rmarkdown::render(paste0("analysis/compiled_performance_measure_table",".Rmd"), 
+rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
                   output_file=paste0("performance_measures_", which_model,"_", analysis),
                   output_dir="output")
 
