@@ -185,8 +185,9 @@ stage0_data_cleaning <- function(cohort){
   input_factor_vars <- input_factor_vars %>% mutate(cov_cat_smoking_status = as.character(cov_cat_smoking_status)) %>%
     mutate(cov_cat_smoking_status = replace_na(cov_cat_smoking_status, "Missing")) %>%
     mutate(cov_cat_smoking_status = as.factor(cov_cat_smoking_status))
+    
   #reset the reference to never smoker
-  input_factor_vars$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
+  input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Never smoker")
   
   ## sub_cat_covid_history: two categories: false and missing, as patients with covid history was excluded
   input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
