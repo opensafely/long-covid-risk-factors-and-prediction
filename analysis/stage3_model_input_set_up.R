@@ -33,7 +33,6 @@ if(analysis == "vax_c"){
     dplyr::rename(lcovid_surv = lcovid_surv_vax_c, lcovid_cens = lcovid_cens_vax_c)
 }
 ## Analysis 3: time origin is the first vaccination 
-# (please ignore analysis 3 for now as the study definition needs to be revised for this population)
 if(analysis == "vaccinated"){
   input <- read_rds("output/input_stage1_vaccinated.rds")
 }
@@ -121,20 +120,21 @@ surv_formula_lp <- paste0(
 )
 
 ## only predictors
-surv_formula_predictors <- paste0(
-  " ~ ",
-  paste(covariate_names, collapse = "+"),
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ cluster(practice_id)"
-)
+# surv_formula_predictors <- paste0(
+#   " ~ ",
+#   paste(covariate_names, collapse = "+"),
+#   "+rms::rcs(cov_num_age,parms=knot_placement)", 
+#   "+ cluster(practice_id)"
+# )
 
 ## only linear predictors
-surv_formula_predictors_lp <- paste0(
-  " ~ ",
-  paste(covariate_names, collapse = "+"),
-  "+ cov_num_age", 
-  "+ cluster(practice_id)"
-)
+# surv_formula_predictors_lp <- paste0(
+#   " ~ ",
+#   paste(covariate_names, collapse = "+"),
+#   "+ cov_num_age", 
+#   "+ cluster(practice_id)"
+# )
+
 
 if(analysis == "all_vax_td"){
   surv_formula <- paste0(
@@ -152,27 +152,32 @@ if(analysis == "all_vax_td"){
 #    "+ ie.status",
     "+ cluster(practice_id)"
   )
-  ## only predictors
-  surv_formula_predictors <- paste0(
-    " ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement)", 
-#    "+ ie.status",
-    "+ cluster(practice_id)"
-  )
-  ## only linear predictors
-  surv_formula_predictors_lp <- paste0(
-    " ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+ cov_num_age", 
-#    "+ ie.status",
-    "+ cluster(practice_id)"
-  )
+#   ## only predictors
+#   surv_formula_predictors <- paste0(
+#     " ~ ",
+#     paste(covariate_names, collapse = "+"),
+#     "+rms::rcs(cov_num_age,parms=knot_placement)", 
+# #    "+ ie.status",
+#     "+ cluster(practice_id)"
+#   )
+#   ## only linear predictors
+#   surv_formula_predictors_lp <- paste0(
+#     " ~ ",
+#     paste(covariate_names, collapse = "+"),
+#     "+ cov_num_age", 
+# #    "+ ie.status",
+#     "+ cluster(practice_id)"
+#   )
 }
+## only predictors
+surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")
+## only linear predictors
+surv_formula_predictors_lp <- stringr::str_extract(surv_formula_lp, " ~.+")
+
 print(paste0("survival formula: ", surv_formula))
 
 ## set up before using rms::cph
-dd <<- datadist(input)
+dd <<- datadist(input) #
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
 
 print("Part 2: define survival analysis formula is completed!")
