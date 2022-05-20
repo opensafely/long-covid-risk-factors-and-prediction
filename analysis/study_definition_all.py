@@ -23,7 +23,7 @@ from common_variables_dynamic import generate_common_variables
     clinical_variables
 ) = generate_common_variables(index_date_variable = "index_date - 1 day", index_date_variable_3y = "index_date - 3 years")
 
-pandemic_start = "2020-02-01"
+pandemic_start = "2020-01-29"
 
 def make_variable(code):
     return {
