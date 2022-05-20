@@ -11,19 +11,21 @@ source("analysis/functions/redactor2.R")
 index_date=as.Date("2020-12-01")
 pandemic_start = as.Date("2020-01-29")
 cohort_end = as.Date("2022-03-31")
+# cohort_end - pandemic_start  # maximum days
+
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1_all.rds")
 
 # we can only calcualte days from covid to long covid if the long covid diagnosis date is not na
 # it is possible that for people with long covid diagnosis there is no record of their covid infection date
-nrow(input)
+#nrow(input)
 input <- input%>% select(out_first_long_covid_date, out_covid_date) %>%
                   filter(((out_covid_date>= pandemic_start & out_covid_date <= cohort_end)|
                            is.na(out_covid_date))&
                           ((out_first_long_covid_date >= pandemic_start & 
                              out_first_long_covid_date <= cohort_end)))
 
-nrow(input)
+#nrow(input)
 # if long covid date is recorded, but covid date is not recorded, input days from c to long c as 91 days = 13 weeks
 input <- input %>% mutate(days_covid_to_long = ifelse(out_first_long_covid_date > out_covid_date & 
                                        !is.na(out_first_long_covid_date) & 
@@ -49,18 +51,16 @@ results$median[1] = quantile(days, probs = 0.5, na.rm = T)
 results$mean[1] = mean(days, na.rm=T)
 results$sd[1] = sd(days, na.rm=T)
 
-write.csv(data.frame(results), file="output/summary_days_c_to_long.csv", row.names = F)
-
-# hist(input$days_covid_to_long, main = "",
-#      xlab = "Days from COVID infection to long COVID diagnosis",
-#      ylab = "Count")
+results <- data.frame(results)
+results <- round(results, 3)
+write.csv(results, file="output/summary_days_c_to_long.csv", row.names = F)
 
 figure_hist<-ggplot(as.data.frame(days), aes(x=days)) +
   geom_histogram(color="black", fill="white", bins = 15) +
+  scale_x_continuous(breaks = seq(0, 800, by = 100)) +
   labs(title="",x="Days from COVID infection to long COVID diagnosis", y = "Count") +
   theme_classic()
 figure_hist
-
 
 ggsave(file="output/figure_hist.svg", 
        plot=figure_hist, width=16, height=8)
