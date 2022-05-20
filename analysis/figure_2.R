@@ -5,9 +5,6 @@
 
 library(readr); library(dplyr); library(ggplot2)
 
-# function for small number suppression
-source("analysis/functions/redactor2.R")
-
 index_date=as.Date("2020-12-01")
 pandemic_start = as.Date("2020-01-29")
 cohort_end = as.Date("2022-03-31")
@@ -16,17 +13,15 @@ cohort_end = as.Date("2022-03-31")
 # Read in data and identify factor variables and numerical variables------------
 input <- read_rds("output/input_stage1_all.rds")
 
-# we can only calcualte days from covid to long covid if the long covid diagnosis date is not na
-# it is possible that for people with long covid diagnosis there is no record of their covid infection date
-#nrow(input)
+# We can only calculate days from covid to long covid if the long covid diagnosis date is not NA
+# It is possible that for people with long covid diagnosis there is no record of their covid infection date
 input <- input%>% select(out_first_long_covid_date, out_covid_date) %>%
                   filter(((out_covid_date>= pandemic_start & out_covid_date <= cohort_end)|
                            is.na(out_covid_date))&
                           ((out_first_long_covid_date >= pandemic_start & 
                              out_first_long_covid_date <= cohort_end)))
 
-#nrow(input)
-# if long covid date is recorded, but covid date is not recorded, input days from c to long c as 91 days = 13 weeks
+# If long covid date is recorded, but covid date is not recorded, input days from c to long c as 91 days = 13 weeks
 input <- input %>% mutate(days_covid_to_long = ifelse(out_first_long_covid_date > out_covid_date & 
                                        !is.na(out_first_long_covid_date) & 
                                        !is.na(out_covid_date),
@@ -34,7 +29,6 @@ input <- input %>% mutate(days_covid_to_long = ifelse(out_first_long_covid_date 
                                      ifelse((is.na(out_covid_date)|out_covid_date > out_first_long_covid_date)
                                             & !is.na(out_first_long_covid_date), 91, NA)))
 
-#summary(input$days_covid_to_long)
 days <- sort(input$days_covid_to_long, decreasing = F)
 # truncation - make the ten smallest days = the 11th smallest day
 days[1:10]<- head(days,11)[11] # the 11th smallest number
