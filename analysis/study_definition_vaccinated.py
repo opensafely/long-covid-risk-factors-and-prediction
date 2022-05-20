@@ -225,6 +225,7 @@ study = StudyDefinition(
     ),
 
     ###No. primary care consultation in year prior to index date
+    #
     cov_num_gp_consultation=patients.with_gp_consultations(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
