@@ -40,5 +40,7 @@ if(length(selected_covariate_names)>0){
       paste(selected_covariate_names, collapse = "+"),
       "+ cluster(practice_id)")
   }
+  print("Selected models: survival formula is")
   print(surv_formula)
 }
+print("Finished stage3_model_selection.R")
