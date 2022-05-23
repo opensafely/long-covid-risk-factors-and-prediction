@@ -1,11 +1,11 @@
 source("analysis/stage3_model_input_set_up.R")
 
-print("Fitting cox model:")
-
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
-print("Finished fitting cox model!")
+# print("Fitting cox model:")
+# 
+# fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# 
+# print("Finished fitting cox model!")
 
 ## backward elimination
 fit_cox_model_vs <- fastbw(fit_cox_model)
