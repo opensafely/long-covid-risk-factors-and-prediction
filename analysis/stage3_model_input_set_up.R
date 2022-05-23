@@ -178,7 +178,7 @@ print(paste0("survival formula: ", surv_formula))
 
 ## set up before using rms::cph
 dd <<- datadist(input) #
-options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
+options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 
 print("Part 2: define survival analysis formula is completed!")
 ################################################################################
