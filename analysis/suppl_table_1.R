@@ -62,7 +62,7 @@ suppl_figure_pie <- ggplot(count_data_active, aes(x = "", y = count, fill = snom
 suppl_figure_pie
 
 #supplementary figure - pie chart
-ggsave(file="output/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
+ggsave(file="output/review/descriptives/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
 
 # output underlying count data for supplementary figure - pie chart
 
