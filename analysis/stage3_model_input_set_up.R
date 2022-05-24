@@ -33,7 +33,6 @@ if(analysis == "vax_c"){
     dplyr::rename(lcovid_surv = lcovid_surv_vax_c, lcovid_cens = lcovid_cens_vax_c)
 }
 ## Analysis 3: time origin is the first vaccination 
-# (please ignore analysis 3 for now as the study definition needs to be revised for this population)
 if(analysis == "vaccinated"){
   input <- read_rds("output/input_stage1_vaccinated.rds")
 }
@@ -120,22 +119,6 @@ surv_formula_lp <- paste0(
   "+ cluster(practice_id)"
 )
 
-## only predictors
-surv_formula_predictors <- paste0(
-  " ~ ",
-  paste(covariate_names, collapse = "+"),
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ cluster(practice_id)"
-)
-
-## only linear predictors
-surv_formula_predictors_lp <- paste0(
-  " ~ ",
-  paste(covariate_names, collapse = "+"),
-  "+ cov_num_age", 
-  "+ cluster(practice_id)"
-)
-
 if(analysis == "all_vax_td"){
   surv_formula <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
@@ -152,28 +135,17 @@ if(analysis == "all_vax_td"){
 #    "+ ie.status",
     "+ cluster(practice_id)"
   )
-  ## only predictors
-  surv_formula_predictors <- paste0(
-    " ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement)", 
-#    "+ ie.status",
-    "+ cluster(practice_id)"
-  )
-  ## only linear predictors
-  surv_formula_predictors_lp <- paste0(
-    " ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+ cov_num_age", 
-#    "+ ie.status",
-    "+ cluster(practice_id)"
-  )
 }
+## only predictors
+surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")
+## only linear predictors
+surv_formula_predictors_lp <- stringr::str_extract(surv_formula_lp, " ~.+")
+
 print(paste0("survival formula: ", surv_formula))
 
 ## set up before using rms::cph
-dd <<- datadist(input)
-options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment"))
+dd <<- datadist(input) #
+options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 
 print("Part 2: define survival analysis formula is completed!")
 ################################################################################
@@ -190,7 +162,24 @@ fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
 if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
   surv_formula = surv_formula_lp
   surv_formula_predictors = surv_formula_predictors_lp
+  fit_cox_model <- fit_cox_model_linear
+} else {
+  fit_cox_model <- fit_cox_model_splines
 }
+
+# save the full model
+# readr::write_rds(
+#   fit_cox_model,
+#   "output/fit_cox_model.rds",
+#   compress = "gz"
+# )
+# 
+# # save the survival formula
+# readr::write_rds(
+#   surv_formula,
+#   "output/surv_formula.rds",
+#   compress = "gz"
+# )
 
 print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))

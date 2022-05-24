@@ -62,7 +62,7 @@ cox_output <- function(fit_cox_model, which_model){
   
   results$concordance <- results$concordance.lower <- results$concordance.upper <- NA
   
-  results$concordance[1] <- round(concordance(fit_cox_model)$concordance,3)
+  results$concordance[1] <- round(concordance(fit_cox_model)$concordance,3) #
   results$concordance.lower[1] <- round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
   results$concordance.upper[1] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
   

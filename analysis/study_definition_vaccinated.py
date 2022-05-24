@@ -12,6 +12,10 @@ from cohortextractor import (
     codelist_from_csv,
 )
 
+# set seed so that dummy data can be reproduced
+import numpy as np
+np.random.seed(4366)
+
 ## Import codelists from codelist.py (which pulls them from the codelist folder)
 from codelists import *
 from common_variables_dynamic import generate_common_variables
@@ -221,6 +225,7 @@ study = StudyDefinition(
     ),
 
     ###No. primary care consultation in year prior to index date
+    #
     cov_num_gp_consultation=patients.with_gp_consultations(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",

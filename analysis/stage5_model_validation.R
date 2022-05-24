@@ -17,7 +17,6 @@ source("analysis/stage3_model_input_set_up.R")
 #splines_for_age = TRUE
 splines_for_age = grepl("rms::rcs", surv_formula)
 
-
 region <- levels(input$sub_cat_region)
 region
 make_df <- function(nrow) {
@@ -42,6 +41,9 @@ pm_val <- make_df(length(region))
 print("Data frame for pm is created successfully!")
 
 for(i in 1:length(region)){
+  
+  print(paste0("---- START Leave out: ", region[1], " ----"))
+  
     pm_val$region_left_out[i] = region[i]
     input_train <- input %>% filter(sub_cat_region != region[i])
     input_test <- input %>% filter(sub_cat_region == region[i])
@@ -155,6 +157,8 @@ for(i in 1:length(region)){
     legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
     dev.off()
     print("Re-calibration plot is created successfully!")
+    
+    print(paste0("---- END Leave out: ", region[1], " ----"))
 }
 
 write.csv(pm_val, file = paste0("output/val_performance_measures_", analysis,".csv"), row.names = F)

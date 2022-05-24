@@ -1,11 +1,13 @@
 source("analysis/stage3_model_input_set_up.R")
 
-print("Fitting cox model:")
-
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
-print("Finished fitting cox model!")
+# fit_cox_model <- read_rds("output/fit_cox_model.rds")
+# surv_formula <- read_rds("output/surv_formula.rds")
+# print("Fitting cox model:")
+# 
+# fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# 
+# print("Finished fitting cox model!")
 
 ## backward elimination
 fit_cox_model_vs <- fastbw(fit_cox_model)
@@ -44,3 +46,4 @@ if(length(selected_covariate_names)>0){
   print(surv_formula)
 }
 print("Finished stage3_model_selection.R")
+

@@ -6,7 +6,7 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available in opensafely
 
 ################################################################################
-# Part 1: load data, fit Cox model                                             #
+# Part 1: load fitted model                                                    #
 ################################################################################
 
 # load data, with defined weight, and import formula for survival analysis 
@@ -17,10 +17,10 @@ if(length(selected_covariate_names)>0){
 }else{
   which_model="full"  
 }
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
-print("Part 1. Finished fitting cox model!")
+# fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# 
+# print("Part 1. Finished fitting cox model!")
 
 # create output table for performance measures
 
@@ -70,7 +70,7 @@ print("Part 3. Assess the models apparent calibration is completed successfully!
 # Part 4. Plotting #
 ####################
 
-print("Stage4_model_evaluation.R, startting Part 4 Plotting!")
+print("Stage4_model_evaluation.R, starting Part 4 Plotting!")
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
 #Plot of apparent separation across 4 groups
@@ -204,7 +204,7 @@ abline(v=180,col="red")
 dev.off()
 
 svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
-# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability at 5yrs
+# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability
 # as calculated above to check they match the predicted survival curves
 plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
@@ -221,8 +221,8 @@ print(paste0("Part 5. Assess for optimism is completed successfully for ", which
 ###########################################################
 
 #  perform internal validation using bootstrap validation. 
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# fit_cox_model <-rms::cph(formula= as.formula(surv_formula), #
+#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 set.seed(12345) # to ensure reproducibility
 boot_1 <- validate(fit_cox_model,B=100) 
@@ -253,11 +253,8 @@ print(paste0("Part 6. Internal validation using bootstrap validation is complete
 # Part 7. Shrinkage & Optimism adjusted performance measures #
 ###############################################################
 
-# extend the  bootstrapping methodology from above to include predictor selection 
-# using backward elimination. 
-
-fit_cox_model <-cph(formula= as.formula(surv_formula),
-                    data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# fit_cox_model <-cph(formula= as.formula(surv_formula), #
+#                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 # Shrinkage & optimism adjusted AUC, CITL etc. using bootstrapping with predictor selection methods
 k10 <- qchisq(0.20,1,lower.tail=FALSE)
