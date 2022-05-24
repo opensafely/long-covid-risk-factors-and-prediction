@@ -204,7 +204,7 @@ abline(v=180,col="red")
 dev.off()
 
 svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
-# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability at 5yrs??
+# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability
 # as calculated above to check they match the predicted survival curves
 plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
