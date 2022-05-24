@@ -201,11 +201,18 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
 }
 
 # save the full model
-readr::write_rds(
-  fit_cox_model,
-  "output/fit_cox_model.rds",
-  compress = "gz"
-)
+# readr::write_rds(
+#   fit_cox_model,
+#   "output/fit_cox_model.rds",
+#   compress = "gz"
+# )
+# 
+# # save the survival formula
+# readr::write_rds(
+#   surv_formula,
+#   "output/surv_formula.rds",
+#   compress = "gz"
+# )
 
 print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))
