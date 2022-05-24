@@ -78,10 +78,10 @@ apply_development_cox_model <- function(analysis_development){
       arguments = c(analysis_development),
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
-        ph_test_CSV = glue("output/PH_test_*_{analysis_development}.csv"),
-        hazard_ratios_CSV = glue("output/hazard_ratio_estimates_*_{analysis_development}.csv"),
-        hazard_ratios_HTML = glue("output/hazard_ratio_estimates_*_{analysis_development}.html")
-        #calibration = glue("output/calibration_development_*_{analysis}.svg")
+        ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
+        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.csv"),
+        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html")
+        #calibration = glue("output/review/model/calibration_development_*_{analysis}.svg")
       )
     )
   )
@@ -96,9 +96,9 @@ apply_evaluation_cox_model <- function(analysis){
       arguments = c(analysis),
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
-        performance_measure_CSV = glue("output/performance_measures_*_{analysis}.csv"),
-        performance_measure_HTML = glue("output/performance_measures_*_{analysis}.html"),
-        survival_plot = glue("output/survival_plot_*_{analysis}.svg")
+        performance_measure_CSV = glue("output/review/model/performance_measures_*_{analysis}.csv"),
+        performance_measure_HTML = glue("output/review/model/performance_measures_*_{analysis}.html"),
+        survival_plot = glue("output/review/model/survival_plot_*_{analysis}.svg")
       )
     )
   )
@@ -113,9 +113,9 @@ apply_validation_cox_model <- function(analysis){
       arguments = c(analysis),
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
-        val_performance_measure_CSV = glue("output/val_performance_measures_{analysis}.csv"),
-        val_cal_plot = glue("output/val_cal_plot_*_{analysis}.svg"),
-        val_re_cal_plot = glue("output/val_re_cal_plot_*_{analysis}.svg")
+        val_performance_measure_CSV = glue("output/review/model/val_performance_measures_{analysis}.csv"),
+        val_cal_plot = glue("output/review/model/val_cal_plot_*_{analysis}.svg"),
+        val_re_cal_plot = glue("output/review/model/val_re_cal_plot_*_{analysis}.svg")
       )
     )
   )

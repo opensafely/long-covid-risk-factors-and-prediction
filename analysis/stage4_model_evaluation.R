@@ -12,6 +12,8 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # load data, with defined weight, and import formula for survival analysis 
 source("analysis/stage3_model_selection.R")
 
+fs::dir_create(here::here("output", "review", "model"))
+
 if(length(selected_covariate_names)>0){
   which_model = "selected"
 }else{
@@ -74,7 +76,7 @@ print("Stage4_model_evaluation.R, starting Part 4 Plotting!")
 # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
 
 #Plot of apparent separation across 4 groups
-svglite::svglite(file = paste0("output/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
+svglite::svglite(file = paste0("output/review/model/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
 if(which_model == "full"){
   centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                     labels=c(1:4),include.lowest=TRUE)
@@ -157,7 +159,7 @@ patient_high_shrunk$pred_LP <- patient_high$pred_LP*vanH
 patient_low_shrunk <- patient_low
 patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
 
-svglite::svglite(file = paste0("output/surival_plot_with_shrunken_LP_", which_model, ".svg"))
+svglite::svglite(file = paste0("output/review/model/surival_plot_with_shrunken_LP_", which_model, ".svg"))
 
 plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
@@ -191,7 +193,7 @@ prob_HR
 prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
 prob_HR_shrunk
 
-svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves_", which_model,"_", analysis, ".svg"))
+svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves_", which_model,"_", analysis, ".svg"))
 # We can plot the two baseline survival curves
 plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
@@ -203,7 +205,7 @@ abline(h=day180_Cox_shrunk,col="red")
 abline(v=180,col="red")
 dev.off()
 
-svglite::svglite(file = paste0("output/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
+svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
 # # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability
 # as calculated above to check they match the predicted survival curves
 plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
@@ -285,12 +287,12 @@ pm[nrow(pm),2] <- round((boot_2[3,5]+1)/2,3)
 names(pm) <- c("performance measure", "value")
 which_model="full"
 
-write.csv(pm, file=paste0("output/performance_measures_", which_model, "_", analysis, ".csv"), 
+write.csv(pm, file=paste0("output/review/model/performance_measures_", which_model, "_", analysis, ".csv"), 
           row.names=F)
 
 rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
                   output_file=paste0("performance_measures_", which_model,"_", analysis),
-                  output_dir="output")
+                  output_dir="output/review/model")
 
 print(paste0("Part 7. Shrinkage & Optimism adjusted performance measures is completed successfully for",
              which_model, " ", analysis, "!"))

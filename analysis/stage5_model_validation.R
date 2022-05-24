@@ -128,7 +128,7 @@ for(i in 1:length(region)){
                          S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
                          u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
     
-    svg(paste0("output/val_cal_plot_",region[i],"_", analysis, ".svg"))
+    svg(paste0("output/review/model/val_cal_plot_",region[i],"_", analysis, ".svg"))
     plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
     groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
             g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
@@ -150,7 +150,7 @@ for(i in 1:length(region)){
                           S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
                           u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
     
-    svg(paste0("output/val_re_cal_plot_",region[i],"_", analysis, ".svg"))
+    svg(paste0("output/review/model/val_re_cal_plot_",region[i],"_", analysis, ".svg"))
     plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
     groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
             g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
@@ -161,4 +161,4 @@ for(i in 1:length(region)){
     print(paste0("---- END Leave out: ", region[1], " ----"))
 }
 
-write.csv(pm_val, file = paste0("output/val_performance_measures_", analysis,".csv"), row.names = F)
+write.csv(pm_val, file = paste0("output/review/model/val_performance_measures_", analysis,".csv"), row.names = F)

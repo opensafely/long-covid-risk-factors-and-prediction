@@ -7,6 +7,8 @@
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 
+fs::dir_create(here::here("output", "review", "model"))
+
 ####################################################################################################
 # Part 1: load data, define inverse probability weighting, fit cox model and assess PH assumption  #
 #         variable selection using backward elimination                                            #
@@ -33,7 +35,7 @@ cox_output <- function(fit_cox_model, which_model){
   ## assess proportional hazards assumption
   ph_test_result <- cox.zph(fit_cox_model, "rank")$table
   ph_test_result[,c(1,3)] <- round(ph_test_result[,c(1,3)], 3)
-  write.csv(ph_test_result, file=paste0("output/PH_test_", which_model, "_", analysis, ".csv"), row.names=F)
+  write.csv(ph_test_result, file=paste0("output/review/model/PH_test_", which_model, "_", analysis, ".csv"), row.names=F)
   print(paste0("Results from proportional hazards test are saved successfully for ", which_model, " ", analysis, "!"))
   
   ## get robust variance-covariance matrix so that robust standard errors can be used in constructing CI's
@@ -78,18 +80,18 @@ cox_output <- function(fit_cox_model, which_model){
   #           what="observed-predicted"
   #           )
   # 
-  # svglite::svglite(file = paste0("output/calibration_development_cox_model_", which_model,"_", analysis, ".svg"))
+  # svglite::svglite(file = paste0("output/review/model/calibration_development_cox_model_", which_model,"_", analysis, ".svg"))
   # plot(cal)
   # dev.off()
   # }
   
   # results <-results %>% dplyr::select(-contains("robust"))
   
-  write.csv(results, file=paste0("output/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
+  write.csv(results, file=paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
                           row.names=F)
   rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
                     output_file=paste0("hazard_ratio_estimates_", which_model, "_", analysis),
-                    output_dir="output")
+                    output_dir="output/review/model")
   print(paste0("Hazard ratio estimates are saved successfully for ", which_model, " ", analysis, "!"))
 }
 
