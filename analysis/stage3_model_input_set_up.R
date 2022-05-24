@@ -119,23 +119,6 @@ surv_formula_lp <- paste0(
   "+ cluster(practice_id)"
 )
 
-## only predictors
-# surv_formula_predictors <- paste0(
-#   " ~ ",
-#   paste(covariate_names, collapse = "+"),
-#   "+rms::rcs(cov_num_age,parms=knot_placement)", 
-#   "+ cluster(practice_id)"
-# )
-
-## only linear predictors
-# surv_formula_predictors_lp <- paste0(
-#   " ~ ",
-#   paste(covariate_names, collapse = "+"),
-#   "+ cov_num_age", 
-#   "+ cluster(practice_id)"
-# )
-
-
 if(analysis == "all_vax_td"){
   surv_formula <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
@@ -152,22 +135,6 @@ if(analysis == "all_vax_td"){
 #    "+ ie.status",
     "+ cluster(practice_id)"
   )
-#   ## only predictors
-#   surv_formula_predictors <- paste0(
-#     " ~ ",
-#     paste(covariate_names, collapse = "+"),
-#     "+rms::rcs(cov_num_age,parms=knot_placement)", 
-# #    "+ ie.status",
-#     "+ cluster(practice_id)"
-#   )
-#   ## only linear predictors
-#   surv_formula_predictors_lp <- paste0(
-#     " ~ ",
-#     paste(covariate_names, collapse = "+"),
-#     "+ cov_num_age", 
-# #    "+ ie.status",
-#     "+ cluster(practice_id)"
-#   )
 }
 ## only predictors
 surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")

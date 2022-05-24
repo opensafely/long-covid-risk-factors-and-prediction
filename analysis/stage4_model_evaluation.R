@@ -6,7 +6,7 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available in opensafely
 
 ################################################################################
-# Part 1: load data, fit Cox model                                             #
+# Part 1: load fitted model                                                    #
 ################################################################################
 
 # load data, with defined weight, and import formula for survival analysis 
@@ -252,9 +252,6 @@ print(paste0("Part 6. Internal validation using bootstrap validation is complete
 ###############################################################
 # Part 7. Shrinkage & Optimism adjusted performance measures #
 ###############################################################
-
-# extend the  bootstrapping methodology from above to include predictor selection 
-# using backward elimination. 
 
 # fit_cox_model <-cph(formula= as.formula(surv_formula), #
 #                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
