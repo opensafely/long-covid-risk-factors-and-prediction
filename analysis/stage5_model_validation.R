@@ -7,6 +7,8 @@
 
 library(rms); library(fastDummies)
 
+fs::dir_create(here::here("output", "review", "model"))
+
 # load data, with defined weight, and import formula for survival analysis 
 source("analysis/stage3_model_input_set_up.R")
 
