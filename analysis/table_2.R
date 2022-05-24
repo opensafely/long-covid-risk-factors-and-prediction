@@ -8,6 +8,8 @@ library(readr); library(dplyr);library(lubridate)
 # function for small number suppression
 source("analysis/functions/redactor2.R")
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
@@ -73,19 +75,34 @@ table2_creation <- function(cohort){
   
   #nrow(table_2)
   
-  outcome = "covid"
-  outcome = "long covid"
+  #RK - what are the following two lines for?
+  #YW - these two lines are now deleted
+  #outcome = "covid"
+  #outcome = "long covid"
   
   # data <- data %>% rowwise() %>% mutate(fup_end_date=min(out_first_long_covid_date, death_date, cohort_end_date,na.rm = TRUE))
   # data <- data %>% filter(fup_end_date >= index_date & fup_end_date != Inf)
   ## calculate follow-up days
-  data <- data %>% mutate(person_days = as.numeric(as.Date(fup_end_date) - as.Date(index_date))+1)
-  #hist(data$person_days)
+  
+  #RK - why have you re-calculated  person days here? It looks like it's the same?
+  #YW - I now delete this repeated calculation
+  
+  # data <- data %>% mutate(person_days = as.numeric(as.Date(fup_end_date) - as.Date(index_date))+1)
+  # #hist(data$person_days)
   data <- data %>% filter(person_days >= 1 & person_days <= 486)
   
+  
+  #Rk - makes no difference to the script but if switch the two 'for' statements
+  #around so that you do demographics first them outcome it means that you wont be 
+  #subsetting the data twice when you don't need to i.e will subset then run for both 
+  #outcomes rather than subset for one outcome then subset for the other outcome
+  
+  #YW - thanks for this suggestion, I now swap the two 'for' statements around
+  
   ##start.time = Sys.time()
-  for(outcome in c("covid", "long covid")){
-      for(i in demographics){
+ 
+  for(i in demographics){
+    for(outcome in c("covid", "long covid")){
             print(i)
             level <- names(table(data[,i]))
             print(level)
@@ -121,14 +138,24 @@ table2_creation <- function(cohort){
   # impose an NA for testing
   #table_2$event_count[1:2] = NA
   
-  col_names <- c("event_count", "person_years", "ir", "ir_lower", "ir_upper")
+  #RK - I don't think you need to redact the person years as that is a whole
+  #population statistic so can keep if you want it
+  
+  # YW - I now keep person years
+  
+  col_names <- c("event_count", "ir", "ir_lower", "ir_upper")
   table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
   
   table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
   
-  write.csv(table_2, file=paste0("output/table_2_", cohort,".csv"),row.names=F)
+  #RK - Kurt added these to the vacc/unvacc repo which mean that outcomes
+  #can be saved in subdirectories within the outputs folder which has been useful
+  #in case you wanted to include in this repo
+  #fs::dir_create(here::here("output", "review", "descriptives"))
+  write.csv(table_2, file=paste0("output/review/descriptives/table_2_", cohort,".csv"),row.names=F)
   
-  rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", output_file=paste0("table_2_", cohort),output_dir="output")
+  rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", 
+                    output_file=paste0("table_2_", cohort),output_dir="output/review/descriptives")
 }
 
 if(cohort == "both") {

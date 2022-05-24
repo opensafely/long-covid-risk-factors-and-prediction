@@ -8,6 +8,7 @@
 
 library(readr); library(dplyr); library(lubridate)
 # library(scales): not available in opensafely yet
+fs::dir_create(here::here("output", "review", "descriptives"))
 
 # function for small number suppression
 source("analysis/functions/redactor2.R")
@@ -68,10 +69,10 @@ table1_creation <- function(cohort){
   # index <- which(table_1$number<=5)
   # table_1[index,2:ncol(table_1)] = "redacted"
   
-  write.csv(table_1, file=paste0("output/table_1_",cohort, ".csv"), row.names = F)
+  write.csv(table_1, file=paste0("output/review/descriptives/table_1_",cohort, ".csv"), row.names = F)
   
   rmarkdown::render("analysis/compilation/compiled_table1_results.Rmd",
-                    output_file=paste0("table_1_", cohort),output_dir="output")
+                    output_file=paste0("table_1_", cohort),output_dir="output/review/descriptives")
 }
 
 if (cohort == "both") {

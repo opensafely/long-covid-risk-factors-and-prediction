@@ -1,5 +1,7 @@
 library(tidyverse)
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 source("analysis/functions/redactor2.R")
 
 input <- read_rds("output/input_stage1_all.rds")
@@ -97,9 +99,9 @@ table3<- table3 %>%
     )
   )
 
-write.csv(table3,file="output/table_3.csv",row.names=F)
+write.csv(table3,file="output/review/descriptives/table_3.csv",row.names=F)
 
 csv_file ="table_3"
 rmarkdown::render("analysis/compilation/compiled_table3_results.Rmd", output_file="table_3",
-                  output_dir="output")
+                  output_dir="output/review/descriptives")
 

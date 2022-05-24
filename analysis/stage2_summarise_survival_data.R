@@ -5,6 +5,8 @@
 
 library(prodlim);library(readr); library(dplyr); library(survival)
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 data <- read_rds("output/input_stage1_all.rds")
 data <- data %>% dplyr::select(lcovid_surv, lcovid_cens)
 attach(data)
@@ -22,18 +24,19 @@ median(data_2$lcovid_surv)
 # Summarise follow-up, reverse the event indicator to summarise follow-up
 fup <- quantile(prodlim(Hist(lcovid_surv,lcovid_cens)~1,reverse=TRUE))
 a <- fup[1]$quantiles.survival[3,] # median follow-up time
-# not sure why NA is returned?
 
 # Median time to long covid diagnosis
 surv_time <- quantile(prodlim(Hist(lcovid_surv,lcovid_cens)~1,reverse=FALSE))
 b <- surv_time[1]$quantiles.survival[3,] # median survival time
-# not sure why NA is returned?
+
 
 results <- rbind(a,b)
 
+# return NA if not observing 50% people experiencign the event of interest by the end of the follow-up time
+
 rownames(results) <- c("median follow-up", "median survival time")
 #colnames(results) <- c("quartile")
-write.csv(results, file="output/summarise_survival_data.csv")
+write.csv(results, file="output/review/descriptives/summarise_survival_data.csv")
 
 rmarkdown::render("analysis/compilation/compiled_summarsied_survival_data.Rmd",
-                  output_file="summarise_survival_data",output_dir="output")
+                  output_file="summarise_survival_data",output_dir="output/review/descriptives")
