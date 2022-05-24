@@ -154,7 +154,7 @@ table2_creation <- function(cohort){
   #fs::dir_create(here::here("output", "review", "descriptives"))
   write.csv(table_2, file=paste0("output/review/descriptives/table_2_", cohort,".csv"),row.names=F)
   
-  rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", output_file=paste0("output/review/descriptives/table_2_", cohort),output_dir="output")
+  rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", output_file=paste0("review/descriptives/table_2_", cohort),output_dir="output")
 }
 
 if(cohort == "both") {
