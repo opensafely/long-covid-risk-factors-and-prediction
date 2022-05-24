@@ -22,7 +22,7 @@ knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
 #population = "vaccinated"
-df=read_csv(paste0("output/table_2_", cohort,".csv"))
+df=read_csv(paste0("output/review/descriptives/table_2_", cohort,".csv"))
 df %>%
     datatable(extensions = 'Buttons',
               options = list(dom = 'Blfrtip',

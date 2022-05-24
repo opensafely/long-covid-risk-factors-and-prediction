@@ -75,8 +75,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/table_2_*.csv
-        incidence_rate_talbe_HTML: output/table_2_*.html
+        incidence_rate_table_CSV: output/review/descriptives/table_2_*.csv
+        incidence_rate_talbe_HTML: output/review/descriptives/table_2_*.html
 
   ## table_3 - sequence count 
 
