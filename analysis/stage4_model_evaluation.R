@@ -221,8 +221,8 @@ print(paste0("Part 5. Assess for optimism is completed successfully for ", which
 ###########################################################
 
 #  perform internal validation using bootstrap validation. 
-fit_cox_model <-rms::cph(formula= as.formula(surv_formula), #
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# fit_cox_model <-rms::cph(formula= as.formula(surv_formula), #
+#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 set.seed(12345) # to ensure reproducibility
 boot_1 <- validate(fit_cox_model,B=100) 
@@ -256,8 +256,8 @@ print(paste0("Part 6. Internal validation using bootstrap validation is complete
 # extend the  bootstrapping methodology from above to include predictor selection 
 # using backward elimination. 
 
-fit_cox_model <-cph(formula= as.formula(surv_formula), #
-                    data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# fit_cox_model <-cph(formula= as.formula(surv_formula), #
+#                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 # Shrinkage & optimism adjusted AUC, CITL etc. using bootstrapping with predictor selection methods
 k10 <- qchisq(0.20,1,lower.tail=FALSE)
