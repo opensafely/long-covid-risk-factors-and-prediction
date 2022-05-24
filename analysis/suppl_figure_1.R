@@ -8,6 +8,8 @@
 library(readr); library(dplyr); library("arrow"); library("data.table"); 
 library(lubridate); library(htmlTable);library(ggplot2)
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 ## Load functions to calculate long covid cases
 
 source("analysis/functions/function_long_covid_count.R")
@@ -159,21 +161,21 @@ ggsave(file=paste0("output/suppl_figure_1_weekly", ".svg"),
 
 # Output underlying monthly count data for supplementary figure 2 ----------------------
 table_lc_monthly_count$count[is.na(table_lc_monthly_count$count)] = "[redacted]"
-write.csv(table_lc_monthly_count, file="output/long_covid_count_monthly_by_region.csv")
+write.csv(table_lc_monthly_count, file="output/review/descriptives/long_covid_count_monthly_by_region.csv")
 
 time_interval = "monthly"
 region = "by_region"
 rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
                   output_file="long_covid_count_monthly_by_region",
-                  output_dir="output")
+                  output_dir="output/review/descriptives")
 
 # Output underlying weekly count data for supplementary figure 2 ----------------------
 table_lc_weekly_count$count[is.na(table_lc_weekly_count$count)] = "[redacted]"
-write.csv(table_lc_weekly_count, file="output/long_covid_count_weekly_by_region.csv")
+write.csv(table_lc_weekly_count, file="output/review/descriptives/long_covid_count_weekly_by_region.csv")
 time_interval = "weekly"
 region = "by_region"
 rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
-                  output_file="long_covid_count_weekly_by_region",output_dir="output")
+                  output_file="long_covid_count_weekly_by_region",output_dir="output/review/descriptives")
 
 
 

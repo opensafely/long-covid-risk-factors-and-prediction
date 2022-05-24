@@ -6,6 +6,8 @@
 # function for small number suppression
 source("analysis/functions/redactor2.R")
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 library(readr); library(dplyr); library(ggplot2)
 
 # Read in data and identify factor variables and numerical variables------------
@@ -67,8 +69,8 @@ ggsave(file="output/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, heig
 # small number suppression - indicate NA as redacted
 count_data[which(is.na(count_data$count)),col_names]="[redacted]" 
 
-write.csv(count_data, file="output/suppl_table_1.csv")
+write.csv(count_data, file="output/review/descriptives/suppl_table_1.csv")
 
 rmarkdown::render("analysis/compilation/compiled_snomed_count.Rmd",
-                  output_file="suppl_table_1",output_dir="output")
+                  output_file="suppl_table_1",output_dir="output/review/descriptives")
  

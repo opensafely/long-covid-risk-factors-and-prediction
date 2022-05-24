@@ -64,8 +64,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        descriptive_table_CSV: output/table_1_*.csv
-        descriptive_table_HTML: output/table_1_*.html
+        descriptive_table_CSV: output/review/descriptives/table_1_*.csv
+        descriptive_table_HTML: output/review/descriptives/table_1_*.html
 
   ## table_2 - event count and incidence rate 
 
@@ -86,8 +86,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        sequence_count_table_CSV: output/table_3.csv
-        sequence_count_table_HTML: output/table_3.html
+        sequence_count_table_CSV: output/review/descriptives/table_3.csv
+        sequence_count_table_HTML: output/review/descriptives/table_3.html
 
   ## Figure_1 - long covid count 
 
@@ -98,8 +98,8 @@ actions:
     outputs:
       moderately_sensitive:
         figure_long_covid_count_all: output/figure_1_*.svg
-        table_csv_long_covid_count_all: output/long_covid_count_*_all.csv
-        table_html_long_covid_count_all: output/long_covid_count_*_all.html
+        table_csv_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.csv
+        table_html_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.html
 
   ## Figure_2 - days from covid to long covid 
 
@@ -109,8 +109,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        figure_days_c_to_lc: output/figure_hist.svg
-        table_csv_summary: output/summary_days_c_to_long.csv
+        figure_days_c_to_lc: output/review/descriptives/figure_hist.svg
+        table_csv_summary: output/review/descriptives/summary_days_c_to_long.csv
 
   ## Suppl_table_1 - frequencies of snomed code for long covid diagnosis 
 
@@ -120,9 +120,9 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        pie_chart_long_covid_code: output/suppl_figure_pie.svg
-        table_csv_long_covid_code: output/suppl_table_1.csv
-        table_html_long_covid_code: output/suppl_table_1.html
+        pie_chart_long_covid_code: output/review/descriptives/suppl_figure_pie.svg
+        table_csv_long_covid_code: output/review/descriptives/suppl_table_1.csv
+        table_html_long_covid_code: output/review/descriptives/suppl_table_1.html
 
   ## Suppl_figure_1 - long covid count by region 
 
@@ -132,9 +132,9 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_region: output/suppl_figure_1_*.svg
-        table_csv_long_covid_count_region: output/long_covid_count_*.csv
-        table_html_long_covid_region: output/long_covid_count_*.html
+        figure_long_covid_count_region: output/review/descriptives/suppl_figure_1_*.svg
+        table_csv_long_covid_count_region: output/review/descriptives/long_covid_count_*.csv
+        table_html_long_covid_region: output/review/descriptives/long_covid_count_*.html
 
   ## Summarise survival data 
 
@@ -144,8 +144,8 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        summary_survival_data_CSV: output/summarise_survival_data.csv
-        summary_survival_data_HTML: output/summarise_survival_data.html
+        summary_survival_data_CSV: output/review/descriptives/summarise_survival_data.csv
+        summary_survival_data_HTML: output/review/descriptives/summarise_survival_data.html
 
   ## Development Cox model 
   ## Development Cox Model - all 

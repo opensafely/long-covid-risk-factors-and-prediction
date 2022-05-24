@@ -199,8 +199,8 @@ actions_list <- splice(
     run = "r:latest analysis/table_3.R",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      sequence_count_table_CSV = glue("output/table_3.csv"),
-      sequence_count_table_HTML = glue("output/table_3.html")
+      sequence_count_table_CSV = glue("output/review/descriptives/table_3.csv"),
+      sequence_count_table_HTML = glue("output/review/descriptives/table_3.html")
     )
   ),
   comment("Figure_1 - long covid count"),
@@ -210,8 +210,8 @@ actions_list <- splice(
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       figure_long_covid_count_all = glue("output/figure_1_*.svg"),
-      table_csv_long_covid_count_all = glue("output/long_covid_count_*_all.csv"),
-      table_html_long_covid_count_all = glue("output/long_covid_count_*_all.html")
+      table_csv_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.csv"),
+      table_html_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.html")
     )
   ),
   comment("Figure_2 - days from covid to long covid"),
@@ -220,8 +220,8 @@ actions_list <- splice(
     run = "r:latest analysis/figure_2.R",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      figure_days_c_to_lc = glue("output/figure_hist.svg"),
-      table_csv_summary= glue("output/summary_days_c_to_long.csv")
+      figure_days_c_to_lc = glue("output/review/descriptives/figure_hist.svg"),
+      table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long.csv")
     )
   ),
   comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
@@ -230,9 +230,9 @@ actions_list <- splice(
     run = "r:latest analysis/suppl_table_1.R",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      pie_chart_long_covid_code = glue("output/suppl_figure_pie.svg"),
-      table_csv_long_covid_code = glue("output/suppl_table_1.csv"),
-      table_html_long_covid_code = glue("output/suppl_table_1.html")
+      pie_chart_long_covid_code = glue("output/review/descriptives/suppl_figure_pie.svg"),
+      table_csv_long_covid_code = glue("output/review/descriptives/suppl_table_1.csv"),
+      table_html_long_covid_code = glue("output/review/descriptives/suppl_table_1.html")
     )
   ),
   comment("Suppl_figure_1 - long covid count by region"),
@@ -241,9 +241,9 @@ actions_list <- splice(
     run = "r:latest analysis/suppl_figure_1.R",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      figure_long_covid_count_region = glue("output/suppl_figure_1_*.svg"),
-      table_csv_long_covid_count_region = glue("output/long_covid_count_*.csv"),
-      table_html_long_covid_region = glue("output/long_covid_count_*.html")
+      figure_long_covid_count_region = glue("output/review/descriptives/suppl_figure_1_*.svg"),
+      table_csv_long_covid_count_region = glue("output/review/descriptives/long_covid_count_*.csv"),
+      table_html_long_covid_region = glue("output/review/descriptives/long_covid_count_*.html")
     )
   ),
   comment("Summarise survival data"),
@@ -252,8 +252,8 @@ actions_list <- splice(
     run = "r:latest analysis/stage2_summarise_survival_data.R",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      summary_survival_data_CSV = glue("output/summarise_survival_data.csv"),
-      summary_survival_data_HTML = glue("output/summarise_survival_data.html")
+      summary_survival_data_CSV = glue("output/review/descriptives/summarise_survival_data.csv"),
+      summary_survival_data_HTML = glue("output/review/descriptives/summarise_survival_data.html")
     )
   ),
   comment("Development Cox model"),

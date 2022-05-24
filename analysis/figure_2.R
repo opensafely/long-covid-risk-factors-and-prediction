@@ -5,6 +5,8 @@
 
 library(readr); library(dplyr); library(ggplot2)
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 index_date=as.Date("2020-12-01")
 pandemic_start = as.Date("2020-01-29")
 cohort_end = as.Date("2022-03-31")
@@ -47,7 +49,7 @@ results$sd[1] = sd(days, na.rm=T)
 
 results <- data.frame(results)
 results <- round(results, 3)
-write.csv(results, file="output/summary_days_c_to_long.csv", row.names = F)
+write.csv(results, file="output/review/descriptives/summary_days_c_to_long.csv", row.names = F)
 
 figure_hist<-ggplot(as.data.frame(days), aes(x=days)) +
   geom_histogram(color="black", fill="white", bins = 15) +
@@ -56,5 +58,5 @@ figure_hist<-ggplot(as.data.frame(days), aes(x=days)) +
   theme_classic()
 figure_hist
 
-ggsave(file="output/figure_hist.svg", 
+ggsave(file="output/review/descriptives/figure_hist.svg", 
        plot=figure_hist, width=16, height=8)

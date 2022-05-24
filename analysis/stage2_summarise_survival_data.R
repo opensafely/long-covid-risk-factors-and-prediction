@@ -5,6 +5,8 @@
 
 library(prodlim);library(readr); library(dplyr); library(survival)
 
+fs::dir_create(here::here("output", "review", "descriptives"))
+
 data <- read_rds("output/input_stage1_all.rds")
 data <- data %>% dplyr::select(lcovid_surv, lcovid_cens)
 attach(data)
@@ -34,7 +36,7 @@ results <- rbind(a,b)
 
 rownames(results) <- c("median follow-up", "median survival time")
 #colnames(results) <- c("quartile")
-write.csv(results, file="output/summarise_survival_data.csv")
+write.csv(results, file="output/review/descriptives/summarise_survival_data.csv")
 
 rmarkdown::render("analysis/compilation/compiled_summarsied_survival_data.Rmd",
-                  output_file="summarise_survival_data",output_dir="output")
+                  output_file="summarise_survival_data",output_dir="output/review/descriptives")
