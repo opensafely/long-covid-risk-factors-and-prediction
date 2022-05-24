@@ -183,7 +183,7 @@ study = StudyDefinition(
         },
     ),
     ),
-      ###  COVID vaccination
+    ###  COVID vaccination
     # First covid vaccination date (first vaccine given on 8/12/2020 in the UK)
     vax_covid_date1=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
@@ -226,13 +226,13 @@ study = StudyDefinition(
 
     ###No. primary care consultation in year prior to index date
     #
-    cov_num_gp_consultation=patients.with_gp_consultations(
-        between=["index_date - 12 months", "index_date"],
-        returning="number_of_matches_in_period",
-        return_expectations={
-            "int": {"distribution": "poisson", "mean": 5},
-        },
-    ),
+    # cov_num_gp_consultation=patients.with_gp_consultations(
+    #     between=["index_date - 12 months", "index_date"],
+    #     returning="number_of_matches_in_period",
+    #     return_expectations={
+    #         "int": {"distribution": "poisson", "mean": 5},
+    #     },
+    # ),
     # Smoking status
     cov_cat_smoking_status=patients.categorised_as(
         {
