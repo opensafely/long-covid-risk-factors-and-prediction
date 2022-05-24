@@ -179,8 +179,8 @@ actions_list <- splice(
     run = "r:latest analysis/table_1.R both",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
-      descriptive_table_CSV = glue("output/table_1_*.csv"),
-      descriptive_table_HTML = glue("output/table_1_*.html")
+      descriptive_table_CSV = glue("output/review/descriptives/table_1_*.csv"),
+      descriptive_table_HTML = glue("output/review/descriptives/table_1_*.html")
     )
   ),
   comment("table_2 - event count and incidence rate"),  
