@@ -1,18 +1,19 @@
-#source("analysis/stage3_model_input_set_up.R")
+library(readr)
+source("analysis/stage3_model_input_set_up.R")
 
-args <- commandArgs(trailingOnly=TRUE)
+# args <- commandArgs(trailingOnly=TRUE)
+# 
+# if(length(args)==0){
+#   analysis <- "all"          # all eligible population
+#   #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
+#   #analysis <- "vaccinated"   # vaccinated population
+#   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+# }else{
+#   analysis <- args[[1]]
+# }
 
-if(length(args)==0){
-  analysis <- "all"          # all eligible population
-  #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
-  #analysis <- "vaccinated"   # vaccinated population
-  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
-}else{
-  analysis <- args[[1]]
-}
-
-fit_cox_model <- read_rds(paste0("output/fit_cox_model_", analysis,".rds"))
-surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
+# fit_cox_model <- read_rds(paste0("output/fit_cox_model_", analysis,".rds"))
+# surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
 # print("Fitting cox model:")
 # 
 # fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
@@ -21,12 +22,12 @@ surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
 # print("Finished fitting cox model!")
 
 ## backward elimination
-fit_cox_model_vs <- fastbw(fit_cox_model)
+fit_cox_model_selected <- fastbw(fit_cox_model)
 
 print("selected model:")
-fit_cox_model_vs$names.kept
+fit_cox_model_selected$names.kept
 
-selected_covariate_names <- fit_cox_model_vs$names.kept
+selected_covariate_names <- fit_cox_model_selected$names.kept
 
 if(length(selected_covariate_names)>0){
   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == TRUE){

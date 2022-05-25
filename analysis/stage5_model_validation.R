@@ -23,8 +23,8 @@ fs::dir_create(here::here("output", "review", "model"))
 # fit_cox_model <- read_rds(paste0("output/fit_cox_model_", analysis,".rds"))
 # surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
 
-# load data, with defined weight, and import formula for survival analysis 
-#source("analysis/stage3_model_input_set_up.R")
+#load data, with defined weight, and import formula for survival analysis
+source("analysis/stage3_model_input_set_up.R")
 
 # Assumption: linear term is selected for age
 #surv_formula = surv_formula_lp

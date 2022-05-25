@@ -56,17 +56,6 @@ actions:
         flow_chart_csv: output/flow_chart_*.csv
         flow_chart_html: output/flow_chart_*.html
 
-  ## Stage 3 - Model input set up 
-
-  stage3_model_input_set_up:
-    run: r:latest analysis/stage3_model_input_set_up.R all
-    needs:
-    - stage1_define_eligible_population
-    outputs:
-      moderately_sensitive:
-        fit_cox_model: output/fit_cox_model_*.rds
-        surv_formula: output/surv_formula_*.rds
-
   ## table_1 - Patient characteristics 
 
   table_1:
@@ -213,7 +202,7 @@ actions:
   evaluation_cox_model_all:
     run: r:latest analysis/stage4_model_evaluation.R all
     needs:
-    - stage3_model_input_set_up
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all.csv
@@ -225,7 +214,7 @@ actions:
   evaluation_cox_model_vax_c:
     run: r:latest analysis/stage4_model_evaluation.R vax_c
     needs:
-    - stage3_model_input_set_up
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_vax_c.csv
@@ -237,7 +226,7 @@ actions:
   evaluation_cox_model_vaccinated:
     run: r:latest analysis/stage4_model_evaluation.R vaccinated
     needs:
-    - stage3_model_input_set_up
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_vaccinated.csv
@@ -249,7 +238,7 @@ actions:
   evaluation_cox_model_all_vax_td:
     run: r:latest analysis/stage4_model_evaluation.R all_vax_td
     needs:
-    - stage3_model_input_set_up
+    - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all_vax_td.csv

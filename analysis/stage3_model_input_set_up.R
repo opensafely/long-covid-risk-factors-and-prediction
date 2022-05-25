@@ -6,6 +6,8 @@
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 
+# fs::dir_create(here::here("output"))
+# 
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
@@ -16,8 +18,8 @@ if(length(args)==0){
 }else{
   analysis <- args[[1]]
 }
-
-stage3_model_set_up <- function(analysis){
+# 
+# stage3_model_set_up <- function(analysis){
   ################################################################################
   # Part 1: load data, define inverse probability weighting                      #
   ################################################################################
@@ -168,32 +170,32 @@ stage3_model_set_up <- function(analysis){
     fit_cox_model <- fit_cox_model_splines
   }
   
-  #save the full model
-  readr::write_rds(
-    fit_cox_model,
-    paste0("output/fit_cox_model_",analysis, ".rds"),
-    compress = "gz"
-  )
-
-  # save the survival formula
-  readr::write_rds(
-    surv_formula,
-    paste0("output/surv_formula_",analysis, ".rds"),
-    compress = "gz"
-  )
+  # #save the full model
+  # readr::write_rds(
+  #   fit_cox_model,
+  #   paste0("output/fit_cox_model_",analysis, ".rds"),
+  #   #compress = "gz"
+  # )
+  # 
+  # # save the survival formula
+  # readr::write_rds(
+  #   surv_formula,
+  #   paste0("output/surv_formula_",analysis, ".rds"),
+  #   #compress = "gz"
+  # )
   
   print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
   print(paste0("The formula for fitting Cox model is: ", surv_formula))
   print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
   print("Part 3 is completed!")
   print(paste0("Model set up completed for ", analysis, "!"))
-}
-
-if(analysis == "all_cohorts") {
-  stage3_model_set_up("all")
-  stage3_model_set_up("vaccinated")
-  stage3_model_set_up("vax_c")
-  stage3_model_set_up("all_vax_td")
-}else{
-  stage3_model_set_up(analysis)
-}
+# }
+# 
+# if(analysis == "all_cohorts") {
+#   stage3_model_set_up("all")
+#   stage3_model_set_up("vaccinated")
+#   stage3_model_set_up("vax_c")
+#   stage3_model_set_up("all_vax_td")
+# }else{
+#   stage3_model_set_up(analysis)
+# }

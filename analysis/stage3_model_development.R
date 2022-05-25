@@ -21,7 +21,7 @@ print("Starting stage3_model_development.R")
 
 if(length(selected_covariate_names)>0){
   fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
-                                    data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+                                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   print("The selected model is")
   print(fit_cox_model_selected)
 }
