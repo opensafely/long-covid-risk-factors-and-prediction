@@ -16,6 +16,8 @@ fs::dir_create(here::here("output", "review", "model"))
 
 if(length(selected_covariate_names)>0){
   which_model = "selected"
+  fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+                                    data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }else{
   which_model="full"  
 }
