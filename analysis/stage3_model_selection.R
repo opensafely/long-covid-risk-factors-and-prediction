@@ -1,7 +1,18 @@
-source("analysis/stage3_model_input_set_up.R")
+#source("analysis/stage3_model_input_set_up.R")
 
-# fit_cox_model <- read_rds("output/fit_cox_model.rds")
-# surv_formula <- read_rds("output/surv_formula.rds")
+args <- commandArgs(trailingOnly=TRUE)
+
+if(length(args)==0){
+  analysis <- "all"          # all eligible population
+  #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
+  #analysis <- "vaccinated"   # vaccinated population
+  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+}else{
+  analysis <- args[[1]]
+}
+
+fit_cox_model <- read_rds(paste0("output/fit_cox_model_", analysis,".rds"))
+surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
 # print("Fitting cox model:")
 # 
 # fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
