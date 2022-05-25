@@ -94,7 +94,7 @@ apply_evaluation_cox_model <- function(analysis){
       name = glue("evaluation_cox_model_{analysis}"),
       run = "r:latest analysis/stage4_model_evaluation.R",
       arguments = c(analysis),
-      needs = list("stage1_define_eligible_population"),
+      needs = list("stage3_model_input_set_up"),
       moderately_sensitive = list(
         performance_measure_CSV = glue("output/review/model/performance_measures_*_{analysis}.csv"),
         performance_measure_HTML = glue("output/review/model/performance_measures_*_{analysis}.html"),
@@ -172,6 +172,16 @@ actions_list <- splice(
     highly_sensitive = list(
       cohort = glue("output/input_stage1_*.rds")
     )
+  ),
+  comment("Stage 3 - Model input set up"),
+  action(
+    name = "stage3_model_input_set_up",
+    run = "r:latest analysis/stage3_model_input_set_up.R all",
+    needs = list("stage1_define_eligible_population"),
+    moderately_sensitive = list(
+      fit_cox_model = glue("output/fit_cox_model_*.rds"),
+      surv_formula = glue("output/surv_formula_*.rds")
+    ),
   ),
   comment("table_1 - Patient characteristics"),  
   action(
