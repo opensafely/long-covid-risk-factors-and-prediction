@@ -169,80 +169,22 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
   fit_cox_model <- fit_cox_model_splines
 }
 
-#save the full model
-readr::write_rds(
-  fit_cox_model,
-  paste0("output/fit_cox_model_",analysis, ".rds"),
-  #compress = "gz"
-)
-
-# save the survival formula
-readr::write_rds(
-  surv_formula,
-  paste0("output/surv_formula_",analysis, ".rds"),
-  #compress = "gz"
-)
+# #save the full model
+# readr::write_rds(
+#   fit_cox_model,
+#   paste0("output/fit_cox_model_",analysis, ".rds"),
+#   #compress = "gz"
+# )
+# 
+# # save the survival formula
+# readr::write_rds(
+#   surv_formula,
+#   paste0("output/surv_formula_",analysis, ".rds"),
+#   #compress = "gz"
+# )
 
 print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 print(paste0("The formula for fitting Cox model is: ", surv_formula))
 print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
 print("Part 3 is completed!")
 print(paste0("Model set up completed for ", analysis, "!"))
-
-# ##############################################################################
-# #  Part 4. Model selection                                                   #
-# ##############################################################################
-# ## backward elimination
-# fit_cox_model_selected <- fastbw(fit_cox_model)
-# 
-# print("selected model:")
-# fit_cox_model_selected$names.kept
-# 
-# selected_covariate_names <- fit_cox_model_selected$names.kept
-# 
-# if(length(selected_covariate_names)>0){
-#   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == TRUE){
-#     selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
-#     surv_formula <- paste0(
-#       "Surv(lcovid_surv, lcovid_cens) ~ ",
-#       paste(selected_covariate_names, collapse = "+"),
-#       "+rms::rcs(cov_num_age,parms=knot_placement)",
-#       "+ cluster(practice_id)"
-#     )
-#   }
-#   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == FALSE){
-#     selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
-#     surv_formula <- paste0(
-#       "Surv(lcovid_surv, lcovid_cens) ~ ",
-#       paste(selected_covariate_names, collapse = "+"),
-#       "+ cov_num_age",
-#       "+ cluster(practice_id)"
-#     )
-#   }
-#   if(!("cov_num_age" %in% selected_covariate_names)){
-#     surv_formula <- paste0(
-#       "Surv(lcovid_surv, lcovid_cens) ~ ",
-#       paste(selected_covariate_names, collapse = "+"),
-#       "+ cluster(practice_id)")
-#   }
-#   print("Selected models: survival formula is")
-#   print(surv_formula)
-# 
-#   # #save the selected model
-#   # readr::write_rds(
-#   #   fit_cox_model,
-#   #   paste0("output/fit_cox_model_selected_",analysis, ".rds"),
-#   #   #compress = "gz"
-#   # )
-# 
-#   # # save the survival formula for the selected model
-#   # readr::write_rds(
-#   #   surv_formula,
-#   #   paste0("output/surv_formula_selected_",analysis, ".rds"),
-#   #   #compress = "gz"
-#   # )
-# }
-
-# selected_model_indicator <- ifelse(length(selected_covariate_names)>0, TRUE, FALSE)
-# write.csv(selected_model_indicator, file = paste0("output/selected_model_indicator_", analysis,".csv"), row.names=F)
-

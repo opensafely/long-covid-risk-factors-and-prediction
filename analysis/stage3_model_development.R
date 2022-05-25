@@ -17,15 +17,9 @@ fs::dir_create(here::here("output", "review", "model"))
 # # load data, with defined weight, and import formula for survival analysis 
 source("analysis/stage3_model_selection.R")
 
-# fit_cox_model <- read_rds(paste0("output/fit_cox_model_", analysis,".rds"))
-# surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
-# selected_model_indicator <- read.csv(paste0("output/selected_model_indicator_", analysis,".csv"))
-
 #print("Starting stage3_model_development.R")
 
 if(length(selected_covariate_names)>0){
-#if(selected_model_indicator == TRUE){
-  #surv_formula  <- read_rds(paste0("output/surv_formula_selected_",analysis, ".rds"))
   fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
                                      data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   print("The selected model is")

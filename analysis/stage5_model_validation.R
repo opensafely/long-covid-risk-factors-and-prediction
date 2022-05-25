@@ -9,20 +9,6 @@ library(rms); library(fastDummies)
 
 fs::dir_create(here::here("output", "review", "model"))
 
-# args <- commandArgs(trailingOnly=TRUE)
-# 
-# if(length(args)==0){
-#   analysis <- "all"          # all eligible population
-#   #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
-#   #analysis <- "vaccinated"   # vaccinated population
-#   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
-# }else{
-#   analysis <- args[[1]]
-# }
-# 
-# fit_cox_model <- read_rds(paste0("output/fit_cox_model_", analysis,".rds"))
-# surv_formula  <- read_rds(paste0("output/surv_formula_",analysis, ".rds"))
-
 #load data, with defined weight, and import formula for survival analysis
 source("analysis/stage3_model_input_set_up.R")
 
