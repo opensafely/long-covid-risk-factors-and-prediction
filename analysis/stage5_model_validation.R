@@ -17,6 +17,7 @@ source("analysis/stage3_model_input_set_up.R")
 
 # Assumption: spline function is selected for age - extract estimated parameters from fit_cox_model_splines
 #splines_for_age = TRUE
+
 splines_for_age = grepl("rms::rcs", surv_formula)
 
 region <- levels(input$sub_cat_region)

@@ -19,10 +19,8 @@ if(length(selected_covariate_names)>0){
 }else{
   which_model="full"  
 }
-# fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-# 
-# print("Part 1. Finished fitting cox model!")
+
+print("Part 1. Finished loading fitted cox model!")
 
 # create output table for performance measures
 
@@ -181,9 +179,6 @@ day180_Cox
 shrunk_mod <- coxph(Surv(input$lcovid_surv,input$lcovid_cens)~offset(heuristic_lp))
 day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=180)$surv
 day180_Cox_shrunk
-#shrunk_mod <- cph(Surv(input$lcovid_surv,input$lcovid_cens)~offset(heuristic_lp),x=TRUE, y=TRUE)
-#day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=5)$surv
-#day180_Cox_shrunk
 
 # # Estimate the predicted survival probability at 180 days for the high risk patient above
 prob_HR <- day180_Cox^exp(patient_high$pred_LP)
@@ -223,8 +218,6 @@ print(paste0("Part 5. Assess for optimism is completed successfully for ", which
 ###########################################################
 
 #  perform internal validation using bootstrap validation. 
-# fit_cox_model <-rms::cph(formula= as.formula(surv_formula), #
-#                          data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 set.seed(12345) # to ensure reproducibility
 boot_1 <- validate(fit_cox_model,B=100) 
@@ -255,14 +248,10 @@ print(paste0("Part 6. Internal validation using bootstrap validation is complete
 # Part 7. Shrinkage & Optimism adjusted performance measures #
 ###############################################################
 
-# fit_cox_model <-cph(formula= as.formula(surv_formula), #
-#                     data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
 # Shrinkage & optimism adjusted AUC, CITL etc. using bootstrapping with predictor selection methods
 k10 <- qchisq(0.20,1,lower.tail=FALSE)
 set.seed(12345) # to ensure reproducibility
 boot_2 <- validate(fit_cox_model,B=100,rule="aic",aics=k10)
-#boot_2 <- validate(fit_cox_model,B=100,rule="aic", bw=TRUE,aics=k10)
 boot_2
 
 # Convert Dxy to c-index

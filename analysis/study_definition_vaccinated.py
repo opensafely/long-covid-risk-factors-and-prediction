@@ -133,8 +133,8 @@ study = StudyDefinition(
             },
         },
     ),
-     #"loop_over_codes" provides any post viral fatigue code that a patient has been given and the first time that the specific code is given.
-     # because of this, the post viral fatigue date can also be derived outside study definition
+    #"loop_over_codes" provides any post viral fatigue code that a patient has been given and the first time that the specific code is given.
+    # because of this, the post viral fatigue date can also be derived outside study definition
     cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_after=pandemic_start,
