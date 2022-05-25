@@ -1,8 +1,8 @@
 library(readr)
 source("analysis/stage3_model_input_set_up.R")
 
-# args <- commandArgs(trailingOnly=TRUE)
-# 
+args <- commandArgs(trailingOnly=TRUE)
+
 # if(length(args)==0){
 #   analysis <- "all"          # all eligible population
 #   #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
@@ -21,7 +21,7 @@ source("analysis/stage3_model_input_set_up.R")
 # 
 # print("Finished fitting cox model!")
 
-## backward elimination
+  ## backward elimination
 fit_cox_model_selected <- fastbw(fit_cox_model)
 
 print("selected model:")
@@ -56,6 +56,19 @@ if(length(selected_covariate_names)>0){
   }
   print("Selected models: survival formula is")
   print(surv_formula)
+  
+  # #save the selected model
+  # readr::write_rds(
+  #   fit_cox_model,
+  #   paste0("output/fit_cox_model_selected_",analysis, ".rds"),
+  #   #compress = "gz"
+  # )
+  # 
+  # # save the survival formula for the selected model
+  # readr::write_rds(
+  #   surv_formula,
+  #   paste0("output/surv_formula_selected",analysis, ".rds"),
+  #   #compress = "gz"
+  # )
 }
 print("Finished stage3_model_selection.R")
-

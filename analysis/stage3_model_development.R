@@ -72,19 +72,6 @@ cox_output <- function(fit_cox_model, which_model){
   print("Print results")
   print(results) 
   
-  # ## Calibration
-  # ## Predicted 365 day survival
-  # if(which_model == "full"){
-  # cal <- calibrate(fit_cox_model, cmethod=c('hare', 'KM'),
-  #           method="boot", u=365, m=50,  B=20,
-  #           what="observed-predicted"
-  #           )
-  # 
-  # svglite::svglite(file = paste0("output/review/model/calibration_development_cox_model_", which_model,"_", analysis, ".svg"))
-  # plot(cal)
-  # dev.off()
-  # }
-  
   # results <-results %>% dplyr::select(-contains("robust"))
   
   write.csv(results, file=paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
