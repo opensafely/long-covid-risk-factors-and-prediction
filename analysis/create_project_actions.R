@@ -173,16 +173,16 @@ actions_list <- splice(
       cohort = glue("output/input_stage1_*.rds")
     )
   ),
-  comment("Stage 3 - Model input set up"),
-  action(
-    name = "stage3_model_set_up_and_selection",
-    run = "r:latest analysis/stage3_model_set_up.R all_cohorts",
-    needs = list("stage1_define_eligible_population"),
-    moderately_sensitive = list(
-      fit_cox_model = glue("output/fit_cox_model_*.rds"),
-      surv_formula = glue("output/surv_formula_*.rds")
-    ),
-  ),
+  # comment("Stage 3 - Model input set up"),
+  # action(
+  #   name = "stage3_model_set_up_and_selection",
+  #   run = "r:latest analysis/stage3_model_set_up.R all_cohorts",
+  #   needs = list("stage1_define_eligible_population"),
+  #   moderately_sensitive = list(
+  #     fit_cox_model = glue("output/fit_cox_model_*.rds"),
+  #     surv_formula = glue("output/surv_formula_*.rds")
+  #   ),
+  # ),
   comment("table_1 - Patient characteristics"),  
   action(
     name = "table_1",

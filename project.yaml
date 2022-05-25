@@ -56,17 +56,6 @@ actions:
         flow_chart_csv: output/flow_chart_*.csv
         flow_chart_html: output/flow_chart_*.html
 
-  ## Stage 3 - Model input set up 
-
-  stage3_model_set_up_and_selection:
-    run: r:latest analysis/stage3_model_set_up.R all_cohorts
-    needs:
-    - stage1_define_eligible_population
-    outputs:
-      moderately_sensitive:
-        fit_cox_model: output/fit_cox_model_*.rds
-        surv_formula: output/surv_formula_*.rds
-
   ## table_1 - Patient characteristics 
 
   table_1:
