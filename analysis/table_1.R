@@ -56,7 +56,7 @@ table1_creation <- function(cohort){
   input_num_vars <- input[,cov_num_names]
   if(length(cov_num_names) == 1){
     index = nrow(table_1)+1
-    table_1[index,1] <- cov_num_names[i]
+    table_1[index,1] <- cov_num_names
     table_1[index,2] <- length(which(!is.na(unlist(input_num_vars)))) # number of observations
     table_1[index,4] <- round(mean(unlist(input_num_vars)),2) # mean
     table_1[index,5] <- round(sd(unlist(input_num_vars)),2) # sd

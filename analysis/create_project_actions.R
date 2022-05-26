@@ -78,7 +78,7 @@ apply_development_cox_model <- function(analysis_development){
       arguments = c(analysis_development),
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
-        ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
+        #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
         hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.csv"),
         hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html")
         #calibration = glue("output/review/model/calibration_development_*_{analysis}.svg")
@@ -153,8 +153,9 @@ actions_list <- splice(
     run = "r:latest analysis/stage0_data_cleaning.R both",
     needs = list("generate_study_population_all", "generate_study_population_vaccinated"),
     moderately_sensitive = list(
-      variable_check_table_CSV = glue("output/table_0_*.csv"),
-      variable_check_table_HTML = glue("output/table_0_*.html")
+      variable_check_table_CSV = glue("output/not_for_review/descriptives/table_0_*.csv"),
+      variable_check_table_HTML = glue("output/not_for_review/descriptives/table_0_*.html"),
+      histogram_numerical_variable = glue("output/not_for_review/descriptives/histogram_*")
     ),
     highly_sensitive = list(
       cohort = glue("output/input_stage0_*.rds")

@@ -40,8 +40,9 @@ actions:
       highly_sensitive:
         cohort: output/input_stage0_*.rds
       moderately_sensitive:
-        variable_check_table_CSV: output/table_0_*.csv
-        variable_check_table_HTML: output/table_0_*.html
+        variable_check_table_CSV: output/not_for_review/descriptives/table_0_*.csv
+        variable_check_table_HTML: output/not_for_review/descriptives/table_0_*.html
+        histogram_numerical_variable: output/not_for_review/descriptives/histogram_*
 
   ## Stage 1 - Define eligible population 
 
@@ -156,7 +157,6 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_all.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all.html
 
@@ -168,7 +168,6 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_vax_c.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vax_c.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vax_c.html
 
@@ -180,7 +179,6 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_vaccinated.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vaccinated.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vaccinated.html
 
@@ -192,7 +190,6 @@ actions:
     - stage1_define_eligible_population
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_all_vax_td.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_td.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_td.html
 

@@ -13,6 +13,8 @@
 
 library(readr); library(dplyr); library("arrow"); library(lubridate); library(tidyr)
 
+fs::dir_create(here::here("output", "not_for_review", "descriptives"))
+
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
@@ -83,10 +85,15 @@ stage0_data_cleaning <- function(cohort){
   
   input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
   
-  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, 2,
-                                                                         ifelse(cov_num_multimorbidity==1, 1, 0)))
+  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, ">=2 (two or more diseases)",
+                                                                         ifelse(cov_num_multimorbidity==1, "1 (one disease)", "0 (no disease)")))
+  
+  input_select$cov_cat_multimorbidity <- ordered(input_select$cov_cat_multimorbidity, 
+                                                 levels = c("0 (no disease)", "1 (one disease)", ">=2 (two or more diseases)"))
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
+  
+
   
   ## left join: keep all observations in input_select
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
@@ -98,6 +105,14 @@ stage0_data_cleaning <- function(cohort){
   ################################################################################
   ## Part 3. define variable types: factor or numerical or date                  #
   ################################################################################
+  
+  # For numerical variables, produce histogram for numerical variable
+  num_var <- colnames(input)[grepl("cov_num_",colnames(input))]
+  for(i in num_var){
+    svglite::svglite(file = paste0("output/not_for_review/descriptives/histogram_", i,"_", cohort, ".svg"))
+    hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
+    dev.off()
+  }
   
   ## For categorical factors, specify the most frequently occurred level as the reference group
   cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
@@ -114,8 +129,6 @@ stage0_data_cleaning <- function(cohort){
                                   x
                                   }
                                 )
-  
-  #lapply(input[,cat_factors], is.factor)
   
   ## cov_cat_imd by quintile------------------------------------------------------
   table(input$cov_cat_imd)
@@ -243,9 +256,9 @@ stage0_data_cleaning <- function(cohort){
     print("Finished constructing table_0 successfully!")
     print(paste0("cohort is ", cohort))
     
-    write.csv(table_0, file=paste0("output/table_0_", cohort, ".csv"), row.names =F)
+    write.csv(table_0, file=paste0("output/not_for_review/descriptives/table_0_", cohort, ".csv"), row.names =F)
     rmarkdown::render("analysis/compilation/compiled_table0_results.Rmd",
-                      output_file=paste0("table_0_", cohort),output_dir="output")
+                      output_file=paste0("table_0_", cohort),output_dir="output/not_for_review/descriptives")
   }
   
   output_table_0(input)
