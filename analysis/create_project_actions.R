@@ -104,12 +104,12 @@ apply_evaluation_cox_model <- function(analysis){
   )
 }
 
-apply_validation_cox_model <- function(analysis){
+apply_validation_cox_model_iecv <- function(analysis){
   splice(
     comment(glue("Validation Cox Model - {analysis}")),
     action(
       name = glue("validation_cox_model_{analysis}"),
-      run = "r:latest analysis/stage5_model_validation.R",
+      run = "r:latest analysis/stage5_model_validation_iecv.R",
       arguments = c(analysis),
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
@@ -278,7 +278,7 @@ actions_list <- splice(
   ),
   splice(
     # over outcomes
-    unlist(lapply(analysis, function(x) apply_validation_cox_model(analysis = x)), recursive = FALSE)
+    unlist(lapply(analysis, function(x) apply_validation_cox_model_iecv(analysis = x)), recursive = FALSE)
   )
 )
   ## combine everything ----

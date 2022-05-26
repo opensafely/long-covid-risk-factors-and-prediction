@@ -1,6 +1,8 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
-# Content: internal-external validation - leave one region out at a time
+# Content: internal-external validation:
+#          1. model has been developed and selected based on the whole data set
+#          2. in this script, test the developed model on each region, and calculate the weighted performance measure
 # Output:  One table: val_performance_measures.csv
 #          val_cal_plot.svg for each region
 #          val_re_cal_plot.svg for each region
@@ -10,7 +12,17 @@ library(rms); library(fastDummies)
 fs::dir_create(here::here("output", "review", "model"))
 
 #load data, with defined weight, and import formula for survival analysis
-source("analysis/stage3_model_input_set_up.R")
+source("analysis/stage3_model_selection.R")
+
+if(length(selected_covariate_names)>0){
+  which_model = "selected"
+  # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
+  fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+                           data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+}else{
+  which_model="full" 
+  # the full model is already loaded in stage3_model_input_set_up, so no need to refit
+}
 
 # Assumption: linear term is selected for age
 #surv_formula = surv_formula_lp
@@ -27,8 +39,9 @@ make_df <- function(nrow) {
     nrow <- 0
   }
   temp_df <- data.frame(
-    region_left_out  = character(),
-    c_stat = numeric(),
+    region  = character(),
+    c_stat  = numeric(),
+    c_stat_var = numeric(), 
     c_stat_lower = numeric(),
     c_stat_upper = numeric(),
     cal_slope = numeric(),
@@ -45,21 +58,20 @@ print("Data frame for pm is created successfully!")
 
 for(i in 1:length(region)){
   
-  print(paste0("---- START Leave out: ", region[1], " ----"))
+  print(paste0("---- START Region: ", region[1], " ----"))
   
-    pm_val$region_left_out[i] = region[i]
-    input_train <- input %>% filter(sub_cat_region != region[i])
+    pm_val$region[i] = region[i]
+    #input_train <- input %>% filter(sub_cat_region != region[i])
     input_test <- input %>% filter(sub_cat_region == region[i])
     if(analysis == "all_vax_td"){
       input_test$patient_id <- seq.int(nrow(input_test))  # reset patient id as they are not unique in this case
     }
     
-    
-    train_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                             data= input_train, weight=input_train$weight,surv = TRUE,x=TRUE,y=TRUE)
+    # train_cox_model <-rms::cph(formula= as.formula(surv_formula),
+    #                          data= input_train, weight=input_train$weight,surv = TRUE,x=TRUE,y=TRUE)
     
     # names of covariates and factor levels
-    covariates <- names(train_cox_model$coefficients)
+    covariates <- names(fit_cox_model$coefficients)
     
     #pred_level = sub(".*=", "", covariates)  # keep all characters after =
     pred_level = sapply(strsplit(covariates, '='), `[`, 2)
@@ -67,7 +79,7 @@ for(i in 1:length(region)){
     pred_name_level <- paste0(pred_names, "_", pred_level)
     pred_name_level = gsub("_NA", "", pred_name_level)
     
-    predictors <- data.frame(pred_name_level, train_cox_model$coefficients)
+    predictors <- data.frame(pred_name_level, fit_cox_model$coefficients)
     covariates <- unique(pred_names)
     factor_covars <- covariates[grepl("cat", covariates)]
     #input_test <- input_test %>% dplyr::select(-all_of(covariates))
@@ -90,19 +102,22 @@ for(i in 1:length(region)){
     }
     input_test_select <- input_test_select %>% dplyr::select(c(patient_id, all_of(pred_name_level)))
     
-    # predictors_wide=as.data.frame(transpose(data.frame(train_cox_model$coefficients)))
-    # names(predictors_wide) = paste0(pred_name_level,".coeff")
-    
     for(j in pred_name_level){
       print(j)
       row.index = which(pred_name_level ==j)
-      input_test_select[,j] = input_test_select[,j]*predictors$train_cox_model.coefficients[row.index]
+      input_test_select[,j] = input_test_select[,j]*predictors$fit_cox_model.coefficients[row.index]
     }
     cov_cols <- names(input_test_select)[grep("cov", names(input_test_select))]
     
     # Here the linear predictor is calculated for the testing data, using the linear combination of covariates
+    if(length(cov_cols)>1){
     input_test_select <- input_test_select %>% mutate(lin_pred = rowSums(.[ , cov_cols])) %>%
-                    dplyr::select(c(patient_id,lin_pred))
+                      dplyr::select(c(patient_id,lin_pred))
+    }
+    if(length(cov_cols)==1){
+    input_test_select <- input_test_select %>% mutate(lin_pred = input_test_select[,cov_cols]) %>%
+      dplyr::select(c(patient_id,lin_pred))
+    }
     
     ## left join: keep all observations in input_select
     input_test <- merge(x = input_test_select, y = input_test, by = "patient_id", all.x = TRUE)
@@ -114,7 +129,7 @@ for(i in 1:length(region)){
     pm_val$c_stat[i] = round(concordance(test_cox_model)$concordance,3)
     pm_val$c_stat_lower[i] = round(concordance(test_cox_model)$concordance - 1.96*sqrt((concordance(test_cox_model))$var),3)
     pm_val$c_stat_upper[i] = round(concordance(test_cox_model)$concordance + 1.96*sqrt((concordance(test_cox_model))$var),3)
-    
+    pm_val$c_stat_var[i] = round((concordance(test_cox_model))$var,6)
     print("Calculation for the C-statistic is completed!")
     # Calibration slope
     pm_val$cal_slope[i] = round(test_cox_model$coef,3)
@@ -122,7 +137,7 @@ for(i in 1:length(region)){
     # Calibration plot for the validation data
     # Calculate predicted survival probability at 1 year
     time_point = 365
-    y1_cox <- summary(survfit(train_cox_model),time=time_point)$surv
+    y1_cox <- summary(survfit(fit_cox_model),time=time_point)$surv
     y1_cox
     
     pred_surv_prob = y1_cox^exp(input_test_select$lin_pred)
@@ -160,8 +175,22 @@ for(i in 1:length(region)){
     legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
     dev.off()
     print("Re-calibration plot is created successfully!")
-    
-    print(paste0("---- END Leave out: ", region[1], " ----"))
+    print(paste0("---- END Region: ", region[1], " ----"))
 }
+
+# weight for each region
+pm_val$weight = 1/pm_val$c_stat_var
+# standardized weight for each region
+pm_val$s_weight = pm_val$weight/(mean(pm_val$weight))
+# an internal-external cross-validation estimate of C Statistic
+c_iecv  = sum(pm_val$c_stat*pm_val$s_weight)/nrow(pm_val)
+# standard error of the overall C statistic
+c_iecv_var = mean(pm_val$s_weight*(pm_val$c_stat - c_iecv)^2)/(nrow(pm_val)-1)
+c_iecv_se = sqrt(c_iecv_var)
+
+pm_val$c_iecv = pm_val$c_iecv_lower = pm_val$c_iecv_upper = NA
+pm_val$c_iecv[1] = round(c_iecv,3)
+pm_val$c_iecv_lower[1] = round(c_iecv - 1.96*c_iecv_se,3)
+pm_val$c_iecv_upper[1] = round(c_iecv + 1.96*c_iecv_se,3)
 
 write.csv(pm_val, file = paste0("output/review/model/val_performance_measures_", analysis,".csv"), row.names = F)

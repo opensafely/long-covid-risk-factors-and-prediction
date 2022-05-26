@@ -16,12 +16,12 @@ fs::dir_create(here::here("output", "review", "model"))
 
 if(length(selected_covariate_names)>0){
   which_model = "selected"
-  # loading the selected model as fit_cox_model_vs from backward elemination is not a standard Cox model object
+  # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                             data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }else{
   which_model="full" 
-  # the full model is alredy loaded in stage3_model_input_set_up, so no need to refit
+  # the full model is already loaded in stage3_model_input_set_up, so no need to refit
 }
 
 print("Part 1. Finished loading fitted cox model!")

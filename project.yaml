@@ -248,7 +248,7 @@ actions:
   ## Validation Cox Model - all 
 
   validation_cox_model_all:
-    run: r:latest analysis/stage5_model_validation.R all
+    run: r:latest analysis/stage5_model_validation_iecv.R all
     needs:
     - stage1_define_eligible_population
     outputs:
@@ -260,7 +260,7 @@ actions:
   ## Validation Cox Model - vax_c 
 
   validation_cox_model_vax_c:
-    run: r:latest analysis/stage5_model_validation.R vax_c
+    run: r:latest analysis/stage5_model_validation_iecv.R vax_c
     needs:
     - stage1_define_eligible_population
     outputs:
@@ -272,7 +272,7 @@ actions:
   ## Validation Cox Model - vaccinated 
 
   validation_cox_model_vaccinated:
-    run: r:latest analysis/stage5_model_validation.R vaccinated
+    run: r:latest analysis/stage5_model_validation_iecv.R vaccinated
     needs:
     - stage1_define_eligible_population
     outputs:
@@ -284,7 +284,7 @@ actions:
   ## Validation Cox Model - all_vax_td 
 
   validation_cox_model_all_vax_td:
-    run: r:latest analysis/stage5_model_validation.R all_vax_td
+    run: r:latest analysis/stage5_model_validation_iecv.R all_vax_td
     needs:
     - stage1_define_eligible_population
     outputs:
