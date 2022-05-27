@@ -15,9 +15,8 @@ defaults_list <- list(
   expectations= list(population_size=10000L)
 )
 
-analysis <- c("all", "vax_c", "vaccinated", "all_vax_td") 
-cohort <- c("all", "vaccinated")
-analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td")
+analysis <- analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td", "infected") 
+cohort <- c("all", "vaccinated", "infected")
 
 # create action functions ----
 
@@ -158,8 +157,8 @@ actions_list <- splice(
   comment("Stage 0 - Data cleaning"),
   action(
     name = "stage0_data_cleaning",
-    run = "r:latest analysis/stage0_data_cleaning.R both",
-    needs = list("generate_study_population_all", "generate_study_population_vaccinated"),
+    run = "r:latest analysis/stage0_data_cleaning.R all_cohorts",
+    needs = list("generate_study_population_all", "generate_study_population_vaccinated", "generate_study_population_infected"),
     moderately_sensitive = list(
       variable_check_table_CSV = glue("output/not_for_review/descriptives/table_0_*.csv"),
       variable_check_table_HTML = glue("output/not_for_review/descriptives/table_0_*.html"),
@@ -172,7 +171,7 @@ actions_list <- splice(
   comment("Stage 1 - Define eligible population"),
   action(
     name = "stage1_define_eligible_population",
-    run = "r:latest analysis/stage1_define_eligible_population.R both",
+    run = "r:latest analysis/stage1_define_eligible_population.R all_cohorts",
     needs = list("stage0_data_cleaning"),
     moderately_sensitive = list(
       flow_chart_csv = glue("output/flow_chart_*.csv"),
@@ -195,7 +194,7 @@ actions_list <- splice(
   comment("table_1 - Patient characteristics"),  
   action(
     name = "table_1",
-    run = "r:latest analysis/table_1.R both",
+    run = "r:latest analysis/table_1.R all_cohorts",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       descriptive_table_CSV = glue("output/review/descriptives/table_1_*.csv"),
@@ -205,7 +204,7 @@ actions_list <- splice(
   comment("table_2 - event count and incidence rate"),  
   action(
     name = "table_2",
-    run = "r:latest analysis/table_2.R both",
+    run = "r:latest analysis/table_2.R all_cohorts",
     needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       incidence_rate_table_CSV = glue("output/review/descriptives/table_2_*.csv"),

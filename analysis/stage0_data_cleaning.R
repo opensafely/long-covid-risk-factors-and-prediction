@@ -279,9 +279,10 @@ stage0_data_cleaning <- function(cohort){
   print("input_stage0 is saved successfully!") 
 }
 
-if(cohort == "both") {
+if(cohort == "all_cohorts") {
   stage0_data_cleaning("all")
   stage0_data_cleaning("vaccinated")
+  stage0_data_cleaning("infected")
 } else{
   stage0_data_cleaning(cohort)
 }

@@ -41,10 +41,11 @@ actions:
   ## Stage 0 - Data cleaning 
 
   stage0_data_cleaning:
-    run: r:latest analysis/stage0_data_cleaning.R both
+    run: r:latest analysis/stage0_data_cleaning.R all_cohorts
     needs:
     - generate_study_population_all
     - generate_study_population_vaccinated
+    - generate_study_population_infected
     outputs:
       highly_sensitive:
         cohort: output/input_stage0_*.rds
@@ -56,7 +57,7 @@ actions:
   ## Stage 1 - Define eligible population 
 
   stage1_define_eligible_population:
-    run: r:latest analysis/stage1_define_eligible_population.R both
+    run: r:latest analysis/stage1_define_eligible_population.R all_cohorts
     needs:
     - stage0_data_cleaning
     outputs:
@@ -69,7 +70,7 @@ actions:
   ## table_1 - Patient characteristics 
 
   table_1:
-    run: r:latest analysis/table_1.R both
+    run: r:latest analysis/table_1.R all_cohorts
     needs:
     - stage1_define_eligible_population
     outputs:
@@ -80,7 +81,7 @@ actions:
   ## table_2 - event count and incidence rate 
 
   table_2:
-    run: r:latest analysis/table_2.R both
+    run: r:latest analysis/table_2.R all_cohorts
     needs:
     - stage1_define_eligible_population
     outputs:
@@ -202,6 +203,17 @@ actions:
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_td.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_td.html
 
+  ## Development Cox Model - infected 
+
+  development_cox_model_infected:
+    run: r:latest analysis/stage3_model_development.R infected
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_infected.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_infected.html
+
   ## Evaluation Cox model 
   ## Evaluation Cox Model - all 
 
@@ -251,6 +263,18 @@ actions:
         performance_measure_HTML: output/review/model/performance_measures_*_all_vax_td.html
         survival_plot: output/review/model/survival_plot_*_all_vax_td.svg
 
+  ## Evaluation Cox Model - infected 
+
+  evaluation_cox_model_infected:
+    run: r:latest analysis/stage4_model_evaluation.R infected
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        performance_measure_CSV: output/review/model/performance_measures_*_infected.csv
+        performance_measure_HTML: output/review/model/performance_measures_*_infected.html
+        survival_plot: output/review/model/survival_plot_*_infected.svg
+
   ## Validation Cox Model - all 
 
   validation_cox_model_all:
@@ -298,4 +322,16 @@ actions:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_td.csv
         val_cal_plot: output/review/model/val_cal_plot_*_all_vax_td.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_all_vax_td.svg
+
+  ## Validation Cox Model - infected 
+
+  validation_cox_model_infected:
+    run: r:latest analysis/stage5_model_validation_iecv.R infected
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        val_performance_measure_CSV: output/review/model/val_performance_measures_infected.csv
+        val_cal_plot: output/review/model/val_cal_plot_*_infected.svg
+        val_re_cal_plot: output/review/model/val_re_cal_plot_*_infected.svg
 

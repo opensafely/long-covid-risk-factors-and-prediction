@@ -85,9 +85,10 @@ table1_creation <- function(cohort){
                     output_file=paste0("table_1_", cohort),output_dir="output/review/descriptives")
 }
 
-if (cohort == "both") {
+if (cohort == "all_cohorts") {
   table1_creation("all")
   table1_creation("vaccinated")
+  table1_creation("infected")
 } else{
   table1_creation(cohort)
 }

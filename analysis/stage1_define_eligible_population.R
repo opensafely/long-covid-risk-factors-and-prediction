@@ -196,9 +196,10 @@ stage1_eligibility <- function(cohort){
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))
 }
 
-if (cohort == "both") {
+if(cohort == "all_cohorts") {
   stage1_eligibility("all")
   stage1_eligibility("vaccinated")
+  stage1_eligibility("infected")
 } else{
   stage1_eligibility(cohort)
 }
