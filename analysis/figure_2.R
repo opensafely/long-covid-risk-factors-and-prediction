@@ -31,11 +31,13 @@ input <- input %>% mutate(days_covid_to_long = ifelse(out_first_long_covid_date 
                                      ifelse((is.na(out_covid_date)|out_covid_date > out_first_long_covid_date)
                                             & !is.na(out_first_long_covid_date), 91, NA)))
 
+
 days <- sort(input$days_covid_to_long, decreasing = F)
 # truncation - make the ten smallest days = the 11th smallest day
 days[1:10]<- head(days,11)[11] # the 11th smallest number
 # truncation - make the ten largest days = the 11th largest day
 days[(length(days)-9):length(days)] = head(tail(days, 11),1) # the 11th largest number
+
 
 results <- NULL
 results$min[1] = min(days, na.rm=T)
