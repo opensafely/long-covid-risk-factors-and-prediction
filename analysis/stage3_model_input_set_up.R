@@ -14,8 +14,8 @@ if(length(args)==0){
   #analysis <- "all"          # all eligible population
   #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
   #analysis <- "vaccinated"   # vaccinated population
-  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
-  analysis <- "infected"
+  analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  #analysis <- "infected"
 }else{
   analysis <- args[[1]]
 }
@@ -72,7 +72,7 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
                                     non_case_inverse_weight, 1)
 
 if(analysis == "all_vax_td"){
-  z <- ie.setup(input$lcovid_surv, input$lcovid_cens, input$vax1_surv)
+  z <- ie.setup(input$lcovid_surv, input$lcovid_cens, input$vax2_surv)
   S <- z$S
   ie.status <- z$ie.status
   input <- input[z$subs,] # replicates all variables
@@ -99,7 +99,7 @@ variables_to_keep <- c("patient_id", "practice_id",
                        "cov_num_age", "weight", "sub_cat_region")
 
 if(analysis == "all_vax_td"){
-  variables_to_keep <- c(variables_to_keep, "vax1_surv")
+  variables_to_keep <- c(variables_to_keep, "vax2_surv")
 }
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
@@ -108,9 +108,9 @@ print("Part 1: load data, define inverse probability weighting is completed!")
 ################################################################################
 # Part 2: define survival analysis formula                                     #
 ################################################################################
-## linear predictors + a restricted cubic spline for age + clustering effect 
+## linear predictors + a restricted cubic spline for age + clustering effect for practice
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
-## for practice 
+ 
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
