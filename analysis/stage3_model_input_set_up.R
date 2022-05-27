@@ -14,7 +14,8 @@ if(length(args)==0){
   #analysis <- "all"          # all eligible population
   #analysis <- "vax_c"        # all eligible population but censored them by the 2nd vaccination + 14 days
   #analysis <- "vaccinated"   # vaccinated population
-  analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  analysis <- "infected"
 }else{
   analysis <- args[[1]]
 }
@@ -22,7 +23,7 @@ if(length(args)==0){
 ################################################################################
 # Part 1: load data, define inverse probability weighting                      #
 ################################################################################
-## Analysis 1: all eligible patients, without censoring individuals by vaccination
+## Analyses 1 and 4: all eligible patients, without censoring individuals by vaccination
 if(analysis == "all" | analysis == "all_vax_td"){
   input <- read_rds("output/input_stage1_all.rds")
 }
@@ -38,6 +39,10 @@ if(analysis == "vaccinated"){
   input <- read_rds("output/input_stage1_vaccinated.rds")
 }
 
+## Analysis 6: time origin is the first covid infection
+if(analysis == "infected"){
+  input <- read_rds("output/input_stage1_infected.rds")
+}
 ##--specify inverse probability weighting
 cases <- input %>% filter(!is.na(out_first_long_covid_date) & 
                                   (out_first_long_covid_date == fup_end_date))

@@ -29,6 +29,15 @@ actions:
       highly_sensitive:
         cohort: output/input_vaccinated.feather
 
+  ## Generate dummy data for study_definition - infected 
+
+  generate_study_population_infected:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_infected
+      --output-format feather
+    outputs:
+      highly_sensitive:
+        cohort: output/input_infected.feather
+
   ## Stage 0 - Data cleaning 
 
   stage0_data_cleaning:

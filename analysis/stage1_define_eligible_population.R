@@ -1,15 +1,16 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
 # Content: define eligible population
-# Output:  input_stage1_all.rds; input_stage1_vaccinated.rds
+# Output:  input_stage1_all.rds; input_stage1_vaccinated.rds; input_stage1_infected.rds
 
 library(readr); library(dplyr); library(htmlTable)
 
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
-  #cohort <- "vaccinated"   # vaccinated population
+  #cohort <- "all"           # all eligible population
+  #cohort <- "vaccinated"    # vaccinated population
+  cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -84,14 +85,12 @@ stage1_eligibility <- function(cohort){
   input$cohort_end_date = cohort_end
   
   ## To improve efficiency: keep only necessary variables
-  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
+  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date2",
                         "death_date", "cohort_end_date", "index_date")
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
   
   ## Construct time to long COVID for analysis 1, analysis 2 and analysis 3-----------------
-  
-  ## Define survival data for analysis 1----------------------------------------------------
   ## lcovid_surv: days from index date to long COVID, without censoring by vaccination 
   ## lcovid_cens: indicator for long covid          
   
@@ -107,35 +106,42 @@ stage1_eligibility <- function(cohort){
   input_select <- input_select %>% mutate(lcovid_cens = ifelse((out_first_long_covid_date <= fup_end_date & 
                                                        out_first_long_covid_date >= index_date &
                                                        !is.na(out_first_long_covid_date)), 1, 0)) %>%
-  ## define 1st vaccination as an intervening event - a time-dependent variable
+  ## define 2nd vaccination as an intervening event - a time-dependent variable
   ## add 14 days as buffer to allow vaccination to take effects
-                                  mutate(vax1_surv = ifelse(vax_covid_date1 >= index_date & 
-                                                            (vax_covid_date1 + 14) <= fup_end_date &
-                                                            !is.na(vax_covid_date1) & 
-                                                            ((vax_covid_date1+14) <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
-                                                            as.numeric(vax_covid_date1 - index_date)+14, NA))
+                                  mutate(vax2_surv = ifelse(vax_covid_date2 >= index_date & 
+                                                            (vax_covid_date2 + 14) <= fup_end_date &
+                                                            !is.na(vax_covid_date2) & 
+                                                            ((vax_covid_date2+14) <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
+                                                            as.numeric(vax_covid_date2 - index_date)+14, NA))
   
-  ## Define survival data for analysis 2-----------------------------------------------------
-  ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
-  ## lcovid_cens_vax_c: indicator for long covid   
-  input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
-                                                                        vax_covid_date1,
-                                                                        death_date, 
-                                                                        cohort_end_date,
-                                                                        na.rm = TRUE))
-  input_select$lcovid_surv_vax_c<- as.numeric(input_select$fup_end_date_vax_c - input_select$index_date)+1
-  input_select <- input_select %>% mutate(lcovid_cens_vax_c = ifelse((out_first_long_covid_date <= fup_end_date_vax_c & 
-                                                               out_first_long_covid_date >= index_date &
-                                                               !is.na(out_first_long_covid_date)), 1, 0))
+  ## Define survival data for eligible -----------------------------------------------------
+  if(cohort == "all"){
+    ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
+    ## lcovid_cens_vax_c: indicator for long covid   
+    input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
+                                                                          vax_covid_date2,
+                                                                          death_date, 
+                                                                          cohort_end_date,
+                                                                          na.rm = TRUE))
+    input_select$lcovid_surv_vax_c<- as.numeric(input_select$fup_end_date_vax_c - input_select$index_date)+1
+    input_select <- input_select %>% mutate(lcovid_cens_vax_c = ifelse((out_first_long_covid_date <= fup_end_date_vax_c & 
+                                                                 out_first_long_covid_date >= index_date &
+                                                                 !is.na(out_first_long_covid_date)), 1, 0))
+  }
   
   ################################################################################
   # Part 3. Create and output datasets                                           #
   ################################################################################
   ## Create data set for analysis 1 and analysis 2
   
-  variables_to_keep <-c("patient_id", "fup_end_date",
-                        "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
-                        "fup_end_date_vax_c", "vax1_surv")
+  if(cohort == "all"){
+    variables_to_keep <-c("patient_id", "fup_end_date",
+                          "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
+                          "fup_end_date_vax_c", "vax2_surv")
+  }else{
+    variables_to_keep <-c("patient_id", "fup_end_date",
+                          "lcovid_surv", "lcovid_cens", "vax2_surv")
+  }
   
   # warnings if non-neg follow-up time
   if (!all(input_select$lcovid_surv>=0)) warning("lcovid_surv should be  >= 0 in input_select")
@@ -148,20 +154,21 @@ stage1_eligibility <- function(cohort){
   
   rm(input_select)
   
-  ## Data set for analysis 1 and analysis 2
+  ## Data set for all eligible population and vaccinated population
   ## Time origin: index date; 
   ## fup end: long covid or death or end of cohort, with / without censoring by 1st vax
-  if(cohort == "all"){
-    saveRDS(input, file = "output/input_stage1_all.rds")
-    print("Stage 1 date set for analyses 1 and 2 created successfully!")
-  }
+  # if(cohort == "all"){
+  #   saveRDS(input, file = "output/input_stage1_all.rds")
+  #   print("Stage 1 date set for analyses 1 and 2 created successfully!")
+  # }
+  # 
+  # if(cohort == "vaccinated"){
+  #   saveRDS(input, file = "output/input_stage1_vaccinated.rds")
+  #   print("Stage 1 date set for vaccinated population created successfully!")
+  # }
   
-  if(cohort == "vaccinated"){
-    saveRDS(input, file = "output/input_stage1_vaccinated.rds")
-    print("Stage 1 date set for vaccinated population created successfully!")
-  }
-  
-  
+  saveRDS(input, file = paste0("output/input_stage1_", cohort, ".rds"))
+  print(paste0("Stage 1 date set for ", cohort, " created successfully!"))
   ################################################################################
   # Part 4. Flowchart output                                                     #
   ################################################################################

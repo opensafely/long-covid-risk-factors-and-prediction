@@ -147,6 +147,14 @@ actions_list <- splice(
       cohort = glue("output/input_vaccinated.feather")
     )
   ),
+  comment("Generate dummy data for study_definition - infected"),
+  action(
+    name = "generate_study_population_infected",
+    run = "cohortextractor:latest generate_cohort --study-definition study_definition_infected --output-format feather",
+    highly_sensitive = list(
+      cohort = glue("output/input_infected.feather")
+    )
+  ),
   comment("Stage 0 - Data cleaning"),
   action(
     name = "stage0_data_cleaning",

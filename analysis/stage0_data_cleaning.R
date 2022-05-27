@@ -18,8 +18,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"          # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"   # vaccinated population
+  cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -32,6 +33,17 @@ stage0_data_cleaning <- function(cohort){
   ## define cohort start date:
   index_date=as.Date("2020-12-01")
   input$index_date = as.Date(index_date)
+  cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+  input$cohort_end_date = cohort_end
+  
+  if(cohort == "vaccinated"){
+    input <- input %>% filter(!is.na(vax_covid_date2) &vax_covid_date2 >= index_date & vax_covid_date2 <= cohort_end_date)
+    input$index_date = input$vax_covid_date2 + 14 
+  }
+  if(cohort == "infected"){
+    input <- input %>% filter(!is.na(out_covid_date) &out_covid_date>= index_date & out_covid_date <= cohort_end_date)
+    input$index_date = input$out_covid_date
+  }
   
   # Step 1. Define variables: COVID infection-------------------------------------
   # create an indicator variable for covid infection
@@ -97,7 +109,6 @@ stage0_data_cleaning <- function(cohort){
   
   ## left join: keep all observations in input_select
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
-  
   rm(input_select)
   
   ## View(input_select)
@@ -172,7 +183,6 @@ stage0_data_cleaning <- function(cohort){
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
   
   #select_variables <- input %>% dplyr::select(c(sub_cat_covid_history, out_covid_date, index_date))
-  
   
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
