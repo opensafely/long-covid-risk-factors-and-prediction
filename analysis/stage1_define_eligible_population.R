@@ -167,6 +167,11 @@ stage1_eligibility <- function(cohort){
   #   print("Stage 1 date set for vaccinated population created successfully!")
   # }
   
+  ## if infected population, make covid phenotype as a covariate
+  if(cohort == "infected"){
+    input <- rename(input, cov_cat_covid_phenotype = sub_cat_covid_phenotype)
+  }
+  
   saveRDS(input, file = paste0("output/input_stage1_", cohort, ".rds"))
   print(paste0("Stage 1 date set for ", cohort, " created successfully!"))
   ################################################################################
