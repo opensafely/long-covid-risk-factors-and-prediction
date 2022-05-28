@@ -113,8 +113,10 @@ apply_validation_cox_model_iecv <- function(analysis){
       needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
         val_performance_measure_CSV = glue("output/review/model/val_performance_measures_{analysis}.csv"),
-        val_cal_plot = glue("output/review/model/val_cal_plot_*_{analysis}.svg"),
-        val_re_cal_plot = glue("output/review/model/val_re_cal_plot_*_{analysis}.svg")
+        #val_cal_plot = glue("output/review/model/val_cal_plot_*_{analysis}.svg"),
+        #val_re_cal_plot = glue("output/review/model/val_re_cal_plot_*_{analysis}.svg")
+        val_cal_plot = glue("output/val_cal_plot_*_{analysis}.svg"),
+        val_re_cal_plot = glue("output/val_re_cal_plot_*_{analysis}.svg")
       )
     )
   )

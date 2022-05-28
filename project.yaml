@@ -2,7 +2,7 @@ version: '3.0'
 
 expectations:
 
-  population_size: 20000
+  population_size: 10000
 
 actions:
 
@@ -284,8 +284,8 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all.csv
-        val_cal_plot: output/review/model/val_cal_plot_*_all.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_all.svg
+        val_cal_plot: output/val_cal_plot_*_all.svg
+        val_re_cal_plot: output/val_re_cal_plot_*_all.svg
 
   ## Validation Cox Model - vax_c 
 
@@ -296,8 +296,8 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_vax_c.csv
-        val_cal_plot: output/review/model/val_cal_plot_*_vax_c.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_vax_c.svg
+        val_cal_plot: output/val_cal_plot_*_vax_c.svg
+        val_re_cal_plot: output/val_re_cal_plot_*_vax_c.svg
 
   ## Validation Cox Model - vaccinated 
 
@@ -308,8 +308,8 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_vaccinated.csv
-        val_cal_plot: output/review/model/val_cal_plot_*_vaccinated.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_vaccinated.svg
+        val_cal_plot: output/val_cal_plot_*_vaccinated.svg
+        val_re_cal_plot: output/val_re_cal_plot_*_vaccinated.svg
 
   ## Validation Cox Model - all_vax_td 
 
@@ -320,8 +320,8 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_td.csv
-        val_cal_plot: output/review/model/val_cal_plot_*_all_vax_td.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_all_vax_td.svg
+        val_cal_plot: output/val_cal_plot_*_all_vax_td.svg
+        val_re_cal_plot: output/val_re_cal_plot_*_all_vax_td.svg
 
   ## Validation Cox Model - infected 
 
@@ -332,6 +332,6 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_infected.csv
-        val_cal_plot: output/review/model/val_cal_plot_*_infected.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_infected.svg
+        val_cal_plot: output/val_cal_plot_*_infected.svg
+        val_re_cal_plot: output/val_re_cal_plot_*_infected.svg
 

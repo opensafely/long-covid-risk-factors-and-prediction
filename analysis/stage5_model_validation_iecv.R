@@ -150,30 +150,36 @@ int_ext_cross_validation <- function(region_i){
   val_ests <- val.surv(est.surv = pred_surv_prob,
                        S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
                        u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
+  print("val_ests is now specified!")
   
-  svg(paste0("output/review/model/val_cal_plot_",region_i,"_", analysis, ".svg"))
+  #svg(paste0("output/review/model/val_cal_plot_",region_i,"_", analysis, ".svg"))
+  svg(paste0("output/val_cal_plot_",region_i,"_", analysis, ".svg"))
   plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
   groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
           g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
   legend(0.0,0.8,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
   dev.off()
   print("Calibration plot is created successfully!")
+  
   # Recalibration of the baseline survival function
   recal_mod <- coxph(Surv(input_test$lcovid_surv,input_test$lcovid_cens)~offset(input_test_select$lin_pred))
   y_recal_1y <- summary(survfit(recal_mod),time=time_point)$surv
   y_recal_1y
   
-  # Calculate new predicted probabilities at 1 year (linear predictor stays the same but needs centering)
+  # Calculate new predicted probabilities at 1 year
   pred_surv_prob2=y_recal_1y^exp(input_test_select$lin_pred-mean(input_test_select$lin_pred))
   mean(pred_surv_prob2)
   sd(pred_surv_prob2)
+  print("Calculation of new predicted probabilities at 1 year is completed successfully!")
   
   # Redo calibration plot
   val_ests2 <- val.surv(est.surv = pred_surv_prob2,
                         S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
                         u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
   
-  svg(paste0("output/review/model/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
+  print("val_ests2 is now specified!")
+  #svg(paste0("output/review/model/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
+  svg(paste0("output/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
   plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
   groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
           g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)

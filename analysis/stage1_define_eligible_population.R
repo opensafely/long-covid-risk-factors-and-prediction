@@ -8,9 +8,9 @@ library(readr); library(dplyr); library(htmlTable)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"     # infected population
+  #cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -85,8 +85,8 @@ stage1_eligibility <- function(cohort){
   input$cohort_end_date = cohort_end
   
   ## To improve efficiency: keep only necessary variables
-  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date2",
-                        "death_date", "cohort_end_date", "index_date")
+  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
+                        "vax_covid_date2", "death_date", "cohort_end_date", "index_date")
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
   
@@ -116,10 +116,11 @@ stage1_eligibility <- function(cohort){
   
   ## Define survival data for eligible -----------------------------------------------------
   if(cohort == "all"){
-    ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
+    ## Survival time and indicator for unvaccinated population
+    ## lcovid_surv_vax_c: days from index date to long COVID, censored by first vaccination 
     ## lcovid_cens_vax_c: indicator for long covid   
     input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
-                                                                          vax_covid_date2,
+                                                                          vax_covid_date1,
                                                                           death_date, 
                                                                           cohort_end_date,
                                                                           na.rm = TRUE))

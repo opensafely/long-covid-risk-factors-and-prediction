@@ -1,3 +1,4 @@
+library(dplyr)
 library(tidyverse)
 
 fs::dir_create(here::here("output", "review", "descriptives"))
@@ -13,7 +14,7 @@ input <- input[,variables_to_keep]
 # transform data to long format and calculate sequence of events
 input_long_1 <- input %>% 
   as_tibble() %>%
-  select(patient_id, out_covid_date, vax_covid_date1, out_first_long_covid_date) %>%
+  dplyr::select(patient_id, out_covid_date, vax_covid_date2, out_first_long_covid_date) %>%
   pivot_longer(
     cols = -patient_id
     ) %>%
@@ -22,10 +23,10 @@ input_long_1 <- input %>%
   # when calculating rank, NAs stay NA, and ties take the min
   mutate(sequence = rank(value, na.last = "keep", ties.method = "min")) %>%
   ungroup() %>%
-  select(-value) %>%
+  dplyr::select(-value) %>%
   mutate(across(name, 
                 ~case_when(.x %in% "out_covid_date" ~ "covid",
-                           .x %in% "vax_covid_date1" ~ "vax",
+                           .x %in% "vax_covid_date2" ~ "vax",
                            .x %in% "out_first_long_covid_date" ~ "long",
                            TRUE ~ NA_character_))) 
 
@@ -58,7 +59,7 @@ table3 <- input_wide_1 %>%
     str_c(name, collapse = "==")
   )) %>%
   ungroup() %>%
-  select(-name) %>%
+  dplyr::select(-name) %>%
   distinct() %>%
   # arrange by order
   arrange(order, value) %>%
@@ -80,7 +81,7 @@ table3 <- input_wide_1 %>%
   mutate(newname3 = str_c(newname2, collapse = " & ")) %>%
   ungroup() %>%
   distinct(newname3, n) %>%
-  select(sequence = newname3, n) %>%
+  dplyr::select(sequence = newname3, n) %>%
   # redact smallest values until total redacted >5 using redactor2 function
   mutate(across(n, redactor2)) %>%
   mutate(across(n, ~if_else(is.na(.x), "[redacted]", scales::comma(.x, accuracy = 1))))
