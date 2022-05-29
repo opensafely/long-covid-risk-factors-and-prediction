@@ -126,10 +126,6 @@ int_ext_cross_validation <- function(region_i){
   
   # Calculate the C-statistic for the discrimination of the model in the validation dataset
   # Harrell's C-statistic 
-  # pm_val$c_stat[i] = round(concordance(test_cox_model)$concordance,3)
-  # pm_val$c_stat_lower[i] = round(concordance(test_cox_model)$concordance - 1.96*sqrt((concordance(test_cox_model))$var),3)
-  # pm_val$c_stat_upper[i] = round(concordance(test_cox_model)$concordance + 1.96*sqrt((concordance(test_cox_model))$var),3)
-  # pm_val$c_stat_var[i] = round((concordance(test_cox_model))$var,6)
   c_stat = round(concordance(test_cox_model)$concordance,3)
   c_stat_lower = round(concordance(test_cox_model)$concordance - 1.96*sqrt((concordance(test_cox_model))$var),3)
   c_stat_upper = round(concordance(test_cox_model)$concordance + 1.96*sqrt((concordance(test_cox_model))$var),3)
@@ -152,8 +148,7 @@ int_ext_cross_validation <- function(region_i){
                        u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
   print("val_ests is now specified!")
   
-  #svg(paste0("output/review/model/val_cal_plot_",region_i,"_", analysis, ".svg"))
-  svg(paste0("output/val_cal_plot_",region_i,"_", analysis, ".svg"))
+  svg(paste0("output/review/model/val_cal_plot_",region_i,"_", analysis, ".svg"))
   plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
   groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
           g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
@@ -178,8 +173,7 @@ int_ext_cross_validation <- function(region_i){
                         u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
   
   print("val_ests2 is now specified!")
-  #svg(paste0("output/review/model/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
-  svg(paste0("output/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
+  svg(paste0("output/review/model/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
   plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
   groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
           g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
@@ -197,7 +191,6 @@ for(i in 1:length(region)){
     pm_val[i,2:ncol(pm_val)] = temp
   }
 }
-
 
 # weight for each region
 pm_val$weight = 1/pm_val$c_stat_var

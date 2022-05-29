@@ -108,13 +108,13 @@ print("Part 1: load data, define inverse probability weighting is completed!")
 ################################################################################
 # Part 2: define survival analysis formula                                     #
 ################################################################################
-## linear predictors + a restricted cubic spline for age + clustering effect for practice
-knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
- 
+## linear predictors + a restricted cubic spline for age + 
+##  a restricted cubic spline for gp consultation rate + clustering effect for practice
+knot_placement_age=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
+  "+rms::rcs(cov_num_age,parms=knot_placement_age)", 
   "+ cluster(practice_id)"
 )
 
@@ -130,7 +130,7 @@ if(analysis == "all_vax_td"){
   surv_formula <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement)", 
+    "+rms::rcs(cov_num_age,parms=knot_placement_age)", 
 #    "+ ie.status",
     "+ cluster(practice_id)"
   )
