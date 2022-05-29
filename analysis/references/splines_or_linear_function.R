@@ -71,3 +71,5 @@ splines_or_linear <- function(cov_num){
 
 splines_or_linear(input$cov_num_age)
 try(splines_or_linear(input$cov_num_gp_consultation))
+hist(input$cov_num_gp_consultation)
+mean(input$cov_num_gp_consultation)

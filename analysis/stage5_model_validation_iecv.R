@@ -15,13 +15,14 @@ fs::dir_create(here::here("output", "review", "model"))
 source("analysis/stage3_model_selection.R")
 
 if(length(selected_covariate_names)>0){
-  which_model = "selected"
-  # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
+ # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
+  which_model = "selected model"
   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }else{
-  which_model="full" 
-  # the full model is already loaded in stage3_model_input_set_up, so no need to refit
+# if length(selected_covariate_names) == 0, full model will be used later.
+# the full model is already loaded in stage3_model_input_set_up, so no need to refit
+  which_model = "full model"
 }
 
 # Assumption: linear term is selected for age
@@ -39,6 +40,8 @@ make_df <- function(nrow) {
     nrow <- 0
   }
   temp_df <- data.frame(
+    analysis = character(),
+    which_model = character(),
     region  = character(),
     c_stat  = numeric(),
     c_stat_var = numeric(), 
@@ -54,13 +57,16 @@ make_df <- function(nrow) {
 } 
 pm_val <- make_df(length(region))
 
+pm_val$analysis = analysis
+pm_val$which_model = which_model
+
 print("Data frame for pm is created successfully!")
 
-int_ext_cross_validation <- function(region_i){
+int_ext_cross_validation <- function(region_i, fit_cox_model){
   
   print(paste0("---- START Region: ", region_i, " ----"))
   
-  pm_val$region_i = region_i
+  pm_val$region = region_i
   #input_train <- input %>% filter(sub_cat_region != region_i)
   input_test <- input %>% filter(sub_cat_region == region_i)
   if(analysis == "all_vax_td"){
@@ -186,9 +192,9 @@ int_ext_cross_validation <- function(region_i){
 
 for(i in 1:length(region)){
   pm_val[i,1] = region[i]
-  temp = try(int_ext_cross_validation(region[i]))
+  temp = try(int_ext_cross_validation(region[i], fit_cox_model))
   if(is.numeric(temp)){
-    pm_val[i,2:ncol(pm_val)] = temp
+    pm_val[i,4:ncol(pm_val)] = temp
   }
 }
 

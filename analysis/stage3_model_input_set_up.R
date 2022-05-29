@@ -6,13 +6,11 @@
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 
-# fs::dir_create(here::here("output"))
-# 
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #analysis <- "all"          # all eligible population
-  analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
+  analysis <- "all"          # all eligible population
+  #analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
   #analysis <- "vaccinated"   # vaccinated population
   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
   #analysis <- "infected"
@@ -24,7 +22,11 @@ if(length(args)==0){
 # Part 1: load data, define inverse probability weighting                      #
 ################################################################################
 ## Analyses 1 and 4: all eligible patients, without censoring individuals by vaccination
-if(analysis == "all" | analysis == "all_vax_td"){
+if(analysis == "all"){
+  input <- read_rds("output/input_stage1_all.rds")
+}
+
+if(analysis == "all_vax_td"){
   input <- read_rds("output/input_stage1_all.rds")
 }
 
@@ -110,11 +112,11 @@ print("Part 1: load data, define inverse probability weighting is completed!")
 ################################################################################
 ## linear predictors + a restricted cubic spline for age + 
 ##  a restricted cubic spline for gp consultation rate + clustering effect for practice
-knot_placement_age=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
+knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+rms::rcs(cov_num_age,parms=knot_placement_age)", 
+  "+rms::rcs(cov_num_age,parms=knot_placement)", 
   "+ cluster(practice_id)"
 )
 
@@ -130,7 +132,7 @@ if(analysis == "all_vax_td"){
   surv_formula <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement_age)", 
+    "+rms::rcs(cov_num_age,parms=knot_placement)", 
 #    "+ ie.status",
     "+ cluster(practice_id)"
   )

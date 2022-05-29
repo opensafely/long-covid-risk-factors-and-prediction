@@ -12,7 +12,7 @@ library(readr)
 ## defaults ----
 defaults_list <- list(
   version = "3.0",
-  expectations= list(population_size=10000L)
+  expectations= list(population_size=15000L)
 )
 
 analysis <- analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td", "infected") 

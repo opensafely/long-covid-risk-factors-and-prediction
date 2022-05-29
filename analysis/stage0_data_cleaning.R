@@ -18,9 +18,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"       # infected population
+  #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -112,6 +112,11 @@ stage0_data_cleaning <- function(cohort){
   rm(input_select)
   
   ## View(input_select)
+  
+  ## cov_num_gp_consultation
+  ## define cov_cat_gp_consultation
+  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation >= 12, "Greater or equal to 12", "less than 12")
+  input$cov_num_gp_consultation[which(input$cov_num_gp_consultation >= 12)] = 12
   
   ################################################################################
   ## Part 3. define variable types: factor or numerical or date                  #

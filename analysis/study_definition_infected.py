@@ -225,14 +225,14 @@ study = StudyDefinition(
     ),
 
     ###No. primary care consultation in year prior to index date
-    #
-    # cov_num_gp_consultation=patients.with_gp_consultations(
-    #     between=["index_date - 12 months", "index_date"],
-    #     returning="number_of_matches_in_period",
-    #     return_expectations={
-    #         "int": {"distribution": "poisson", "mean": 5},
-    #     },
-    # ),
+    
+    cov_num_gp_consultation=patients.with_gp_consultations(
+        between=["index_date - 12 months", "index_date"],
+        returning="number_of_matches_in_period",
+        return_expectations={
+            "int": {"distribution": "poisson", "mean": 10},
+        },
+    ),
     # Smoking status
     cov_cat_smoking_status=patients.categorised_as(
         {
