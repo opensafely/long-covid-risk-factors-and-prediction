@@ -284,6 +284,7 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all.csv
+        val_performance_measure_html: output/review/model/val_performance_measures_all.html
         val_cal_plot: output/review/model/val_cal_plot_*_all.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_all.svg
 
@@ -296,6 +297,7 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_vax_c.csv
+        val_performance_measure_html: output/review/model/val_performance_measures_vax_c.html
         val_cal_plot: output/review/model/val_cal_plot_*_vax_c.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_vax_c.svg
 
@@ -308,6 +310,7 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_vaccinated.csv
+        val_performance_measure_html: output/review/model/val_performance_measures_vaccinated.html
         val_cal_plot: output/review/model/val_cal_plot_*_vaccinated.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_vaccinated.svg
 
@@ -320,6 +323,7 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_td.csv
+        val_performance_measure_html: output/review/model/val_performance_measures_all_vax_td.html
         val_cal_plot: output/review/model/val_cal_plot_*_all_vax_td.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_all_vax_td.svg
 
@@ -332,6 +336,7 @@ actions:
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_infected.csv
+        val_performance_measure_html: output/review/model/val_performance_measures_infected.html
         val_cal_plot: output/review/model/val_cal_plot_*_infected.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_infected.svg
 

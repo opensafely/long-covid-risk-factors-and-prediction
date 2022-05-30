@@ -97,11 +97,8 @@ stage0_data_cleaning <- function(cohort){
   
   input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
   
-  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, "two or more diseases",
-                                                                         ifelse(cov_num_multimorbidity==1, "one disease", "no disease")))
-  
-  input_select$cov_cat_multimorbidity <- ordered(input_select$cov_cat_multimorbidity, 
-                                                 levels = c("no disease", "one disease", "two or more diseases"))
+  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, "2 (two or more diseases)",
+                                                                         ifelse(cov_num_multimorbidity==1, "1 (one disease)", "0 (no disease)")))
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
   
@@ -158,6 +155,13 @@ stage0_data_cleaning <- function(cohort){
   input$cov_cat_imd <- ordered(input$cov_cat_imd, 
                                levels = c("1 (most deprived)","2","3","4","5 (least deprived)", "0 (missing)"))
   
+  input$cov_cat_bmi<- ordered(input$cov_cat_bmi, 
+                              levels = c("Not obese","Obese I (30-34.9)",
+                                          "Obese II (35-39.9)", "Obese III (40+)"))
+  
+  input$cov_cat_multimorbidity <- ordered(input$cov_cat_multimorbidity, 
+                                          levels = c("0 (no disease)", "1 (one disease)", "2 (two or more diseases)"))
+
   ## cov_cat_smoking_status-------------------------------------------------------
   table(input$cov_cat_smoking_status)
   levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
