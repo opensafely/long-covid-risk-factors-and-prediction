@@ -85,9 +85,9 @@ if(which_model == "full"){
 
   # Graph the KM curves in the 4 risk groups to visually assess separation
   plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
-       main="Kaplan-Meier survival estimates",
-       xlab="analysis time",col=c(1:4))
-  legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
+       #main="Kaplan-Meier survival estimates",
+       xlab="Days",ylab = "Survival probability",col=c(1:4))
+  legend(1,0.5,c("Low risk group","Low to medium risk group","Medium to high risk group","High risk group"),col=c(1:4),lty=1,bty="n")
 
 }
 
@@ -98,9 +98,9 @@ if(which_model == "selected"){
                       labels=c(1:4),include.lowest=TRUE)
     # Graph the KM curves in the 4 risk groups to visually assess separation
     plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
-         main="Kaplan-Meier survival estimates",
-         xlab="analysis time",col=c(1:4))
-    legend(1,0.5,c("group=1","group=2","group=3","group=4"),col=c(1:4),lty=1,bty="n")
+         # main="Kaplan-Meier survival estimates",
+         xlab="Days", ylab = "Survival probability", col=c(1:4))
+    legend(1,0.5,c("Low risk group","Low to medium risk group","Medium to high risk group","High risk group"),col=c(1:4),lty=1,bty="n")
    # dev.off()
   }
 }
@@ -164,7 +164,7 @@ patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
 
 svglite::svglite(file = paste0("output/review/model/surival_plot_with_shrunken_LP_", which_model, ".svg"))
 
-plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
+plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_low)),col=3,conf.int=FALSE)
 lines(survfit(fit_cox_model,newdata=data.frame(patient_low_shrunk)),col=4,conf.int=FALSE)
@@ -195,7 +195,7 @@ prob_HR_shrunk
 
 svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves_", which_model,"_", analysis, ".svg"))
 # We can plot the two baseline survival curves
-plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
+plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
 legend(7.5,0.3,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
 
@@ -208,7 +208,7 @@ dev.off()
 svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
 # # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability
 # as calculated above to check they match the predicted survival curves
-plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="analysis time",ylab="Survival",col=1,conf.int=FALSE)
+plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
 lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
 legend(10,0.3,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
 abline(h=prob_HR,col="black")

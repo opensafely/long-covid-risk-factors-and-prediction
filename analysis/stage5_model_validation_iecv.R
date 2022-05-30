@@ -25,6 +25,8 @@ if(length(selected_covariate_names)>0){
   which_model = "full model"
 }
 
+print(which_model)
+
 # Assumption: linear term is selected for age
 #surv_formula = surv_formula_lp
 
@@ -62,6 +64,8 @@ pm_val$which_model = which_model
 
 print("Data frame for pm is created successfully!")
 
+# for testing
+# region_i = "London"
 int_ext_cross_validation <- function(region_i, fit_cox_model){
   
   print(paste0("---- START Region: ", region_i, " ----"))
@@ -72,9 +76,6 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
   if(analysis == "all_vax_td"){
     input_test$patient_id <- seq.int(nrow(input_test))  # reset patient id as they are not unique in this case
   }
-  
-  # train_cox_model <-rms::cph(formula= as.formula(surv_formula),
-  #                          data= input_train, weight=input_train$weight,surv = TRUE,x=TRUE,y=TRUE)
   
   # names of covariates and factor levels
   covariates <- names(fit_cox_model$coefficients)
@@ -155,10 +156,17 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
   print("val_ests is now specified!")
   
   svg(paste0("output/review/model/val_cal_plot_",region_i,"_", analysis, ".svg"))
-  plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
+  # plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
+  # groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
+  #         g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
+  # legend(0.0,0.8,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
+  temp <- data.frame(groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), u=time_point))
+  lb <- temp$KM - 1.96*temp$std.err
   groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
-          g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
-  legend(0.0,0.8,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
+          g=10,u=time_point, pl=T, lty=0,cex.subtitle=FALSE,
+          xlim = c(min(pred_surv_prob), 1), ylim=c(min(lb),1),
+          xlab="Predicted Survival Probability",ylab="Observed Survival Probability") 
+  # + abline(coef = c(0,1))
   dev.off()
   print("Calibration plot is created successfully!")
   
@@ -180,10 +188,16 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
   
   print("val_ests2 is now specified!")
   svg(paste0("output/review/model/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
-  plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
+  # plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
+  # groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
+  #         g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
+  # legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
+  temp <- data.frame(groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), u=time_point))
+  lb <- temp$KM - 1.96*temp$std.err
   groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
-          g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
-  legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
+          g=10,u=time_point, pl=T, lty=0,cex.subtitle=FALSE,
+          xlim = c(min(pred_surv_prob2), 1), ylim=c(min(lb),1),
+          xlab="Predicted Survival Probability",ylab="Observed Survival Probability") 
   dev.off()
   print("Re-calibration plot is created successfully!")
   print(paste0("---- END Region: ", region_i, " ----"))
@@ -214,3 +228,7 @@ pm_val$c_iecv_lower[1] = round(c_iecv - 1.96*c_iecv_se,3)
 pm_val$c_iecv_upper[1] = round(c_iecv + 1.96*c_iecv_se,3)
 
 write.csv(pm_val, file = paste0("output/review/model/val_performance_measures_", analysis,".csv"), row.names = F)
+
+rmarkdown::render(paste0("analysis/compilation/compiled_val_pm_table",".Rmd"), 
+                  output_file=paste0("val_performance_measures_", analysis),
+                  output_dir="output/review/model")

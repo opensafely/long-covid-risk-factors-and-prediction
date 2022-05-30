@@ -97,11 +97,11 @@ stage0_data_cleaning <- function(cohort){
   
   input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
   
-  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, ">=2 (two or more diseases)",
-                                                                         ifelse(cov_num_multimorbidity==1, "1 (one disease)", "0 (no disease)")))
+  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, "two or more diseases",
+                                                                         ifelse(cov_num_multimorbidity==1, "one disease", "no disease")))
   
   input_select$cov_cat_multimorbidity <- ordered(input_select$cov_cat_multimorbidity, 
-                                                 levels = c("0 (no disease)", "1 (one disease)", ">=2 (two or more diseases)"))
+                                                 levels = c("no disease", "one disease", "two or more diseases"))
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
   
@@ -113,6 +113,13 @@ stage0_data_cleaning <- function(cohort){
   
   ## View(input_select)
   
+  # For numerical variables, produce histogram for numerical variable
+  num_var <- colnames(input)[grepl("cov_num_",colnames(input))]
+  for(i in num_var){
+    svglite::svglite(file = paste0("output/not_for_review/descriptives/histogram_", i,"_", cohort, ".svg"))
+    hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
+    dev.off()
+  }
   ## cov_num_gp_consultation
   ## define cov_cat_gp_consultation
   input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation >= 12, "Greater or equal to 12", "less than 12")
@@ -121,14 +128,6 @@ stage0_data_cleaning <- function(cohort){
   ################################################################################
   ## Part 3. define variable types: factor or numerical or date                  #
   ################################################################################
-  
-  # For numerical variables, produce histogram for numerical variable
-  num_var <- colnames(input)[grepl("cov_num_",colnames(input))]
-  for(i in num_var){
-    svglite::svglite(file = paste0("output/not_for_review/descriptives/histogram_", i,"_", cohort, ".svg"))
-    hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
-    dev.off()
-  }
   
   ## For categorical factors, specify the most frequently occurred level as the reference group
   cat_factors <- colnames(input)[grepl("_cat_",colnames(input))]
