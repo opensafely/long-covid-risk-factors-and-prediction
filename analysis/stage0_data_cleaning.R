@@ -111,8 +111,15 @@ stage0_data_cleaning <- function(cohort){
   # For numerical variables, produce histogram for numerical variable
   num_var <- colnames(input)[grepl("cov_num_",colnames(input))]
   for(i in num_var){
+    print(paste0("Summary statistics for ", i))
+    print(summary(input[,i]))
     svglite::svglite(file = paste0("output/not_for_review/descriptives/histogram_", i,"_", cohort, ".svg"))
-    hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
+    if(i!="cov_num_gp_consultation"){
+      hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
+    }else{
+      input_frequent_consultation <- input[which(input[,i]>=12),i]
+      hist(input_frequent_consultation, main=paste0("Histogram of ", i), xlab =i)
+    }
     dev.off()
   }
   ## cov_num_gp_consultation

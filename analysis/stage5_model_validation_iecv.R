@@ -160,17 +160,17 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
   print("val_ests is now specified!")
   
   svg(paste0("output/review/model/val_cal_plot_",region_i,"_", analysis, ".svg"))
-  # plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
+  plot(val_ests,xlab="Expected Survival Probability",ylab="Observed Survival Probability")
+  groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens),
+          g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
+  legend(0.0,0.8,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
+  # temp <- data.frame(groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), u=time_point))
+  # lb <- temp$KM - 1.96*temp$std.err
   # groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
-  #         g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
-  # legend(0.0,0.8,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
-  temp <- data.frame(groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), u=time_point))
-  lb <- temp$KM - 1.96*temp$std.err
-  groupkm(pred_surv_prob, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
-          g=10,u=time_point, pl=T, lty=0,cex.subtitle=FALSE,
-          xlim = c(min(pred_surv_prob), 1), ylim=c(min(lb),1),
-          xlab="Predicted Survival Probability",ylab="Observed Survival Probability") 
-  # + abline(coef = c(0,1))
+  #         g=10,u=time_point, pl=T, lty=0,cex.subtitle=FALSE,
+  #         xlim = c(min(pred_surv_prob), 1), ylim=c(min(lb),1),
+  #         xlab="Predicted Survival Probability",ylab="Observed Survival Probability") 
+  # # + abline(coef = c(0,1))
   dev.off()
   print("Calibration plot is created successfully!")
   
@@ -192,16 +192,16 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
   
   print("val_ests2 is now specified!")
   svg(paste0("output/review/model/val_re_cal_plot_",region_i,"_", analysis, ".svg"))
-  # plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability") 
+  plot(val_ests2,xlab="Expected Survival Probability",ylab="Observed Survival Probability")
+  groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens),
+          g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
+  legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
+  # temp <- data.frame(groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), u=time_point))
+  # lb <- temp$KM - 1.96*temp$std.err
   # groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
-  #         g=10,u=time_point, pl=T, add=T,lty=0,cex.subtitle=FALSE)
-  # legend(0.0,0.9,c("Risk groups","Reference line","95% CI"),lty=c(0,2,1),pch=c(19,NA,NA),bty="n")
-  temp <- data.frame(groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), u=time_point))
-  lb <- temp$KM - 1.96*temp$std.err
-  groupkm(pred_surv_prob2, S = Surv(input_test$lcovid_surv,input_test$lcovid_cens), 
-          g=10,u=time_point, pl=T, lty=0,cex.subtitle=FALSE,
-          xlim = c(min(pred_surv_prob2), 1), ylim=c(min(lb),1),
-          xlab="Predicted Survival Probability",ylab="Observed Survival Probability") 
+  #         g=10,u=time_point, pl=T, lty=0,cex.subtitle=FALSE,
+  #         xlim = c(min(pred_surv_prob2), 1), ylim=c(min(lb),1),
+  #         xlab="Predicted Survival Probability",ylab="Observed Survival Probability") 
   dev.off()
   print("Re-calibration plot is created successfully!")
   print(paste0("---- END Region: ", region_i, " ----"))
