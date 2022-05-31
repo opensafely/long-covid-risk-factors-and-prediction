@@ -40,21 +40,8 @@ if(length(selected_covariate_names)>0){
 
 if(length(selected_covariate_names)>0){
   which_model = "selected"
-  # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
-  #fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-  #                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-  # #save the selected model
-  # readr::write_rds(
-  #   fit_cox_model,
-  #   paste0("output/fit_cox_model_selected_",analysis, ".rds"),
-  #   #compress = "gz"
-  # )
 }else{
-  # if length(selected_covariate_names) == 0, no covariate is significant
-  # However, we will evaluate full model in this case.
-  # the full model is already loaded in stage3_model_input_set_up, so no need to refit
   which_model = "full"
-  #fit_cox_model <- fit_cox_model_full
 }
 
 selection <- data.frame(analysis = analysis, which_model = which_model)

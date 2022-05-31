@@ -80,7 +80,7 @@ apply_development_cox_model <- function(analysis_development){
       #   input_samples_rds = glue("output/input_samples_{analysis_development}.rds")
       # ),
       moderately_sensitive = list(
-        #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
+        ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
         hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.csv"),
         hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html"),
         model_selection = glue("output/not_for_review/model/model_selection_{analysis_development}.csv")

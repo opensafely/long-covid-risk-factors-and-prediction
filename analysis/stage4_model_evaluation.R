@@ -24,12 +24,6 @@ if(length(args)==0){
 source("analysis/stage3_model_selection.R")
 
 print("Starting stage_4_model_evaluation.R")
-# input <- read_rds(paste0("output/input_samples_", analysis, ".rds"))
-# selection <- read.csv(file=paste0("output/not_for_review/model/model_selection_",analysis,".csv"))
-# #print(paste0("output/not_for_review/model/fit_cox_model_", selection$which_model,"_",analysis, ".rds"))
-# which_model <- selection$which_model
-# #fit_cox_model <- read_rds(file=paste0("output/fit_cox_model_", which_model,"_",analysis, ".rds"))
-# fit_cox_model <- read_rds(paste0("output/fit_cox_model_", which_model,"_",analysis, ".rds"))
 
 fs::dir_create(here::here("output", "review", "model"))
 
@@ -104,7 +98,6 @@ if(which_model == "full"){
        #main="Kaplan-Meier survival estimates",
        xlab="Days",ylab = "Survival probability",col=c(1:4))
   legend(1,0.5,c("Low risk group","Low to medium risk group","Medium to high risk group","High risk group"),col=c(1:4),lty=1,bty="n")
-
 }
 
 if(which_model == "selected"){
@@ -145,7 +138,6 @@ pm[nrow(pm)+1, 1] <- "Heuristic shrinkage"
 pm[nrow(pm), 2] <- round(vanH,3)
 
 # revise the final model
-
 heuristic_lp = vanH*pred_LP
 
 # summarise the original & shrunken lp and compare the mean/SD/range

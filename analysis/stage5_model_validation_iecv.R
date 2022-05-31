@@ -25,9 +25,6 @@ print("Starting stage_5_model_evaluation.R")
 
 #load data, with defined weight, and import formula for survival analysis
 source("analysis/stage3_model_selection.R")
-# selection <- read.csv(file=paste0("output/not_for_review/model/model_selection_",analysis,".csv"))
-# fit_cox_model <- read_rds(file=paste0("output/not_for_review/model/fit_cox_model_",
-#                                       selection$which_model,"_",analysis, ".rds"))
 
 if(which_model == "selected"){
   # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
@@ -143,11 +140,12 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
   c_stat_lower = round(concordance(test_cox_model)$concordance - 1.96*sqrt((concordance(test_cox_model))$var),3)
   c_stat_upper = round(concordance(test_cox_model)$concordance + 1.96*sqrt((concordance(test_cox_model))$var),3)
   c_stat_var = round((concordance(test_cox_model))$var,6)
+  
   print("Calculation for the C-statistic is completed!")
+  
   # Calibration slope
   #pm_val$cal_slope[i] = round(test_cox_model$coef,3)
   cal_slope = round(test_cox_model$coef,3)
-  
   # Calibration plot for the validation data
   # Calculate predicted survival probability at 1 year
   time_point = 365
