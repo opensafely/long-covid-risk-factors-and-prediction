@@ -1,7 +1,7 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
 # Content: Produce hazard ratio plot for predictors
-# Output:  
+# Output:  figure_hr_*svg for each analysis
 
 library(readr); library(dplyr); library(ggplot2)
 

@@ -155,19 +155,6 @@ stage1_eligibility <- function(cohort){
   
   rm(input_select)
   
-  ## Data set for all eligible population and vaccinated population
-  ## Time origin: index date; 
-  ## fup end: long covid or death or end of cohort, with / without censoring by 1st vax
-  # if(cohort == "all"){
-  #   saveRDS(input, file = "output/input_stage1_all.rds")
-  #   print("Stage 1 date set for analyses 1 and 2 created successfully!")
-  # }
-  # 
-  # if(cohort == "vaccinated"){
-  #   saveRDS(input, file = "output/input_stage1_vaccinated.rds")
-  #   print("Stage 1 date set for vaccinated population created successfully!")
-  # }
-  
   ## if infected population, make covid phenotype as a covariate
   if(cohort == "infected"){
     input <- rename(input, cov_cat_covid_phenotype = sub_cat_covid_phenotype)
@@ -179,6 +166,7 @@ stage1_eligibility <- function(cohort){
   # Part 4. Flowchart output                                                     #
   ################################################################################
   
+  # Small number suppression
   flow_chart<-data.frame(steps, flow_chart_n)
   flow_chart$drop <- rep(0, nrow(flow_chart))
   for(i in 2:nrow(flow_chart)){

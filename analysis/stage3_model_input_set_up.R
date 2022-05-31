@@ -136,7 +136,6 @@ if(analysis == "all_vax_td"){
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     paste(covariate_names, collapse = "+"),
     "+rms::rcs(cov_num_age,parms=knot_placement)", 
-#    "+ ie.status",
     "+ cluster(practice_id)"
   )
   ## age is added as a linear predictor
@@ -144,7 +143,6 @@ if(analysis == "all_vax_td"){
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     paste(covariate_names, collapse = "+"),
     "+ cov_num_age", 
-#    "+ ie.status",
     "+ cluster(practice_id)"
   )
 }

@@ -4,11 +4,11 @@
 ## Output:  input_stage0.rds; table_0.csv; table_0.html
 
 ##Variable naming principles: 
-## 1. starting with "cov_cat_" indicate categorical covariates
-## 2. starting with "cov_num_" indicate numerical covariates
-## 3. starting with "out_" indicate outcome variables
+## 1. prefix "cov_cat_" indicate categorical covariates
+## 2. prefix "cov_num_" indicate numerical covariates
+## 3. prefix "out_" indicate outcome variables
 ## 4. containing "_date" indicate date variables
-## 5. starting with "sub_" indicate patient characteristics which are not included
+## 5. prefix "sub_" indicate patient characteristics which are not included
 ##    in the analysis / modelling, but are of interest in exploration
 
 library(readr); library(dplyr); library("arrow"); library(lubridate); library(tidyr)
@@ -108,8 +108,6 @@ stage0_data_cleaning <- function(cohort){
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
   rm(input_select)
   
-  ## View(input_select)
-  
   # For numerical variables, produce histogram for numerical variable
   num_var <- colnames(input)[grepl("cov_num_",colnames(input))]
   for(i in num_var){
@@ -189,8 +187,6 @@ stage0_data_cleaning <- function(cohort){
   
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
-  
-  #select_variables <- input %>% dplyr::select(c(sub_cat_covid_history, out_covid_date, index_date))
   
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #

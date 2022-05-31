@@ -123,6 +123,20 @@ actions:
         figure_days_c_to_lc: output/review/descriptives/figure_hist.svg
         table_csv_summary: output/review/descriptives/summary_days_c_to_long.csv
 
+  ## Figure - hazard ratio plot 
+
+  figure_hazard_ratio:
+    run: r:latest analysis/figure_hazard_ratio_plot.R
+    needs:
+    - development_cox_model_all
+    - development_cox_model_vax_c
+    - development_cox_model_vaccinated
+    - development_cox_model_all_vax_td
+    - development_cox_model_infected
+    outputs:
+      moderately_sensitive:
+        figure_hazard_ratio_plot: output/review/model/figure_hr_*.svg
+
   ## Suppl_table_1 - frequencies of snomed code for long covid diagnosis 
 
   suppl_table_1:

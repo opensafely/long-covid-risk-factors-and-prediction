@@ -76,16 +76,11 @@ apply_development_cox_model <- function(analysis_development){
       run = "r:latest analysis/stage3_model_development.R",
       arguments = c(analysis_development),
       needs = list("stage1_define_eligible_population"),
-      # highly_sensitive = list(
-      #   input_samples_rds = glue("output/input_samples_{analysis_development}.rds")
-      # ),
       moderately_sensitive = list(
         ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
         hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.csv"),
         hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html"),
         model_selection = glue("output/not_for_review/model/model_selection_{analysis_development}.csv")
-        #fit_cox_model = glue("output/fit_cox_model_*_{analysis_development}.rds")
-        #calibration = glue("output/review/model/calibration_development_*_{analysis}.svg")
       )
     )
   )
@@ -187,16 +182,6 @@ actions_list <- splice(
       cohort = glue("output/input_stage1_*.rds")
     )
   ),
-  # comment("Stage 3 - Model input set up"),
-  # action(
-  #   name = "stage3_model_set_up_and_selection",
-  #   run = "r:latest analysis/stage3_model_set_up.R all_cohorts",
-  #   needs = list("stage1_define_eligible_population"),
-  #   moderately_sensitive = list(
-  #     fit_cox_model = glue("output/fit_cox_model_*.rds"),
-  #     surv_formula = glue("output/surv_formula_*.rds")
-  #   ),
-  # ),
   comment("table_1 - Patient characteristics"),  
   action(
     name = "table_1",
@@ -246,6 +231,15 @@ actions_list <- splice(
     moderately_sensitive = list(
       figure_days_c_to_lc = glue("output/review/descriptives/figure_hist.svg"),
       table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long.csv")
+    )
+  ),
+  comment("Figure - hazard ratio plot"),
+  action(
+    name = "figure_hazard_ratio",
+    run = "r:latest analysis/figure_hazard_ratio_plot.R",
+    needs = glue("development_cox_model_{analysis}"),
+    moderately_sensitive = list(
+      figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
     )
   ),
   comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
