@@ -9,29 +9,35 @@
 
 library(rms); library(fastDummies)
 
-fs::dir_create(here::here("output", "review", "model"))
+args <- commandArgs(trailingOnly=TRUE)
+
+if(length(args)==0){
+  #analysis <- "all"          # all eligible population
+  #analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
+  #analysis <- "vaccinated"   # vaccinated population
+  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  analysis <- "infected"
+}else{
+  analysis <- args[[1]]
+}
+
+print("Starting stage_5_model_evaluation.R")
 
 #load data, with defined weight, and import formula for survival analysis
 source("analysis/stage3_model_selection.R")
+# selection <- read.csv(file=paste0("output/not_for_review/model/model_selection_",analysis,".csv"))
+# fit_cox_model <- read_rds(file=paste0("output/not_for_review/model/fit_cox_model_",
+#                                       selection$which_model,"_",analysis, ".rds"))
 
-if(length(selected_covariate_names)>0){
- # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
-  which_model = "selected model"
+if(which_model == "selected"){
+  # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-}else{
-# if length(selected_covariate_names) == 0, full model will be used later.
-# the full model is already loaded in stage3_model_input_set_up, so no need to refit
-  which_model = "full model"
 }
-
+# the full model is already loaded in stage3_model_input_set_up, so no need to refit
 print(which_model)
 
-# Assumption: linear term is selected for age
-#surv_formula = surv_formula_lp
-
-# Assumption: spline function is selected for age - extract estimated parameters from fit_cox_model_splines
-#splines_for_age = TRUE
+print("Finished loading fitted cox model!")
 
 splines_for_age = grepl("rms::rcs", surv_formula)
 

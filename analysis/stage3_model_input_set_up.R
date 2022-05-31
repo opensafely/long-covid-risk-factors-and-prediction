@@ -5,6 +5,8 @@
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
+fs::dir_create(here::here("output", "not_for_review", "model"))
+fs::dir_create(here::here("output", "review", "model"))
 
 args <- commandArgs(trailingOnly=TRUE)
 
@@ -105,6 +107,7 @@ if(analysis == "all_vax_td"){
 }
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
+# readr::write_rds(input, paste0("output/input_samples_", analysis, ".rds"))
 print("Part 1: load data, define inverse probability weighting is completed!")
 
 ################################################################################
@@ -172,17 +175,17 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
   surv_formula = surv_formula_lp
   surv_formula_predictors = surv_formula_predictors_lp
   fit_cox_model <- fit_cox_model_linear
-} else {
+} else{
   fit_cox_model <- fit_cox_model_splines
 }
 
-# #save the full model
+#save the full model
 # readr::write_rds(
-#   fit_cox_model,
-#   paste0("output/fit_cox_model_",analysis, ".rds"),
+#   fit_cox_model_full,
+#   paste0("output/fit_cox_model_full_",analysis, ".rds"),
 #   #compress = "gz"
 # )
-# 
+
 # # save the survival formula
 # readr::write_rds(
 #   surv_formula,

@@ -76,10 +76,15 @@ apply_development_cox_model <- function(analysis_development){
       run = "r:latest analysis/stage3_model_development.R",
       arguments = c(analysis_development),
       needs = list("stage1_define_eligible_population"),
+      # highly_sensitive = list(
+      #   input_samples_rds = glue("output/input_samples_{analysis_development}.rds")
+      # ),
       moderately_sensitive = list(
         #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
         hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.csv"),
-        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html")
+        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html"),
+        model_selection = glue("output/not_for_review/model/model_selection_{analysis_development}.csv")
+        #fit_cox_model = glue("output/fit_cox_model_*_{analysis_development}.rds")
         #calibration = glue("output/review/model/calibration_development_*_{analysis}.svg")
       )
     )

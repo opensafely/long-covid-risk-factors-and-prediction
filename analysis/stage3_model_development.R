@@ -7,8 +7,6 @@
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 
-fs::dir_create(here::here("output", "review", "model"))
-
 ####################################################################################################
 # Part 1: load data, define inverse probability weighting, fit cox model and assess PH assumption  #
 #         variable selection using backward elimination                                            #
@@ -17,9 +15,9 @@ fs::dir_create(here::here("output", "review", "model"))
 # # load data, with defined weight, and import formula for survival analysis 
 source("analysis/stage3_model_selection.R")
 
-#print("Starting stage3_model_development.R")
+print("Starting stage3_model_development.R")
 
-if(length(selected_covariate_names)>0){
+if(which_model == "selected"){
   fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
                                      data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   print("The selected model is")
@@ -84,7 +82,7 @@ cox_output <- function(fit_cox_model, which_model){
 print("The full model is")
 print(fit_cox_model)
 cox_output(fit_cox_model, "full")
-if(length(selected_covariate_names)>0){
+if(which_model == "selected"){
   cox_output(fit_cox_model_selected, "selected")
 }
 print("Finished stage3_model_development.R")

@@ -5,24 +5,40 @@
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available in opensafely
 
+args <- commandArgs(trailingOnly=TRUE)
+
+if(length(args)==0){
+  analysis <- "all"          # all eligible population
+  #analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
+  #analysis <- "vaccinated"   # vaccinated population
+  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  #analysis <- "infected"
+}else{
+  analysis <- args[[1]]
+}
+
 ################################################################################
 # Part 1: load fitted model                                                    #
 ################################################################################
-
 # load data, with defined weight, and import formula for survival analysis 
 source("analysis/stage3_model_selection.R")
 
+print("Starting stage_4_model_evaluation.R")
+# input <- read_rds(paste0("output/input_samples_", analysis, ".rds"))
+# selection <- read.csv(file=paste0("output/not_for_review/model/model_selection_",analysis,".csv"))
+# #print(paste0("output/not_for_review/model/fit_cox_model_", selection$which_model,"_",analysis, ".rds"))
+# which_model <- selection$which_model
+# #fit_cox_model <- read_rds(file=paste0("output/fit_cox_model_", which_model,"_",analysis, ".rds"))
+# fit_cox_model <- read_rds(paste0("output/fit_cox_model_", which_model,"_",analysis, ".rds"))
+
 fs::dir_create(here::here("output", "review", "model"))
 
-if(length(selected_covariate_names)>0){
-  which_model = "selected"
+if(which_model == "selected"){
   # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-}else{
-  which_model="full" 
-  # the full model is already loaded in stage3_model_input_set_up, so no need to refit
+                           data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 }
+# the full model is already loaded in stage3_model_input_set_up, so no need to refit
 
 print("Part 1. Finished loading fitted cox model!")
 
@@ -279,8 +295,6 @@ pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
 pm[nrow(pm),2] <- round((boot_2[3,5]+1)/2,3)
 
 names(pm) <- c("performance measure", "value")
-
-which_model="full"
 
 write.csv(pm, file=paste0("output/review/model/performance_measures_", which_model, "_", analysis, ".csv"), 
           row.names=F)

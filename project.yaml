@@ -169,6 +169,7 @@ actions:
       moderately_sensitive:
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all.html
+        model_selection: output/not_for_review/model/model_selection_all.csv
 
   ## Development Cox Model - vax_c 
 
@@ -180,6 +181,7 @@ actions:
       moderately_sensitive:
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vax_c.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vax_c.html
+        model_selection: output/not_for_review/model/model_selection_vax_c.csv
 
   ## Development Cox Model - vaccinated 
 
@@ -191,6 +193,7 @@ actions:
       moderately_sensitive:
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vaccinated.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vaccinated.html
+        model_selection: output/not_for_review/model/model_selection_vaccinated.csv
 
   ## Development Cox Model - all_vax_td 
 
@@ -202,6 +205,7 @@ actions:
       moderately_sensitive:
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_td.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_td.html
+        model_selection: output/not_for_review/model/model_selection_all_vax_td.csv
 
   ## Development Cox Model - infected 
 
@@ -213,6 +217,7 @@ actions:
       moderately_sensitive:
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_infected.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_infected.html
+        model_selection: output/not_for_review/model/model_selection_infected.csv
 
   ## Evaluation Cox model 
   ## Evaluation Cox Model - all 
