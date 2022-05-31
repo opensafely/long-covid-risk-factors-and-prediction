@@ -18,8 +18,8 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
-  #cohort <- "vaccinated"    # vaccinated population
+  #cohort <- "all"           # all eligible population
+  cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
@@ -125,7 +125,11 @@ stage0_data_cleaning <- function(cohort){
   ## cov_num_gp_consultation
   ## define cov_cat_gp_consultation
   input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation >= 12, "Greater or equal to 12", "less than 12")
-  input$cov_num_gp_consultation[which(input$cov_num_gp_consultation >= 12)] = 12
+  input <- input%>%mutate(cov_num_gp_consultation_truncated = 
+                            ifelse(cov_num_gp_consultation>=12, 12, cov_num_gp_consultation))%>%
+    rename(sub_num_gp_consultation = cov_num_gp_consultation) # rename so it is not included in modelling but only for exploration
+  #a <- input%>%dplyr::select(contains("gp")); View(a)
+  #input$cov_num_gp_consultation[which(input$cov_num_gp_consultation >= 12)] = 12
   
   ################################################################################
   ## Part 3. define variable types: factor or numerical or date                  #
@@ -194,7 +198,7 @@ stage0_data_cleaning <- function(cohort){
   
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
-  
+
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
   #################################################################################

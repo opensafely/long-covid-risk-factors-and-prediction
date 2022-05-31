@@ -20,6 +20,8 @@ if(length(args)==0){
   analysis <- args[[1]]
 }
 
+ratio_non_cases_to_cases = 20 # this is used in sampling non-cases to increase efficiency without loss of information
+
 ################################################################################
 # Part 1: load data, define inverse probability weighting                      #
 ################################################################################
@@ -53,27 +55,30 @@ cases <- input %>% filter(!is.na(out_first_long_covid_date) &
 
 non_cases <- input %>% filter(!patient_id %in% cases$patient_id)
 
-## sample non_cases, size = 5*nrow(cases) if 5*nrow(cases) < nrow(cases)
-set.seed(123456) # to ensure reproducibility
-if(nrow(cases)*5 < nrow(non_cases)){
-  non_cases <- non_cases[sample(1:nrow(non_cases), nrow(cases)*5,replace=FALSE), ]
-}else if (nrow(cases)*5 >= nrow(non_cases)){
-  non_cases=non_cases
+if(analysis!= "vaccinated"){
+  set.seed(123456) # to ensure reproducibility
+  print(analysis)
+  ## sample non_cases, for example, if ratio_non_cases_to_cases = 5, 
+  ## size = 5*nrow(cases) if 5*nrow(cases) < nrow(cases)
+  if(nrow(cases)*ratio_non_cases_to_cases < nrow(non_cases)){
+    non_cases <- non_cases[sample(1:nrow(non_cases), nrow(cases)*ratio_non_cases_to_cases,replace=FALSE), ]
+  }else if (nrow(cases)*ratio_non_cases_to_cases >= nrow(non_cases)){
+    non_cases=non_cases
+  }
+  print(paste0("Number of cases: ", nrow(cases)))
+  print(paste0("Number of controls: ", nrow(non_cases)))
+  non_case_inverse_weight=(nrow(input)-nrow(cases))/nrow(non_cases)
+  ## recreate input after sampling
+  input <- bind_rows(cases,non_cases)
+  ## Add inverse probability weights for non-cases
+  noncase_ids <- unique(non_cases$patient_id)
+  input$weight <-1
+  input$weight <- ifelse(input$patient_id %in% noncase_ids,
+                                      non_case_inverse_weight, 1)
+}else{
+  print(analysis)
+  input$weight=1 # we do not do sampling for vaccinated population as the population is probably smaller
 }
-
-print(paste0("Number of cases: ", nrow(cases)))
-print(paste0("Number of controls: ", nrow(non_cases)))
-
-non_case_inverse_weight=(nrow(input)-nrow(cases))/nrow(non_cases)
-
-## recreate input after sampling
-input <- bind_rows(cases,non_cases)
-
-## Add inverse probability weights for non-cases
-noncase_ids <- unique(non_cases$patient_id)
-input$weight <-1
-input$weight <- ifelse(input$patient_id %in% noncase_ids,
-                                    non_case_inverse_weight, 1)
 
 if(analysis == "all_vax_td"){
   z <- ie.setup(input$lcovid_surv, input$lcovid_cens, input$vax2_surv)

@@ -27,8 +27,12 @@ table1_creation <- function(cohort){
   # Read in data and identify factor variables and numerical variables------------
   input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
   cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
-  cov_factor_names <- c(cov_factor_names, "sub_cat_covid_history")
+  sub_factor_names <- names(input)[grepl("sub_cat", names(input))]
+  cov_factor_names <- c(cov_factor_names, sub_factor_names)   # to include sub_cat_covid_phenotype
   cov_num_names <- names(input)[grepl("cov_num", names(input))]
+  sub_num_names <- names(input)[grepl("sub_num", names(input))]
+  # to include sub_num_gp_consultation which stores the original values before truncation
+  cov_num_names <- c(cov_num_names, sub_num_names) 
   
   # Create an empty data frame ---------------------------------------------------
   table_1 <- data.frame(variable = character(),

@@ -23,7 +23,8 @@ stage1_eligibility <- function(cohort){
   ################################################################################
   
   steps <- c("starting point","dead before index date", "missing sex", 
-             "missing age", "age <18y", "age>105y", "ethnicity", "long covid before cohort start")
+             "missing age", "age <18y", "age>105y", "ethnicity", 
+             "long covid before cohort start", "covid infection before index date")
   ## starting point
   flow_chart_n <- nrow(input)
   
@@ -68,6 +69,11 @@ stage1_eligibility <- function(cohort){
   input <- input%>%filter(out_first_long_covid_date >= cohort_start |
                             is.na(out_first_long_covid_date))
   flow_chart_n <- c(flow_chart_n, nrow(input))
+  
+  # covid history
+  input <- input%>%filter(sub_cat_covid_history != TRUE) # remove individuals with covid infection befor index date
+  flow_chart_n <- c(flow_chart_n, nrow(input))
+  
   
   ## redefine age group
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
