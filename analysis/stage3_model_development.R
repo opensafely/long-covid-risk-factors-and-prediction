@@ -54,7 +54,7 @@ cox_output <- function(fit_cox_model, which_model){
   results$std.error=exp(sqrt(diag(vcov(fit_cox_model))))
   
   # Hazard ratio and robust estimation for variance, and the resulting 95% CI, P-value and S.E.
-  results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate CI
+  results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate 95% CI
   results$robust.conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
   results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
   results$robust.se=round(exp(sqrt(diag(vcov(robust_fit_cox_model)))),3)
@@ -69,9 +69,9 @@ cox_output <- function(fit_cox_model, which_model){
   print("Print results")
   print(results) 
   
-  # remove results from robust estimation
-  results <-results %>% dplyr::select(-contains("robust"))
-  
+  # # remove results from robust estimation
+  # results <-results %>% dplyr::select(-contains("robust"))
+  # 
   write.csv(results, file=paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
                           row.names=F)
   rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
