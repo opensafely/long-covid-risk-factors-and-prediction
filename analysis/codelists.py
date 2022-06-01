@@ -204,3 +204,11 @@ psychosis_schizophrenia_bipolar_codes = codelist_from_csv(
 depression_codes = codelist_from_csv(
     "codelists/opensafely-depression.csv", system="ctv3", column="CTV3Code"
 )
+creatinine_codes = codelist(["XE2q5"], system="ctv3")
+
+# hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
+# hba1c_old_codes = codelist(["X772q", "XaERo", "XaERp"], system="ctv3")
+
+dialysis_codes = codelist_from_csv(
+    "codelists/opensafely-chronic-kidney-disease.csv", system="ctv3", column="CTV3ID"
+)
