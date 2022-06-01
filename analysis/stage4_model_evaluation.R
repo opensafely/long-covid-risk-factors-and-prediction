@@ -8,11 +8,11 @@ library(readr); library(dplyr); library(rms); library(MASS)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  analysis <- "all"          # all eligible population
+  #analysis <- "all"          # all eligible population
   #analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
   #analysis <- "vaccinated"   # vaccinated population
   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
-  #analysis <- "infected"
+  analysis <- "infected"
 }else{
   analysis <- args[[1]]
 }
@@ -102,7 +102,7 @@ if(which_model == "full"){
 
 if(which_model == "selected"){
   # if(selected_covariate_names != "cov_cat_ie.status" | length(selected_covariate_names)>2){
-  if(length(selected_covariate_names)>2){
+  if(length(selected_covariate_names)>3){
     centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                       labels=c(1:4),include.lowest=TRUE)
     # Graph the KM curves in the 4 risk groups to visually assess separation
