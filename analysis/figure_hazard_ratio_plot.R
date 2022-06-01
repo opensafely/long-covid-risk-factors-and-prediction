@@ -3,6 +3,7 @@
 # Content: Produce hazard ratio plot for predictors
 # Output:  figure_hr_*svg for each analysis
 
+# next step Try finalfit for hazard ratio plot: https://finalfit.org/reference/hr_plot.html
 library(readr); library(dplyr); library(ggplot2)
 
 fs::dir_create(here::here("output", "review", "model"))

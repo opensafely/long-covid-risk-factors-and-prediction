@@ -137,6 +137,16 @@ actions:
       moderately_sensitive:
         figure_hazard_ratio_plot: output/review/model/figure_hr_*.svg
 
+  ## Figure - cumulative probability plot 
+
+  figure_cum_prob_km:
+    run: r:latest analysis/figure_cum_prob_km.R
+    needs:
+    - stage1_define_eligible_population
+    outputs:
+      moderately_sensitive:
+        cum_prob_plot: output/review/descriptives/figure_cum_*.svg
+
   ## Suppl_table_1 - frequencies of snomed code for long covid diagnosis 
 
   suppl_table_1:
