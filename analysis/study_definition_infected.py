@@ -22,7 +22,7 @@ from common_variables_dynamic import generate_common_variables
 (
     demographic_variables,
     clinical_variables
-) = generate_common_variables(index_date_variable = "out_covid_date", index_date_variable_3y = "out_covid_date - 3 years")
+) = generate_common_variables(index_date_variable = "index_date - 1 day", index_date_variable_1y = "index_date - 1 year", index_date_variable_3y = "index_date - 3 years")
 
 pandemic_start = "2020-01-29" # the first two COVID cases in the UK
 

@@ -18,8 +18,8 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
-  cohort <- "vaccinated"    # vaccinated population
+  cohort <- "all"           # all eligible population
+  #cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
@@ -28,7 +28,7 @@ if(length(args)==0){
 stage0_data_cleaning <- function(cohort){
   input <- read_feather(paste0("output/input_", cohort, ".feather"))
   ################################################################################
-  ## Part 1. define index date and remove variables                              #
+  ## Part 1. define index date and remove variables, specify date variable       #
   ################################################################################
   ## define cohort start date:
   index_date=as.Date("2020-12-01")
@@ -74,8 +74,18 @@ stage0_data_cleaning <- function(cohort){
                             colnames(input)[grepl("vax_",colnames(input))],
                             sort(tidyselect::peek_vars()))
   
+  ## Step 3. specify date variables in the format of "%Y-%m-%d"----------------------------
+  vars_dates <- grep("date", names(input))
+  vars_dates <- names(input)[vars_dates]
+  
+  convert_to_date <- function(x){
+    as.Date(x,format = "%Y-%m-%d")
+  }
+  input[vars_dates] = lapply(input[vars_dates], convert_to_date)
+  lapply(input[vars_dates], is.Date)
+  
   ################################################################################
-  ## Part 2. define multimorbidity                                               #
+  ## Part 2 define multimorbidity                                                #
   ################################################################################
   
   condition_names <- names(input)[grepl("cov_cat", names(input))]
@@ -132,7 +142,7 @@ stage0_data_cleaning <- function(cohort){
   #input$cov_num_gp_consultation[which(input$cov_num_gp_consultation >= 12)] = 12
   
   ################################################################################
-  ## Part 3. define variable types: factor or numerical or date                  #
+  ## Part 3. define variable types: factor or numerical                          #
   ################################################################################
   
   ## For categorical factors, specify the most frequently occurred level as the reference group
@@ -186,15 +196,15 @@ stage0_data_cleaning <- function(cohort){
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
   input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
   
-  ## specify date variables in the format of "%Y-%m-%d"----------------------------
-  vars_dates <- grep("date", names(input))
-  vars_dates <- names(input)[vars_dates]
-  
-  convert_to_date <- function(x){
-    as.Date(x,format = "%Y-%m-%d")
-  }
-  input[vars_dates] = lapply(input[vars_dates], convert_to_date)
-  lapply(input[vars_dates], is.Date)
+  # ## specify date variables in the format of "%Y-%m-%d"----------------------------
+  # vars_dates <- grep("date", names(input))
+  # vars_dates <- names(input)[vars_dates]
+  # 
+  # convert_to_date <- function(x){
+  #   as.Date(x,format = "%Y-%m-%d")
+  # }
+  # input[vars_dates] = lapply(input[vars_dates], convert_to_date)
+  # lapply(input[vars_dates], is.Date)
   
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
@@ -293,7 +303,6 @@ stage0_data_cleaning <- function(cohort){
   
   print("input_stage0 is saved successfully!") 
 }
-
 if(cohort == "all_cohorts") {
   stage0_data_cleaning("all")
   stage0_data_cleaning("vaccinated")

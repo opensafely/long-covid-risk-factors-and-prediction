@@ -3,7 +3,7 @@ from codelists import *
 
 # Define command variables function
 
-def generate_common_variables(index_date_variable, index_date_variable_3y):
+def generate_common_variables(index_date_variable, index_date_variable_1y, index_date_variable_3y):
     demographic_variables = dict(
         cov_num_age = patients.age_as_of(
             f"{index_date_variable}",
@@ -107,7 +107,6 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
                 return_expectations={"incidence": 0.01},
         ),
     )
-
     clinical_variables = dict(
         cov_cat_bmi=patients.categorised_as(
             {
@@ -132,9 +131,7 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
                },
            },
         ),
-        cov_cat_diabetes=patients.with_these_clinical_events(
-            diabetes_codes, on_or_before=f"{index_date_variable}"
-        ),
+        # Cancer(non-haematological)
         cov_cat_cancer=patients.satisfying(
             "other_cancer OR lung_cancer",
             other_cancer=patients.with_these_clinical_events(
@@ -144,9 +141,11 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
                 lung_cancer_codes, on_or_before=f"{index_date_variable}"
             ),
         ),
+        #Haematological malignancy
         cov_cat_haem_cancer=patients.with_these_clinical_events(
             haem_cancer_codes, on_or_before=f"{index_date_variable}"
-        ),
+        ), 
+        #Asthma
         cov_cat_asthma=patients.satisfying(
             """
                 recent_asthma_code OR (
@@ -264,25 +263,13 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
         cov_cat_psoriasis=patients.with_these_clinical_events(
             psoriasis_codes, on_or_before =f"{index_date_variable}"
         ),
-        # # Chronic kidney disease
-        #https://github.com/ebmdatalab/tpp-sql-notebook/issues/17
+        # Chronic kidney disease
         cov_cat_chronic_kidney_disease=patients.with_these_clinical_events(
             chronic_kidney_disease_codes, on_or_before =f"{index_date_variable}"
         ),
-        # cov_num_creatinine=patients.with_these_clinical_events(
-        #     creatinine_codes,
-        #     find_last_match_in_period=True,
-        #     on_or_before="2020-02-01",
-        #     returning="numeric_value",
-        #     include_date_of_match=True,
-        #     include_month=True,
-        #     return_expectations={
-        #         "float": {"distribution": "normal", "mean": 60.0, "stddev": 15},
-        #         "incidence": 0.95,
-        #     },
-        # ),
-        # cov_cat_dialysis=patients.with_these_clinical_events(
-        #     dialysis_codes, return_first_date_in_period=True, include_month=True,
-        # ),
+        # Diabetes
+        cov_cat_diabetes=patients.with_these_clinical_events(
+            diabetes_codes, on_or_before=f"{index_date_variable}"
+        ),
     )
     return demographic_variables, clinical_variables
