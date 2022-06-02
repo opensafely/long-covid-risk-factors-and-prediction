@@ -3,7 +3,6 @@
 # Content: Produce hazard ratio plot for predictors
 # Output:  figure_hr_*svg for each analysis
 
-# next step Try finalfit for hazard ratio plot: https://finalfit.org/reference/hr_plot.html
 library(readr); library(dplyr); library(ggplot2)
 
 fs::dir_create(here::here("output", "review", "model"))
@@ -36,6 +35,10 @@ figure_hr_generation <-function(analysis)
          plot=hr_plot, width=12, height=10)
 }
 
-for(analysis in c("all", "vax_c", "vaccinated", "all_vax_td", "infected")){
+# for(analysis in c("all", "vax_c", "vaccinated", "all_vax_td", "infected")){
+#   try(figure_hr_generation(analysis))
+# }
+
+for(analysis in c("all", "vax_c", "all_vax_td", "infected")){
   try(figure_hr_generation(analysis))
 }
