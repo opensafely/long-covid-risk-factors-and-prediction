@@ -69,9 +69,9 @@ cox_output <- function(fit_cox_model, which_model){
   print("Print results")
   print(results) 
   
-  # # remove results from robust estimation
-  # results <-results %>% dplyr::select(-contains("robust"))
-  # 
+  # remove results from robust estimation
+  results <-results %>% dplyr::select(-contains("robust"))
+
   write.csv(results, file=paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
                           row.names=F)
   rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
