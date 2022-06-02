@@ -35,10 +35,6 @@ figure_hr_generation <-function(analysis)
          plot=hr_plot, width=12, height=10)
 }
 
-# for(analysis in c("all", "all_vax_c", "vaccinated", "all_vax_td", "infected")){
-#   try(figure_hr_generation(analysis))
-# }
-
-for(analysis in c("all", "all_vax_c", "all_vax_td", "infected")){
+for(analysis in c("all", "all_vax_c", "vaccinated", "all_vax_td", "infected")){
   try(figure_hr_generation(analysis))
 }
