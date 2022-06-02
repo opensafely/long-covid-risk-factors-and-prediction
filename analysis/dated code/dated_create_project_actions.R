@@ -1,3 +1,6 @@
+# 02 June 2022
+# Archieve after database failed for vaccinated population
+# replace by a new script which separate all actions by cohort and analysis
 library(tidyverse)
 library(yaml)
 library(here)
@@ -15,9 +18,8 @@ defaults_list <- list(
   expectations= list(population_size=15000L)
 )
 
-analysis <- c("all", "vax_c", "vaccinated", "all_vax_td", "infected") 
+analysis <- analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td", "infected") 
 cohort <- c("all", "vaccinated", "infected")
-analysis_run <- c("all", "vax_c", "all_vax_td", "infected") 
 
 # create action functions ----
 
@@ -69,93 +71,19 @@ convert_comment_actions <-function(yaml.txt){
     str_replace_all("\\#\\#\\'\\\n", "\n")
 }
 
-apply_stage0_data_cleaning <- function(cohort){
+apply_development_cox_model <- function(analysis_development){
   splice(
-    comment(glue("Stage 0 Data Cleaning - {cohort}")),
+    comment(glue("Development Cox Model - {analysis_development}")),
     action(
-      name = glue("stage0_data_cleaning_{cohort}"),
-      run = "r:latest analysis/stage0_data_cleaning.R",
-      arguments = c(cohort),
-      needs = list(glue("generate_study_population_{cohort}")),
-      highly_sensitive = list(
-        cohort = glue("output/input_stage0_{cohort}.rds")
-      ),
-      moderately_sensitive = list(
-        variable_check_table_CSV = glue("output/not_for_review/descriptives/table_0_{cohort}.csv"),
-        variable_check_table_HTML = glue("output/not_for_review/descriptives/table_0_{cohort}.html"),
-        histogram_numerical_variable = glue("output/not_for_review/descriptives/histogram_*_{cohort}.svg")
-      )
-    )
-  )
-}
-
-apply_table1 <- function(cohort){
-  splice(
-    comment(glue("Table 1. Patient Characteristics - {cohort}")),
-    action(
-      name = glue("table_1_{cohort}"),
-      run = "r:latest analysis/table_1.R",
-      arguments = c(cohort),
-      needs = list(glue("stage1_define_eligible_population_{cohort}")),
-      moderately_sensitive = list(
-        descriptive_table_CSV = glue("output/review/descriptives/table_1_{cohort}.csv"),
-        descriptive_table_HTML = glue("output/review/descriptives/table_1_{cohort}.html")
-      )
-    )
-  )
-}
-
-apply_table2 <- function(cohort){
-  splice(
-    comment(glue("Table 2. Event count and incidence rate - {cohort}")),
-    action(
-      name = glue("table_2_{cohort}"),
-      run = "r:latest analysis/table_2.R",
-      arguments = c(cohort),
-      needs = list(glue("stage1_define_eligible_population_{cohort}")),
-      moderately_sensitive = list(
-        incidence_rate_table_CSV = glue("output/review/descriptives/table_2_{cohort}.csv"),
-        incidence_rate_talbe_HTML = glue("output/review/descriptives/table_2_{cohort}.html")
-      )
-    )
-  )
-}
-apply_stage1_eligibility <- function(cohort){
-  splice(
-    comment(glue("Stage 1 define eligible population - {cohort}")),
-    action(
-      name = glue("stage1_define_eligible_population_{cohort}"),
-      run = "r:latest analysis/stage1_define_eligible_population.R",
-      arguments = c(cohort),
-      needs = list(glue("stage0_data_cleaning_{cohort}")),
-      highly_sensitive = list(
-        cohort = glue("output/input_stage1_{cohort}.rds")
-      ),
-      moderately_sensitive = list(
-        flow_chart_csv = glue("output/flow_chart_{cohort}.csv"),
-        flow_chart_html = glue("output/flow_chart_{cohort}.html")
-      )
-    )
-  )
-}
-
-apply_development_cox_model <- function(analysis){
-  splice(
-    comment(glue("Development Cox Model - {analysis}")),
-    action(
-      name = list(glue("development_cox_model_{analysis}")),
+      name = glue("development_cox_model_{analysis_development}"),
       run = "r:latest analysis/stage3_model_development.R",
-      arguments = c(analysis),
-      needs = list(if(analysis == "all" | analysis == "vax_c" | analysis == "all_vax_td"){
-        glue("stage1_define_eligible_population_all")}else{
-        glue("stage1_define_eligible_population_{analysis}")
-        }
-        ),
+      arguments = c(analysis_development),
+      needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
-        ph_test_CSV = glue("output/review/model/PH_test_*_{analysis}.csv"),
-        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.csv"),
-        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.html"),
-        model_selection = glue("output/not_for_review/model/model_selection_{analysis}.csv")
+        ph_test_CSV = glue("output/review/model/PH_test_*_{analysis_development}.csv"),
+        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.csv"),
+        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis_development}.html"),
+        model_selection = glue("output/not_for_review/model/model_selection_{analysis_development}.csv")
       )
     )
   )
@@ -163,14 +91,12 @@ apply_development_cox_model <- function(analysis){
 
 apply_evaluation_cox_model <- function(analysis){
   splice(
+    comment(glue("Evaluation Cox Model - {analysis}")),
     action(
       name = glue("evaluation_cox_model_{analysis}"),
       run = "r:latest analysis/stage4_model_evaluation.R",
       arguments = c(analysis),
-      needs = list(if(analysis == "all" | analysis == "vax_c" | analysis == "all_vax_td"){
-        glue("stage1_define_eligible_population_all")}else{
-          glue("stage1_define_eligible_population_{analysis}")
-        }),
+      needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
         performance_measure_CSV = glue("output/review/model/performance_measures_*_{analysis}.csv"),
         performance_measure_HTML = glue("output/review/model/performance_measures_*_{analysis}.html"),
@@ -187,10 +113,7 @@ apply_validation_cox_model_iecv <- function(analysis){
       name = glue("validation_cox_model_{analysis}"),
       run = "r:latest analysis/stage5_model_validation_iecv.R",
       arguments = c(analysis),
-      needs = list(if(analysis == "all" | analysis == "vax_c" | analysis == "all_vax_td"){
-        glue("stage1_define_eligible_population_all")}else{
-          glue("stage1_define_eligible_population_{analysis}")
-        }),
+      needs = list("stage1_define_eligible_population"),
       moderately_sensitive = list(
         val_performance_measure_CSV = glue("output/review/model/val_performance_measures_{analysis}.csv"),
         val_performance_measure_html = glue("output/review/model/val_performance_measures_{analysis}.html"),
@@ -211,10 +134,7 @@ actions_list <- splice(
           "Edit and run create_project_actions.R to update the project.yaml",
           "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"
   ),
-  comment(""),
-  comment("Part 1. Generate Study Population"),
-  comment(""),
-  comment("Generate dummy data for all eligible population"),
+  comment("Generate dummy data for study_definition for all eligible population"),
   action(
     name = "generate_study_population_all",
     run = "cohortextractor:latest generate_cohort --study-definition study_definition_all --output-format feather",
@@ -222,7 +142,7 @@ actions_list <- splice(
       cohort = glue("output/input_all.feather")
     )
   ),
-  comment("Generate dummy data for study population - vaccinated"),
+  comment("Generate dummy data for study_definition - vaccinated"),
   action(
     name = "generate_study_population_vaccinated",
     run = "cohortextractor:latest generate_cohort --study-definition study_definition_vaccinated --output-format feather",
@@ -230,7 +150,7 @@ actions_list <- splice(
       cohort = glue("output/input_vaccinated.feather")
     )
   ),
-  comment("Generate dummy data for study population - infected"),
+  comment("Generate dummy data for study_definition - infected"),
   action(
     name = "generate_study_population_infected",
     run = "cohortextractor:latest generate_cohort --study-definition study_definition_infected --output-format feather",
@@ -238,31 +158,58 @@ actions_list <- splice(
       cohort = glue("output/input_infected.feather")
     )
   ),
-  comment("Part 2. Create Analysis Data Sets"),
-  comment("Data Cleaning"),
-  splice(
-    unlist(lapply(cohort, function(x) apply_stage0_data_cleaning(cohort = x)), recursive = FALSE)
+  comment("Stage 0 - Data cleaning"),
+  action(
+    name = "stage0_data_cleaning",
+    run = "r:latest analysis/stage0_data_cleaning.R all_cohorts",
+    needs = list("generate_study_population_all", "generate_study_population_vaccinated", "generate_study_population_infected"),
+    moderately_sensitive = list(
+      variable_check_table_CSV = glue("output/not_for_review/descriptives/table_0_*.csv"),
+      variable_check_table_HTML = glue("output/not_for_review/descriptives/table_0_*.html"),
+      histogram_numerical_variable = glue("output/not_for_review/descriptives/histogram_*")
+    ),
+    highly_sensitive = list(
+      cohort = glue("output/input_stage0_*.rds")
+    )
   ),
-  comment("Define eligible population"),
-  splice(
-    unlist(lapply(cohort, function(x) apply_stage1_eligibility(cohort = x)), recursive = FALSE)
+  comment("Stage 1 - Define eligible population"),
+  action(
+    name = "stage1_define_eligible_population",
+    run = "r:latest analysis/stage1_define_eligible_population.R all_cohorts",
+    needs = list("stage0_data_cleaning"),
+    moderately_sensitive = list(
+      flow_chart_csv = glue("output/flow_chart_*.csv"),
+      flow_chart_html = glue("output/flow_chart_*.html")
+    ),
+    highly_sensitive = list(
+      cohort = glue("output/input_stage1_*.rds")
+    )
   ),
-   # Figures and tables
-  comment("Part 3. Figures and tables"),
-  # Table 1 Patient Characteristics
-  splice(
-    unlist(lapply(cohort, function(x) apply_table1(cohort = x)), recursive = FALSE)
+  comment("table_1 - Patient characteristics"),  
+  action(
+    name = "table_1",
+    run = "r:latest analysis/table_1.R all_cohorts",
+    needs = list("stage1_define_eligible_population"),
+    moderately_sensitive = list(
+      descriptive_table_CSV = glue("output/review/descriptives/table_1_*.csv"),
+      descriptive_table_HTML = glue("output/review/descriptives/table_1_*.html")
+    )
   ),
-  # Table 2 Event count and incidence rate
-  comment("Define eligible population"),
-  splice(
-    unlist(lapply(cohort, function(x) apply_table2(cohort = x)), recursive = FALSE)
+  comment("table_2 - event count and incidence rate"),  
+  action(
+    name = "table_2",
+    run = "r:latest analysis/table_2.R all_cohorts",
+    needs = list("stage1_define_eligible_population"),
+    moderately_sensitive = list(
+      incidence_rate_table_CSV = glue("output/review/descriptives/table_2_*.csv"),
+      incidence_rate_talbe_HTML = glue("output/review/descriptives/table_2_*.html")
+    ),
   ),
   comment("table_3 - sequence count"),
   action(
-    name = "table_3_all",
+    name = "table_3",
     run = "r:latest analysis/table_3.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       sequence_count_table_CSV = glue("output/review/descriptives/table_3.csv"),
       sequence_count_table_HTML = glue("output/review/descriptives/table_3.html")
@@ -270,9 +217,9 @@ actions_list <- splice(
   ),
   comment("Figure_1 - long covid count"),
   action(
-    name = "figure_1_all",
+    name = "figure_1",
     run = "r:latest analysis/figure_1.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       figure_long_covid_count_all = glue("output/figure_1_*.svg"),
       table_csv_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.csv"),
@@ -281,9 +228,9 @@ actions_list <- splice(
   ),
   comment("Figure_2 - days from covid to long covid"),
   action(
-    name = "figure_2_all",
+    name = "figure_2",
     run = "r:latest analysis/figure_2.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       figure_days_c_to_lc = glue("output/review/descriptives/figure_hist.svg"),
       table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long.csv")
@@ -293,25 +240,25 @@ actions_list <- splice(
   action(
     name = "figure_hazard_ratio",
     run = "r:latest analysis/figure_hazard_ratio_plot.R",
-    needs = glue("development_cox_model_{analysis_run}"),
+    needs = glue("development_cox_model_{analysis}"),
     moderately_sensitive = list(
       figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
     )
   ),
   comment("Figure - cumulative probability plot"),
   action(
-    name = "figure_cum_prob_km_all",
+    name = "figure_cum_prob_km",
     run = "r:latest analysis/figure_cum_prob_km.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       cum_prob_plot = glue("output/review/descriptives/figure_cum_*.svg")
     )
   ),
   comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
   action(
-    name = "suppl_table_1_all",
+    name = "suppl_table_1",
     run = "r:latest analysis/suppl_table_1.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       pie_chart_long_covid_code = glue("output/review/descriptives/suppl_figure_pie.svg"),
       table_csv_long_covid_code = glue("output/review/descriptives/suppl_table_1.csv"),
@@ -320,9 +267,9 @@ actions_list <- splice(
   ),
   comment("Suppl_figure_1 - long covid count by region"),
   action(
-    name = "suppl_figure_1_all",
+    name = "suppl_figure_1",
     run = "r:latest analysis/suppl_figure_1.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       figure_long_covid_count_region = glue("output/review/descriptives/suppl_figure_1_*.svg"),
       table_csv_long_covid_count_region = glue("output/review/descriptives/long_covid_count_*.csv"),
@@ -331,23 +278,19 @@ actions_list <- splice(
   ),
   comment("Summarise survival data"),
   action(
-    name = "summarise_survival_data_all",
+    name = "summarise_survival_data",
     run = "r:latest analysis/stage2_summarise_survival_data.R",
-    needs = list("stage1_define_eligible_population_all"),
+    needs = list("stage1_define_eligible_population"),
     moderately_sensitive = list(
       summary_survival_data_CSV = glue("output/review/descriptives/summarise_survival_data.csv"),
       summary_survival_data_HTML = glue("output/review/descriptives/summarise_survival_data.html")
     )
   ),
-  comment("Part 4. Modelling"),
   comment("Development Cox model"),
-  
   splice(
     # over outcomes
-    unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
+    unlist(lapply(analysis_development, function(x) apply_development_cox_model(analysis_development = x)), recursive = FALSE)
   ),
-
-  
   comment("Evaluation Cox model"),
   splice(
     # over outcomes
@@ -358,11 +301,11 @@ actions_list <- splice(
     unlist(lapply(analysis, function(x) apply_validation_cox_model_iecv(analysis = x)), recursive = FALSE)
   )
 )
-  ## combine everything ----
-  project_list <- splice(
-    defaults_list,
-    list(actions = actions_list)
-  )
+## combine everything ----
+project_list <- splice(
+  defaults_list,
+  list(actions = actions_list)
+)
 
 #####################################################################################
 ## convert list to yaml, reformat comments and white space, and output a .yaml file #

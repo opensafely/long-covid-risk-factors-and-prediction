@@ -20,7 +20,8 @@ if(length(args)==0){
   analysis <- args[[1]]
 }
 
-ratio_non_cases_to_cases = 20 # this is used in sampling non-cases to increase efficiency without loss of information
+ratio_non_cases_to_cases = 10 # this is used in sampling non-cases to increase efficiency without loss of information
+set.seed(123456) # to ensure reproducibility in the sampling
 
 ################################################################################
 # Part 1: load data, define inverse probability weighting                      #
@@ -56,7 +57,6 @@ cases <- input %>% filter(!is.na(out_first_long_covid_date) &
 non_cases <- input %>% filter(!patient_id %in% cases$patient_id)
 
 if(analysis!= "vaccinated"){
-  set.seed(123456) # to ensure reproducibility
   print(analysis)
   ## sample non_cases, for example, if ratio_non_cases_to_cases = 5, 
   ## size = 5*nrow(cases) if 5*nrow(cases) < nrow(cases)

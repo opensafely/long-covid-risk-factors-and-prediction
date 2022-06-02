@@ -11,7 +11,10 @@ actions:
   ## This file is created by create_project_actions.R 
   ## Edit and run create_project_actions.R to update the project.yaml 
   ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-  ## Generate dummy data for study_definition for all eligible population 
+  ##  
+  ## Part 1. Generate Study Population 
+  ##  
+  ## Generate dummy data for all eligible population 
 
   generate_study_population_all:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_all
@@ -20,7 +23,7 @@ actions:
       highly_sensitive:
         cohort: output/input_all.feather
 
-  ## Generate dummy data for study_definition - vaccinated 
+  ## Generate dummy data for study population - vaccinated 
 
   generate_study_population_vaccinated:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_vaccinated
@@ -29,7 +32,7 @@ actions:
       highly_sensitive:
         cohort: output/input_vaccinated.feather
 
-  ## Generate dummy data for study_definition - infected 
+  ## Generate dummy data for study population - infected 
 
   generate_study_population_infected:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_infected
@@ -38,63 +41,164 @@ actions:
       highly_sensitive:
         cohort: output/input_infected.feather
 
-  ## Stage 0 - Data cleaning 
+  ## Part 2. Create Analysis Data Sets 
+  ## Data Cleaning 
+  ## Stage 0 Data Cleaning - all 
 
-  stage0_data_cleaning:
-    run: r:latest analysis/stage0_data_cleaning.R all_cohorts
+  stage0_data_cleaning_all:
+    run: r:latest analysis/stage0_data_cleaning.R all
     needs:
     - generate_study_population_all
+    outputs:
+      highly_sensitive:
+        cohort: output/input_stage0_all.rds
+      moderately_sensitive:
+        variable_check_table_CSV: output/not_for_review/descriptives/table_0_all.csv
+        variable_check_table_HTML: output/not_for_review/descriptives/table_0_all.html
+        histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_all.svg
+
+  ## Stage 0 Data Cleaning - vaccinated 
+
+  stage0_data_cleaning_vaccinated:
+    run: r:latest analysis/stage0_data_cleaning.R vaccinated
+    needs:
     - generate_study_population_vaccinated
+    outputs:
+      highly_sensitive:
+        cohort: output/input_stage0_vaccinated.rds
+      moderately_sensitive:
+        variable_check_table_CSV: output/not_for_review/descriptives/table_0_vaccinated.csv
+        variable_check_table_HTML: output/not_for_review/descriptives/table_0_vaccinated.html
+        histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_vaccinated.svg
+
+  ## Stage 0 Data Cleaning - infected 
+
+  stage0_data_cleaning_infected:
+    run: r:latest analysis/stage0_data_cleaning.R infected
+    needs:
     - generate_study_population_infected
     outputs:
       highly_sensitive:
-        cohort: output/input_stage0_*.rds
+        cohort: output/input_stage0_infected.rds
       moderately_sensitive:
-        variable_check_table_CSV: output/not_for_review/descriptives/table_0_*.csv
-        variable_check_table_HTML: output/not_for_review/descriptives/table_0_*.html
-        histogram_numerical_variable: output/not_for_review/descriptives/histogram_*
+        variable_check_table_CSV: output/not_for_review/descriptives/table_0_infected.csv
+        variable_check_table_HTML: output/not_for_review/descriptives/table_0_infected.html
+        histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_infected.svg
 
-  ## Stage 1 - Define eligible population 
+  ## Define eligible population 
+  ## Stage 1 define eligible population - all 
 
-  stage1_define_eligible_population:
-    run: r:latest analysis/stage1_define_eligible_population.R all_cohorts
+  stage1_define_eligible_population_all:
+    run: r:latest analysis/stage1_define_eligible_population.R all
     needs:
-    - stage0_data_cleaning
+    - stage0_data_cleaning_all
     outputs:
       highly_sensitive:
-        cohort: output/input_stage1_*.rds
+        cohort: output/input_stage1_all.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_*.csv
-        flow_chart_html: output/flow_chart_*.html
+        flow_chart_csv: output/flow_chart_all.csv
+        flow_chart_html: output/flow_chart_all.html
 
-  ## table_1 - Patient characteristics 
+  ## Stage 1 define eligible population - vaccinated 
 
-  table_1:
-    run: r:latest analysis/table_1.R all_cohorts
+  stage1_define_eligible_population_vaccinated:
+    run: r:latest analysis/stage1_define_eligible_population.R vaccinated
     needs:
-    - stage1_define_eligible_population
+    - stage0_data_cleaning_vaccinated
+    outputs:
+      highly_sensitive:
+        cohort: output/input_stage1_vaccinated.rds
+      moderately_sensitive:
+        flow_chart_csv: output/flow_chart_vaccinated.csv
+        flow_chart_html: output/flow_chart_vaccinated.html
+
+  ## Stage 1 define eligible population - infected 
+
+  stage1_define_eligible_population_infected:
+    run: r:latest analysis/stage1_define_eligible_population.R infected
+    needs:
+    - stage0_data_cleaning_infected
+    outputs:
+      highly_sensitive:
+        cohort: output/input_stage1_infected.rds
+      moderately_sensitive:
+        flow_chart_csv: output/flow_chart_infected.csv
+        flow_chart_html: output/flow_chart_infected.html
+
+  ## Part 3. Figures and tables 
+  ## Table 1. Patient Characteristics - all 
+
+  table_1_all:
+    run: r:latest analysis/table_1.R all
+    needs:
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        descriptive_table_CSV: output/review/descriptives/table_1_*.csv
-        descriptive_table_HTML: output/review/descriptives/table_1_*.html
+        descriptive_table_CSV: output/review/descriptives/table_1_all.csv
+        descriptive_table_HTML: output/review/descriptives/table_1_all.html
 
-  ## table_2 - event count and incidence rate 
+  ## Table 1. Patient Characteristics - vaccinated 
 
-  table_2:
-    run: r:latest analysis/table_2.R all_cohorts
+  table_1_vaccinated:
+    run: r:latest analysis/table_1.R vaccinated
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_*.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_*.html
+        descriptive_table_CSV: output/review/descriptives/table_1_vaccinated.csv
+        descriptive_table_HTML: output/review/descriptives/table_1_vaccinated.html
+
+  ## Table 1. Patient Characteristics - infected 
+
+  table_1_infected:
+    run: r:latest analysis/table_1.R infected
+    needs:
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        descriptive_table_CSV: output/review/descriptives/table_1_infected.csv
+        descriptive_table_HTML: output/review/descriptives/table_1_infected.html
+
+  ## Define eligible population 
+  ## Table 2. Event count and incidence rate - all 
+
+  table_2_all:
+    run: r:latest analysis/table_2.R all
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        incidence_rate_table_CSV: output/review/descriptives/table_2_all.csv
+        incidence_rate_talbe_HTML: output/review/descriptives/table_2_all.html
+
+  ## Table 2. Event count and incidence rate - vaccinated 
+
+  table_2_vaccinated:
+    run: r:latest analysis/table_2.R vaccinated
+    needs:
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        incidence_rate_table_CSV: output/review/descriptives/table_2_vaccinated.csv
+        incidence_rate_talbe_HTML: output/review/descriptives/table_2_vaccinated.html
+
+  ## Table 2. Event count and incidence rate - infected 
+
+  table_2_infected:
+    run: r:latest analysis/table_2.R infected
+    needs:
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        incidence_rate_table_CSV: output/review/descriptives/table_2_infected.csv
+        incidence_rate_talbe_HTML: output/review/descriptives/table_2_infected.html
 
   ## table_3 - sequence count 
 
-  table_3:
+  table_3_all:
     run: r:latest analysis/table_3.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         sequence_count_table_CSV: output/review/descriptives/table_3.csv
@@ -102,10 +206,10 @@ actions:
 
   ## Figure_1 - long covid count 
 
-  figure_1:
+  figure_1_all:
     run: r:latest analysis/figure_1.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         figure_long_covid_count_all: output/figure_1_*.svg
@@ -114,10 +218,10 @@ actions:
 
   ## Figure_2 - days from covid to long covid 
 
-  figure_2:
+  figure_2_all:
     run: r:latest analysis/figure_2.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         figure_days_c_to_lc: output/review/descriptives/figure_hist.svg
@@ -130,7 +234,6 @@ actions:
     needs:
     - development_cox_model_all
     - development_cox_model_vax_c
-    - development_cox_model_vaccinated
     - development_cox_model_all_vax_td
     - development_cox_model_infected
     outputs:
@@ -139,20 +242,20 @@ actions:
 
   ## Figure - cumulative probability plot 
 
-  figure_cum_prob_km:
+  figure_cum_prob_km_all:
     run: r:latest analysis/figure_cum_prob_km.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         cum_prob_plot: output/review/descriptives/figure_cum_*.svg
 
   ## Suppl_table_1 - frequencies of snomed code for long covid diagnosis 
 
-  suppl_table_1:
+  suppl_table_1_all:
     run: r:latest analysis/suppl_table_1.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         pie_chart_long_covid_code: output/review/descriptives/suppl_figure_pie.svg
@@ -161,10 +264,10 @@ actions:
 
   ## Suppl_figure_1 - long covid count by region 
 
-  suppl_figure_1:
+  suppl_figure_1_all:
     run: r:latest analysis/suppl_figure_1.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         figure_long_covid_count_region: output/review/descriptives/suppl_figure_1_*.svg
@@ -173,22 +276,23 @@ actions:
 
   ## Summarise survival data 
 
-  summarise_survival_data:
+  summarise_survival_data_all:
     run: r:latest analysis/stage2_summarise_survival_data.R
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         summary_survival_data_CSV: output/review/descriptives/summarise_survival_data.csv
         summary_survival_data_HTML: output/review/descriptives/summarise_survival_data.html
 
+  ## Part 4. Modelling 
   ## Development Cox model 
   ## Development Cox Model - all 
 
   development_cox_model_all:
     run: r:latest analysis/stage3_model_development.R all
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         ph_test_CSV: output/review/model/PH_test_*_all.csv
@@ -201,7 +305,7 @@ actions:
   development_cox_model_vax_c:
     run: r:latest analysis/stage3_model_development.R vax_c
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         ph_test_CSV: output/review/model/PH_test_*_vax_c.csv
@@ -214,7 +318,7 @@ actions:
   development_cox_model_vaccinated:
     run: r:latest analysis/stage3_model_development.R vaccinated
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
         ph_test_CSV: output/review/model/PH_test_*_vaccinated.csv
@@ -227,7 +331,7 @@ actions:
   development_cox_model_all_vax_td:
     run: r:latest analysis/stage3_model_development.R all_vax_td
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         ph_test_CSV: output/review/model/PH_test_*_all_vax_td.csv
@@ -240,7 +344,7 @@ actions:
   development_cox_model_infected:
     run: r:latest analysis/stage3_model_development.R infected
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
         ph_test_CSV: output/review/model/PH_test_*_infected.csv
@@ -249,60 +353,51 @@ actions:
         model_selection: output/not_for_review/model/model_selection_infected.csv
 
   ## Evaluation Cox model 
-  ## Evaluation Cox Model - all 
 
   evaluation_cox_model_all:
     run: r:latest analysis/stage4_model_evaluation.R all
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all.csv
         performance_measure_HTML: output/review/model/performance_measures_*_all.html
         survival_plot: output/review/model/survival_plot_*_all.svg
 
-  ## Evaluation Cox Model - vax_c 
-
   evaluation_cox_model_vax_c:
     run: r:latest analysis/stage4_model_evaluation.R vax_c
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_vax_c.csv
         performance_measure_HTML: output/review/model/performance_measures_*_vax_c.html
         survival_plot: output/review/model/survival_plot_*_vax_c.svg
 
-  ## Evaluation Cox Model - vaccinated 
-
   evaluation_cox_model_vaccinated:
     run: r:latest analysis/stage4_model_evaluation.R vaccinated
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_vaccinated.csv
         performance_measure_HTML: output/review/model/performance_measures_*_vaccinated.html
         survival_plot: output/review/model/survival_plot_*_vaccinated.svg
 
-  ## Evaluation Cox Model - all_vax_td 
-
   evaluation_cox_model_all_vax_td:
     run: r:latest analysis/stage4_model_evaluation.R all_vax_td
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all_vax_td.csv
         performance_measure_HTML: output/review/model/performance_measures_*_all_vax_td.html
         survival_plot: output/review/model/survival_plot_*_all_vax_td.svg
 
-  ## Evaluation Cox Model - infected 
-
   evaluation_cox_model_infected:
     run: r:latest analysis/stage4_model_evaluation.R infected
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_infected.csv
@@ -314,7 +409,7 @@ actions:
   validation_cox_model_all:
     run: r:latest analysis/stage5_model_validation_iecv.R all
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all.csv
@@ -327,7 +422,7 @@ actions:
   validation_cox_model_vax_c:
     run: r:latest analysis/stage5_model_validation_iecv.R vax_c
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_vax_c.csv
@@ -340,7 +435,7 @@ actions:
   validation_cox_model_vaccinated:
     run: r:latest analysis/stage5_model_validation_iecv.R vaccinated
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_vaccinated.csv
@@ -353,7 +448,7 @@ actions:
   validation_cox_model_all_vax_td:
     run: r:latest analysis/stage5_model_validation_iecv.R all_vax_td
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_td.csv
@@ -366,7 +461,7 @@ actions:
   validation_cox_model_infected:
     run: r:latest analysis/stage5_model_validation_iecv.R infected
     needs:
-    - stage1_define_eligible_population
+    - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/val_performance_measures_infected.csv
