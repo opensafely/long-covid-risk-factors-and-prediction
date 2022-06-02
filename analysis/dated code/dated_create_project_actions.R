@@ -18,7 +18,7 @@ defaults_list <- list(
   expectations= list(population_size=15000L)
 )
 
-analysis <- analysis_development <- c("all", "vax_c", "vaccinated", "all_vax_td", "infected") 
+analysis <- analysis_development <- c("all", "all_vax_c", "vaccinated", "all_vax_td", "infected") 
 cohort <- c("all", "vaccinated", "infected")
 
 # create action functions ----

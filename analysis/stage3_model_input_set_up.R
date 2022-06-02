@@ -12,7 +12,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
   #analysis <- "all"          # all eligible population
-  #analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
+  #analysis <- "all_vax_c"        # all eligible population but censored them by the 1st vaccination
   #analysis <- "vaccinated"   # vaccinated population
   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
   analysis <- "infected"
@@ -36,7 +36,7 @@ if(analysis == "all_vax_td"){
 }
 
 ## Analysis 2: all eligible patients, but censoring individuals by vaccination
-if(analysis == "vax_c"){
+if(analysis == "all_vax_c"){
   input <- read_rds("output/input_stage1_all.rds")
   input <- input %>% dplyr::select(-lcovid_surv, -lcovid_cens) %>%
     dplyr::rename(lcovid_surv = lcovid_surv_vax_c, lcovid_cens = lcovid_cens_vax_c)
@@ -56,8 +56,8 @@ cases <- input %>% filter(!is.na(out_first_long_covid_date) &
 
 non_cases <- input %>% filter(!patient_id %in% cases$patient_id)
 
-if(analysis!= "vaccinated"){
-  print(analysis)
+# if(analysis!= "vaccinated"){
+#   print(analysis)
   ## sample non_cases, for example, if ratio_non_cases_to_cases = 5, 
   ## size = 5*nrow(cases) if 5*nrow(cases) < nrow(cases)
   if(nrow(cases)*ratio_non_cases_to_cases < nrow(non_cases)){
@@ -75,10 +75,10 @@ if(analysis!= "vaccinated"){
   input$weight <-1
   input$weight <- ifelse(input$patient_id %in% noncase_ids,
                                       non_case_inverse_weight, 1)
-}else{
-  print(analysis)
-  input$weight=1 # we do not do sampling for vaccinated population as the population is probably smaller
-}
+# }else{
+#   print(analysis)
+#   input$weight=1 # we do not do sampling for vaccinated population as the population is probably smaller
+# }
 
 if(analysis == "all_vax_td"){
   z <- ie.setup(input$lcovid_surv, input$lcovid_cens, input$vax2_surv)

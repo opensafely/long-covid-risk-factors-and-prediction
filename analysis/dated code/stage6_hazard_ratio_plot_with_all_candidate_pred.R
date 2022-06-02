@@ -9,7 +9,7 @@ args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
   analysis <- "all"          # all eligible population
-  #analysis <- "vax_c"        # all eligible population but censored them by the 1st vaccination
+  #analysis <- "all_vax_c"        # all eligible population but censored them by the 1st vaccination
   #analysis <- "vaccinated"   # vaccinated population
   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
   #analysis <- "infected"

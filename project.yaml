@@ -233,7 +233,7 @@ actions:
     run: r:latest analysis/figure_hazard_ratio_plot.R
     needs:
     - development_cox_model_all
-    - development_cox_model_vax_c
+    - development_cox_model_all_vax_c
     - development_cox_model_all_vax_td
     - development_cox_model_infected
     outputs:
@@ -300,18 +300,18 @@ actions:
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all.html
         model_selection: output/not_for_review/model/model_selection_all.csv
 
-  ## Development Cox Model - vax_c 
+  ## Development Cox Model - all_vax_c 
 
-  development_cox_model_vax_c:
-    run: r:latest analysis/stage3_model_development.R vax_c
+  development_cox_model_all_vax_c:
+    run: r:latest analysis/stage3_model_development.R all_vax_c
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_vax_c.csv
-        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vax_c.csv
-        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vax_c.html
-        model_selection: output/not_for_review/model/model_selection_vax_c.csv
+        ph_test_CSV: output/review/model/PH_test_*_all_vax_c.csv
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_c.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_c.html
+        model_selection: output/not_for_review/model/model_selection_all_vax_c.csv
 
   ## Development Cox Model - vaccinated 
 
@@ -364,15 +364,15 @@ actions:
         performance_measure_HTML: output/review/model/performance_measures_*_all.html
         survival_plot: output/review/model/survival_plot_*_all.svg
 
-  evaluation_cox_model_vax_c:
-    run: r:latest analysis/stage4_model_evaluation.R vax_c
+  evaluation_cox_model_all_vax_c:
+    run: r:latest analysis/stage4_model_evaluation.R all_vax_c
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        performance_measure_CSV: output/review/model/performance_measures_*_vax_c.csv
-        performance_measure_HTML: output/review/model/performance_measures_*_vax_c.html
-        survival_plot: output/review/model/survival_plot_*_vax_c.svg
+        performance_measure_CSV: output/review/model/performance_measures_*_all_vax_c.csv
+        performance_measure_HTML: output/review/model/performance_measures_*_all_vax_c.html
+        survival_plot: output/review/model/survival_plot_*_all_vax_c.svg
 
   evaluation_cox_model_vaccinated:
     run: r:latest analysis/stage4_model_evaluation.R vaccinated
@@ -417,18 +417,18 @@ actions:
         val_cal_plot: output/review/model/val_cal_plot_*_all.svg
         val_re_cal_plot: output/review/model/val_re_cal_plot_*_all.svg
 
-  ## Validation Cox Model - vax_c 
+  ## Validation Cox Model - all_vax_c 
 
-  validation_cox_model_vax_c:
-    run: r:latest analysis/stage5_model_validation_iecv.R vax_c
+  validation_cox_model_all_vax_c:
+    run: r:latest analysis/stage5_model_validation_iecv.R all_vax_c
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        val_performance_measure_CSV: output/review/model/val_performance_measures_vax_c.csv
-        val_performance_measure_html: output/review/model/val_performance_measures_vax_c.html
-        val_cal_plot: output/review/model/val_cal_plot_*_vax_c.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_vax_c.svg
+        val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_c.csv
+        val_performance_measure_html: output/review/model/val_performance_measures_all_vax_c.html
+        val_cal_plot: output/review/model/val_cal_plot_*_all_vax_c.svg
+        val_re_cal_plot: output/review/model/val_re_cal_plot_*_all_vax_c.svg
 
   ## Validation Cox Model - vaccinated 
 

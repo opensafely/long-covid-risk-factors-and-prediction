@@ -1,5 +1,7 @@
+# YW added clinical variables from AW, added heart failure, smoking status, age>=18 years
+# YW adapted from AW, 10 November 2021
+
 # Long COVID risk factors and prediction models
-# vaccinated population
 
 # --- IMPORT STATEMENTS ---
 from cohortextractor import (
@@ -18,13 +20,14 @@ np.random.seed(4366)
 
 ## Import codelists from codelist.py (which pulls them from the codelist folder)
 from codelists import *
+#from common_variables import demographic_variables, clinical_variables
 from common_variables_dynamic import generate_common_variables
 (
     demographic_variables,
     clinical_variables
-) = generate_common_variables(index_date_variable = "vax_covid_date2 + 13 days", index_date_variable_3y = "vax_covid_date2 - 3 years")
+) = generate_common_variables(index_date_variable = "index_date - 1 day", index_date_variable_3y = "index_date - 3 years")
 
-pandemic_start = "2020-01-29" # the first two COVID cases in the UK
+pandemic_start = "2020-01-29"
 
 def make_variable(code):
     return {
@@ -71,8 +74,8 @@ study = StudyDefinition(
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
-        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
+       # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}}, 
+       return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}}, 
     ),
     primary_care_covid=patients.with_these_clinical_events(
         any_primary_care_code,
@@ -90,16 +93,14 @@ study = StudyDefinition(
         #return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
         return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
     ),
-    # first covid infection date
+    # Outcome
     out_covid_date = patients.minimum_of(
         "sgss_positive", "primary_care_covid", "hospital_covid"
     ),
-    # long covid diagnosis
     out_long_covid=patients.with_these_clinical_events(
         any_long_covid_code,
         return_expectations={"incidence": 0.05},
     ),
-    # first long covid diagnosis date
     out_first_long_covid_date=patients.with_these_clinical_events(
         any_long_covid_code,
         returning="date",
@@ -133,7 +134,7 @@ study = StudyDefinition(
             },
         },
     ),
-    #"loop_over_codes" provides any post viral fatigue code that a patient has been given and the first time that the specific code is given.
+    # "loop_over_codes" provides any post viral fatigue code that a patient has been given and the first time that the specific code is given.
     # because of this, the post viral fatigue date can also be derived outside study definition
     cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
@@ -183,7 +184,7 @@ study = StudyDefinition(
         },
     ),
     ),
-    ###  COVID vaccination
+      ###  COVID vaccination
     # First covid vaccination date (first vaccine given on 8/12/2020 in the UK)
     vax_covid_date1=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
@@ -210,7 +211,7 @@ study = StudyDefinition(
             "incidence": 0.6
         },
     ),
-    # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
+     # Booster covid vaccination date (first booster vaccine reported on 16/09/2022 in the UK)
     vax_covid_date3=patients.with_tpp_vaccination_record(
         # code for TPP only, when using patients.with_tpp_vaccination_record() function
         target_disease_matches="SARS-2 CORONAVIRUS",
@@ -224,13 +225,12 @@ study = StudyDefinition(
         },
     ),
 
-    ##No. primary care consultation in year prior to index date
-    
+    ###No. primary care consultation in year prior to index date
     cov_num_gp_consultation=patients.with_gp_consultations(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
         return_expectations={
-            "int": {"distribution": "poisson", "mean": 5},
+            "int": {"distribution": "poisson", "mean": 20},
         },
     ),
     # Smoking status

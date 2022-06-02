@@ -22,7 +22,7 @@ from common_variables_dynamic import generate_common_variables
 (
     demographic_variables,
     clinical_variables
-) = generate_common_variables(index_date_variable = "index_date - 1 day", index_date_variable_3y = "index_date - 3 years")
+) = generate_common_variables(index_date_variable = "out_covid_date", index_date_variable_3y = "out_covid_date - 3 years")
 
 pandemic_start = "2020-01-29" # the first two COVID cases in the UK
 
@@ -223,14 +223,12 @@ study = StudyDefinition(
             "incidence": 0.6
         },
     ),
-
     ###No. primary care consultation in year prior to index date
-    
     cov_num_gp_consultation=patients.with_gp_consultations(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
         return_expectations={
-            "int": {"distribution": "poisson", "mean": 10},
+            "int": {"distribution": "poisson", "mean": 20},
         },
     ),
     # Smoking status

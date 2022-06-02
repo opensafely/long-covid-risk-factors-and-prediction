@@ -15,9 +15,9 @@ defaults_list <- list(
   expectations= list(population_size=15000L)
 )
 
-analysis <- c("all", "vax_c", "vaccinated", "all_vax_td", "infected") 
+analysis <- c("all", "all_vax_c", "vaccinated", "all_vax_td", "infected") 
 cohort <- c("all", "vaccinated", "infected")
-analysis_run <- c("all", "vax_c", "all_vax_td", "infected") 
+analysis_to_run <- c("all", "all_vax_c", "all_vax_td", "infected") 
 
 # create action functions ----
 
@@ -146,7 +146,7 @@ apply_development_cox_model <- function(analysis){
       name = list(glue("development_cox_model_{analysis}")),
       run = "r:latest analysis/stage3_model_development.R",
       arguments = c(analysis),
-      needs = list(if(analysis == "all" | analysis == "vax_c" | analysis == "all_vax_td"){
+      needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
         glue("stage1_define_eligible_population_all")}else{
         glue("stage1_define_eligible_population_{analysis}")
         }
@@ -167,7 +167,7 @@ apply_evaluation_cox_model <- function(analysis){
       name = glue("evaluation_cox_model_{analysis}"),
       run = "r:latest analysis/stage4_model_evaluation.R",
       arguments = c(analysis),
-      needs = list(if(analysis == "all" | analysis == "vax_c" | analysis == "all_vax_td"){
+      needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
         glue("stage1_define_eligible_population_all")}else{
           glue("stage1_define_eligible_population_{analysis}")
         }),
@@ -187,7 +187,7 @@ apply_validation_cox_model_iecv <- function(analysis){
       name = glue("validation_cox_model_{analysis}"),
       run = "r:latest analysis/stage5_model_validation_iecv.R",
       arguments = c(analysis),
-      needs = list(if(analysis == "all" | analysis == "vax_c" | analysis == "all_vax_td"){
+      needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
         glue("stage1_define_eligible_population_all")}else{
           glue("stage1_define_eligible_population_{analysis}")
         }),
@@ -293,7 +293,7 @@ actions_list <- splice(
   action(
     name = "figure_hazard_ratio",
     run = "r:latest analysis/figure_hazard_ratio_plot.R",
-    needs = glue("development_cox_model_{analysis_run}"),
+    needs = glue("development_cox_model_{analysis_to_run}"),
     moderately_sensitive = list(
       figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
     )
