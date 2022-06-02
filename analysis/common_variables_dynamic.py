@@ -3,7 +3,7 @@ from codelists import *
 
 # Define command variables function
 
-def generate_common_variables(index_date_variable, index_date_variable_1y, index_date_variable_3y):
+def generate_common_variables(index_date_variable, index_date_variable_3y):
     demographic_variables = dict(
         cov_num_age = patients.age_as_of(
             f"{index_date_variable}",
