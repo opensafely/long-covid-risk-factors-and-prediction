@@ -14,7 +14,7 @@ library(readr)
 knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```
 
-## Compiled table for hazard ratio estimates
+## Compiled table for snomed code count for long covid
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #analyses = "main"
