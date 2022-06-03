@@ -295,7 +295,6 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_all.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all.html
         model_selection: output/not_for_review/model/model_selection_all.csv
@@ -308,7 +307,6 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_all_vax_c.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_c.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_c.html
         model_selection: output/not_for_review/model/model_selection_all_vax_c.csv
@@ -321,7 +319,6 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_vaccinated.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vaccinated.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vaccinated.html
         model_selection: output/not_for_review/model/model_selection_vaccinated.csv
@@ -334,7 +331,6 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_all_vax_td.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_td.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_td.html
         model_selection: output/not_for_review/model/model_selection_all_vax_td.csv
@@ -347,7 +343,6 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        ph_test_CSV: output/review/model/PH_test_*_infected.csv
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_infected.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_infected.html
         model_selection: output/not_for_review/model/model_selection_infected.csv
