@@ -159,7 +159,7 @@ if(length(cov_num_names)>1){
 
 write.csv(df_summary, file=paste0("output/review/model/analysis_data_summary_", analysis,".csv"), row.names = F)
 rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd", 
-                  output_file="analysis_data_summary",output_dir="output/review/model")
+                  output_file=paste0("analysis_data_summary_", analysis),output_dir="output/review/model")
 
 ################################################################################
 # Part 3: define survival analysis formula                                     #
