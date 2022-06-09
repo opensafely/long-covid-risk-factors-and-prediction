@@ -216,16 +216,17 @@ actions:
         table_csv_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.csv
         table_html_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.html
 
-  ## Figure_2 - days from covid to long covid 
+  ## Figure_hist - Histogram of days from covid to long covid 
 
-  figure_2_all:
-    run: r:latest analysis/figure_2.R
+  figure_hist_all:
+    run: r:latest analysis/figure_hist.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         figure_days_c_to_lc: output/review/descriptives/figure_hist.svg
         table_csv_summary: output/review/descriptives/summary_days_c_to_long.csv
+        table_bin_count: output/review/descriptives/hist_*
 
   ## Figure - hazard ratio plot 
 

@@ -279,14 +279,15 @@ actions_list <- splice(
       table_html_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.html")
     )
   ),
-  comment("Figure_2 - days from covid to long covid"),
+  comment("Figure_hist - Histogram of days from covid to long covid"),
   action(
-    name = "figure_2_all",
-    run = "r:latest analysis/figure_2.R",
+    name = "figure_hist_all",
+    run = "r:latest analysis/figure_hist.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
       figure_days_c_to_lc = glue("output/review/descriptives/figure_hist.svg"),
-      table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long.csv")
+      table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long.csv"),
+      table_bin_count= glue("output/review/descriptives/hist_*")
     )
   ),
   comment("Figure - hazard ratio plot"),

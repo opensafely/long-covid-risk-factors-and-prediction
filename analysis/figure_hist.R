@@ -1,6 +1,6 @@
 # Purpose: Long covid coding
 # Author:  Yinghui Wei
-# Content: Figure 2. days from covid to long covid
+# Content: Figure: histogram for days from covid to long covid
 # Output:  one CSV table and one SVG figure
 
 library(readr); library(dplyr); library(ggplot2)
@@ -33,13 +33,11 @@ input <- input %>% mutate(days_covid_to_long = ifelse(out_first_long_covid_date 
                                      ifelse((is.na(out_covid_date)|out_covid_date > out_first_long_covid_date)
                                             & !is.na(out_first_long_covid_date), 91, NA)))
 
-
 days <- sort(input$days_covid_to_long, decreasing = F)
 # truncation - make the ten smallest days = the 11th smallest day, to avoid potential disclosure issues
 days[1:10]<- head(days,11)[11] # the 11th smallest number
 # truncation - make the ten largest days = the 11th largest day, to avid potential disclosure issues
 days[(length(days)-9):length(days)] = head(tail(days, 11),1) # the 11th largest number
-
 
 results <- NULL
 results$min[1] = min(days, na.rm=T)
@@ -63,5 +61,12 @@ figure_hist<-ggplot(as.data.frame(days), aes(x=days)) +
   theme(axis.line = element_line(arrow = arrow(angle = 15, length = unit(.1,"inches"),type = "closed")))
 figure_hist
 
+bin_count <- ggplot_build(figure_hist)$data[[1]]$count
+bin_count <- data.frame(seq(1:length(bin_count)), bin_count)
+names(bin_count) <- c("bin", "count")
 ggsave(file="output/review/descriptives/figure_hist.svg", 
        plot=figure_hist, width=16, height=8)
+
+write.csv(bin_count, file="output/review/descriptives/hist_bin_count.csv", row.names = F)
+rmarkdown::render("analysis/compilation/compiled_hist_bin_count.Rmd", 
+                  output_file="hist_bin_count",output_dir="output/review/descriptives")
