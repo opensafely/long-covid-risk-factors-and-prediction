@@ -1,0 +1,30 @@
+---
+title: "Table"
+output: html_document
+---
+Table. characteristics of patients in sampled population - used in Cox regression
+
+Categorical variables, number and percentage; continuous variable, mean and standard deviation, and range
+
+This is a supporting document for the hazard ratios table from Cox model
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(DT)
+library(readr)
+knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
+```
+
+## Compiled table1 characteristics of patients
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+df=read_csv(paste0("output/review/model/analysis_data_summary_", analysis,".csv"))
+df %>%
+    datatable(extensions = 'Buttons',
+              options = list(dom = 'Blfrtip',
+                             buttons = c('copy', 'csv', 'excel', 'pdf', 'print' ),
+                             lengthMenu = list(c(50,-1),
+                                               c(50,"All"))))
+```
