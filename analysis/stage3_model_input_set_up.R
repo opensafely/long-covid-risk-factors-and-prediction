@@ -117,7 +117,7 @@ df_summary <- data.frame(variable = character(),
                       percent = numeric(),
                       mean    = numeric(),
                       sd      = numeric(), 
-                      range   = numeric(),
+                      IQR   = numeric(),
                       stringsAsFactors = FALSE)
 
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]

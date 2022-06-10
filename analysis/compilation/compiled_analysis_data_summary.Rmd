@@ -17,7 +17,7 @@ library(readr)
 knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```
 
-## Compiled table1 characteristics of patients
+## Compiled table characteristics of patients
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 df=read_csv(paste0("output/review/model/analysis_data_summary_", analysis,".csv"))
