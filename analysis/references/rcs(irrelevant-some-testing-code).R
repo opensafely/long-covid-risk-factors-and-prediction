@@ -16,3 +16,4 @@ a1 <- a[,1]
 a2 <- a[,2]
 
 a <- data.frame(a1,a2)
+a
