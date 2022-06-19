@@ -171,6 +171,17 @@ actions:
         incidence_rate_table_CSV: output/review/descriptives/table_2_all.csv
         incidence_rate_talbe_HTML: output/review/descriptives/table_2_all.html
 
+  ## Table 2. Event count and incidence rate - all_vax_c 
+
+  table_2_all_vax_c:
+    run: r:latest analysis/table_2.R all_vax_c
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        incidence_rate_table_CSV: output/review/descriptives/table_2_all_vax_c.csv
+        incidence_rate_talbe_HTML: output/review/descriptives/table_2_all_vax_c.html
+
   ## Table 2. Event count and incidence rate - vaccinated 
 
   table_2_vaccinated:

@@ -17,6 +17,7 @@ defaults_list <- list(
 
 analysis <- c("all", "all_vax_c", "vaccinated", "all_vax_td", "infected") 
 cohort <- c("all", "vaccinated", "infected")
+cohort2 <- c("all", "all_vax_c" , "vaccinated", "infected")
 analysis_to_run <- c("all", "all_vax_c", "all_vax_td", "infected") 
 
 # create action functions ----
@@ -112,7 +113,11 @@ apply_table2 <- function(cohort){
       name = glue("table_2_{cohort}"),
       run = "r:latest analysis/table_2.R",
       arguments = c(cohort),
-      needs = list(glue("stage1_define_eligible_population_{cohort}")),
+      needs = list(if(cohort == "all_vax_c"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{cohort}")
+        }
+      ),
       moderately_sensitive = list(
         incidence_rate_table_CSV = glue("output/review/descriptives/table_2_{cohort}.csv"),
         incidence_rate_talbe_HTML = glue("output/review/descriptives/table_2_{cohort}.html")
@@ -258,7 +263,7 @@ actions_list <- splice(
   # Table 2 Event count and incidence rate
   comment("Define eligible population"),
   splice(
-    unlist(lapply(cohort, function(x) apply_table2(cohort = x)), recursive = FALSE)
+    unlist(lapply(cohort2, function(x) apply_table2(cohort = x)), recursive = FALSE)
   ),
   comment("table_3 - sequence count"),
   action(

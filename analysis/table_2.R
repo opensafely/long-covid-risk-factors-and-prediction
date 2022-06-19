@@ -15,15 +15,23 @@ args <- commandArgs(trailingOnly=TRUE)
 if(length(args)==0){
   #cohort <- "all"          # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"      # infected population
+  #cohort <- "infected"      # infected population
+  cohort <- "all_vax_c"     # all eligible population but follow-up censored by 1st vaccination
 }else{
   cohort <- args[[1]]
 }
 
 table2_creation <- function(cohort){
+  if(cohort == "all_vax_c"){
+    cohort = "all"
+    vax_c = TRUE
+  }
   ## Read in data and identify factor variables and numerical variables------------
   input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
-  
+  if(vax_c == TRUE){
+    input$fup_end_date = input$fup_end_date_vax_c
+    input$lcovid_surv = input$lcovid_surv_vax_c
+  }
   ## define variables to keep
   vax <- names(input)[grepl("vax_covid_", names(input))]
   keep <- names(input)[!names(input)%in%(vax)]
@@ -121,6 +129,9 @@ table2_creation <- function(cohort){
   
   table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
   
+  if(vax_c == TRUE){
+    cohort = "all_vax_c"
+  }
   write.csv(table_2, file=paste0("output/review/descriptives/table_2_", cohort,".csv"),row.names=F)
   
   rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", 
@@ -131,6 +142,7 @@ if(cohort == "all_cohorts") {
   table2_creation("all")
   table2_creation("vaccinated")
   table2_creation("infected")
+  table2_creation("all_vax_c")
 } else{
   table2_creation(cohort)
 }
