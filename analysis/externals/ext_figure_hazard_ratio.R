@@ -11,15 +11,18 @@ library(stringr)
 results_dir <- "C:/Users/yingh_/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/2022-06-06/"
 output_dir <- "C:/Users/yingh_/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/2022-06-06/figures/"
 file_list=list.files(path = results_dir, pattern = "hazard_ratio_estimates_*")
-
+#file_to_keep <- grepl("infected",file_list)
+#file_list <- file_list[file_to_keep]
 # read in each .csv file in file_list and create a data frame with the same name as the .csv file
 for (i in 1:length(file_list)){
   #temp = gsub(".csv", "", file_list[i])
   assign(file_list[i], 
          read.csv(paste(results_dir, file_list[i], sep=''))
   )
-  }
+}
 
+# df_list <- list(hazard_ratio_estimates_full_infected.csv,
+#                 hazard_ratio_estimates_selected_infected.csv) 
 df_list <- list(hazard_ratio_estimates_full_all.csv, 
                 hazard_ratio_estimates_full_all_vax_c.csv, 
                 hazard_ratio_estimates_full_all_vax_td.csv,
@@ -30,13 +33,10 @@ df_list <- list(hazard_ratio_estimates_full_all.csv,
                 hazard_ratio_estimates_selected_all_vax_td.csv,
                 hazard_ratio_estimates_selected_infected.csv,
                 hazard_ratio_estimates_selected_vaccinated.csv) 
-
-csv_index = 3
-
-# note: csv_index = c(4,9) need different variable template because the covariates are
-# slightly different
-
-for(csv_index in c(1,2,3,5,6,7,8,10)){
+csv_index = 1
+infected_cohort <- grep("infected",file_list)
+td_analysis <- grep("td", file_list)
+for(csv_index in 1:length(df_list)){
   hr <- data.frame(df_list[csv_index])
   hr <- hr %>% 
     dplyr::select(c("term","hazard_ratio", "conf.low", "conf.high", "std.error")) %>%
@@ -63,7 +63,9 @@ for(csv_index in c(1,2,3,5,6,7,8,10)){
   if(csv_index %in% c(2,5)){
     x_annot = x_max - 1
   }
-
+  if(csv_index %in% c(4,9)){
+    x_annot = x_max - 0.6
+  }
   hr <- hr[order(hr$term),]
   
   pred_name <- unique(hr$pred_name)
@@ -103,11 +105,15 @@ for(csv_index in c(1,2,3,5,6,7,8,10)){
   df <- read.csv(file=paste0(output_dir, "hr_var_order_fixed.csv"))
   
   # remove Ie.status if the HR are not from Cox model with vaccination status as a time-dependent variable
-  if(csv_index!=3 & csv_index!=8){
+  if(!csv_index%in%td_analysis){
     df <- df%>%filter(!grepl("Ie", df$term, fixed = TRUE))
   }
+  if(!csv_index%in%infected_cohort){
+    df <- df%>%filter(!grepl("Covid", term, fixed = TRUE)) %>%
+      filter(!grepl("COVID", term, fixed = TRUE))
+  }
   
-  a <- merge(df,hr,all=T)
+  a <- merge(df,hr,by="term", all=T)
   
   a <- a[order(a$row.num),]
   #View(a)
@@ -116,8 +122,8 @@ for(csv_index in c(1,2,3,5,6,7,8,10)){
   
   temp <- hr$term[reorder(hr$term, desc(hr$row.num))]
   row.ref = which(temp == "Post viral fatigue")
-
-
+  
+  
   #hr[row.ref,2:4] = NA
   #b <- reorder(hr$term, desc(hr$row.num))
   #row.ref = hr$row.num[which(hr$term == "Post viral fatigue")]
@@ -166,6 +172,6 @@ for(csv_index in c(1,2,3,5,6,7,8,10)){
   a <- sub(".*estimates","",file_list[csv_index])
   b <- sub(".csv","", a)
   ggsave(file=paste0("plot_hr",b, ".svg"), path = output_dir,
-        plot=hr_plot, width=10, height=12)
+         plot=hr_plot, width=10, height=12)
 }
-     
+
