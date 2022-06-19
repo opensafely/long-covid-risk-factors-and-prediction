@@ -157,7 +157,7 @@ for(csv_index in 1:length(df_list)){
     geom_errorbar(aes(xmin = conf.low, xmax = conf.high), size=0.5) +
     xlab(label='\nHazard Ratio')+
     #
-    ylab(label='Predictorss\n') +
+    ylab(label='Predictors\n') +
     xlim(x_min, x_max) +
     geom_vline(xintercept = 1, linetype = 2, color = "#b16100", size=1) +
     theme(axis.text.y = element_text(hjust = 0), axis.text = element_text(size = 12),
