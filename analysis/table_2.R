@@ -22,6 +22,7 @@ if(length(args)==0){
 }
 
 table2_creation <- function(cohort){
+  vax_c = FALSE
   if(cohort == "all_vax_c"){
     cohort = "all"
     vax_c = TRUE
