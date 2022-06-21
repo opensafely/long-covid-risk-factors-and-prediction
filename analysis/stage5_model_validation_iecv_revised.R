@@ -12,3 +12,4 @@
 # Output:  One table: val_performance_measures.csv
 #          val_cal_plot.svg for each region
 #          val_re_cal_plot.svg for each region
+# to do: validate the full model

@@ -3,6 +3,8 @@
 # Content: Cox model: model development and some evaluation
 # Output:  hazard ratios and 95% CI
 #          two CSV files, Two HTML files, and TWO SVG files
+# to do 1. output standard errors of c statistics
+#       2. output calibration slope, se and 95% CI
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
