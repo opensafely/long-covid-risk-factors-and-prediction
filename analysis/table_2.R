@@ -125,6 +125,13 @@ table2_creation <- function(cohort){
   # impose a small number for checking
   # table_2$event_count[7]=2
   
+  tt <- table(data$cov_cat_region)
+  region.max = names(tt[which.max(table(tt))])
+  data <- data %>% mutate(cov_cat_region = as.character(cov_cat_region)) 
+  #data$cov_cat_region[1] = "Missing" # to impose missing data for testing
+  data$cov_cat_region[which(data$cov_cat_region == "Missing")] = region.max
+  data <- data %>% mutate(cov_cat_region = as.factor(cov_cat_region))
+  
   # redaction by subgroup
   for(i in demographics){
     print(i)
