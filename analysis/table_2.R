@@ -119,15 +119,20 @@ table2_creation <- function(cohort){
             }
       }
   }
+  #table_2 <- table_2 %>%filter(outcome == "long covid")
+  table(table_2$subgrp)
+  # table_2$event_count <- redactor2(table_2$event_count)
+  # impose a small number for checking
+  # table_2$event_count[7]=2
   
-  table_2$event_count <- redactor2(table_2$event_count)
-  
-  # impose an NA for testing
-  #table_2$event_count[1:2] = NA
-  
-  col_names <- c("event_count", "ir", "ir_lower", "ir_upper")
+  # redaction by subgroup
+  for(i in demographics){
+    print(i)
+    index = which(table_2$subgrp == i)
+    table_2$event_count[index] <- redactor2(table_2$event_count[index])
+  }
+  col_names <- c("event_count","person_years","ir", "ir_lower", "ir_upper")
   table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
-  
   table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
   
   if(vax_c == TRUE){
@@ -138,7 +143,6 @@ table2_creation <- function(cohort){
   rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", 
                     output_file=paste0("table_2_", cohort),output_dir="output/review/descriptives")
 }
-
 if(cohort == "all_cohorts") {
   table2_creation("all")
   table2_creation("vaccinated")
