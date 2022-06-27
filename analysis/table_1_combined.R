@@ -23,21 +23,22 @@ table_1_com <- rbind(table_1_all.csv, table_1_vaccinated.csv, table_1_infected.c
 
 table_1_wide <- reshape(table_1_com, idvar = c("variable","subgroup_level"), timevar = "analysis", direction = "wide")
 
-table_1_wide$diff_all_vax = table_1_wide$number.all-table_1_wide$number.vaccinated
-table_1_wide$diff_all_infected = table_1_wide$number.all-table_1_wide$number.infected
+table_1_wide$diff_all_vax = abs(table_1_wide$number.all-table_1_wide$number.vaccinated)
+table_1_wide$diff_all_infected = abs(table_1_wide$number.all-table_1_wide$number.infected)
 
 table_1_wide <- table_1_wide %>% filter(subgroup_level!="FALSE")
 
 print("table_1_wide created successfully!")
 
 index <- which(!is.na(table_1_wide$diff_all_vax))
+print("Part 1")
 print(index)
-#table_1_wide$diff_all_vax[index] = redactor2(table_1_wide$diff_all_vax[index])
-# 
-index <- which(!is.na(table_1_wide$diff_all_infected))
-print(index)
-# table_1_wide$diff_all_infected[index] = redactor2(table_1_wide$diff_all_infected[index])
+table_1_wide$diff_all_vax[index] = redactor2(table_1_wide$diff_all_vax[index])
 
+index <- which(!is.na(table_1_wide$diff_all_infected))
+print("Part 2")
+print(index)
+table_1_wide$diff_all_infected[index] = redactor2(table_1_wide$diff_all_infected[index])
 
 # make table 1 a single file
 write.csv(table_1_wide, file="output/review/descriptives/table_1_combined.csv", row.names = F)
