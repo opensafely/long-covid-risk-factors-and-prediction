@@ -166,7 +166,7 @@ stage1_eligibility <- function(cohort){
   rm(input_select)
   
   if(cohort == "infected"){
-    input <- rename(input, cov_cat_covid_phenotype = sub_cat_covid_phenotype)
+    input <- input %>% mutate(cov_cat_covid_phenotype = sub_cat_covid_phenotype)
   }
   
   saveRDS(input, file = paste0("output/input_stage1_", cohort, ".rds"))
