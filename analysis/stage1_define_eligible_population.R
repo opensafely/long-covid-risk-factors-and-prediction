@@ -22,14 +22,19 @@ stage1_eligibility <- function(cohort){
   ## Part 1. Define eligible population                                          #
   ################################################################################
   
-  steps <- c("starting point","dead before index date", "missing sex", 
-             "missing age", "age <18y", "age>105y", "ethnicity", 
-             "long covid before cohort start", "covid infection before index date")
+  steps <- c("starting point","dead before index date", "missing region", "missing sex", 
+             "missing age", "age <18y", "age>105y", "ethnicity", "long covid before cohort start")
   ## starting point
   flow_chart_n <- nrow(input)
   
   ## Dead: removed if dead before index date
   input <- input%>%filter(death_date > index_date | is.na(death_date))
+  flow_chart_n <- c(flow_chart_n, nrow(input))
+  
+  #input$cov_cat_region[1:10] = NA # impose NA for testing
+  ## Region: remove if missing
+  input <- input%>%filter(!is.na(cov_cat_region))
+  table(input$cov_cat_region)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
   ## Sex: remove if missing
@@ -70,10 +75,10 @@ stage1_eligibility <- function(cohort){
                             is.na(out_first_long_covid_date))
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
-  # covid history
-  input <- input%>%filter(sub_cat_covid_history != TRUE) # remove individuals with covid infection befor index date
-  flow_chart_n <- c(flow_chart_n, nrow(input))
-  
+  # redefine factor level for region since NA is now removed
+  input <- input %>% mutate(cov_cat_region = as.character(cov_cat_region)) %>%
+    mutate(cov_cat_region = as.factor(cov_cat_region))
+  input$cov_cat_region <- relevel(input$cov_cat_region, ref = "London")
   
   ## redefine age group
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
@@ -91,8 +96,8 @@ stage1_eligibility <- function(cohort){
   input$cohort_end_date = cohort_end
   
   ## To improve efficiency: keep only necessary variables
-  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
-                        "vax_covid_date2", "death_date", "cohort_end_date", "index_date")
+  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date2",
+                        "death_date", "cohort_end_date", "index_date")
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
   
@@ -122,11 +127,10 @@ stage1_eligibility <- function(cohort){
   
   ## Define survival data for eligible -----------------------------------------------------
   if(cohort == "all"){
-    ## Survival time and indicator for unvaccinated population
-    ## lcovid_surv_vax_c: days from index date to long COVID, censored by first vaccination 
+    ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
     ## lcovid_cens_vax_c: indicator for long covid   
     input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
-                                                                          vax_covid_date1,
+                                                                          vax_covid_date2,
                                                                           death_date, 
                                                                           cohort_end_date,
                                                                           na.rm = TRUE))
@@ -161,10 +165,18 @@ stage1_eligibility <- function(cohort){
   
   rm(input_select)
   
-  ## if infected population, make covid phenotype as a covariate
-  if(cohort == "infected"){
-    input <- rename(input, cov_cat_covid_phenotype = sub_cat_covid_phenotype)
-  }
+  ## Data set for all eligible population and vaccinated population
+  ## Time origin: index date; 
+  ## fup end: long covid or death or end of cohort, with / without censoring by 1st vax
+  # if(cohort == "all"){
+  #   saveRDS(input, file = "output/input_stage1_all.rds")
+  #   print("Stage 1 date set for analyses 1 and 2 created successfully!")
+  # }
+  # 
+  # if(cohort == "vaccinated"){
+  #   saveRDS(input, file = "output/input_stage1_vaccinated.rds")
+  #   print("Stage 1 date set for vaccinated population created successfully!")
+  # }
   
   saveRDS(input, file = paste0("output/input_stage1_", cohort, ".rds"))
   print(paste0("Stage 1 date set for ", cohort, " created successfully!"))
@@ -172,7 +184,6 @@ stage1_eligibility <- function(cohort){
   # Part 4. Flowchart output                                                     #
   ################################################################################
   
-  # Small number suppression
   flow_chart<-data.frame(steps, flow_chart_n)
   flow_chart$drop <- rep(0, nrow(flow_chart))
   for(i in 2:nrow(flow_chart)){
@@ -196,7 +207,7 @@ stage1_eligibility <- function(cohort){
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))
 }
 
-if(cohort == "all_cohorts") {
+if (cohort == "all_cohorts") {
   stage1_eligibility("all")
   stage1_eligibility("vaccinated")
   stage1_eligibility("infected")

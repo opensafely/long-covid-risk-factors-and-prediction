@@ -79,9 +79,10 @@ table2_creation <- function(cohort){
   table_2$outcome <- outcome
   table_2$subgrp <- table_2$subgrp_level <- subgrp <- subgrp_level
   
-  ## extend to subgroups by demographics
+  ## extend to subgroups by demographics + post viral fatigue
   demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
-                    "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker")
+                    "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker",
+                    "cov_cat_post_viral_fatigue")
   
   # #hist(data$person_days)
   data <- data %>% filter(person_days >= 1 & person_days <= 486)
