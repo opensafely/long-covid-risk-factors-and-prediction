@@ -96,8 +96,8 @@ stage1_eligibility <- function(cohort){
   input$cohort_end_date = cohort_end
   
   ## To improve efficiency: keep only necessary variables
-  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date2",
-                        "death_date", "cohort_end_date", "index_date")
+  variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
+                        "vax_covid_date2", "death_date", "cohort_end_date", "index_date")
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
   
@@ -130,7 +130,7 @@ stage1_eligibility <- function(cohort){
     ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
     ## lcovid_cens_vax_c: indicator for long covid   
     input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
-                                                                          vax_covid_date2,
+                                                                          vax_covid_date1,
                                                                           death_date, 
                                                                           cohort_end_date,
                                                                           na.rm = TRUE))
@@ -165,18 +165,9 @@ stage1_eligibility <- function(cohort){
   
   rm(input_select)
   
-  ## Data set for all eligible population and vaccinated population
-  ## Time origin: index date; 
-  ## fup end: long covid or death or end of cohort, with / without censoring by 1st vax
-  # if(cohort == "all"){
-  #   saveRDS(input, file = "output/input_stage1_all.rds")
-  #   print("Stage 1 date set for analyses 1 and 2 created successfully!")
-  # }
-  # 
-  # if(cohort == "vaccinated"){
-  #   saveRDS(input, file = "output/input_stage1_vaccinated.rds")
-  #   print("Stage 1 date set for vaccinated population created successfully!")
-  # }
+  if(cohort == "infected"){
+    input <- rename(input, cov_cat_covid_phenotype = sub_cat_covid_phenotype)
+  }
   
   saveRDS(input, file = paste0("output/input_stage1_", cohort, ".rds"))
   print(paste0("Stage 1 date set for ", cohort, " created successfully!"))
