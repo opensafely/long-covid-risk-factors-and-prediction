@@ -71,18 +71,6 @@ table1_creation <- function(cohort){
     table_1$number[start:end] = redactor2(table_1$number[start:end])
   }
   
-  # for(i in 1:length(cov_factor_names)){
-  #   levels = names(table(input_factor_vars[,i]))
-  #   start = nrow(table_1)+1
-  #   table_1[start,1] = cov_factor_names[i]
-  #   start = nrow(table_1)+1
-  #   end = nrow(table_1)+length(levels)
-  #   table_1[start:end,1] <- c(levels)            # variable name
-  #   table_1[start:end,2] <- c(table(input_factor_vars[,i]))  # number
-  #   table_1[start:end,3] <- 100*round(c(table(input_factor_vars[,i]))/nrow(input_factor_vars),4)  # percentage
-  #   print(levels)
-  # }
-  
   # numerical variables: number and percentage of observations, mean and standard deviations
   input_num_vars <- input[,cov_num_names]
   if(length(cov_num_names) == 1){
@@ -106,12 +94,7 @@ table1_creation <- function(cohort){
       table_1$number[index] = redactor2(table_1$number[index])
     }
   }
-  # small number suppression if number <=5
-  #table_1$number[index] = redactor2(table_1$number[index])
-  
-  # index <- which(table_1$number<=5)
-  # table_1[index,2:ncol(table_1)] = "redacted"
-  
+
   write.csv(table_1, file=paste0("output/review/descriptives/table_1_",cohort, ".csv"), row.names = F)
   
   rmarkdown::render("analysis/compilation/compiled_table1_results.Rmd",
