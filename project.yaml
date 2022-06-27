@@ -159,6 +159,18 @@ actions:
         descriptive_table_CSV: output/review/descriptives/table_1_infected.csv
         descriptive_table_HTML: output/review/descriptives/table_1_infected.html
 
+  ## Table_1_combined - all table 1 combined 
+
+  table_1_combined:
+    run: r:latest analysis/table_1_combined.R
+    needs:
+    - table_1_all
+    - table_1_vaccinated
+    - table_1_infected
+    outputs:
+      moderately_sensitive:
+        table: output/review/descriptives/table_1_combined*
+
   ## Define eligible population 
   ## Table 2. Event count and incidence rate - all 
 

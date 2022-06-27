@@ -260,6 +260,16 @@ actions_list <- splice(
   splice(
     unlist(lapply(cohort, function(x) apply_table1(cohort = x)), recursive = FALSE)
   ),
+  
+  comment("Table_1_combined - all table 1 combined"),
+  action(
+    name = "table_1_combined",
+    run = "r:latest analysis/table_1_combined.R",
+    needs = list("table_1_all", "table_1_vaccinated", "table_1_infected"),
+    moderately_sensitive = list(
+      table = glue("output/review/descriptives/table_1_combined*")
+    )
+  ),
   # Table 2 Event count and incidence rate
   comment("Define eligible population"),
   splice(
