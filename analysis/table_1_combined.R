@@ -28,12 +28,14 @@ table_1_wide$diff_all_infected = table_1_wide$number.all-table_1_wide$number.inf
 
 table_1_wide <- table_1_wide %>% filter(subgroup_level!="FALSE")
 
-index <- which(!is.na(table_1_wide$diff_all_vax))
-table_1_wide$diff_all_vax[index] = redactor2(table_1_wide$diff_all_vax[index])
+print("table_1_wide created successfully!")
 
-index <- which(!is.na(table_1_wide$diff_all_infected))
-table_1_wide$diff_all_infected[index] = redactor2(table_1_wide$diff_all_infected[index])
-# print("table_1_wide created successfully!")
+# index <- which(!is.na(table_1_wide$diff_all_vax))
+# table_1_wide$diff_all_vax[index] = redactor2(table_1_wide$diff_all_vax[index])
+# 
+# index <- which(!is.na(table_1_wide$diff_all_infected))
+# table_1_wide$diff_all_infected[index] = redactor2(table_1_wide$diff_all_infected[index])
+
 
 # make table 1 a single file
 write.csv(table_1_wide, file="output/review/descriptives/table_1_combined.csv", row.names = F)
