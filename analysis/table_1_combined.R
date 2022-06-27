@@ -30,10 +30,12 @@ table_1_wide <- table_1_wide %>% filter(subgroup_level!="FALSE")
 
 print("table_1_wide created successfully!")
 
-# index <- which(!is.na(table_1_wide$diff_all_vax))
-# table_1_wide$diff_all_vax[index] = redactor2(table_1_wide$diff_all_vax[index])
+index <- which(!is.na(table_1_wide$diff_all_vax))
+print(index)
+#table_1_wide$diff_all_vax[index] = redactor2(table_1_wide$diff_all_vax[index])
 # 
-# index <- which(!is.na(table_1_wide$diff_all_infected))
+index <- which(!is.na(table_1_wide$diff_all_infected))
+print(index)
 # table_1_wide$diff_all_infected[index] = redactor2(table_1_wide$diff_all_infected[index])
 
 
