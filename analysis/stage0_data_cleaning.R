@@ -116,8 +116,6 @@ stage0_data_cleaning <- function(cohort){
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
   
-
-  
   ## left join: keep all observations in input_select
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
   rm(input_select)
@@ -131,19 +129,19 @@ stage0_data_cleaning <- function(cohort){
     if(i!="cov_num_gp_consultation"){
       hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
     }else{
-      input_frequent_consultation <- input[which(input[,i]>=12),i]
+      input_frequent_consultation <- input[which(input[,i]>12),i]
       hist(input_frequent_consultation, main=paste0("Histogram of ", i), xlab =i)
     }
     dev.off()
   }
   ## cov_num_gp_consultation
   ## define cov_cat_gp_consultation
-  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation >= 12, "Greater or equal to 12", "less than 12")
+  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 12, "Greater than 12", "less than or equal to 12")
   input <- input%>%mutate(cov_num_gp_consultation_truncated = 
-                            ifelse(cov_num_gp_consultation>=12, 12, cov_num_gp_consultation))%>%
+                            ifelse(cov_num_gp_consultation>12, 12, cov_num_gp_consultation))%>%
     rename(sub_num_gp_consultation = cov_num_gp_consultation) # rename so it is not included in modelling but only for exploration
   #a <- input%>%dplyr::select(contains("gp")); View(a)
-  #input$cov_num_gp_consultation[which(input$cov_num_gp_consultation >= 12)] = 12
+  #input$cov_num_gp_consultation[which(input$cov_num_gp_consultation > 12)] = 12
   
   ################################################################################
   ## Part 3. define variable types: factor or numerical                          #
@@ -200,16 +198,6 @@ stage0_data_cleaning <- function(cohort){
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
   input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
-  
-  # ## specify date variables in the format of "%Y-%m-%d"----------------------------
-  # vars_dates <- grep("date", names(input))
-  # vars_dates <- names(input)[vars_dates]
-  # 
-  # convert_to_date <- function(x){
-  #   as.Date(x,format = "%Y-%m-%d")
-  # }
-  # input[vars_dates] = lapply(input[vars_dates], convert_to_date)
-  # lapply(input[vars_dates], is.Date)
   
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
