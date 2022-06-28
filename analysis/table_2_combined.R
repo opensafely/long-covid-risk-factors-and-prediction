@@ -45,7 +45,7 @@ for(i in variables){
   table_2_wide$diff_all_infected[index3] = redactor2(table_2_wide$diff_all_infected[index3])
   
   index4 <- which(!is.na(table_2_wide$diff_all_vaccinated[index]))
-  table_2_wide$diff_all_vaccinated[index3] = redactor2(table_2_wide$diff_all_infected[index4])
+  table_2_wide$diff_all_vaccinated[index4] = redactor2(table_2_wide$diff_all_infected[index4])
 }
 
 index <- which(is.na(table_2_wide$diff_all_vax))
