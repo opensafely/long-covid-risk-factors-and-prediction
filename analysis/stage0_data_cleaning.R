@@ -226,6 +226,10 @@ stage0_data_cleaning <- function(cohort){
   input_factor_vars <- input_factor_vars %>% mutate(cov_cat_ethnicity = recode(cov_cat_ethnicity,
                                                         Missing ="Missing or Other",
                                                         Other = "Missing or Other"))
+  # input_factor_vars <- input_factor_vars %>% 
+  #   mutate(cov_cat_ethnicity = case_when(cov_cat_ethnicity == "Missing" ~ "Missing or Other",
+  #                                        cov_cat_ethnicity == "Other" ~ "Missing or Other"))
+  
   input_factor_vars$cov_cat_ethnicity <- relevel(input_factor_vars$cov_cat_ethnicity, ref = "White")
   
   # cov_cat_smoking_status

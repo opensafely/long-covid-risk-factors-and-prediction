@@ -50,14 +50,21 @@ for(i in variables){
   
   index2 <- which(!is.na(table_1_wide$diff_all_vax[index]))
   table_1_wide$diff_all_vax[index2] = redactor2(table_1_wide$diff_all_vax[index2])
-  index2 <- which(is.na(table_1_wide$diff_all_vax[index]))
-  table_1_wide[index2,3:17] = "[redacted]"
+  # index2 <- which(is.na(table_1_wide$diff_all_vax[index]))
+  # table_1_wide[index2,3:17] = "[redacted]"
   
   index3 <- which(!is.na(table_1_wide$diff_all_infected[index]))
   table_1_wide$diff_all_infected[index3] = redactor2(table_1_wide$diff_all_infected[index3])
-  index3 <- which(is.na(table_1_wide$diff_all_vax[index]))
-  table_1_wide[index3,3:17] = "[redacted]"
+  # index3 <- which(is.na(table_1_wide$diff_all_infected[index]))
+  # table_1_wide[index3,3:17] = "[redacted]"
 }
+
+index <- which(is.na(table_1_wide$diff_all_vax))
+table_1_wide[index,3:17] = "[redacted]"
+
+index <- which(is.na(table_1_wide$diff_all_infected))
+table_1_wide[index,3:17] = "[redacted]"
+
 
 # make table 1 a single file
 write.csv(table_1_wide, file="output/review/descriptives/table_1_combined.csv", row.names = F)

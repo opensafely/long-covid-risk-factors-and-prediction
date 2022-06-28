@@ -216,6 +216,19 @@ actions:
         incidence_rate_table_CSV: output/review/descriptives/table_2_infected.csv
         incidence_rate_talbe_HTML: output/review/descriptives/table_2_infected.html
 
+  ## Table_2_combined - all table 2 combined 
+
+  table_2_combined:
+    run: r:latest analysis/table_2_combined.R
+    needs:
+    - table_2_all
+    - table_2_all_vax_c
+    - table_2_vaccinated
+    - table_2_infected
+    outputs:
+      moderately_sensitive:
+        table: output/review/descriptives/table_2_combined*
+
   ## table_3 - sequence count 
 
   table_3_all:

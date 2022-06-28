@@ -275,6 +275,15 @@ actions_list <- splice(
   splice(
     unlist(lapply(cohort2, function(x) apply_table2(cohort = x)), recursive = FALSE)
   ),
+  comment("Table_2_combined - all table 2 combined"),
+  action(
+    name = "table_2_combined",
+    run = "r:latest analysis/table_2_combined.R",
+    needs = list("table_2_all", "table_2_all_vax_c", "table_2_vaccinated", "table_2_infected"),
+    moderately_sensitive = list(
+      table = glue("output/review/descriptives/table_2_combined*")
+    )
+  ),
   comment("table_3 - sequence count"),
   action(
     name = "table_3_all",

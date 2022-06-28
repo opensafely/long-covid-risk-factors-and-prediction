@@ -13,10 +13,10 @@ fs::dir_create(here::here("output", "review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"          # all eligible population
+  cohort <- "all"          # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"      # infected population
-  cohort <- "all_vax_c"     # all eligible population but follow-up censored by 1st vaccination
+  #cohort <- "all_vax_c"     # all eligible population but follow-up censored by 1st vaccination
 }else{
   cohort <- args[[1]]
 }
@@ -130,7 +130,7 @@ table2_creation <- function(cohort){
     table_2$event_count[index] <- redactor2(table_2$event_count[index])
   }
   col_names <- c("event_count","person_years","ir", "ir_lower", "ir_upper")
-  table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
+  #table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
   table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
   
   if(vax_c == TRUE){

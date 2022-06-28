@@ -42,14 +42,20 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
         ## Deprivation
         cov_cat_imd=patients.categorised_as(
             {
+                # "0": "DEFAULT",
+                # "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+                # "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+                # "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+                # "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+                # "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
                 "0": "DEFAULT",
-                "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
-                "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
-                "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
-                "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
-                "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
+                "1": "imd >= 0 AND imd < 32800*1/5",
+                "2": "imd >= 32800*1/5 AND imd < 32800*2/5",
+                "3": "imd >= 32800*2/5 AND imd < 32800*3/5",
+                "4": "imd >= 32800*3/5 AND imd < 32800*4/5",
+                "5": "imd >= 32800*4/5 AND imd <= 32800",
            },
-            index_of_multiple_deprivation=patients.address_as_of(
+            imd=patients.address_as_of(
                 f"{index_date_variable}",
                 returning="index_of_multiple_deprivation",
                 round_to_nearest=100,
