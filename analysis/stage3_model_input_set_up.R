@@ -167,6 +167,19 @@ rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd",
 ## linear predictors + a restricted cubic spline for age + 
 ##  a restricted cubic spline for gp consultation rate + clustering effect for practice
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
+
+surv_formula_age_sex <- paste0(
+  "Surv(lcovid_surv, lcovid_cens) ~ ",
+  "cov_cat_sex",
+  "+rms::rcs(cov_num_age,parms=knot_placement)", 
+  "+ cluster(practice_id)"
+)
+
+surv_formula_age_lp_sex <- paste0(
+  "Surv(lcovid_surv, lcovid_cens) ~ ",
+  "cov_cat_sex", "+ cov_cat_age", "+ cluster(practice_id)"
+)
+
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),

@@ -27,7 +27,8 @@ table_1_com$subgroup_level[index] <- table_1_com$variable[index]
 table_1_wide <- reshape(table_1_com, idvar = c("variable","subgroup_level"), timevar = "analysis", direction = "wide")
 
 # according to the definition
-index <- which(table_1_wide$subgroup_level == "no_infection")
+index <- which(table_1_wide$variable == "sub_cat_covid_phenotype" &
+                 table_1_wide$subgroup_level == "no_infection")
 table_1_wide$number.infected[index] = 0 # change from NA to 0 because no infection have been excluded for infected population
 index <- which(table_1_wide$variable == "sub_cat_covid_history" & 
                  (table_1_wide$subgroup_level == "Missing" |
@@ -50,13 +51,9 @@ for(i in variables){
   
   index2 <- which(!is.na(table_1_wide$diff_all_vax[index]))
   table_1_wide$diff_all_vax[index2] = redactor2(table_1_wide$diff_all_vax[index2])
-  # index2 <- which(is.na(table_1_wide$diff_all_vax[index]))
-  # table_1_wide[index2,3:17] = "[redacted]"
-  
+
   index3 <- which(!is.na(table_1_wide$diff_all_infected[index]))
   table_1_wide$diff_all_infected[index3] = redactor2(table_1_wide$diff_all_infected[index3])
-  # index3 <- which(is.na(table_1_wide$diff_all_infected[index]))
-  # table_1_wide[index3,3:17] = "[redacted]"
 }
 
 index <- which(is.na(table_1_wide$diff_all_vax))

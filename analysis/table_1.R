@@ -37,7 +37,7 @@ table1_creation <- function(cohort){
   # summary table for practice id - for exploration only
   print("summary statistics for practice id")
   dtable <- table(input$practice_id)
-  print(table(input$practice_id))
+  #print(table(input$practice_id))
   print("number of practice id")
   print(nrow(dtable))
   print("number of missing practice id")
