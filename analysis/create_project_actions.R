@@ -168,6 +168,29 @@ apply_development_cox_model <- function(analysis){
   )
 }
 
+apply_development_cox_model_age_sex <- function(analysis){
+  splice(
+    comment(glue("Development Cox Model - {analysis}")),
+    action(
+      name = list(glue("development_model_age_sex_{analysis}")),
+      run = "r:latest analysis/stage3_dev_model_age_sex.R",
+      arguments = c(analysis),
+      needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{analysis}")
+        }
+      ),
+      moderately_sensitive = list(
+        #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis}.csv"),
+        #supporting_document_CSV = glue("output/review/model/analysis_data_summary_{analysis}.csv"),
+        #supporting_document_html = glue("output/review/model/analysis_data_summary_{analysis}.html"),
+        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}.csv"),
+        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}.html")
+      )
+    )
+  )
+}
+
 apply_evaluation_cox_model <- function(analysis){
   splice(
     action(
@@ -374,6 +397,12 @@ actions_list <- splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
   ),
 
+  
+  splice(
+    # over outcomes
+    unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex(analysis = x)), recursive = FALSE)
+  ),
+  
   
   comment("Evaluation Cox model"),
   splice(

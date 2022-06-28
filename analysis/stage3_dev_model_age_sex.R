@@ -1,0 +1,38 @@
+# Purpose: to fit Cox model with age and sex as predictors
+
+library(readr)
+source("analysis/stage3_model_input_set_up.R")
+source("analysis/functions/function_cox_output.R")
+################################################################################
+# Part 1: Assess if non-linear term is needed for continuous age               #
+#         and redefine the survival analysis formula                           #
+################################################################################
+
+# age as splines
+fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula_age_spl_sex),
+                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+# age as linear predictor
+fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_age_linear_sex),
+                                data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+# a crude comparison
+if(AIC(fit_cox_model_linear) <= AIC(fit_cox_model_splines)){
+  surv_formula = surv_formula_age_linear_sex
+  #surv_formula_predictors = surv_formula_predictors_lp
+  fit_cox_model <- fit_cox_model_linear
+  print("Linear term is selected for age!")
+} else{
+  surv_formula <- surv_formula_age_spl_sex
+  fit_cox_model <- fit_cox_model_splines
+  print("Restricted cubic splines is selected for age!")
+}
+print("The selected model is")
+print(fit_cox_model)
+
+################################################################################
+# Part 2: Output results from the Cox Model                                    #
+################################################################################
+which_model = "model"
+output_file = paste0("output/review/model/hazard_ratio_estimates_age_sex_", which_model, "_", analysis)
+cox_output(fit_cox_model, which_model, output_file)

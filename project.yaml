@@ -394,6 +394,61 @@ actions:
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_infected.html
         model_selection: output/not_for_review/model/model_selection_infected.csv
 
+  ## Development Cox Model - all 
+
+  development_model_age_sex_all:
+    run: r:latest analysis/stage3_dev_model_age_sex.R all
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_all.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_all.html
+
+  ## Development Cox Model - all_vax_c 
+
+  development_model_age_sex_all_vax_c:
+    run: r:latest analysis/stage3_dev_model_age_sex.R all_vax_c
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_c.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_c.html
+
+  ## Development Cox Model - vaccinated 
+
+  development_model_age_sex_vaccinated:
+    run: r:latest analysis/stage3_dev_model_age_sex.R vaccinated
+    needs:
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_vaccinated.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_vaccinated.html
+
+  ## Development Cox Model - all_vax_td 
+
+  development_model_age_sex_all_vax_td:
+    run: r:latest analysis/stage3_dev_model_age_sex.R all_vax_td
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_td.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_td.html
+
+  ## Development Cox Model - infected 
+
+  development_model_age_sex_infected:
+    run: r:latest analysis/stage3_dev_model_age_sex.R infected
+    needs:
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_infected.csv
+        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_infected.html
+
   ## Evaluation Cox model 
 
   evaluation_cox_model_all:

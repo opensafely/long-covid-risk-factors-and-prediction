@@ -1,6 +1,34 @@
 library(readr)
 source("analysis/stage3_model_input_set_up.R")
 
+################################################################################
+# Part 1: Assess if non-linear term is needed for continuous age               #
+#         and redefine the survival analysis formula                           #
+################################################################################
+
+fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
+                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
+                                data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+
+if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
+  surv_formula = surv_formula_lp
+  surv_formula_predictors = surv_formula_predictors_lp
+  fit_cox_model <- fit_cox_model_linear
+} else{
+  fit_cox_model <- fit_cox_model_splines
+}
+
+print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
+print(paste0("The formula for fitting Cox model is: ", surv_formula))
+print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
+print(paste0("Model set up completed for ", analysis, "!"))
+print("Part 1 is completed!")
+
+################################################################################
+# Part 2: backward elimination                                                 #
+################################################################################
 ## backward elimination
 fit_cox_model_selected <- fastbw(fit_cox_model)
 

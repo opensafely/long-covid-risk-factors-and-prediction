@@ -20,7 +20,7 @@ if(length(args)==0){
   analysis <- args[[1]]
 }
 
-ratio_non_cases_to_cases = 50 # this is used in sampling non-cases to increase efficiency without loss of information
+ratio_non_cases_to_cases = 20 # this is used in sampling non-cases to increase efficiency without loss of information
 set.seed(123456) # to ensure reproducibility in the sampling
 
 ################################################################################
@@ -157,9 +157,14 @@ if(length(cov_num_names)>1){
   }
 }
 
+# Output as help file: number of observations from the sampled population in each covariate level
 write.csv(df_summary, file=paste0("output/review/model/analysis_data_summary_", analysis,".csv"), row.names = F)
-rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd", 
+rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd",
                   output_file=paste0("analysis_data_summary_", analysis),output_dir="output/review/model")
+
+## set up before using rms::cph
+dd <<- datadist(input) #
+options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 
 ################################################################################
 # Part 3: define survival analysis formula                                     #
@@ -168,16 +173,16 @@ rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd",
 ##  a restricted cubic spline for gp consultation rate + clustering effect for practice
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 
-surv_formula_age_sex <- paste0(
+surv_formula_age_spl_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex",
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
   "+ cluster(practice_id)"
 )
 
-surv_formula_age_lp_sex <- paste0(
+surv_formula_age_linear_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
-  "cov_cat_sex", "+ cov_cat_age", "+ cluster(practice_id)"
+  "cov_cat_sex", "+ cov_num_age", "+ cluster(practice_id)"
 )
 
 surv_formula <- paste0(
@@ -195,21 +200,22 @@ surv_formula_lp <- paste0(
   "+ cluster(practice_id)"
 )
 
-if(analysis == "all_vax_td"){
-  surv_formula <- paste0(
-    "Surv(lcovid_surv, lcovid_cens) ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+rms::rcs(cov_num_age,parms=knot_placement)", 
-    "+ cluster(practice_id)"
-  )
-  ## age is added as a linear predictor
-  surv_formula_lp <- paste0(
-    "Surv(lcovid_surv, lcovid_cens) ~ ",
-    paste(covariate_names, collapse = "+"),
-    "+ cov_num_age", 
-    "+ cluster(practice_id)"
-  )
-}
+# the following lines are not needed because ie.status has been specified as a covariate if analysis == "all_vax_td"
+# if(analysis == "all_vax_td"){
+#   surv_formula <- paste0(
+#     "Surv(lcovid_surv, lcovid_cens) ~ ",
+#     paste(covariate_names, collapse = "+"),
+#     "+rms::rcs(cov_num_age,parms=knot_placement)", 
+#     "+ cluster(practice_id)"
+#   )
+#   ## age is added as a linear predictor
+#   surv_formula_lp <- paste0(
+#     "Surv(lcovid_surv, lcovid_cens) ~ ",
+#     paste(covariate_names, collapse = "+"),
+#     "+ cov_num_age", 
+#     "+ cluster(practice_id)"
+#   )
+# }
 ## only predictors
 surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")
 ## only linear predictors
@@ -217,32 +223,6 @@ surv_formula_predictors_lp <- stringr::str_extract(surv_formula_lp, " ~.+")
 
 print(paste0("survival formula: ", surv_formula))
 
-## set up before using rms::cph
-dd <<- datadist(input) #
-options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
-
 print("Part 3: define survival analysis formula is completed!")
-################################################################################
-# Part 4: Assess if non-linear term is needed for continuous age               #
-#         and redefine the survival analysis formula                           #
-################################################################################
 
-fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
-                         data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
-fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
-                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-
-if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
-  surv_formula = surv_formula_lp
-  surv_formula_predictors = surv_formula_predictors_lp
-  fit_cox_model <- fit_cox_model_linear
-} else{
-  fit_cox_model <- fit_cox_model_splines
-}
-
-print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
-print(paste0("The formula for fitting Cox model is: ", surv_formula))
-print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
-print(paste0("Model set up completed for ", analysis, "!"))
-print("Part 4 is completed!")
+print("End of stage3_model_input_setup.R")
