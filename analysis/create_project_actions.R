@@ -339,15 +339,15 @@ actions_list <- splice(
       table_bin_count= glue("output/review/descriptives/hist_*")
     )
   ),
-  comment("Figure - hazard ratio plot"),
-  action(
-    name = "figure_hazard_ratio",
-    run = "r:latest analysis/figure_hazard_ratio_plot.R",
-    needs = glue("development_cox_model_{analysis_to_run}"),
-    moderately_sensitive = list(
-      figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
-    )
-  ),
+  # comment("Figure - hazard ratio plot"),
+  # action(
+  #   name = "figure_hazard_ratio",
+  #   run = "r:latest analysis/figure_hazard_ratio_plot.R",
+  #   needs = glue("development_cox_model_{analysis_to_run}"),
+  #   moderately_sensitive = list(
+  #     figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
+  #   )
+  # ),
   comment("Figure - cumulative probability plot"),
   action(
     name = "figure_cum_prob_km_all",
