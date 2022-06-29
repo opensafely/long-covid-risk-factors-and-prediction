@@ -384,57 +384,77 @@ actions:
   ## Development Cox Model - all 
 
   development_model_age_sex_all:
-    run: r:latest analysis/stage3_dev_model_age_sex.R all
+    run: r:latest analysis/stage3_4_model_dev_eval_age_sex.R all
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_all.rds
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_all.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_all.html
+        performance_measure_CSV: output/review/model/performance_measures_age_sex_*_all.csv
+        performance_measure_HTML: output/review/model/performance_measures_age_sex_*_all.html
+        survival_plot: output/review/model/survival_plot_*_age_sex_*_all.svg
 
   ## Development Cox Model - all_vax_c 
 
   development_model_age_sex_all_vax_c:
-    run: r:latest analysis/stage3_dev_model_age_sex.R all_vax_c
+    run: r:latest analysis/stage3_4_model_dev_eval_age_sex.R all_vax_c
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_all_vax_c.rds
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_c.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_c.html
+        performance_measure_CSV: output/review/model/performance_measures_age_sex_*_all_vax_c.csv
+        performance_measure_HTML: output/review/model/performance_measures_age_sex_*_all_vax_c.html
+        survival_plot: output/review/model/survival_plot_*_age_sex_*_all_vax_c.svg
 
   ## Development Cox Model - vaccinated 
 
   development_model_age_sex_vaccinated:
-    run: r:latest analysis/stage3_dev_model_age_sex.R vaccinated
+    run: r:latest analysis/stage3_4_model_dev_eval_age_sex.R vaccinated
     needs:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_vaccinated.rds
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_vaccinated.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_vaccinated.html
+        performance_measure_CSV: output/review/model/performance_measures_age_sex_*_vaccinated.csv
+        performance_measure_HTML: output/review/model/performance_measures_age_sex_*_vaccinated.html
+        survival_plot: output/review/model/survival_plot_*_age_sex_*_vaccinated.svg
 
   ## Development Cox Model - all_vax_td 
 
   development_model_age_sex_all_vax_td:
-    run: r:latest analysis/stage3_dev_model_age_sex.R all_vax_td
+    run: r:latest analysis/stage3_4_model_dev_eval_age_sex.R all_vax_td
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_all_vax_td.rds
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_td.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_all_vax_td.html
+        performance_measure_CSV: output/review/model/performance_measures_age_sex_*_all_vax_td.csv
+        performance_measure_HTML: output/review/model/performance_measures_age_sex_*_all_vax_td.html
+        survival_plot: output/review/model/survival_plot_*_age_sex_*_all_vax_td.svg
 
   ## Development Cox Model - infected 
 
   development_model_age_sex_infected:
-    run: r:latest analysis/stage3_dev_model_age_sex.R infected
+    run: r:latest analysis/stage3_4_model_dev_eval_age_sex.R infected
     needs:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_infected.rds
         hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_age_sex_*_infected.csv
         hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_age_sex_*_infected.html
+        performance_measure_CSV: output/review/model/performance_measures_age_sex_*_infected.csv
+        performance_measure_HTML: output/review/model/performance_measures_age_sex_*_infected.html
+        survival_plot: output/review/model/survival_plot_*_age_sex_*_infected.svg
 
   ## Evaluation Cox model 
 
@@ -488,6 +508,7 @@ actions:
         performance_measure_HTML: output/review/model/performance_measures_*_infected.html
         survival_plot: output/review/model/survival_plot_*_infected.svg
 
+  ## Validation Cox model 
   ## Validation Cox Model - all 
 
   validation_cox_model_all:

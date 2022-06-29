@@ -14,8 +14,8 @@ if(length(args)==0){
   #analysis <- "all"          # all eligible population
   #analysis <- "all_vax_c"        # all eligible population but censored them by the 1st vaccination
   #analysis <- "vaccinated"   # vaccinated population
-  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
-  analysis <- "infected"
+  analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  #analysis <- "infected"
 }else{
   analysis <- args[[1]]
 }
@@ -173,6 +173,7 @@ options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 ##  a restricted cubic spline for gp consultation rate + clustering effect for practice
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 
+## Age sex model
 surv_formula_age_spl_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex",
@@ -180,11 +181,26 @@ surv_formula_age_spl_sex <- paste0(
   "+ cluster(practice_id)"
 )
 
+## Age sex model
 surv_formula_age_linear_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex", "+ cov_num_age", "+ cluster(practice_id)"
 )
 
+## Age sex model
+if(analysis == "all_vax_td"){
+  surv_formula_age_spl_sex <- paste0(
+    "Surv(lcovid_surv, lcovid_cens) ~ ",
+    "cov_cat_sex", "+rms::rcs(cov_num_age,parms=knot_placement)", 
+    "+ cov_cat_ie.status", "+ cluster(practice_id)"
+  )
+  surv_formula_age_linear_sex <- paste0(
+    "Surv(lcovid_surv, lcovid_cens) ~ ",
+    "cov_cat_sex", "+ cov_num_age", "+ cov_cat_ie.status", "+ cluster(practice_id)"
+  )
+}
+
+## Full model
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
@@ -192,7 +208,7 @@ surv_formula <- paste0(
   "+ cluster(practice_id)"
 )
 
-## age is added as a linear predictor
+## full model: age is added as a linear predictor
 surv_formula_lp <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
