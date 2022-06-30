@@ -19,19 +19,19 @@ nuts_shp<-readRDS(here::here("output", "nuts_shp.rds"))
 long_covid_map<-nuts_shp %>%
   filter(nuts118nm!="Wales" & nuts118nm!="Northern Ireland" & nuts118nm!="Scotland") %>%
   left_join(data,by="nuts118cd") %>%
-  ggplot(aes(geometry = geometry,fill=long_covid_percent)) +
+  ggplot(aes(geometry = geometry,fill=long_covid_risk)) +
   geom_sf(lwd = .8, colour='black') +
-  geom_sf_label(aes(label = paste0(round(long_covid_cases/1000000,1),"M")),
+  geom_sf_label(aes(label = paste0(round(long_covid_cases/1000,1),"K")),
                 label.size = 0.1,
                 label.r = unit(0.5, "lines"),
                 fun.geometry = st_centroid,
                 show.legend = F) +
-  scale_fill_gradient2(limits=c(0,100), breaks = c(0,sort(round(data$long_covid_percent,0)),100),midpoint = 50, high = "navyblue",
+  scale_fill_gradient2(limits=c(0,100), breaks = c(0,sort(round(data$long_covid_risk,0)),100),midpoint = 50, high = "navyblue",
                        mid = "indianred", low = "ivory1",na.value = "white") +
   theme(legend.position = c(0.2,0.5),legend.text.align = 1,
         panel.background=element_rect(fill="white")) + 
   ggtitle("Long COVID cases by region") +
-  guides(fill=guide_legend(title="Long COVID\npercent (%)")) + 
+  guides(fill=guide_legend(title="Long COVID per\n10K persons")) + 
   xlab("") + ylab("")
 
 long_covid_map
