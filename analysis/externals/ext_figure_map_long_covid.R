@@ -36,5 +36,7 @@ long_covid_map<-nuts_shp %>%
 
 long_covid_map
 
+# long_covid_map + geom_sf_text(aes(label = region), colour = "white")
+
 ggsave(file=paste0("long_covid_map", ".svg"), path = output_dir,
        plot=long_covid_map, width=10, height=12)
