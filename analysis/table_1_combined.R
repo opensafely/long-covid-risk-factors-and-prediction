@@ -35,8 +35,13 @@ index <- which(table_1_wide$variable == "sub_cat_covid_history" &
                     table_1_wide$subgroup_level == "FALSE"))
 table_1_wide$number.infected[index] = 0 # change from NA to 0 because prior covid history have been excluded for infected population
 
+# That is fine. I think you should also correct percent.infected which remain 100% while the associated number has been changed to 0.
+
 table_1_wide$diff_all_vax = abs(table_1_wide$number.all-table_1_wide$number.vaccinated)
 table_1_wide$diff_all_infected = abs(table_1_wide$number.all-table_1_wide$number.infected)
+
+# It doesn't look like abs() is needed here, on lines 40-41. 
+# Maybe you added abs() in case the number.all is smaller then either number.vax or number.inf?
 
 table_1_wide <- table_1_wide %>% filter(subgroup_level!="FALSE") %>%
   filter(variable != "cov_cat_covid_phenotype")
@@ -62,6 +67,10 @@ table_1_wide[index,3:17] = "[redacted]"
 index <- which(is.na(table_1_wide$diff_all_infected))
 table_1_wide[index,3:17] = "[redacted]"
 
+# Because infection is NA for sub_cat_covid_history = TRUE, it gets redacted for the whole row.
+# I'm not sure this should be redacted for sub_cat_covid_history = TRUE. 
+# Expect for the infection cohort, other numbers seemed ok for all and vax cohorts for that category.
+# Maybe this infection NA for sub_cat_covid_history = TRUE needs to be taken into account when applying redaction.
 
 # make table 1 a single file
 write.csv(table_1_wide, file="output/review/descriptives/table_1_combined.csv", row.names = F)

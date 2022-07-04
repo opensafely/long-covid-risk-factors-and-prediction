@@ -108,3 +108,17 @@ if (cohort == "all_cohorts") {
 } else{
   table1_creation(cohort)
 }
+
+
+# Comment 1:
+# Multi-morbidity could be redefined as discussed in a previous meeting
+# Possibly to a Multi-morbidity (yes/no) with yes if 2 or more diseases
+
+# Comment 2:
+# Why is there a need to have both GP consultation and GP consultation truncated
+# Why the truncated version is truncated at 12?
+
+# Note:
+# inter_quartile_range for GP consultation or *_truncated is 0 which is odd.
+# However when looking at the dummy data, both GP consultation and its truncated version
+# are made of many 0s. Could there be an issue in the study definition?
