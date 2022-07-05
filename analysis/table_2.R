@@ -87,6 +87,10 @@ table2_creation <- function(cohort){
   # #hist(data$person_days)
   data <- data %>% filter(person_days >= 1 & person_days <= 486)
   
+  #RK - not sure if this is just a dummy data check but if you think it could be in
+  #the real data, should this be moved to before calculating the main IR on line 77/78?
+  
+  
   ##start.time = Sys.time()
  
   for(i in demographics){
@@ -124,6 +128,11 @@ table2_creation <- function(cohort){
   table(table_2$subgrp)
 
   # redaction by subgroup
+  #RK - the redactor function looks like it's doing what it needs to do.
+  #Currently you put both the long covid and covid counts in as one but should these be redacted separately
+  #as these are separate outcomes? Otherwise you might redact one level in long covid then when it tries to 
+  #redact the next smallest it might do it in the covid outcome which won't remove the disclosure.
+  
   for(i in demographics){
     print(i)
     index = which(table_2$subgrp == i)

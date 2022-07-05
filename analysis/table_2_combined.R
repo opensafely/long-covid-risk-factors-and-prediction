@@ -36,7 +36,7 @@ variables <- unique(table_2_wide$subgrp)
 
 for(i in variables){
   print(i)
-  index = which(table_2_wide$variable == i)
+  index = which(table_2_wide$variable == i)#RK - I don't think $variable exists in table 2 wide? Should it be subgrp?
   
   index2 <- which(!is.na(table_2_wide$diff_all_vax[index]))
   table_2_wide$diff_all_vax[index2] = redactor2(table_2_wide$diff_all_vax[index2])
@@ -45,8 +45,11 @@ for(i in variables){
   table_2_wide$diff_all_infected[index3] = redactor2(table_2_wide$diff_all_infected[index3])
   
   index4 <- which(!is.na(table_2_wide$diff_all_vaccinated[index]))
-  table_2_wide$diff_all_vaccinated[index4] = redactor2(table_2_wide$diff_all_infected[index4])
+  table_2_wide$diff_all_vaccinated[index4] = redactor2(table_2_wide$diff_all_infected[index4])#RK redactor function has infected rather than vaccinated
 }
+
+#RK - in the diff columns there are still some counts of 0,1,2 etc- what are these? Do these differences matter?
+# Does anything else need to be redacted?
 
 index <- which(is.na(table_2_wide$diff_all_vax))
 # although person-years do not need to be redacted, I would still do so for now
