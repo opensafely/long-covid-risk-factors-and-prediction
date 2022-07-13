@@ -53,6 +53,6 @@ cox_output2(fit_cox_model, which_model, output_file, save_output = TRUE)
 
 subset_vars = "age_sex_"
 which_model = "model"
-function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars, graphics_output=FALSE, save_output = FALSE)
+function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars = subset_vars, graphics_output=TRUE, save_output = TRUE)
 print("Finished model valuation for age and sex model!")
 
