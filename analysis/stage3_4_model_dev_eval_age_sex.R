@@ -42,7 +42,7 @@ readr::write_rds(
 ################################################################################
 which_model = "model"
 output_file = paste0("output/review/model/hazard_ratio_estimates_age_sex_", which_model, "_", analysis)
-cox_output(fit_cox_model, which_model, output_file)
+cox_output2(fit_cox_model, which_model, output_file, save_output = TRUE)
 
 ################################################################################
 # Part 3: Model evaluation                                                     #
@@ -53,6 +53,6 @@ cox_output(fit_cox_model, which_model, output_file)
 
 subset_vars = "age_sex_"
 which_model = "model"
-function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars)
+function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars, graphics_output=FALSE, save_output = FALSE)
 print("Finished model valuation for age and sex model!")
 
