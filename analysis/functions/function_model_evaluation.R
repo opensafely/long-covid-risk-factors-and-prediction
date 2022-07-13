@@ -1,5 +1,5 @@
 library(rms)
-function_model_evaluation <- function(input,fit_cox_model, which_model, analysis, subset_vars){
+function_model_evaluation <- function(input,fit_cox_model, which_model, analysis, subset_vars, graphics_output, save_output){
   # create output table for performance measures
   
   pm <- data.frame()
@@ -51,6 +51,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   print("Stage4_model_evaluation.R, starting Part 4 Plotting!")
   # Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
   
+  if(graphics_output==TRUE){
   #Plot of apparent separation across 4 groups
   svglite::svglite(file = paste0("output/review/model/survival_plot_by_risk_groups_", subset_vars,which_model, "_", analysis, ".svg"))
   if(which_model == "full"){
@@ -78,6 +79,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
     }
   }
   dev.off()
+  }
   
   print(paste0("Part 4. Survival plot by risk groups have been saved successfully for ", which_model, " ", analysis, "!" ))
   
@@ -134,6 +136,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   patient_low_shrunk <- patient_low
   patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
   
+  if(graphics_output==TRUE){
   svglite::svglite(file = paste0("output/review/model/surival_plot_with_shrunken_LP_",subset_vars, which_model, ".svg"))
   
   plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
@@ -142,6 +145,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   lines(survfit(fit_cox_model,newdata=data.frame(patient_low_shrunk)),col=4,conf.int=FALSE)
   legend(1,0.3,c("Original LP - High risk","Shrunken LP - High risk","Original LP - Low risk","Shrunken LP - Low risk"),col=c(1:4),lty=1,bty="n")
   dev.off()
+  }
   #
   # # Linear predictor values
   patient_high$pred_LP
@@ -165,6 +169,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
   prob_HR_shrunk
   
+  if(graphics_output==TRUE){
   svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves_", subset_vars, which_model,"_", analysis, ".svg"))
   # We can plot the two baseline survival curves
   plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
@@ -187,7 +192,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   abline(h=prob_HR_shrunk,col="red")
   abline(v=180,col="red")
   dev.off()
-  
+  }
   print(paste0("Part 5. Assess for optimism is completed successfully for ", which_model, " ", analysis, "!"))
   
   ###########################################################
@@ -252,13 +257,15 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   
   names(pm) <- c("performance measure", "value")
   
+  if(save_output==TRUE){
   write.csv(pm, file=paste0("output/review/model/performance_measures_", subset_vars,which_model, "_", analysis, ".csv"), 
             row.names=F)
   
   rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
                     output_file=paste0("performance_measures_", subset_vars, which_model,"_", analysis),
                     output_dir="output/review/model")
-  
+  }
   print(paste0("Part 7. Shrinkage & Optimism adjusted performance measures is completed successfully for",
                which_model, " ", analysis, "!"))
+  return(pm)
 }

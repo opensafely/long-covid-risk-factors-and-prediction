@@ -31,11 +31,10 @@ if(which_model == "selected"){
 print("The full model is")
 print(fit_cox_model)
 output_file = paste0("output/review/model/hazard_ratio_estimates_", "full", "_", analysis)
-cox_output(fit_cox_model, "full",output_file)
+cox_output2(fit_cox_model, "full",output_file, save_output=TRUE)
 if(which_model == "selected"){
-  which_model = "full"
   output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
-  cox_output(fit_cox_model_selected, "selected", output_file)
+  cox_output2(fit_cox_model_selected, "selected", output_file, save_output = TRUE)
 }
 print("Finished stage3_model_development.R")
 

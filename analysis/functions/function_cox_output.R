@@ -1,7 +1,6 @@
 ## Purpose: to extract and save cox model output--------------------------------                                 
-
 # function for small number suppression
-cox_output <- function(fit_cox_model, which_model, output_file){
+cox_output2 <- function(fit_cox_model, which_model, output_file, save_output){
   
   # ## assess proportional hazards assumption
   # ph_test_result <- cox.zph(fit_cox_model, "rank")$table
@@ -45,14 +44,12 @@ cox_output <- function(fit_cox_model, which_model, output_file){
   # remove results from robust estimation
   #results <-results %>% dplyr::select(-contains("robust"))
   
-  # write.csv(results, file=paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis, ".csv"), 
-  #           row.names=F)
+  if(save_output==TRUE){
   write.csv(results, file=paste0(output_file,".csv"), row.names=F)
   rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
                     output_file=output_file,
                     output_dir="output/review/model")
-  # rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
-  #                   output_file=paste0("hazard_ratio_estimates_", which_model, "_", analysis),
-  #                   output_dir="output/review/model")
+  }
   print(paste0("Hazard ratio estimates are saved successfully for ", which_model, " ", analysis, "!"))
+  return(results)
 }

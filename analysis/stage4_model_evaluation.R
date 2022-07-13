@@ -27,5 +27,5 @@ print("Part 1. Finished loading fitted cox model!")
 # source file for model evaluation
 source("analysis/functions/function_model_evaluation.R")
 subset_vars =""
-function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars)
+function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars, graphics_output = TRUE, save_output = TRUE)
 print("Finished model valuation")
