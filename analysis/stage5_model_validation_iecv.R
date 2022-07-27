@@ -9,7 +9,7 @@
 
 library(rms); library(fastDummies)
 
-print("Starting stage_5_model_evaluation.R")
+print("Starting stage_5_model_validation.R")
 
 #load data, with defined weight, and import formula for survival analysis
 source("analysis/stage3_model_selection.R")

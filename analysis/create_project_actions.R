@@ -281,7 +281,7 @@ apply_validation_cox_model_iecv <- function(analysis){
     comment(glue("Validation Cox Model - {analysis}")),
     action(
       name = glue("validation_cox_model_{analysis}"),
-      run = "r:latest analysis/stage5_model_validation_iecv.R",
+      run = "r:latest analysis/stage5_model_validation_iecv_revised.R",
       arguments = c(analysis),
       needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
         glue("stage1_define_eligible_population_all")}else{
