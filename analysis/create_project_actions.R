@@ -162,6 +162,7 @@ apply_development_cox_model <- function(analysis){
         supporting_document_html = glue("output/review/model/analysis_data_summary_{analysis}.html"),
         hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.csv"),
         hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.html"),
+        selected_variables = glue("output/not_for_review/model/selected_variables_{analysis}.csv"),
         model_selection = glue("output/not_for_review/model/model_selection_{analysis}.csv")
       )
     )
@@ -216,6 +217,29 @@ apply_development_cox_model_age_sex_adjusted <- function(analysis){
     )
   )
 }
+
+# apply_development_cox_model_subset_variables <- function(analysis){
+#   splice(
+#     comment(glue("Development Cox Model using a subset of variables - {analysis}")),
+#     action(
+#       name = list(glue("development_model_subset_variables_{analysis}")),
+#       run = "r:latest analysis/stage3_4_model_dev_eval_subset_variables.R",
+#       arguments = c(analysis),
+#       # needs =list("development_cox_model_all", "development_cox_model_all_vax_c",
+#       #             "development_cox_model_all_vax_td",
+#       #             "development_cox_model_vaccinated", "development_cox_model_infected"),
+#       needs =list("stage1_define_eligible_population_all",
+#                   "stage1_define_eligible_population_vaccinated",
+#                   "stage1_define_eligible_population_infected"),
+#       moderately_sensitive = list(
+#         hazard_ratios_CSV = glue("output/review/model/HR_estimates_selected_vars_{analysis}.csv"),
+#         hazard_ratios_HTML = glue("output/review/model/HR_estimates_selected_vars_{analysis}.html"),
+#         performance_measure_CSV = glue("output/review/model/performance_measures_selected_vars_{analysis}.csv"),
+#         performance_measure_HTML = glue("output/review/model/performance_measures_selected_vars_{analysis}.html")
+#       )
+#     )
+#   )
+# }
 
 apply_evaluation_cox_model <- function(analysis){
   splice(
@@ -447,6 +471,10 @@ actions_list <- splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex_adjusted(analysis = x)), recursive = FALSE)
   ),
   
+  # splice(
+  #   unlist(lapply(analysis, function(x) apply_development_cox_model_subset_variables(analysis = x)), recursive = FALSE)
+  # ),
+  # 
   comment("Evaluation Cox model"),
   splice(
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
