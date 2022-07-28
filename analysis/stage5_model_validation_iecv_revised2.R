@@ -259,6 +259,7 @@ pm_val$c_diff_average_weight[2:nrow(pm_val)] =pm_val$c_diff_overall[2:nrow(pm_va
 pm_val[3:ncol(pm_val)] = round(pm_val[3:ncol(pm_val)], 4)
 write.csv(pm_val, file = paste0("output/review/model/iecv_performance_measures_", analysis,".csv"), row.names = F)
 
+outfile = "iecv_performance_measures_"
 rmarkdown::render(paste0("analysis/compilation/compiled_val_pm_table",".Rmd"), 
                   output_file=paste0("iecv_performance_measures_", analysis),
                   output_dir="output/review/model")
