@@ -14,7 +14,8 @@
 #          val_re_cal_plot.svg for each region
 # to do: validate the full model
 
-library(rms); library(fastDummies); library(pseudo)
+library(rms); library(fastDummies)
+#library(pseudo)
 
 print("Starting stage_5_model_validation.R")
 
