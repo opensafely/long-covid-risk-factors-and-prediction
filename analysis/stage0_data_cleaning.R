@@ -113,7 +113,7 @@ stage0_data_cleaning <- function(cohort){
   input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
   
   input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, "2 (two or more diseases)",
-                                                                         ifelse(cov_num_multimorbidity==1  , "1 (one disease)", "0 (no disease)")))
+                                                                         ifelse(cov_num_multimorbidity==1, "1 (one disease)", "0 (no disease)")))
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
   
@@ -137,11 +137,12 @@ stage0_data_cleaning <- function(cohort){
   }
   ## cov_num_gp_consultation
   ## define cov_cat_gp_consultation
-  ## truncated gp consultation to the maximum follow up days of the study
+  ## truncated gp consultation to 365 days
   input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 365, "Greater than 365", "less than or equal to 365")
   input <- input%>%mutate(cov_num_gp_consultation_truncated = 
                             ifelse(cov_num_gp_consultation>365, 365, cov_num_gp_consultation))%>%
-    rename(sub_num_gp_consultation = cov_num_gp_consultation) # rename so it is not included in modelling but only for exploration
+                  rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
+                  rename(sub_cat_gp_consultation = cov_cat_gp_consultation) # rename so it is not included in modelling but only for exploration
   #a <- input%>%dplyr::select(contains("gp")); View(a)
   
   ################################################################################
@@ -182,7 +183,7 @@ stage0_data_cleaning <- function(cohort){
                                           "Obese II (35-39.9)", "Obese III (40+)"))
   
   input$cov_cat_multimorbidity <- ordered(input$cov_cat_multimorbidity, 
-                                          levels = c("0 (no disease)", "1 (one or two diseases)", "2 (more than two diseases)"))
+                                          levels = c("0 (no disease)", "1 (one disease)", "2 (two or more diseases)"))
 
   ## cov_cat_smoking_status-------------------------------------------------------
   table(input$cov_cat_smoking_status)
