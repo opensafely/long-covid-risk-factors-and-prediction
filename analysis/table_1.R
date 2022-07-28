@@ -114,11 +114,25 @@ if (cohort == "all_cohorts") {
 # Multi-morbidity could be redefined as discussed in a previous meeting
 # Possibly to a Multi-morbidity (yes/no) with yes if 2 or more diseases
 
+## Response 1:
+## Multi-morbidity now updated to three categories: 
+## 0 (no disease), 1(one disease), 2(two or more diseases)
+## This change is in stage0_data_cleaning
+
 # Comment 2:
 # Why is there a need to have both GP consultation and GP consultation truncated
 # Why the truncated version is truncated at 12?
+
+## Response 2:
+## Good question.
+## This was intended to describe whether the GP consultation is frequent or not, agreed it is subjective
+## Re-thinking about it, currently exploring the truncation to 365 days as GP consultation is defined
+## as number of consultation 12 months prior to the baseline 
 
 # Note:
 # inter_quartile_range for GP consultation or *_truncated is 0 which is odd.
 # However when looking at the dummy data, both GP consultation and its truncated version
 # are made of many 0s. Could there be an issue in the study definition?
+
+## Response to note: this is due to the dummy data generation mechanism for this variable
+## not neccesarily the case for real data

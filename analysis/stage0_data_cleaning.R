@@ -18,8 +18,8 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
-  cohort <- "vaccinated"    # vaccinated population
+  cohort <- "all"           # all eligible population
+  #cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
@@ -38,6 +38,7 @@ stage0_data_cleaning <- function(cohort){
   index_date=as.Date("2020-12-01")
   input$index_date = as.Date(index_date)
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+  study_days = cohort_end - index_date
   input$cohort_end_date = cohort_end
   
   if(cohort == "vaccinated"){
@@ -111,8 +112,8 @@ stage0_data_cleaning <- function(cohort){
   
   input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
   
-  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>2, "2 (more than two diseases)",
-                                                                         ifelse(cov_num_multimorbidity==1 | cov_num_multimorbidity==2  , "1 (one or two diseases)", "0 (no disease)")))
+  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, "2 (two or more diseases)",
+                                                                         ifelse(cov_num_multimorbidity==1  , "1 (one disease)", "0 (no disease)")))
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
   
@@ -136,12 +137,12 @@ stage0_data_cleaning <- function(cohort){
   }
   ## cov_num_gp_consultation
   ## define cov_cat_gp_consultation
-  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 12, "Greater than 12", "less than or equal to 12")
+  ## truncated gp consultation to the maximum follow up days of the study
+  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 365, "Greater than 365", "less than or equal to 365")
   input <- input%>%mutate(cov_num_gp_consultation_truncated = 
-                            ifelse(cov_num_gp_consultation>12, 12, cov_num_gp_consultation))%>%
+                            ifelse(cov_num_gp_consultation>365, 365, cov_num_gp_consultation))%>%
     rename(sub_num_gp_consultation = cov_num_gp_consultation) # rename so it is not included in modelling but only for exploration
   #a <- input%>%dplyr::select(contains("gp")); View(a)
-  #input$cov_num_gp_consultation[which(input$cov_num_gp_consultation > 12)] = 12
   
   ################################################################################
   ## Part 3. define variable types: factor or numerical                          #
