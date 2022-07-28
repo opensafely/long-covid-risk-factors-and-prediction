@@ -21,7 +21,6 @@ print("Starting stage_5_model_validation.R")
 #load data, with defined weight, and import formula for survival analysis
 source("analysis/stage3_model_selection.R")
 
-# the full model is already loaded in stage3_model_selection, so no need to refit
 which_model = "full"
 
 print("Finished loading fitted cox model!")

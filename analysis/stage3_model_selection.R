@@ -47,7 +47,7 @@ write.csv(selected_covariate_names,
 if(length(selected_covariate_names)>0){
   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == TRUE){
     selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
-    surv_formula <- paste0(
+    surv_formula_selected <- paste0(
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
       "+rms::rcs(cov_num_age,parms=knot_placement)", 
@@ -56,7 +56,7 @@ if(length(selected_covariate_names)>0){
   }
   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == FALSE){
     selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
-    surv_formula <- paste0(
+    surv_formula_selected <- paste0(
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
       "+ cov_num_age", 
@@ -64,13 +64,13 @@ if(length(selected_covariate_names)>0){
     )
   }
   if(!("cov_num_age" %in% selected_covariate_names)){
-    surv_formula <- paste0(
+    surv_formula_selected <- paste0(
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
       "+ cluster(practice_id)")
   }
   print("Selected models: survival formula is")
-  print(surv_formula)
+  print(surv_formula_selected)
 }
 
 if(length(selected_covariate_names)>0){

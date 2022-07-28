@@ -582,65 +582,55 @@ actions:
   ## Validation Cox Model - all 
 
   validation_cox_model_all:
-    run: r:latest analysis/stage5_model_validation_iecv_revised.R all
+    run: r:latest analysis/stage5_model_validation_iecv_revised2.R all
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        val_performance_measure_CSV: output/review/model/val_performance_measures_all.csv
-        val_performance_measure_html: output/review/model/val_performance_measures_all.html
-        val_cal_plot: output/review/model/val_cal_plot_*_all.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_all.svg
+        val_performance_measure_CSV: output/review/model/iecv_performance_measures_all.csv
+        val_performance_measure_html: output/review/model/iecv_performance_measures_all.html
 
   ## Validation Cox Model - all_vax_c 
 
   validation_cox_model_all_vax_c:
-    run: r:latest analysis/stage5_model_validation_iecv_revised.R all_vax_c
+    run: r:latest analysis/stage5_model_validation_iecv_revised2.R all_vax_c
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_c.csv
-        val_performance_measure_html: output/review/model/val_performance_measures_all_vax_c.html
-        val_cal_plot: output/review/model/val_cal_plot_*_all_vax_c.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_all_vax_c.svg
+        val_performance_measure_CSV: output/review/model/iecv_performance_measures_all_vax_c.csv
+        val_performance_measure_html: output/review/model/iecv_performance_measures_all_vax_c.html
 
   ## Validation Cox Model - vaccinated 
 
   validation_cox_model_vaccinated:
-    run: r:latest analysis/stage5_model_validation_iecv_revised.R vaccinated
+    run: r:latest analysis/stage5_model_validation_iecv_revised2.R vaccinated
     needs:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        val_performance_measure_CSV: output/review/model/val_performance_measures_vaccinated.csv
-        val_performance_measure_html: output/review/model/val_performance_measures_vaccinated.html
-        val_cal_plot: output/review/model/val_cal_plot_*_vaccinated.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_vaccinated.svg
+        val_performance_measure_CSV: output/review/model/iecv_performance_measures_vaccinated.csv
+        val_performance_measure_html: output/review/model/iecv_performance_measures_vaccinated.html
 
   ## Validation Cox Model - all_vax_td 
 
   validation_cox_model_all_vax_td:
-    run: r:latest analysis/stage5_model_validation_iecv_revised.R all_vax_td
+    run: r:latest analysis/stage5_model_validation_iecv_revised2.R all_vax_td
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        val_performance_measure_CSV: output/review/model/val_performance_measures_all_vax_td.csv
-        val_performance_measure_html: output/review/model/val_performance_measures_all_vax_td.html
-        val_cal_plot: output/review/model/val_cal_plot_*_all_vax_td.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_all_vax_td.svg
+        val_performance_measure_CSV: output/review/model/iecv_performance_measures_all_vax_td.csv
+        val_performance_measure_html: output/review/model/iecv_performance_measures_all_vax_td.html
 
   ## Validation Cox Model - infected 
 
   validation_cox_model_infected:
-    run: r:latest analysis/stage5_model_validation_iecv_revised.R infected
+    run: r:latest analysis/stage5_model_validation_iecv_revised2.R infected
     needs:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        val_performance_measure_CSV: output/review/model/val_performance_measures_infected.csv
-        val_performance_measure_html: output/review/model/val_performance_measures_infected.html
-        val_cal_plot: output/review/model/val_cal_plot_*_infected.svg
-        val_re_cal_plot: output/review/model/val_re_cal_plot_*_infected.svg
+        val_performance_measure_CSV: output/review/model/iecv_performance_measures_infected.csv
+        val_performance_measure_html: output/review/model/iecv_performance_measures_infected.html
 

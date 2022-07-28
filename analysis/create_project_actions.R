@@ -281,17 +281,16 @@ apply_validation_cox_model_iecv <- function(analysis){
     comment(glue("Validation Cox Model - {analysis}")),
     action(
       name = glue("validation_cox_model_{analysis}"),
-      run = "r:latest analysis/stage5_model_validation_iecv_revised.R",
+      run = "r:latest analysis/stage5_model_validation_iecv_revised2.R",
       arguments = c(analysis),
       needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
         glue("stage1_define_eligible_population_all")}else{
           glue("stage1_define_eligible_population_{analysis}")
         }),
       moderately_sensitive = list(
-        val_performance_measure_CSV = glue("output/review/model/val_performance_measures_{analysis}.csv"),
-        val_performance_measure_html = glue("output/review/model/val_performance_measures_{analysis}.html"),
-        val_cal_plot = glue("output/review/model/val_cal_plot_*_{analysis}.svg"),
-        val_re_cal_plot = glue("output/review/model/val_re_cal_plot_*_{analysis}.svg")
+        val_performance_measure_CSV = glue("output/review/model/iecv_performance_measures_{analysis}.csv"),
+        val_performance_measure_html = glue("output/review/model/iecv_performance_measures_{analysis}.html")
+        #val_cal_plot = glue("output/review/model/iecv_calibration_plot_*_{analysis}.svg") # currently doesn't work as it needs library(pseudo) to be installed 
       )
     )
   )
