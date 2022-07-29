@@ -35,18 +35,28 @@ table_2_wide$diff_all_infected = abs(table_2_wide$event_count.all-table_2_wide$e
 variables <- unique(table_2_wide$subgrp)
 
 for(i in variables){
-  print(i)
-  index = which(table_2_wide$variable == i)
-  
-  index2 <- which(!is.na(table_2_wide$diff_all_vax[index]))
-  table_2_wide$diff_all_vax[index2] = redactor2(table_2_wide$diff_all_vax[index2])
-  
-  index3 <- which(!is.na(table_2_wide$diff_all_infected[index]))
-  table_2_wide$diff_all_infected[index3] = redactor2(table_2_wide$diff_all_infected[index3])
-  
-  index4 <- which(!is.na(table_2_wide$diff_all_vaccinated[index]))
-  table_2_wide$diff_all_vaccinated[index4] = redactor2(table_2_wide$diff_all_infected[index4])
+  for(j in c("covid", "long covid")){
+    print(i)
+    index = which(table_2_wide$subgrp == i & table_2_wide$outcome == j)#RK - I don't think $variable exists in table 2 wide? Should it be subgrp?
+    # YW: changed "variable" to "subgrp" now.
+    
+    index2 <- which(!is.na(table_2_wide$diff_all_vax[index]))
+    table_2_wide$diff_all_vax[index[index2]] = redactor2(table_2_wide$diff_all_vax[index[index2]])
+    
+    index3 <- which(!is.na(table_2_wide$diff_all_infected[index]))
+    table_2_wide$diff_all_infected[index[index3]] = redactor2(table_2_wide$diff_all_infected[index[index3]])
+    
+    index4 <- which(!is.na(table_2_wide$diff_all_vaccinated[index]))
+    table_2_wide$diff_all_vaccinated[index[index4]] = redactor2(table_2_wide$diff_all_vaccinated[index[index4]])#RK redactor function has infected rather than vaccinated
+    #YW: Thanks! - changed to vaccinated now!
+  }
 }
+
+#RK - in the diff columns there are still some counts of 0,1,2 etc- what are these? Do these differences matter?
+# Does anything else need to be redacted?
+
+## YW - I have amended the code above: a) to make the redaction by outcome (covid and long covid)
+## and b) to use index[index2] for example, to redact the relevant row
 
 index <- which(is.na(table_2_wide$diff_all_vax))
 # although person-years do not need to be redacted, I would still do so for now
