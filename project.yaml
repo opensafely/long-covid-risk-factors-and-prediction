@@ -589,6 +589,7 @@ actions:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/iecv_performance_measures_all.csv
         val_performance_measure_html: output/review/model/iecv_performance_measures_all.html
+        val_cal_plot: output/review/model/iecv_calibration_plot_*_all.svg
 
   ## Validation Cox Model - all_vax_c 
 
@@ -600,6 +601,7 @@ actions:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/iecv_performance_measures_all_vax_c.csv
         val_performance_measure_html: output/review/model/iecv_performance_measures_all_vax_c.html
+        val_cal_plot: output/review/model/iecv_calibration_plot_*_all_vax_c.svg
 
   ## Validation Cox Model - vaccinated 
 
@@ -611,6 +613,7 @@ actions:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/iecv_performance_measures_vaccinated.csv
         val_performance_measure_html: output/review/model/iecv_performance_measures_vaccinated.html
+        val_cal_plot: output/review/model/iecv_calibration_plot_*_vaccinated.svg
 
   ## Validation Cox Model - all_vax_td 
 
@@ -622,6 +625,7 @@ actions:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/iecv_performance_measures_all_vax_td.csv
         val_performance_measure_html: output/review/model/iecv_performance_measures_all_vax_td.html
+        val_cal_plot: output/review/model/iecv_calibration_plot_*_all_vax_td.svg
 
   ## Validation Cox Model - infected 
 
@@ -633,4 +637,5 @@ actions:
       moderately_sensitive:
         val_performance_measure_CSV: output/review/model/iecv_performance_measures_infected.csv
         val_performance_measure_html: output/review/model/iecv_performance_measures_infected.html
+        val_cal_plot: output/review/model/iecv_calibration_plot_*_infected.svg
 

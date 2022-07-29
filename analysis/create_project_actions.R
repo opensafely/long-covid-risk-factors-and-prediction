@@ -289,8 +289,8 @@ apply_validation_cox_model_iecv <- function(analysis){
         }),
       moderately_sensitive = list(
         val_performance_measure_CSV = glue("output/review/model/iecv_performance_measures_{analysis}.csv"),
-        val_performance_measure_html = glue("output/review/model/iecv_performance_measures_{analysis}.html")
-        #val_cal_plot = glue("output/review/model/iecv_calibration_plot_*_{analysis}.svg") # currently doesn't work as it needs library(pseudo) to be installed 
+        val_performance_measure_html = glue("output/review/model/iecv_performance_measures_{analysis}.html"),
+        val_cal_plot = glue("output/review/model/iecv_calibration_plot_*_{analysis}.svg") 
       )
     )
   )
