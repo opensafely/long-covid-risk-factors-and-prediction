@@ -59,7 +59,8 @@ study = StudyDefinition(
         "int": {"distribution": "normal", "mean": 25, "stddev": 5},
         "float": {"distribution": "normal", "mean": 25, "stddev": 5},
     },
-    index_date="2020-12-01",
+    #index_date="2020-12-01",
+    index_date = "2020-01-29",
     population=patients.satisfying(
         "registered AND (cov_cat_sex = 'M' OR cov_cat_sex = 'F') AND cov_num_age >= 18 AND cov_num_age <= 105",
         registered=patients.registered_as_of("index_date"),
