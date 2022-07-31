@@ -181,33 +181,33 @@ print("Calibration plot is created successfully!")
 
 svg(paste0("output/review/model/histogram_risks", analysis, ".svg"))
 
-################################################################################
-# Part 4: histogram of risks: adapted from iecv script                          #
-################################################################################
-
-
-risk <- c(pseudos_sorted$risk, 1-loess_pseudo$fit)
-name_risk <- c(rep("Rredicted risk",length(pseudos_sorted$risk)),
-               rep("Observed risk",length(loess_pseudo$fit)))
-df_risk <- data.frame(risk, name_risk)
-# color <- c(rep("grey",length(pseudos_sorted$risk)),
-#            rep("black",length(loess_pseudo$fit)))
-#
-# df_risk$color <- factor(df_risk$color)
-df_risk$name_risk <- factor(df_risk$name_risk)
-# Map smoke to fill, make the bars NOT stacked, and make them semitransparent
-
-# YW: have to check if loess_pseudo$fit should be 1-loess_pseudo$fit
-figure_hist <- ggplot(df_risk, aes(x=risk, fill=name_risk)) +
-  geom_histogram(position="identity", alpha=0.4, bins = 30) +
-  labs(title="",x="Risk of long COVID", y = "Count")
-figure_hist
-bin_count <- ggplot_build(figure_hist)$data[[1]]$count
-bin_count <- data.frame(seq(1:length(bin_count)), bin_count)
-names(bin_count) <- c("bin", "count")
-ggsave(file=paste0("output/review/model/risk_histogram_", analysis, ".svg"),
-       plot=figure_hist, width=16, height=8)
-write.csv(bin_count, file=paste0("output/review/descriptives/risk_hist_bin_count_", analysis,".csv"), row.names = F)
-outfile=paste0("risk_hist_bin_count_", analysis)
-rmarkdown::render("analysis/compilation/compiled_hist_bin_count.Rmd",
-                  output_file=outfile,output_dir="output/review/descriptives")
+# ################################################################################
+# # Part 4: histogram of risks: adapted from iecv script                          #
+# ################################################################################
+# 
+# 
+# risk <- c(pseudos_sorted$risk, 1-loess_pseudo$fit)
+# name_risk <- c(rep("Rredicted risk",length(pseudos_sorted$risk)),
+#                rep("Observed risk",length(loess_pseudo$fit)))
+# df_risk <- data.frame(risk, name_risk)
+# # color <- c(rep("grey",length(pseudos_sorted$risk)),
+# #            rep("black",length(loess_pseudo$fit)))
+# #
+# # df_risk$color <- factor(df_risk$color)
+# df_risk$name_risk <- factor(df_risk$name_risk)
+# # Map smoke to fill, make the bars NOT stacked, and make them semitransparent
+# 
+# # YW: have to check if loess_pseudo$fit should be 1-loess_pseudo$fit
+# figure_hist <- ggplot(df_risk, aes(x=risk, fill=name_risk)) +
+#   geom_histogram(position="identity", alpha=0.4, bins = 30) +
+#   labs(title="",x="Risk of long COVID", y = "Count")
+# figure_hist
+# bin_count <- ggplot_build(figure_hist)$data[[1]]$count
+# bin_count <- data.frame(seq(1:length(bin_count)), bin_count)
+# names(bin_count) <- c("bin", "count")
+# ggsave(file=paste0("output/review/model/risk_histogram_", analysis, ".svg"),
+#        plot=figure_hist, width=16, height=8)
+# write.csv(bin_count, file=paste0("output/review/descriptives/risk_hist_bin_count_", analysis,".csv"), row.names = F)
+# outfile=paste0("risk_hist_bin_count_", analysis)
+# rmarkdown::render("analysis/compilation/compiled_hist_bin_count.Rmd",
+#                   output_file=outfile,output_dir="output/review/descriptives")
