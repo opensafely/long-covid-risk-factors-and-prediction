@@ -74,6 +74,8 @@ table2_creation <- function(cohort){
   
   outcome <- c("covid", "long covid")
   subgrp <- subgrp_level <- c("main","main")
+  # #hist(data$person_days)
+  data <- data %>% filter(person_days >= 1 & person_days <= 486)
   table_2[1,4:8] <- compute_incidence_rate(covid_count, person_days_total)
   table_2[2,4:8] <- compute_incidence_rate(long_covid_count, person_days_total)
   table_2$outcome <- outcome
@@ -83,9 +85,14 @@ table2_creation <- function(cohort){
   demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
                     "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker",
                     "cov_cat_post_viral_fatigue")
+
   
-  # #hist(data$person_days)
-  data <- data %>% filter(person_days >= 1 & person_days <= 486)
+  #RK - not sure if this is just a dummy data check but if you think it could be in
+  #the real data, should this be moved to before calculating the main IR on line 77/78?
+  
+  #YW - it could be move to before line 77/78 to save some computing time
+  #although it would not make a difference in results it is before or after
+  
   
   ##start.time = Sys.time()
  
@@ -124,10 +131,20 @@ table2_creation <- function(cohort){
   table(table_2$subgrp)
 
   # redaction by subgroup
+  #RK - the redactor function looks like it's doing what it needs to do.
+  #Currently you put both the long covid and covid counts in as one but should these be redacted separately
+  #as these are separate outcomes? Otherwise you might redact one level in long covid then when it tries to 
+  #redact the next smallest it might do it in the covid outcome which won't remove the disclosure.
+  
+  # YW: You are right! This is now amended by using redactor for covid and long covid seperately
+  
+  
   for(i in demographics){
-    print(i)
-    index = which(table_2$subgrp == i)
-    table_2$event_count[index] <- redactor2(table_2$event_count[index])
+    for(j in c("covid", "long covid")){
+      print(i)
+      index = which(table_2$subgrp == i & table_2$outcome == j)
+      table_2$event_count[index] <- redactor2(table_2$event_count[index])
+    }
   }
   col_names <- c("event_count","person_years","ir", "ir_lower", "ir_upper")
   #table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
