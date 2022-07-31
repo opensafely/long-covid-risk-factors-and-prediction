@@ -110,7 +110,7 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
         ## Healthcare worker    
         cov_cat_healthcare_worker=patients.with_healthcare_worker_flag_on_covid_vaccine_record(
                 returning='binary_flag', 
-                return_expectations={"incidence": 0.01},
+                return_expectations={"incidence": 0.2},
         ),
     )
     clinical_variables = dict(
