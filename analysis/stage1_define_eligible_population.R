@@ -8,9 +8,9 @@ library(readr); library(dplyr); library(htmlTable)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"     # infected population
+  cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -23,7 +23,8 @@ stage1_eligibility <- function(cohort){
   ################################################################################
   
   steps <- c("starting point","dead before index date", "missing region", "missing sex", 
-             "missing age", "age <18y", "age>105y", "ethnicity", "long covid before cohort start")
+             "missing age", "age <18y", "age>105y", "ethnicity", 
+             "covid before index date","long covid before cohort start")
   ## starting point
   flow_chart_n <- nrow(input)
   
@@ -58,6 +59,13 @@ stage1_eligibility <- function(cohort){
   ## Ethnicity: remove if missing
   input <- input%>%filter(!is.na(cov_cat_ethnicity))
   flow_chart_n <- c(flow_chart_n, nrow(input))
+  
+  # ## COVID history
+  input <- input%>%filter(!(sub_cat_covid_history==TRUE))
+  input<- input%>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
+    mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
+  flow_chart_n <- c(flow_chart_n, nrow(input))
+  table(input$sub_cat_covid_history)
   
   # ##table(input$cov_cat_previous_covid)
   # input <- input%>%filter(sub_cat_previous_covid == "No COVID code")

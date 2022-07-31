@@ -16,9 +16,9 @@ source("analysis/functions/redactor2.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"          # all eligible population
+  #cohort <- "all"          # all eligible population
   #cohort <- "vaccinated"   # vaccinated population
-  #cohort <- "infected"      # infected population
+  cohort <- "infected"      # infected population
 }else{
   cohort <- args[[1]]
 }

@@ -18,7 +18,7 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"       # infected population
 }else{
@@ -49,6 +49,8 @@ stage0_data_cleaning <- function(cohort){
     input <- input %>% filter(!is.na(out_covid_date) &out_covid_date>= index_date & out_covid_date <= cohort_end_date)
     input$index_date = input$out_covid_date
   }
+  
+
   
   # Step 1. Define variables: COVID infection-------------------------------------
   # create an indicator variable for covid infection
