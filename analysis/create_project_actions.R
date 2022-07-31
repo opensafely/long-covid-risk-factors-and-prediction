@@ -254,7 +254,10 @@ apply_evaluation_cox_model <- function(analysis){
       moderately_sensitive = list(
         performance_measure_CSV = glue("output/review/model/performance_measures_*_{analysis}.csv"),
         performance_measure_HTML = glue("output/review/model/performance_measures_*_{analysis}.html"),
-        survival_plot = glue("output/review/model/survival_plot_*_{analysis}.svg")
+        survival_plot = glue("output/review/model/survival_plot_*_{analysis}.svg"),
+        calibration_plot = glue("output/review/model/calibration_plot_{analysis}.svg"),
+        risk_histogram = glue("output/review/model/risk_histogram_{analysis}.svg"),
+        risk_histogram_bin_count = glue("output/review/descriptives/risk_hist_bin_count_{analysis}*")
       )
     )
   )

@@ -537,6 +537,9 @@ actions:
         performance_measure_CSV: output/review/model/performance_measures_*_all.csv
         performance_measure_HTML: output/review/model/performance_measures_*_all.html
         survival_plot: output/review/model/survival_plot_*_all.svg
+        calibration_plot: output/review/model/calibration_plot_all.svg
+        risk_histogram: output/review/model/risk_histogram_all.svg
+        risk_histogram_bin_count: output/review/descriptives/risk_hist_bin_count_all*
 
   evaluation_cox_model_all_vax_c:
     run: r:latest analysis/stage4_model_evaluation.R all_vax_c
@@ -547,6 +550,9 @@ actions:
         performance_measure_CSV: output/review/model/performance_measures_*_all_vax_c.csv
         performance_measure_HTML: output/review/model/performance_measures_*_all_vax_c.html
         survival_plot: output/review/model/survival_plot_*_all_vax_c.svg
+        calibration_plot: output/review/model/calibration_plot_all_vax_c.svg
+        risk_histogram: output/review/model/risk_histogram_all_vax_c.svg
+        risk_histogram_bin_count: output/review/descriptives/risk_hist_bin_count_all_vax_c*
 
   evaluation_cox_model_vaccinated:
     run: r:latest analysis/stage4_model_evaluation.R vaccinated
@@ -557,6 +563,9 @@ actions:
         performance_measure_CSV: output/review/model/performance_measures_*_vaccinated.csv
         performance_measure_HTML: output/review/model/performance_measures_*_vaccinated.html
         survival_plot: output/review/model/survival_plot_*_vaccinated.svg
+        calibration_plot: output/review/model/calibration_plot_vaccinated.svg
+        risk_histogram: output/review/model/risk_histogram_vaccinated.svg
+        risk_histogram_bin_count: output/review/descriptives/risk_hist_bin_count_vaccinated*
 
   evaluation_cox_model_all_vax_td:
     run: r:latest analysis/stage4_model_evaluation.R all_vax_td
@@ -567,6 +576,9 @@ actions:
         performance_measure_CSV: output/review/model/performance_measures_*_all_vax_td.csv
         performance_measure_HTML: output/review/model/performance_measures_*_all_vax_td.html
         survival_plot: output/review/model/survival_plot_*_all_vax_td.svg
+        calibration_plot: output/review/model/calibration_plot_all_vax_td.svg
+        risk_histogram: output/review/model/risk_histogram_all_vax_td.svg
+        risk_histogram_bin_count: output/review/descriptives/risk_hist_bin_count_all_vax_td*
 
   evaluation_cox_model_infected:
     run: r:latest analysis/stage4_model_evaluation.R infected
@@ -577,6 +589,9 @@ actions:
         performance_measure_CSV: output/review/model/performance_measures_*_infected.csv
         performance_measure_HTML: output/review/model/performance_measures_*_infected.html
         survival_plot: output/review/model/survival_plot_*_infected.svg
+        calibration_plot: output/review/model/calibration_plot_infected.svg
+        risk_histogram: output/review/model/risk_histogram_infected.svg
+        risk_histogram_bin_count: output/review/descriptives/risk_hist_bin_count_infected*
 
   ## Validation Cox model 
   ## Validation Cox Model - all 

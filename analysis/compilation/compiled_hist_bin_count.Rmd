@@ -15,7 +15,7 @@ knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ```
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-df=read_csv("output/review/descriptives/hist_bin_count.csv")
+df=read_csv(paste0("output/review/descriptives/", outfile,".csv"))
 df %>%
     datatable(extensions = 'Buttons',
               options = list(dom = 'Blfrtip',
