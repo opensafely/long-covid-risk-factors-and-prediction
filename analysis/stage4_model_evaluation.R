@@ -15,6 +15,7 @@ source("analysis/stage3_model_selection.R")
 
 print("Starting stage_4_model_evaluation.R")
 
+fs::dir_create(here::here("output", "review", "descriptives"))
 fs::dir_create(here::here("output", "review", "model"))
 
 # if(which_model == "selected"){
