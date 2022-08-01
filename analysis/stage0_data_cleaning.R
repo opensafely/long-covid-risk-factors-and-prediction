@@ -20,7 +20,7 @@ args <- commandArgs(trailingOnly=TRUE)
 if(length(args)==0){
   #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"       # infected population
+  cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -49,8 +49,6 @@ stage0_data_cleaning <- function(cohort){
     input <- input %>% filter(!is.na(out_covid_date) &out_covid_date>= index_date & out_covid_date <= cohort_end_date)
     input$index_date = input$out_covid_date
   }
-  
-
   
   # Step 1. Define variables: COVID infection-------------------------------------
   # create an indicator variable for covid infection
@@ -230,7 +228,7 @@ stage0_data_cleaning <- function(cohort){
   input_factor_vars <- input_factor_vars %>% mutate(cov_cat_ethnicity = recode(cov_cat_ethnicity,
                                                         Missing ="Missing or Other",
                                                         Other = "Missing or Other"))
-  # input_factor_vars <- input_factor_vars %>% 
+  # input_factor_vars <- input_factor_vars %>%
   #   mutate(cov_cat_ethnicity = case_when(cov_cat_ethnicity == "Missing" ~ "Missing or Other",
   #                                        cov_cat_ethnicity == "Other" ~ "Missing or Other"))
   
