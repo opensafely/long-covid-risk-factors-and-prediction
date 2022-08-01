@@ -135,4 +135,4 @@ if (cohort == "all_cohorts") {
 # are made of many 0s. Could there be an issue in the study definition?
 
 ## Response to note: this is due to the dummy data generation mechanism for this variable
-## not neccesarily the case for real data
+## not necessarily the case for real data

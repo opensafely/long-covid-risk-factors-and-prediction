@@ -77,8 +77,8 @@ table_1_wide[index,3:17] = "[redacted]"
 # Expect for the infection cohort, other numbers seemed ok for all and vax cohorts for that category.
 # Maybe this infection NA for sub_cat_covid_history = TRUE needs to be taken into account when applying redaction.
 
-##Response: patients with sub_cat_covid_history = TRUE have now all be excluded from the analysis
-##          and so this category has nown been removed
+##Response: patients with sub_cat_covid_history = TRUE have now all been excluded from the analysis
+##          and so this category has now been removed
 
 # make table 1 a single file
 write.csv(table_1_wide, file="output/review/descriptives/table_1_combined.csv", row.names = F)
