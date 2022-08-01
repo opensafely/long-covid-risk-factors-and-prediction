@@ -29,7 +29,6 @@ stage0_data_cleaning <- function(cohort){
   input <- read_feather(paste0("output/input_", cohort, ".feather"))
   
   # remove ra-sle-psoriasis because they have been included individually
-  
   input <- input %>% select(-cov_cat_ra_sle_psoriasis)
   ################################################################################
   ## Part 1. define index date and remove variables, specify date variable       #
@@ -190,7 +189,6 @@ stage0_data_cleaning <- function(cohort){
   levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
   input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
   table(input$cov_cat_smoking_status)
-  
   
   ## cov_cat_age_group------------------------------------------------------------
   ## Define age groups
