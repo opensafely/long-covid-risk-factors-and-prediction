@@ -72,6 +72,7 @@ if(length(index3)!=0){
   surv_formula <- paste0(surv_formula, "+ rms::rcs(cov_num_age,parms=knot_placement)") 
   #surv_formula_linear <- paste0(surv_formula, "+ cov_num_age") 
 }
+#RK - where index3 is defined has been commented out? Do you still need this?
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)

@@ -18,9 +18,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"       # infected population
+  #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -36,6 +36,7 @@ stage0_data_cleaning <- function(cohort){
   ################################################################################
   ## define cohort start date:
   index_date=as.Date("2020-12-01")
+  #RK - in your study defs you've set index date as "2020-01-29"? Does this need to change?
   input$index_date = as.Date(index_date)
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
   input$cohort_end_date = cohort_end
@@ -59,6 +60,9 @@ stage0_data_cleaning <- function(cohort){
   input$sub_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), "no_infection", "non_hospitalised")
   index = which(!is.na(input$hospital_covid))  # index for hospitalised covid
   input$sub_cat_covid_phenotype[index] <- "hospitalised"
+  
+  #RK - not that it matters if you're not using it but this isn't how hospitalised covid has been defined in our current post covid
+  # events opensafely projects
   
   ## Step 2. Remove variables which are not included in the prediction------------
   ## remove variables start with snomed
@@ -87,6 +91,12 @@ stage0_data_cleaning <- function(cohort){
   }
   input[vars_dates] = lapply(input[vars_dates], convert_to_date)
   lapply(input[vars_dates], is.Date)
+  
+  #if you wanted to simplify the above you could use something like
+  #for (i in colnames(input)[grepl("date",colnames(input))]) {
+  #input[,i] <- as.Date(input[,i])
+  #}
+
   
   ################################################################################
   ## Part 2 define multimorbidity                                                #
@@ -163,6 +173,8 @@ stage0_data_cleaning <- function(cohort){
                                 )
   
   ## cov_cat_imd by quintile------------------------------------------------------
+  #RK - do you get any missing deprivations in your real data? I'm not sure it's something we've included
+  # in other projects as it shoudln't be missing I don't think. Is this just a dummy data thing?
   table(input$cov_cat_imd)
   levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
   levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==1] <-"1 (most deprived)"
@@ -251,6 +263,10 @@ stage0_data_cleaning <- function(cohort){
   input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
     mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "Missing")) %>%
     mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
+  
+  #RK - should sub_cat_covid_history be a TRUE/FALSE variable - I'm not sure that 'Missing' makes sense?
+  #For the all/vaccinated population you don't remove anyone so anyone without a covid date should be set to FALSE
+  #and then for the infected population everyone with covid prior to start date is removed so everyone should be FALSE?
   
   print("Finished replacing missing values with a Missing category!")
   
