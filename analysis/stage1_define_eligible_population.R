@@ -8,8 +8,8 @@ library(readr); library(dplyr); library(htmlTable)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
-  #cohort <- "vaccinated"    # vaccinated population
+  #cohort <- "all"           # all eligible population
+  cohort <- "vaccinated"    # vaccinated population
   cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
@@ -17,13 +17,21 @@ if(length(args)==0){
 
 stage1_eligibility <- function(cohort){
   input <- read_rds(paste0("output/input_stage0_", cohort, ".rds"))
-  
+  ## Specify study period
+  cohort_start = as.Date("2020-12-01", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
+  # YW: in some cohort the cohort start date is different from the index date
+  #  for the vaccinated population and infected population, their index dates were 2nd vaccination + 14 days, and first covid dates during the follow-up
+  cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+  input$cohort_end_date = cohort_end
+  #RK - I would move any hard coded dates to to the top of the script so you don't have to be searching through
+  #scripts to find/check what dates you've been using
+  # YW: this has now been moved to the top of the script
   ################################################################################
   ## Part 1. Define eligible population                                          #
   ################################################################################
   
   steps <- c("starting point","dead before index date", "missing region", "missing sex", 
-             "missing age", "age <18y", "age>105y", "ethnicity", 
+             "missing age", "age <18y", "age>105y",  
              "covid before index date", "long covid before cohort start")
   ## starting point
   flow_chart_n <- nrow(input)
@@ -34,12 +42,13 @@ stage1_eligibility <- function(cohort){
   
   #input$cov_cat_region[1:10] = NA # impose NA for testing
   ## Region: remove if missing
-  input <- input%>%filter(!is.na(cov_cat_region))
+  #input <- input%>%filter(!is.na(cov_cat_region))
+  input2 <- input%>%filter(cov_cat_region!="Missing") # keep if not missing
   table(input$cov_cat_region)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
   #RK - in stage 0 you set NA's to 'Missing' so do you want to be removing 'Missing' instead?
-  
+  #YW - this is now changed to remove the "Missing" category for region
   ## Sex: remove if missing
   input <- input%>%filter(!is.na(cov_cat_sex))
   table(input$cov_cat_sex)
@@ -58,13 +67,14 @@ stage1_eligibility <- function(cohort){
   input <- input%>%filter(cov_num_age <=105)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
-  ## Ethnicity: remove if missing
-  input <- input%>%filter(!is.na(cov_cat_ethnicity))
-  flow_chart_n <- c(flow_chart_n, nrow(input))
+  # ## Ethnicity: remove if missing
+  # input <- input%>%filter(!is.na(cov_cat_ethnicity))
+  # flow_chart_n <- c(flow_chart_n, nrow(input))
   #RK - same as for region, you set NA values to "Missing or Other" so what are you trying to remove?
   #Do you want to remove people with missing ethnicity or just checking for NA values because there shouldn't be any
   #and if there are any NA values then something has gone wrong in a previous step?
-  
+  #YW response - You are right! Missing ethnicity is incorporated as a category, and it is also
+  # no supposed to be removed. I have commented these out
   
   ## COVID history
   input <- input%>%filter(!(sub_cat_covid_history==TRUE))
@@ -93,8 +103,9 @@ stage1_eligibility <- function(cohort){
   #RK- in your study defs your index date is "2020-01-29"? Does this need to be changed? If you want to use any date variables
   #it might be better to have them at the top of the script to make it easier to check which dates are being used?
   #Should the below criteria be for individual index date rather than cohort start date?
-  
-  cohort_start = as.Date("2020-12-01", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
+  #YW - the cohort start date is now changed to "2020-01-29", 
+  #also the specification of cohort start/end dates have now been moved to the top of the script
+ 
   input <- input%>%filter(out_first_long_covid_date >= cohort_start |
                             is.na(out_first_long_covid_date))
   flow_chart_n <- c(flow_chart_n, nrow(input))
@@ -106,7 +117,6 @@ stage1_eligibility <- function(cohort){
   #RK - need to check whether you want to be removing those who have region set to 'Missing'
   #as by this script no one should have any NA values in region
   
-  
   ## redefine age group
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
@@ -115,16 +125,12 @@ stage1_eligibility <- function(cohort){
   input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
   
   #RK - this was defined in stage 0 - why are you redefining it here?
+  #YW - A good question, this is because the dummy data have some observations under 18, and by removing them,
+  #     the number of levels in cov_cat_age_group has changed
   
   ################################################################################
   #Part 2. Define follow-up end date and construct survival data for long covid  #
   ################################################################################
-  
-  ## study period: index date = "2020-12-01", end date = "2022-03-31"
-  cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
-  input$cohort_end_date = cohort_end
-  #RK - I would move any hard coded dates to to the top of the script so you don't have to be searching through
-  #scripts to find/check what dates you've been using
   
   ## To improve efficiency: keep only necessary variables
   variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
@@ -150,7 +156,7 @@ stage1_eligibility <- function(cohort){
                                                        !is.na(out_first_long_covid_date)), 1, 0)) %>%
   ## define 2nd vaccination as an intervening event - a time-dependent variable
   ## add 14 days as buffer to allow vaccination to take effects
-                                  mutate(vax2_surv = ifelse(vax_covid_date2 >= index_date & 
+                                  mutate(vax2_surv = ifelse((vax_covid_date2 +14)>= index_date & 
                                                             (vax_covid_date2 + 14) <= fup_end_date &
                                                             !is.na(vax_covid_date2) & 
                                                             ((vax_covid_date2+14) <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
@@ -158,6 +164,7 @@ stage1_eligibility <- function(cohort){
   #RK - should line 139 vax_covid_date2 >= index_date instead be (vax_covid_date2 + 14) >= index_date otherwise you
   #might not be inlcuding people who were vaccinated prior to index but by index were classed as vaccinated as the 14 days had
   #passed by then
+  #YW - agree, and have changed to (vax_covid_date2 +14) >= index_date
   ## Define survival data for eligible -----------------------------------------------------
   if(cohort == "all"){
     ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 

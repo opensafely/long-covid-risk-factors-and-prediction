@@ -18,8 +18,8 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
-  #cohort <- "vaccinated"    # vaccinated population
+  #cohort <- "all"           # all eligible population
+  cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
@@ -35,8 +35,9 @@ stage0_data_cleaning <- function(cohort){
   ## Part 1. define index date and remove variables, specify date variable       #
   ################################################################################
   ## define cohort start date:
-  index_date=as.Date("2020-12-01")
+  index_date=as.Date("2020-01-29")
   #RK - in your study defs you've set index date as "2020-01-29"? Does this need to change?
+  #YW response - this is now changed to 2020-01-29
   input$index_date = as.Date(index_date)
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
   input$cohort_end_date = cohort_end
@@ -93,10 +94,11 @@ stage0_data_cleaning <- function(cohort){
   lapply(input[vars_dates], is.Date)
   
   #if you wanted to simplify the above you could use something like
-  #for (i in colnames(input)[grepl("date",colnames(input))]) {
-  #input[,i] <- as.Date(input[,i])
-  #}
-
+  # for (i in colnames(input)[grepl("date",colnames(input))]) {
+  # input[,i] <- as.Date(input[,i], format = "%Y-%m-%d")
+  # }
+  # Somehow this doesnt work on mine..and so have sticked to the above
+  
   
   ################################################################################
   ## Part 2 define multimorbidity                                                #
@@ -174,6 +176,7 @@ stage0_data_cleaning <- function(cohort){
   
   ## cov_cat_imd by quintile------------------------------------------------------
   #RK - do you get any missing deprivations in your real data? I'm not sure it's something we've included
+  #YW responses - Yes, I do have some deprivations in the real data, and they are included as a catgory.
   # in other projects as it shoudln't be missing I don't think. Is this just a dummy data thing?
   table(input$cov_cat_imd)
   levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
@@ -261,10 +264,11 @@ stage0_data_cleaning <- function(cohort){
   
   ## sub_cat_covid_history: two categories: false and missing, as patients with covid history was excluded
   input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
-    mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "Missing")) %>%
+    mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "FALSE")) %>%
     mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
   
   #RK - should sub_cat_covid_history be a TRUE/FALSE variable - I'm not sure that 'Missing' makes sense?
+  #YW - agreed and changed "Missing" to "FALSE" for sub_cat_covid_history
   #For the all/vaccinated population you don't remove anyone so anyone without a covid date should be set to FALSE
   #and then for the infected population everyone with covid prior to start date is removed so everyone should be FALSE?
   
