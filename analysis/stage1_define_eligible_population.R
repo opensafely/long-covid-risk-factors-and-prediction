@@ -33,6 +33,7 @@ stage1_eligibility <- function(cohort){
   steps <- c("starting point","dead before index date", "missing region", "missing sex", 
              "missing age", "age <18y", "age>105y",  
              "covid before index date", "long covid before cohort start")
+
   ## starting point
   flow_chart_n <- nrow(input)
   
@@ -85,6 +86,13 @@ stage1_eligibility <- function(cohort){
   #RK - copied from stage 0 comment: should sub_cat_covid_history be a TRUE/FALSE variable - I'm not sure that 'Missing' makes sense?
   #This is a date variable so if they don't have a date, its not that they're missing information (as you don't expect
   #the whole population to have a covid date), they just never had covid so should they actually be FALSE?
+  
+  # ## COVID history
+  input <- input%>%filter(!(sub_cat_covid_history==TRUE))
+  input<- input%>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
+    mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
+  flow_chart_n <- c(flow_chart_n, nrow(input))
+  table(input$sub_cat_covid_history)
   
   # ##table(input$cov_cat_previous_covid)
   # input <- input%>%filter(sub_cat_previous_covid == "No COVID code")
