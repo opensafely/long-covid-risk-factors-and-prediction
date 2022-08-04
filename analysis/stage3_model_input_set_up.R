@@ -178,13 +178,13 @@ surv_formula_age_spl_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex",
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ cluster(practice_id)"
+  "+ strat(sub_cat_region)"
 )
 
 ## Age sex model
 surv_formula_age_linear_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
-  "cov_cat_sex", "+ cov_num_age", "+ cluster(practice_id)"
+  "cov_cat_sex", "+ cov_num_age", "+ strat(sub_cat_region)"
 )
 
 ## Age sex model
@@ -192,11 +192,11 @@ if(analysis == "all_vax_td"){
   surv_formula_age_spl_sex <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     "cov_cat_sex", "+rms::rcs(cov_num_age,parms=knot_placement)", 
-    "+ cov_cat_ie.status", "+ cluster(practice_id)"
+    "+ cov_cat_ie.status", "+ strat(sub_cat_region)"
   )
   surv_formula_age_linear_sex <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
-    "cov_cat_sex", "+ cov_num_age", "+ cov_cat_ie.status", "+ cluster(practice_id)"
+    "cov_cat_sex", "+ cov_num_age", "+ cov_cat_ie.status", "+ strat(sub_cat_region)"
   )
 }
 
@@ -205,7 +205,7 @@ surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ cluster(practice_id)"
+  "+ strat(sub_cat_region)"
 )
 
 ## full model: age is added as a linear predictor
@@ -213,7 +213,7 @@ surv_formula_lp <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+ cov_num_age", 
-  "+ cluster(practice_id)"
+  "+ strat(sub_cat_region)"
 )
 
 # the following lines are not needed because ie.status has been specified as a covariate if analysis == "all_vax_td"
@@ -222,14 +222,14 @@ surv_formula_lp <- paste0(
 #     "Surv(lcovid_surv, lcovid_cens) ~ ",
 #     paste(covariate_names, collapse = "+"),
 #     "+rms::rcs(cov_num_age,parms=knot_placement)", 
-#     "+ cluster(practice_id)"
+#     "+ strat(sub_cat_region)"
 #   )
 #   ## age is added as a linear predictor
 #   surv_formula_lp <- paste0(
 #     "Surv(lcovid_surv, lcovid_cens) ~ ",
 #     paste(covariate_names, collapse = "+"),
 #     "+ cov_num_age", 
-#     "+ cluster(practice_id)"
+#     "+ strat(sub_cat_region)"
 #   )
 # }
 ## only predictors
@@ -242,3 +242,4 @@ print(paste0("survival formula: ", surv_formula))
 print("Part 3: define survival analysis formula is completed!")
 
 print("End of stage3_model_input_setup.R")
+

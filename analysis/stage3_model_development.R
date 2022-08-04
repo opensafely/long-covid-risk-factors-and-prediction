@@ -40,3 +40,5 @@ print("Finished stage3_model_development.R")
 
 #RK - you're getting large robust SE's in your results - I ran your model without +cluster(practice_id)
 #and the robust SE's were then fine - potentially something to invetsigate?
+
+#YW - That's a good point! I am now trying to use strat(sub_cat_region) instead

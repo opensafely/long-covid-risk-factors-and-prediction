@@ -199,14 +199,14 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   # Part 6. Internal validation using bootstrap validation  #
   ###########################################################
   
-  #  perform internal validation using bootstrap validation. 
-  
+  #  perform internal validation using bootstrap validation.
+
   set.seed(12345) # to ensure reproducibility
-  boot_1 <- validate(fit_cox_model,B=100) 
+  boot_1 <- validate(fit_cox_model,B=100, u=365,dxy=TRUE) # u must be specified if strata is used
   # cal <-calibrate(fit_cox_model,B=100,bw=TRUE) # also repeats fastbw
   # plot(cal)
   boot_1
-  
+
   # Note that this gives Dxy rather than c, however Dxy = 2*(c-0.5), i.e. c=(Dxy/2)+0.5
   pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-original"
   pm[nrow(pm),2] <- round((boot_1[1,1]+1)/2,3)
@@ -214,7 +214,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   pm[nrow(pm),2] <- round((boot_1[1,4]+1)/2,3)
   pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-corrected"
   pm[nrow(pm),2] <- round((boot_1[1,5]+1)/2,3)
-  
+
   # Calibration slope
   pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-original"
   pm[nrow(pm),2] <- round((boot_1[3,1]+1)/2,3)
@@ -222,7 +222,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   pm[nrow(pm),2] <- round((boot_1[3,4]+1)/2,3)
   pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
   pm[nrow(pm),2] <- round((boot_1[3,5]+1)/2,3)
-  
+
   print(paste0("Part 6. Internal validation using bootstrap validation is completed successfully for ",
                which_model, " ", analysis, "!"))
   
@@ -233,7 +233,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   # Shrinkage & optimism adjusted AUC, CITL etc. using bootstrapping with predictor selection methods
   k10 <- qchisq(0.20,1,lower.tail=FALSE)
   set.seed(12345) # to ensure reproducibility
-  boot_2 <- validate(fit_cox_model,B=100,rule="aic",aics=k10)
+  boot_2 <- validate(fit_cox_model,B=100,rule="aic",aics=k10, u=365, dxy=TRUE)
   boot_2
   
   # Convert Dxy to c-index
