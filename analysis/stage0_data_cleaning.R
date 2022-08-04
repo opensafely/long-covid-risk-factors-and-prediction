@@ -19,8 +19,8 @@ args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
   #cohort <- "all"           # all eligible population
-  cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"       # infected population
+  #cohort <- "vaccinated"    # vaccinated population
+  cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -29,7 +29,6 @@ stage0_data_cleaning <- function(cohort){
   input <- read_feather(paste0("output/input_", cohort, ".feather"))
   
   # remove ra-sle-psoriasis because they have been included individually
-  
   input <- input %>% select(-cov_cat_ra_sle_psoriasis)
   ################################################################################
   ## Part 1. define index date and remove variables, specify date variable       #
@@ -38,6 +37,7 @@ stage0_data_cleaning <- function(cohort){
   index_date=as.Date("2020-12-01")
   input$index_date = as.Date(index_date)
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+  study_days = cohort_end - index_date
   input$cohort_end_date = cohort_end
   
   if(cohort == "vaccinated"){
@@ -111,8 +111,8 @@ stage0_data_cleaning <- function(cohort){
   
   input_select <- input_select %>% mutate(cov_num_multimorbidity = rowSums(.[ , logical_cols]))
   
-  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>2, "2 (more than two diseases)",
-                                                                         ifelse(cov_num_multimorbidity==1 | cov_num_multimorbidity==2  , "1 (one or two diseases)", "0 (no disease)")))
+  input_select <- input_select %>% mutate(cov_cat_multimorbidity =ifelse(cov_num_multimorbidity>=2, "2 (two or more diseases)",
+                                                                         ifelse(cov_num_multimorbidity==1, "1 (one disease)", "0 (no disease)")))
   
   input_select <- input_select %>% dplyr::select(c(patient_id, cov_cat_multimorbidity))
   
@@ -136,12 +136,13 @@ stage0_data_cleaning <- function(cohort){
   }
   ## cov_num_gp_consultation
   ## define cov_cat_gp_consultation
-  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 12, "Greater than 12", "less than or equal to 12")
+  ## truncated gp consultation to 365 days
+  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 365, "Greater than 365", "less than or equal to 365")
   input <- input%>%mutate(cov_num_gp_consultation_truncated = 
-                            ifelse(cov_num_gp_consultation>12, 12, cov_num_gp_consultation))%>%
-    rename(sub_num_gp_consultation = cov_num_gp_consultation) # rename so it is not included in modelling but only for exploration
+                            ifelse(cov_num_gp_consultation>365, 365, cov_num_gp_consultation))%>%
+                  rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
+                  rename(sub_cat_gp_consultation = cov_cat_gp_consultation) # rename so it is not included in modelling but only for exploration
   #a <- input%>%dplyr::select(contains("gp")); View(a)
-  #input$cov_num_gp_consultation[which(input$cov_num_gp_consultation > 12)] = 12
   
   ################################################################################
   ## Part 3. define variable types: factor or numerical                          #
@@ -181,14 +182,13 @@ stage0_data_cleaning <- function(cohort){
                                           "Obese II (35-39.9)", "Obese III (40+)"))
   
   input$cov_cat_multimorbidity <- ordered(input$cov_cat_multimorbidity, 
-                                          levels = c("0 (no disease)", "1 (one or two diseases)", "2 (more than two diseases)"))
+                                          levels = c("0 (no disease)", "1 (one disease)", "2 (two or more diseases)"))
 
   ## cov_cat_smoking_status-------------------------------------------------------
   table(input$cov_cat_smoking_status)
   levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
   input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
   table(input$cov_cat_smoking_status)
-  
   
   ## cov_cat_age_group------------------------------------------------------------
   ## Define age groups
@@ -226,7 +226,7 @@ stage0_data_cleaning <- function(cohort){
   input_factor_vars <- input_factor_vars %>% mutate(cov_cat_ethnicity = recode(cov_cat_ethnicity,
                                                         Missing ="Missing or Other",
                                                         Other = "Missing or Other"))
-  # input_factor_vars <- input_factor_vars %>% 
+  # input_factor_vars <- input_factor_vars %>%
   #   mutate(cov_cat_ethnicity = case_when(cov_cat_ethnicity == "Missing" ~ "Missing or Other",
   #                                        cov_cat_ethnicity == "Other" ~ "Missing or Other"))
   
