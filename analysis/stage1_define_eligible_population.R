@@ -87,13 +87,6 @@ stage1_eligibility <- function(cohort){
   #This is a date variable so if they don't have a date, its not that they're missing information (as you don't expect
   #the whole population to have a covid date), they just never had covid so should they actually be FALSE?
   
-  # ## COVID history
-  input <- input%>%filter(!(sub_cat_covid_history==TRUE))
-  input<- input%>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
-    mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
-  flow_chart_n <- c(flow_chart_n, nrow(input))
-  table(input$sub_cat_covid_history)
-  
   # ##table(input$cov_cat_previous_covid)
   # input <- input%>%filter(sub_cat_previous_covid == "No COVID code")
   # flow_chart_n <- c(flow_chart_n, nrow(input))
@@ -253,3 +246,4 @@ if (cohort == "all_cohorts") {
 } else{
   stage1_eligibility(cohort)
 }
+
