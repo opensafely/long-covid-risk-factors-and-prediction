@@ -476,7 +476,7 @@ actions_list <- splice(
   # splice(
   #   unlist(lapply(analysis, function(x) apply_development_cox_model_subset_variables(analysis = x)), recursive = FALSE)
   # ),
-  # 
+  
   comment("Evaluation Cox model"),
   splice(
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)

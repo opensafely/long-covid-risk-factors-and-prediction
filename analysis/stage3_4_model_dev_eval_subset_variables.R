@@ -22,38 +22,38 @@ print("source files successfully!")
 ################################################################################
 results_dir <- "output/not_for_review/model/"
 output_dir <- "output/not_for_review/model/"
-# file_list=list.files(path = results_dir, pattern = "selected_variables_*")
-# file_list = c("selected_variables_all.csv","selected_variables_all_vax_c.csv", 
-#               "selected_variables_all_vax_td.csv", "selected_variables_infected.csv",  
-#               "selected_variables_vaccinated.csv")
-# print("setting path successfully!")
-# for (i in 1:length(file_list)){
-#   assign(file_list[i], 
-#          read.csv(paste(results_dir, file_list[i], sep=''))
-#   )
-# }
+ file_list=list.files(path = results_dir, pattern = "selected_variables_*")
+ file_list = c("selected_variables_all.csv","selected_variables_all_vax_c.csv",
+               "selected_variables_all_vax_td.csv", "selected_variables_infected.csv",
+               "selected_variables_vaccinated.csv")
+ print("setting path successfully!")
+ for (i in 1:length(file_list)){
+   assign(file_list[i],
+          read.csv(paste(results_dir, file_list[i], sep=''))
+   )
+ }
 
-# selected_variables_all.csv <- read.csv(paste(results_dir, "selected_variables_all.csv", sep=''))
-# selected_variables_all_vax_c.csv <- read.csv(paste(results_dir, "selected_variables_all_vax_c.csv", sep=''))
-# selected_variables_all_vax_td.csv <- read.csv(paste(results_dir, "selected_variables_all_vax_td.csv", sep=''))
-# selected_variables_infected.csv <- read.csv(paste(results_dir, "selected_variables_infected.csv", sep=''))
-# selected_variables_vaccinated.csv <- read.csv(paste(results_dir, "selected_variables_vaccinated.csv", sep=''))
-# print("read in data successfully!")
-# df_list <- list(selected_variables_all.csv, 
-#                 selected_variables_all_vax_c.csv, 
-#                 selected_variables_all_vax_td.csv,
-#                 selected_variables_infected.csv,
-#                 selected_variables_vaccinated.csv) 
-# 
-# print("Load data successfully!")
-# 
-# selected_vars <- as.vector(unique(rbind(df_list[[1]], df_list[[2]], df_list[[3]], df_list[[4]], df_list[[5]])))
-# 
-# #subset_vars <- subset_vars[!subset_vars %in% c("cov_cat_ie.status", "cov_cat_covid_phenotype")]
-# index1<-which(selected_vars == "cov_cat_ie.status")
-# index2<-which(selected_vars == "cov_cat_covid_phenotype")
-# index3 <- which(selected_vars == "cov_num_age")
-# selected_vars <- selected_vars[-c(index1,index2, index3),] # remove continuous age and it will be included as splines later
+ selected_variables_all.csv <- read.csv(paste(results_dir, "selected_variables_all.csv", sep=''))
+ selected_variables_all_vax_c.csv <- read.csv(paste(results_dir, "selected_variables_all_vax_c.csv", sep=''))
+ selected_variables_all_vax_td.csv <- read.csv(paste(results_dir, "selected_variables_all_vax_td.csv", sep=''))
+ selected_variables_infected.csv <- read.csv(paste(results_dir, "selected_variables_infected.csv", sep=''))
+ selected_variables_vaccinated.csv <- read.csv(paste(results_dir, "selected_variables_vaccinated.csv", sep=''))
+ print("read in data successfully!")
+ df_list <- list(selected_variables_all.csv,
+                 selected_variables_all_vax_c.csv,
+                 selected_variables_all_vax_td.csv,
+                 selected_variables_infected.csv,
+                 selected_variables_vaccinated.csv)
+
+ print("Load data successfully!")
+
+selected_vars <- as.vector(unique(rbind(df_list[[1]], df_list[[2]], df_list[[3]], df_list[[4]], df_list[[5]])))
+
+subset_vars <- subset_vars[!subset_vars %in% c("cov_cat_ie.status", "cov_cat_covid_phenotype")]
+index1<-which(selected_vars == "cov_cat_ie.status")
+index2<-which(selected_vars == "cov_cat_covid_phenotype")
+index3 <- which(selected_vars == "cov_num_age")
+selected_vars <- selected_vars[-c(index1,index2, index3),] # remove continuous age and it will be included as splines later
 
 selected_vars <- c(cov_factor_names, cov_num_names)
 
@@ -73,6 +73,11 @@ if(length(index3)!=0){
   #surv_formula_linear <- paste0(surv_formula, "+ cov_num_age") 
 }
 #RK - where index3 is defined has been commented out? Do you still need this?
+# YW - I have now uncomment index3 and related code. This script currently can only run locally 
+# and some how it doesn't work on yaml， error message:
+# In addition: Warning message:
+#In file(file, "rt") :
+#  cannot open file 'output/not_for_review/model/selected_variables_all.csv': No such file or directory
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
