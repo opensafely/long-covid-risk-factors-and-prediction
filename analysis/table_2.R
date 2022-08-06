@@ -8,6 +8,9 @@ library(readr); library(dplyr);library(lubridate)
 # function for small number suppression
 source("analysis/functions/redactor2.R")
 
+cohort_start = as.Date("2020-01-29", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
+cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+cohort_days = cohort_end - cohort_start
 fs::dir_create(here::here("output", "review", "descriptives"))
 
 args <- commandArgs(trailingOnly=TRUE)
@@ -75,7 +78,7 @@ table2_creation <- function(cohort){
   outcome <- c("covid", "long covid")
   subgrp <- subgrp_level <- c("main","main")
   # #hist(data$person_days)
-  data <- data %>% filter(person_days >= 1 & person_days <= 486)
+  data <- data %>% filter(person_days >= 1 & person_days <= cohort_days)
   table_2[1,4:8] <- compute_incidence_rate(covid_count, person_days_total)
   table_2[2,4:8] <- compute_incidence_rate(long_covid_count, person_days_total)
   table_2$outcome <- outcome

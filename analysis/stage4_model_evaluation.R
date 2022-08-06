@@ -1,8 +1,10 @@
 # Purpose: Long COVID risk factors and prediction models
 # Content: Cox model: model evaluation
-# Output:  One CSV file, One HTML file, for performance measures
+# Output:  One CSV file, One HTML file, for apparent performance measures
+#          SVG files: survival plots and calibration plot
 
 library(readr); library(dplyr); library(rms); library(MASS)
+library(rms); library(fastDummies); library(pseudo)
 # library(survcomp) ## not yet available in opensafely
 
 ################################################################################
@@ -13,275 +15,199 @@ source("analysis/stage3_model_selection.R")
 
 print("Starting stage_4_model_evaluation.R")
 
+fs::dir_create(here::here("output", "review", "descriptives"))
 fs::dir_create(here::here("output", "review", "model"))
 
-if(which_model == "selected"){
-  # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
-  fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-                           data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-}
-# the full model is already loaded in stage3_model_input_set_up, so no need to refit
+# if(which_model == "selected"){
+#   # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
+#   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
+#                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+# }
+#the full model is already loaded in stage3_model_input_set_up, so no need to refit
 
 print("Part 1. Finished loading fitted cox model!")
 
-# create output table for performance measures
+################################################################################
+# Part 2: Output apparent model evaluation - C and calibration slope           #
+################################################################################
+## fit_cox_model is the full model
+# source file for model evaluation
+source("analysis/functions/function_model_evaluation.R")
+subset_vars =""
+which_model = "full" # reset the model to full, evaluate full model
+print(fit_cox_model)
+print(fit_cox_model_selected)
+function_model_evaluation(input,fit_cox_model, which_model, analysis, subset_vars, graphics_output = TRUE, save_output = TRUE)
+print("Finished model valuation")
 
-pm <- data.frame()
+# ################################################################################
+# # Part 3: Calibration plot: adapted from iecv script                            #
+# ################################################################################
+# if(analysis == "all_vax_td"){
+#   input$patient_id <- seq.int(nrow(input))  # reset patient id as they are not unique in this case
+# }
+# #
+# splines_for_age = grepl("rms::rcs", surv_formula)
+# # names of covariates and factor levels
+# covariates <- names(fit_cox_model$coefficients)
+# 
+# #pred_level = sub(".*=", "", covariates)  # keep all characters after =
+# pred_level = sapply(strsplit(covariates, '='), `[`, 2)
+# pred_names = sub("=.*", "", covariates)  # keep all characters before =
+# pred_name_level <- paste0(pred_names, "_", pred_level)
+# pred_name_level = gsub("_NA", "", pred_name_level)
+# 
+# predictors <- data.frame(pred_name_level, fit_cox_model$coefficients)
+# covariates <- unique(pred_names)
+# factor_covars <- covariates[grepl("cat", covariates)]
+# #input <- input %>% dplyr::select(-all_of(covariates))
+# input_select <- dummy_cols(input, select_columns = factor_covars)
+# start = ncol(input)+1
+# #names(input_select)[start:ncol(input_select)]
+# print("extract covariate name if splines are selected for age!")
+# if(splines_for_age == TRUE){
+#   x1 = input_select$cov_num_age
+#   r1 = rcs(x1,parms=knot_placement)
+#   a <- data.matrix(r1)
+#   a1 <- a[,1]
+#   a2 <- a[,2]
+#   a <- data.frame(a1,a2)
+#   names(a) <- c("rcs1","rcs2")
+#   input_select$cov_num_age_rcs2 = c(a[,2])
+#   rm(a)
+#   names(input_select)[grep("cov_num_age_rcs2", names(input_select))] = "cov_num_age'"
+#   print("Covariate names for age (splines) have been extracted successfully!")
+# }
+# input_select <- input_select %>% dplyr::select(c(patient_id, all_of(pred_name_level)))
+# 
+# for(j in pred_name_level){
+#   print(j)
+#   row.index = which(pred_name_level ==j)
+#   input_select[,j] = input_select[,j]*predictors$fit_cox_model.coefficients[row.index]
+# }
+# cov_cols <- names(input_select)[grep("cov", names(input_select))]
+# 
+# # Here the linear predictor is calculated for the testing data, using the linear combination of covariates
+# if(length(cov_cols)>1){
+#   input_select <- input_select %>% mutate(lin_pred = rowSums(.[ , cov_cols])) %>%
+#     dplyr::select(c(patient_id,lin_pred))
+# }
+# if(length(cov_cols)==1){
+#   input_select <- input_select %>% mutate(lin_pred = input_select[,cov_cols]) %>%
+#     dplyr::select(c(patient_id,lin_pred))
+# }
+# 
+# ## left join: keep all observations in input_select
+# input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
+# # Cox model for testing data
+# test_cox_model <- cph(Surv(lcovid_surv,lcovid_cens)~lin_pred,data = input, method="breslow")
+# 
+# # Calculate the C-statistic for the discrimination of the model in the validation dataset
+# # Harrell's C-statistic for C_k: data from region k
+# c_stat = round(concordance(test_cox_model)$concordance,3)
+# c_stat_lower = round(concordance(test_cox_model)$concordance - 1.96*sqrt((concordance(test_cox_model))$var),3)
+# c_stat_upper = round(concordance(test_cox_model)$concordance + 1.96*sqrt((concordance(test_cox_model))$var),3)
+# c_stat_var = round((concordance(test_cox_model))$var,6)
+# 
+# print("Calculation for the C-statistic is completed!")
+# 
+# # Calibration slope
+# cal_slope = round(test_cox_model$coef,3)
+# # Calibration plot for the validation data
+# # Calculate predicted survival probability at 1 year
+# time_point = 365
+# y1_cox <- summary(survfit(fit_cox_model),time=time_point)$surv
+# y1_cox
+# 
+# pred_surv_prob = y1_cox^exp(input_select$lin_pred)
+# 
+# pred_risk = 1 - pred_surv_prob
+# 
+# val_ests <- val.surv(est.surv = pred_surv_prob,
+#                      S = Surv(input$lcovid_surv,input$lcovid_cens),
+#                      u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
+# print("val_ests is now specified!")
+# 
+# ###Calibration plot with pseudos
+# #Calculate pseudo values using pseudo package
+# pseudovalues<- pseudosurv(input$lcovid_surv, input$lcovid_cens, tmax = 365)
+# pseudos<- data.frame(pseudo = pseudovalues$pseudo, risk = pred_risk)
+# pseudos_sorted<- arrange(pseudos, risk) #Sort by risk
+# 
+# #Smooth pseudo values using weighted local regression (LOESS)
+# loess_pseudo<- predict(loess(pseudo ~ risk, data = pseudos_sorted,
+#                              degree = 1, #Fit polynomial of degree 1 (linear) between groups
+#                              span = 0.3 #Proportion of closest points to use in fit (span*number of obs)
+# ),
+# se = T)
+# 
+# #PLOT
+# #Setting up
+# axislim<- 1
+# spike_bounds <- c(-0.05, 0)
+# bin_breaks <- seq(0, axislim, length.out = 100 + 1)
+# freqs <- table(cut(pseudos_sorted$risk, breaks = bin_breaks))
+# bins <- bin_breaks[-1]
+# freqs_valid <- freqs[freqs > 0]
+# freqs_rescaled <- spike_bounds[1] + (spike_bounds[2] - spike_bounds[1]) *
+#   (freqs_valid - min(freqs_valid)) / (max(freqs_valid) - min(freqs_valid))
+# 
+# # save the calibration plot
+# svg(paste0("output/review/model/calibration_plot_", analysis, ".svg"))
+# #Start with a blank plot
+# plot(x = pseudos_sorted$risk, y = pseudos_sorted$pseudovalue,
+#      xlim = c(0, axislim), ylim = c(spike_bounds[1], axislim), #Lower y axis must leave space for histogram
+#      axes = F, xaxs="i",
+#      xlab = "Predicted risks", ylab = "Observed outcome proprtion",
+#      frame.plot = FALSE, type = "n")
+# axis(side = 1, at = seq(0, axislim, by=0.1))
+# axis(side = 2, at = seq(0, axislim, by=0.1))
+# #Add confidence intervals
+# polygon(x = c(pseudos_sorted$risk, rev(pseudos_sorted$risk)),
+#         y = c(pmax(loess_pseudo$fit - qt(p = 0.975, df = loess_pseudo$df) * loess_pseudo$se.fit, 0), #Stop confidence interval dipping below 0
+#               pmax(rev(loess_pseudo$fit + qt(p = 0.975, df = loess_pseudo$df) * loess_pseudo$se.fit),1)),
+#         col = "lightgrey")
+# #Add diagonal line for reference of perfect calibration
+# abline(a=0, b=1, col="red", lty=2)
+# #Add line of calibration
+# lines(x = pseudos_sorted$risk, y = loess_pseudo$fit,
+#       col = "black", lwd = 2)
+# #Add histogram of predicted risk underneath x axis
+# segments(x0 = bins[freqs > 0], x1 = bins[freqs > 0],
+#          y0 = spike_bounds[1], y1 = freqs_rescaled)
+# 
+# dev.off()
+# print("Calibration plot is created successfully!")
+# 
+# svg(paste0("output/review/model/histogram_risks", analysis, ".svg"))
 
-##########################################################
-# Part 2: calculate apparent discrimination performance  #
-##########################################################
-
-# Calculate apparent discrimination performance
-
-## Obtain the linear predictor
-#pred_LP <- predict(fit_cox_model,type="lp",reference="sample", na.rm=T)
-pred_LP <- fit_cox_model$linear.predictors
-
-mean(pred_LP)
-sd(pred_LP)
-min(pred_LP)
-max(pred_LP)
-
-# C statistic
-concordance(fit_cox_model)
-pm[nrow(pm)+1,1] <- "C-Statistic"
-pm[nrow(pm),2] <- round(concordance(fit_cox_model)$concordance,3)
-pm[nrow(pm)+1,1] <- "C-Statistic-lower"
-pm[nrow(pm),2] <-round(concordance(fit_cox_model)$concordance - 1.96*sqrt((concordance(fit_cox_model))$var),3)
-pm[nrow(pm)+1,1] <- "C-Statistic-upper"
-pm[nrow(pm),2] <- round(concordance(fit_cox_model)$concordance + 1.96*sqrt((concordance(fit_cox_model))$var),3)
-
-# D statistic needs library(survcomp)
-
-print("Part 2. Calculate apparent discrimination performance is completed successfully!")
-
-##################################################
-# Part 3.  assess the models apparent calibration#
-##################################################
-
-## Calibration slope
-fit_cox_model2<- cph(Surv(input$lcovid_surv,input$lcovid_cens)~pred_LP,
-                     x=TRUE, y=TRUE)
-pm[nrow(pm)+1,1] <- "Calibration slope"
-pm[nrow(pm),2] <- round(fit_cox_model2$coef,3)
-
-print("Part 3. Assess the models apparent calibration is completed successfully!")
-
-####################
-# Part 4. Plotting #
-####################
-
-print("Stage4_model_evaluation.R, starting Part 4 Plotting!")
-# Compare the bootstrap shrinkage estimate to the heuristic shrinkage previously calculated
-
-#Plot of apparent separation across 4 groups
-svglite::svglite(file = paste0("output/review/model/survival_plot_by_risk_groups_", which_model, "_", analysis, ".svg"))
-if(which_model == "full"){
-  centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
-                    labels=c(1:4),include.lowest=TRUE)
-
-  # Graph the KM curves in the 4 risk groups to visually assess separation
-  plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
-       #main="Kaplan-Meier survival estimates",
-       xlab="Days",ylab = "Survival probability",col=c(1:4))
-  legend(1,0.5,c("Low risk group","Low to medium risk group","Medium to high risk group","High risk group"),col=c(1:4),lty=1,bty="n")
-}
-
-if(which_model == "selected"){
-  # if(selected_covariate_names != "cov_cat_ie.status" | length(selected_covariate_names)>2){
-  if(length(selected_covariate_names)>4){
-    centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
-                      labels=c(1:4),include.lowest=TRUE)
-    # Graph the KM curves in the 4 risk groups to visually assess separation
-    plot(survfit(Surv(input$lcovid_surv,input$lcovid_cens)~centile_LP),
-         # main="Kaplan-Meier survival estimates",
-         xlab="Days", ylab = "Survival probability", col=c(1:4))
-    legend(1,0.5,c("Low risk group","Low to medium risk group","Medium to high risk group","High risk group"),col=c(1:4),lty=1,bty="n")
-   # dev.off()
-  }
-}
-dev.off()
-
-print(paste0("Part 4. Survival plot by risk groups have been saved successfully for ", which_model, " ", analysis, "!" ))
-
-###############################
-# Part 5. Assess for Optimism #
-###############################
-
-## assessment of optimism in the model development process
-
-## Obtain chi-square value: compare fitted model and the null model
-
-chi2_fit_cox_model = fit_cox_model$stats["Model L.R."] 
-df_fit_cox_model = fit_cox_model$stats["d.f."]
-
-names(fit_cox_model)
-
-# obtain the heuristic shrinkage of Van Houwelingen 
-
-vanH <- (chi2_fit_cox_model - df_fit_cox_model)/chi2_fit_cox_model
-vanH
-pm[nrow(pm)+1, 1] <- "Heuristic shrinkage"
-pm[nrow(pm), 2] <- round(vanH,3)
-
-# revise the final model
-heuristic_lp = vanH*pred_LP
-
-# summarise the original & shrunken lp and compare the mean/SD/range
-mean(pred_LP)
-sqrt(var(pred_LP))
-min(pred_LP)
-max(pred_LP)
-
-mean(heuristic_lp)
-sqrt(var(heuristic_lp))
-min(heuristic_lp)
-max(heuristic_lp)
-
-# Now recalculate the calibration slope using the shrunken linear predictor
-fit_cox_model3 <- cph(Surv(input$lcovid_surv,input$lcovid_cens)~heuristic_lp)
-# calibration slope
-fit_cox_model3$coef
-pm[nrow(pm)+1, 1] <- "reculated calibration slope using the shrunken linear predictor"
-pm[nrow(pm), 2] <- round(fit_cox_model3$coef,3)
-
-## plot original predictions (before shrinkage) versus our shrunken model predictions
-## To do this we can plot the KM curve for one high risk patient, and one low risk patient using the original and shrunken model lp
-lpdat <- cbind(input,pred_LP)
-patient_high <- subset(lpdat, pred_LP == max(pred_LP))
-patient_low <- subset(lpdat,pred_LP == min(pred_LP))
-
-# # Calculate shrunken LP for these patients
-patient_high_shrunk <- patient_high
-patient_high_shrunk$pred_LP <- patient_high$pred_LP*vanH
-patient_low_shrunk <- patient_low
-patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
-
-svglite::svglite(file = paste0("output/review/model/surival_plot_with_shrunken_LP_", which_model, ".svg"))
-
-plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
-lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
-lines(survfit(fit_cox_model,newdata=data.frame(patient_low)),col=3,conf.int=FALSE)
-lines(survfit(fit_cox_model,newdata=data.frame(patient_low_shrunk)),col=4,conf.int=FALSE)
-legend(1,0.3,c("Original LP - High risk","Shrunken LP - High risk","Original LP - Low risk","Shrunken LP - Low risk"),col=c(1:4),lty=1,bty="n")
-dev.off()
-#
-# # Linear predictor values
-patient_high$pred_LP
-patient_high_shrunk$pred_LP
-
-# # obtain an estimate of the baseline survival at a specific time point, for the shrunken model
-# # First obtain an estimate of the baseline survival at 180 days for the original model
-day180_Cox <- summary(survfit(fit_cox_model),time=180)$surv
-day180_Cox
-
-# Now calculate the shrunken models baseline survival prob at 180 days by setting the shrunken lp as a offset and predicting the baseline survival
-shrunk_mod <- coxph(Surv(input$lcovid_surv,input$lcovid_cens)~offset(heuristic_lp))
-day180_Cox_shrunk <- summary(survfit(shrunk_mod),time=180)$surv
-day180_Cox_shrunk
-
-# # Estimate the predicted survival probability at 180 days for the high risk patient above
-prob_HR <- day180_Cox^exp(patient_high$pred_LP)
-prob_HR
-prob_HR <- day180_Cox^exp(patient_high$pred_LP)
-prob_HR
-prob_HR_shrunk <- day180_Cox_shrunk^exp(patient_high_shrunk$pred_LP)
-prob_HR_shrunk
-
-svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves_", which_model,"_", analysis, ".svg"))
-# We can plot the two baseline survival curves
-plot(survfit(fit_cox_model),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
-lines(survfit(shrunk_mod),col=2,lty=2,conf.int=FALSE)
-legend(7.5,0.3,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
-
-# abline(h=) adds a line crossing the y-axis at the baseline survival probabilities
-abline(h=day180_Cox,col="black")
-abline(h=day180_Cox_shrunk,col="red")
-abline(v=180,col="red")
-dev.off()
-
-svglite::svglite(file = paste0("output/review/model/survival_plot_baseline_survival_curves2_", which_model, "_", analysis, ".svg"))
-# # Re-plot the high risk patient curves & draw on lines corresponding to the patients survival probability
-# as calculated above to check they match the predicted survival curves
-plot(survfit(fit_cox_model2,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
-lines(survfit(fit_cox_model2,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)
-legend(10,0.3,c("Original LP - High risk","Shrunken LP - High risk"),col=c(1:2),lty=1,bty="n")
-abline(h=prob_HR,col="black")
-abline(h=prob_HR_shrunk,col="red")
-abline(v=180,col="red")
-dev.off()
-
-print(paste0("Part 5. Assess for optimism is completed successfully for ", which_model, " ", analysis, "!"))
-
-###########################################################
-# Part 6. Internal validation using bootstrap validation  #
-###########################################################
-
-#  perform internal validation using bootstrap validation. 
-
-set.seed(12345) # to ensure reproducibility
-boot_1 <- validate(fit_cox_model,B=100) 
-# cal <-calibrate(fit_cox_model,B=100,bw=TRUE) # also repeats fastbw
-# plot(cal)
-boot_1
-
-# Note that this gives Dxy rather than c, however Dxy = 2*(c-0.5), i.e. c=(Dxy/2)+0.5
-pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-original"
-pm[nrow(pm),2] <- round((boot_1[1,1]+1)/2,3)
-pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-optimism"
-pm[nrow(pm),2] <- round((boot_1[1,4]+1)/2,3)
-pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-corrected"
-pm[nrow(pm),2] <- round((boot_1[1,5]+1)/2,3)
-
-# Calibration slope
-pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-original"
-pm[nrow(pm),2] <- round((boot_1[3,1]+1)/2,3)
-pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-optimism"
-pm[nrow(pm),2] <- round((boot_1[3,4]+1)/2,3)
-pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
-pm[nrow(pm),2] <- round((boot_1[3,5]+1)/2,3)
-
-print(paste0("Part 6. Internal validation using bootstrap validation is completed successfully for ",
-             which_model, " ", analysis, "!"))
-
-###############################################################
-# Part 7. Shrinkage & Optimism adjusted performance measures #
-###############################################################
-
-# Shrinkage & optimism adjusted AUC, CITL etc. using bootstrapping with predictor selection methods
-k10 <- qchisq(0.20,1,lower.tail=FALSE)
-set.seed(12345) # to ensure reproducibility
-boot_2 <- validate(fit_cox_model,B=100,rule="aic",aics=k10)
-boot_2
-
-# Convert Dxy to c-index
-# (boot_2[1,1]+1)/2
-# (boot_2[1,5]+1)/2
-
-pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-original"
-pm[nrow(pm),2] <- round((boot_2[1,1]+1)/2,3)
-pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-optimism"
-pm[nrow(pm),2] <- round((boot_2[1,4]+1)/2,3)
-pm[nrow(pm)+1,1] <- "c-statistic-boostrap-validation-corrected"
-pm[nrow(pm),2] <- round((boot_2[1,5]+1)/2,3)
-
-# Calibration slope
-pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-original"
-pm[nrow(pm),2] <- round((boot_2[3,1]+1)/2,3)
-pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-optimism"
-pm[nrow(pm),2] <- round((boot_2[3,4]+1)/2,3)
-pm[nrow(pm)+1,1] <- "calibration-slope-boostrap-validation-corrected"
-pm[nrow(pm),2] <- round((boot_2[3,5]+1)/2,3)
-
-names(pm) <- c("performance measure", "value")
-
-write.csv(pm, file=paste0("output/review/model/performance_measures_", which_model, "_", analysis, ".csv"), 
-          row.names=F)
-
-rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
-                  output_file=paste0("performance_measures_", which_model,"_", analysis),
-                  output_dir="output/review/model")
-
-print(paste0("Part 7. Shrinkage & Optimism adjusted performance measures is completed successfully for",
-             which_model, " ", analysis, "!"))
+# ################################################################################
+# # Part 4: histogram of risks: adapted from iecv script                          #
+# ################################################################################
+# 
+# 
+# risk <- c(pseudos_sorted$risk, 1-loess_pseudo$fit)
+# name_risk <- c(rep("Rredicted risk",length(pseudos_sorted$risk)),
+#                rep("Observed risk",length(loess_pseudo$fit)))
+# df_risk <- data.frame(risk, name_risk)
+# # color <- c(rep("grey",length(pseudos_sorted$risk)),
+# #            rep("black",length(loess_pseudo$fit)))
+# #
+# # df_risk$color <- factor(df_risk$color)
+# df_risk$name_risk <- factor(df_risk$name_risk)
+# # Map smoke to fill, make the bars NOT stacked, and make them semitransparent
+# 
+# # YW: have to check if loess_pseudo$fit should be 1-loess_pseudo$fit
+# figure_hist <- ggplot(df_risk, aes(x=risk, fill=name_risk)) +
+#   geom_histogram(position="identity", alpha=0.4, bins = 30) +
+#   labs(title="",x="Risk of long COVID", y = "Count")
+# figure_hist
+# bin_count <- ggplot_build(figure_hist)$data[[1]]$count
+# bin_count <- data.frame(seq(1:length(bin_count)), bin_count)
+# names(bin_count) <- c("bin", "count")
+# ggsave(file=paste0("output/review/model/risk_histogram_", analysis, ".svg"),
+#        plot=figure_hist, width=16, height=8)
+# write.csv(bin_count, file=paste0("output/review/descriptives/risk_hist_bin_count_", analysis,".csv"), row.names = F)
+# outfile=paste0("risk_hist_bin_count_", analysis)
+# rmarkdown::render("analysis/compilation/compiled_hist_bin_count.Rmd",
+#                   output_file=outfile,output_dir="output/review/descriptives")

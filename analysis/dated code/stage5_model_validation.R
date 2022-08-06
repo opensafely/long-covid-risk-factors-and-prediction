@@ -101,14 +101,9 @@ for(i in 1:length(region)){
     cov_cols <- names(input_test_select)[grep("cov", names(input_test_select))]
     
     # Here the linear predictor is calculated for the testing data, using the linear combination of covariates
-    if(length(cov_cols)>1){
-      input_test_select <- input_test_select %>% mutate(lin_pred = rowSums(.[ , cov_cols])) %>%
-        dplyr::select(c(patient_id,lin_pred))
-    }
-    if(length(cov_cols)==1){
-      input_test_select <- input_test_select %>% mutate(lin_pred = input_test_select[,cov_cols]) %>%
-        dplyr::select(c(patient_id,lin_pred))
-    }
+    input_test_select <- input_test_select %>% mutate(lin_pred = rowSums(.[ , cov_cols])) %>%
+                    dplyr::select(c(patient_id,lin_pred))
+    
     ## left join: keep all observations in input_select
     input_test <- merge(x = input_test_select, y = input_test, by = "patient_id", all.x = TRUE)
     # Cox model for testing data

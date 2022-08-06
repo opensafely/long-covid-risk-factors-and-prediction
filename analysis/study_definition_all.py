@@ -62,7 +62,8 @@ study = StudyDefinition(
         "int": {"distribution": "normal", "mean": 25, "stddev": 5},
         "float": {"distribution": "normal", "mean": 25, "stddev": 5},
     },
-    index_date="2020-12-01",
+    # index_date="2020-12-01",
+    index_date = "2020-01-29",
     population=patients.satisfying(
         "registered AND (cov_cat_sex = 'M' OR cov_cat_sex = 'F') AND cov_num_age >= 18 AND cov_num_age <= 105",
         registered=patients.registered_as_of("index_date"),
@@ -147,7 +148,7 @@ study = StudyDefinition(
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"latest": pandemic_start}},
     ),
     **loop_over_codes(post_viral_fatigue_codes),
     practice_id=patients.registered_practice_as_of(

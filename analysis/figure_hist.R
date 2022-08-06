@@ -17,7 +17,7 @@ input <- read_rds("output/input_stage1_all.rds")
 
 # We can only calculate days from covid to long covid if the long covid diagnosis date is not NA
 # It is possible that for people with long covid diagnosis there is no record of their covid infection date
-input <- input%>% select(out_first_long_covid_date, out_covid_date) %>%
+input <- input%>% dplyr::select(out_first_long_covid_date, out_covid_date) %>%
                   filter(((out_covid_date>= pandemic_start & out_covid_date <= cohort_end)|
                            is.na(out_covid_date))&
                           ((out_first_long_covid_date >= pandemic_start & 
@@ -68,5 +68,6 @@ ggsave(file="output/review/descriptives/figure_hist.svg",
        plot=figure_hist, width=16, height=8)
 
 write.csv(bin_count, file="output/review/descriptives/hist_bin_count.csv", row.names = F)
+outfile="hist_bin_count"
 rmarkdown::render("analysis/compilation/compiled_hist_bin_count.Rmd", 
-                  output_file="hist_bin_count",output_dir="output/review/descriptives")
+                  output_file=outfile,output_dir="output/review/descriptives")

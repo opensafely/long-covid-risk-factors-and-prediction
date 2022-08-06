@@ -162,11 +162,84 @@ apply_development_cox_model <- function(analysis){
         supporting_document_html = glue("output/review/model/analysis_data_summary_{analysis}.html"),
         hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.csv"),
         hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.html"),
+        selected_variables = glue("output/not_for_review/model/selected_variables_{analysis}.csv"),
         model_selection = glue("output/not_for_review/model/model_selection_{analysis}.csv")
       )
     )
   )
 }
+
+apply_development_cox_model_age_sex <- function(analysis){
+  splice(
+    comment(glue("Development Cox Model - {analysis}")),
+    action(
+      name = list(glue("development_model_age_sex_{analysis}")),
+      run = "r:latest analysis/stage3_4_model_dev_eval_age_sex.R",
+      arguments = c(analysis),
+      needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{analysis}")
+        }
+      ),
+      moderately_sensitive = list(
+        #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis}.csv"),
+        #supporting_document_CSV = glue("output/review/model/analysis_data_summary_{analysis}.csv"),
+        #supporting_document_html = glue("output/review/model/analysis_data_summary_{analysis}.html"),
+        fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_{analysis}.rds"),
+        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}.csv"),
+        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}.html"),
+        performance_measure_CSV = glue("output/review/model/performance_measures_age_sex_*_{analysis}.csv"),
+        performance_measure_HTML = glue("output/review/model/performance_measures_age_sex_*_{analysis}.html"),
+        survival_plot = glue("output/review/model/survival_plot_*_age_sex_*_{analysis}.svg")
+      )
+    )
+  )
+}
+
+apply_development_cox_model_age_sex_adjusted <- function(analysis){
+  splice(
+    comment(glue("Development Cox Model - {analysis}")),
+    action(
+      name = list(glue("development_model_age_sex_adjusted_{analysis}")),
+      run = "r:latest analysis/stage3_4_model_dev_eval_age_sex_adjusted.R",
+      arguments = c(analysis),
+      needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{analysis}")
+        }
+      ),
+      moderately_sensitive = list(
+        hazard_ratios_CSV = glue("output/review/model/HR_estimates_age_sex_adjusted_{analysis}.csv"),
+        hazard_ratios_HTML = glue("output/review/model/HR_estimates_age_sex_adjusted_{analysis}.html"),
+        performance_measure_CSV = glue("output/review/model/performance_measures_age_sex_adjusted_{analysis}.csv"),
+        performance_measure_HTML = glue("output/review/model/performance_measures_age_sex_adjusted_{analysis}.html")
+      )
+    )
+  )
+}
+
+# apply_development_cox_model_subset_variables <- function(analysis){
+#   splice(
+#     comment(glue("Development Cox Model using a subset of variables - {analysis}")),
+#     action(
+#       name = list(glue("development_model_subset_variables_{analysis}")),
+#       run = "r:latest analysis/stage3_4_model_dev_eval_subset_variables.R",
+#       arguments = c(analysis),
+#       # needs =list("development_cox_model_all", "development_cox_model_all_vax_c",
+#       #             "development_cox_model_all_vax_td",
+#       #             "development_cox_model_vaccinated", "development_cox_model_infected"),
+#       needs =list("stage1_define_eligible_population_all",
+#                   "stage1_define_eligible_population_vaccinated",
+#                   "stage1_define_eligible_population_infected"),
+#       moderately_sensitive = list(
+#         hazard_ratios_CSV = glue("output/review/model/HR_estimates_selected_vars_{analysis}.csv"),
+#         hazard_ratios_HTML = glue("output/review/model/HR_estimates_selected_vars_{analysis}.html"),
+#         performance_measure_CSV = glue("output/review/model/performance_measures_selected_vars_{analysis}.csv"),
+#         performance_measure_HTML = glue("output/review/model/performance_measures_selected_vars_{analysis}.html")
+#       )
+#     )
+#   )
+# }
 
 apply_evaluation_cox_model <- function(analysis){
   splice(
@@ -182,27 +255,45 @@ apply_evaluation_cox_model <- function(analysis){
         performance_measure_CSV = glue("output/review/model/performance_measures_*_{analysis}.csv"),
         performance_measure_HTML = glue("output/review/model/performance_measures_*_{analysis}.html"),
         survival_plot = glue("output/review/model/survival_plot_*_{analysis}.svg")
+        #calibration_plot = glue("output/review/model/calibration_plot_{analysis}.svg")
+        # risk_histogram = glue("output/review/model/risk_histogram_{analysis}.svg"),
+        # risk_histogram_bin_count = glue("output/review/descriptives/risk_hist_bin_count_{analysis}*")
       )
     )
   )
 }
+
+# apply_evaluation_cox_model_age_sex <- function(analysis){
+#   splice(
+#     action(
+#       name = glue("evaluation_cox_model_age_sex_{analysis}"),
+#       run = "r:latest analysis/stage4_model_eval_age_sex.R",
+#       arguments = c(analysis),
+#       needs = list(glue("development_model_age_sex_{analysis}")),
+#       moderately_sensitive = list(
+#         performance_measure_CSV = glue("output/review/model/performance_measures_age_sex_*_{analysis}.csv"),
+#         performance_measure_HTML = glue("output/review/model/performance_measures_age_sex_*_{analysis}.html"),
+#         survival_plot = glue("output/review/model/survival_plot_age_sex_*_{analysis}.svg")
+#       )
+#     )
+#   )
+# }
 
 apply_validation_cox_model_iecv <- function(analysis){
   splice(
     comment(glue("Validation Cox Model - {analysis}")),
     action(
       name = glue("validation_cox_model_{analysis}"),
-      run = "r:latest analysis/stage5_model_validation_iecv.R",
+      run = "r:latest analysis/stage5_model_validation_iecv_revised2.R",
       arguments = c(analysis),
       needs = list(if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
         glue("stage1_define_eligible_population_all")}else{
           glue("stage1_define_eligible_population_{analysis}")
         }),
       moderately_sensitive = list(
-        val_performance_measure_CSV = glue("output/review/model/val_performance_measures_{analysis}.csv"),
-        val_performance_measure_html = glue("output/review/model/val_performance_measures_{analysis}.html"),
-        val_cal_plot = glue("output/review/model/val_cal_plot_*_{analysis}.svg"),
-        val_re_cal_plot = glue("output/review/model/val_re_cal_plot_*_{analysis}.svg")
+        val_performance_measure_CSV = glue("output/review/model/iecv_performance_measures_{analysis}.csv"),
+        val_performance_measure_html = glue("output/review/model/iecv_performance_measures_{analysis}.html"),
+        val_cal_plot = glue("output/review/model/iecv_calibration_plot_*_{analysis}.svg") 
       )
     )
   )
@@ -316,15 +407,15 @@ actions_list <- splice(
       table_bin_count= glue("output/review/descriptives/hist_*")
     )
   ),
-  comment("Figure - hazard ratio plot"),
-  action(
-    name = "figure_hazard_ratio",
-    run = "r:latest analysis/figure_hazard_ratio_plot.R",
-    needs = glue("development_cox_model_{analysis_to_run}"),
-    moderately_sensitive = list(
-      figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
-    )
-  ),
+  # comment("Figure - hazard ratio plot"),
+  # action(
+  #   name = "figure_hazard_ratio",
+  #   run = "r:latest analysis/figure_hazard_ratio_plot.R",
+  #   needs = glue("development_cox_model_{analysis_to_run}"),
+  #   moderately_sensitive = list(
+  #     figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
+  #   )
+  # ),
   comment("Figure - cumulative probability plot"),
   action(
     name = "figure_cum_prob_km_all",
@@ -370,18 +461,31 @@ actions_list <- splice(
   comment("Development Cox model"),
   
   splice(
-    # over outcomes
     unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
   ),
 
   
+  splice(
+    unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex(analysis = x)), recursive = FALSE)
+  ),
+  
+  splice(
+    unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex_adjusted(analysis = x)), recursive = FALSE)
+  ),
+  
+  # splice(
+  #   unlist(lapply(analysis, function(x) apply_development_cox_model_subset_variables(analysis = x)), recursive = FALSE)
+  # ),
+  
   comment("Evaluation Cox model"),
   splice(
-    # over outcomes
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
   ),
+  # splice(
+  #   unlist(lapply(analysis, function(x) apply_evaluation_cox_model_age_sex(analysis = x)), recursive = FALSE)
+  # ),
+  comment("Validation Cox model"),
   splice(
-    # over outcomes
     unlist(lapply(analysis, function(x) apply_validation_cox_model_iecv(analysis = x)), recursive = FALSE)
   )
 )

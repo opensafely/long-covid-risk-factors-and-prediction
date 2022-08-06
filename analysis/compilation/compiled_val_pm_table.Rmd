@@ -17,9 +17,7 @@ knitr::opts_knit$set(root.dir = gsub("/analysis/compilation","",getwd()))
 ## Compiled table for hazard ratio estimates
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-#analyses = "main"
-#population = "vaccinated"
-df=read_csv(paste0("output/review/model/val_performance_measures_", analysis,".csv"))
+df=read_csv(paste0("output/review/model/", outfile, analysis,".csv"))
 df %>%
     datatable(extensions = 'Buttons', rownames= FALSE,
               options = list(dom = 'Blfrtip', 
