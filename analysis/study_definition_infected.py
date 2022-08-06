@@ -147,7 +147,7 @@ study = StudyDefinition(
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
+        return_expectations={"incidence": 0.1, "date": {"latest": pandemic_start}},
     ),
     **loop_over_codes(post_viral_fatigue_codes),
     practice_id=patients.registered_practice_as_of(

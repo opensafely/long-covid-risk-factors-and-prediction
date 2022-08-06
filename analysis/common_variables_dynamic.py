@@ -163,9 +163,10 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
                 "incidence": 0.05,
            },
             recent_asthma_code=patients.with_these_clinical_events(
-                asthma_codes,
+                asthma_codes, 
+                on_or_before=f"{index_date_variable}"
                 # between=[f"{index_date_variable - 3 years}",f"{index_date_variable}"],
-                between=[f"{index_date_variable_3y}",f"{index_date_variable}"],
+                # between=[f"{index_date_variable_3y}",f"{index_date_variable}"],
             ),
             asthma_code_ever=patients.with_these_clinical_events(asthma_codes),
             copd_code_ever=patients.with_these_clinical_events(

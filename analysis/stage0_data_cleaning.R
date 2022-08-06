@@ -29,7 +29,7 @@ stage0_data_cleaning <- function(cohort){
   input <- read_feather(paste0("output/input_", cohort, ".feather"))
   
   # remove ra-sle-psoriasis because they have been included individually
-  input <- input %>% select(-cov_cat_ra_sle_psoriasis)
+  input <- input %>% dplyr::select(-cov_cat_ra_sle_psoriasis)
   ################################################################################
   ## Part 1. define index date and remove variables, specify date variable       #
   ################################################################################
@@ -58,12 +58,38 @@ stage0_data_cleaning <- function(cohort){
   ## create a categorical variable to indicate covid phenotype: ------------------
   ## no infection, non-hospitalised covid and hospitalised covid
   ## this variable is not included in the Cox model but will create and keep it for now
-  input$sub_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), "no_infection", "non_hospitalised")
-  index = which(!is.na(input$hospital_covid))  # index for hospitalised covid
-  input$sub_cat_covid_phenotype[index] <- "hospitalised"
+  # input$sub_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), "no_infection", "non_hospitalised")
+  # index = which(!is.na(input$hospital_covid))  # index for hospitalised covid
+  # input$sub_cat_covid_phenotype[index] <- "hospitalised"
+  # 
+  # Define COVID-19 severity ---------------------------------------------------
+  # Hospitalized COVID defined as admitted to hospitals within 28 days following COVID positive test
+  input$sub_cat_covid_phenotype <- "no_infection"
+  
+  input$sub_cat_covid_phenotype <- ifelse(!is.na(input$out_covid_date),
+                                          "non_hospitalised",input$sub_cat_covid_phenotype)
+  
+  input$sub_cat_covid_phenotype <- ifelse(!is.na(input$out_covid_date) & 
+                                            !is.na(input$sub_cat_covid_phenotype) &
+                                            (input$hospital_covid-input$out_covid_date>=0 &
+                                               input$hospital_covid-input$out_covid_date<29),
+                                          "hospitalised",input$sub_cat_covid_phenotype)
+  
+  input$sub_cat_covid_phenotype <- as.factor(input$sub_cat_covid_phenotype)
+  #input[,c("hospital_covid")] <- NULL
+  #input <- input[!is.na(input$patient_id),]
+  if(cohort == "infected"){
+    input <- input[!is.na(input$sub_cat_covid_phenotype),]
+  }
+
+  
+  print("COVID19 severity determined successfully")
   
   #RK - not that it matters if you're not using it but this isn't how hospitalised covid has been defined in our current post covid
   # events opensafely projects
+  
+  # YW response - a really good point - I have now amended and specified hospitalised covid as
+  # admission to hospital within 28 days after covid positive test
   
   ## Step 2. Remove variables which are not included in the prediction------------
   ## remove variables start with snomed
@@ -197,7 +223,7 @@ stage0_data_cleaning <- function(cohort){
   
   input$cov_cat_multimorbidity <- ordered(input$cov_cat_multimorbidity, 
                                           levels = c("0 (no disease)", "1 (one disease)", "2 (two or more diseases)"))
-
+  input <- input%>%rename(sub_cat_multimorbidity = cov_cat_multimorbidity)   # to keep this for exploration but not in the model 
   ## cov_cat_smoking_status-------------------------------------------------------
   table(input$cov_cat_smoking_status)
   input <- input %>% mutate(cov_cat_smoking_status = recode(cov_cat_smoking_status, "N" = "Not current smoker",
