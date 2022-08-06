@@ -18,9 +18,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"       # infected population
+  #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -82,7 +82,6 @@ stage0_data_cleaning <- function(cohort){
     input <- input[!is.na(input$sub_cat_covid_phenotype),]
   }
 
-  
   print("COVID19 severity determined successfully")
   
   #RK - not that it matters if you're not using it but this isn't how hospitalised covid has been defined in our current post covid
@@ -270,10 +269,10 @@ stage0_data_cleaning <- function(cohort){
     mutate(cov_cat_region = replace_na(cov_cat_region, "Missing")) %>%
     mutate(cov_cat_region = as.factor(cov_cat_region))
   
-  # cov_cat_ethnicity: merge "Missing" with "Other"
-  input_factor_vars <- input_factor_vars %>% mutate(cov_cat_ethnicity = recode(cov_cat_ethnicity,
-                                                        Missing ="Missing or Other",
-                                                        Other = "Missing or Other"))
+  # # cov_cat_ethnicity: merge "Missing" with "Other"
+  # input_factor_vars <- input_factor_vars %>% mutate(cov_cat_ethnicity = recode(cov_cat_ethnicity,
+  #                                                       Missing ="Missing or Other",
+  #                                                       Other = "Missing or Other"))
   # input_factor_vars <- input_factor_vars %>%
   #   mutate(cov_cat_ethnicity = case_when(cov_cat_ethnicity == "Missing" ~ "Missing or Other",
   #                                        cov_cat_ethnicity == "Other" ~ "Missing or Other"))
