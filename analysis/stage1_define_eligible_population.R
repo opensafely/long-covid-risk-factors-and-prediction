@@ -18,7 +18,7 @@ if(length(args)==0){
 stage1_eligibility <- function(cohort){
   input <- read_rds(paste0("output/input_stage0_", cohort, ".rds"))
   ## Specify study period
-  cohort_start = as.Date("2020-12-01", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
+  cohort_start = as.Date("2020-01-29", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
   # YW: in some cohort the cohort start date is different from the index date
   #  for the vaccinated population and infected population, their index dates were 2nd vaccination + 14 days, and first covid dates during the follow-up
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")

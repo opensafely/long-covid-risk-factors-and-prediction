@@ -43,11 +43,15 @@ stage0_data_cleaning <- function(cohort){
   input$cohort_end_date = cohort_end
   
   if(cohort == "vaccinated"){
+    # select people who were vaccinated during the study period
     input <- input %>% filter(!is.na(vax_covid_date2) &vax_covid_date2 >= index_date & vax_covid_date2 <= cohort_end_date)
+    # reset index date to be 14 days following the second dose of vaccine
     input$index_date = input$vax_covid_date2 + 14 
   }
   if(cohort == "infected"){
+    # select people who were infected during the study period
     input <- input %>% filter(!is.na(out_covid_date) &out_covid_date>= index_date & out_covid_date <= cohort_end_date)
+    # reset index date to be the date of covid infection
     input$index_date = input$out_covid_date
   }
   
@@ -123,7 +127,6 @@ stage0_data_cleaning <- function(cohort){
   # input[,i] <- as.Date(input[,i], format = "%Y-%m-%d")
   # }
   # Somehow this doesnt work on mine..and so have sticked to the above
-  
   
   ################################################################################
   ## Part 2 define multimorbidity                                                #
@@ -314,11 +317,9 @@ stage0_data_cleaning <- function(cohort){
   for(i in cov_factor_names){
     print(table(input[,i]))
   }
-  
   ################################################################################
   ## Part 5. Output datasets                                                     #
   ################################################################################
-  
   ## Table_0 is mainly for data check 
   output_table_0 <- function(input_factor_vars){
     ## Summary of categorical variables
