@@ -138,12 +138,12 @@ study = StudyDefinition(
     # because of this, the post viral fatigue date can also be derived outside study definition
     cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
-        on_or_after=pandemic_start,
+        on_or_before=pandemic_start,
         return_expectations={"incidence": 0.05},
     ),
     first_post_viral_fatigue_date=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
-        on_or_after=pandemic_start,
+        on_or_before=pandemic_start,
         returning="date",
         date_format="YYYY-MM-DD",
         #find_first_match_in_period=True,
@@ -251,8 +251,8 @@ study = StudyDefinition(
         most_recent_smoking_code=patients.with_these_clinical_events(
             smoking_codes,
             find_last_match_in_period=True,
-            #on_or_before="index_date",
-            between=["index_date - 3 years","index_date"],
+            on_or_before="index_date",
+            #between=["index_date - 3 years","index_date"],
             returning="category",
         ),
         ever_smoked=patients.with_these_clinical_events(
