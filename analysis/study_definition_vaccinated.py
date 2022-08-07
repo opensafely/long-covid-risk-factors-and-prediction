@@ -251,7 +251,8 @@ study = StudyDefinition(
         most_recent_smoking_code=patients.with_these_clinical_events(
             smoking_codes,
             find_last_match_in_period=True,
-            on_or_before="index_date",
+            #on_or_before="index_date",
+            between=["index_date - 3 years","index_date"],
             returning="category",
         ),
         ever_smoked=patients.with_these_clinical_events(
