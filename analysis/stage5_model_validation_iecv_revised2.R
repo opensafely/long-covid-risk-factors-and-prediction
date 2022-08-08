@@ -1,5 +1,5 @@
 # Purpose: Long COVID risk factors and prediction models
-# Programmed by:  Yinghui Wei and Stephanie Riley
+# Programmed by:  Yinghui Wei
 # Content: internal-external validation:
 #          1. prognostic model developed based on the whole data set: all predictors (do not select variables)
 #          2. leave one region out at a time, estimate beta based on data without region k, no new test for significance or variable selections
@@ -153,6 +153,7 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
                        u=time_point,fun=function(p)log(-log(p)),pred = sort(runif(100, 0, 1)))
   print("val_ests is now specified!")
   
+  ### Start: Adapt from SR's code for calibration plot ----------------------------------------------
   ###Calibration plot with pseudos
   #Calculate pseudo values using pseudo package
   pseudovalues<- pseudosurv(input_test$lcovid_surv, input_test$lcovid_cens, tmax = 365)
@@ -202,6 +203,7 @@ int_ext_cross_validation <- function(region_i, fit_cox_model){
            y0 = spike_bounds[1], y1 = freqs_rescaled)
   
   dev.off()
+  ### End: Adapt from SR's code for calibration plot ----------------------------------------------
   print("Calibration plot is created successfully!")
   
   print(paste0("---- END Region: ", region_i, " ----"))

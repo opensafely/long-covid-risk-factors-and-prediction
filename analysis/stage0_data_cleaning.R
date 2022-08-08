@@ -228,12 +228,12 @@ stage0_data_cleaning <- function(cohort){
   input <- input%>%rename(sub_cat_multimorbidity = cov_cat_multimorbidity)   # to keep this for exploration but not in the model 
   ## cov_cat_smoking_status-------------------------------------------------------
   table(input$cov_cat_smoking_status)
-  input <- input %>% mutate(cov_cat_smoking_status = recode(cov_cat_smoking_status, "N" = "Not current smoker",
+  input <- input %>% mutate(cov_cat_smoking_status = recode(cov_cat_smoking_status, "N" = "Never smoker",
                                                             "S" = "Current smoker",
-                                                            "E" = "Not current smoker",
+                                                            "E" = "Ever smoker",
                                                             "M" = "Missing"))
   #levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
-  #input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
+  input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
   table(input$cov_cat_smoking_status)
   
   ## cov_cat_sex -----------------------------------------------------------------
@@ -288,8 +288,8 @@ stage0_data_cleaning <- function(cohort){
     mutate(cov_cat_smoking_status = as.factor(cov_cat_smoking_status))
     
   #reset the reference to not current smoker
-  #input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Never smoker")
-  input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Not current smoker")
+  input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Never smoker")
+  #input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Not current smoker")
   
   ## sub_cat_covid_history: two categories: false and missing, as patients with covid history was excluded
   input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
