@@ -135,7 +135,10 @@ stage1_eligibility <- function(cohort){
   
   ## To improve efficiency: keep only necessary variables
   variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
-                        "vax_covid_date2", "death_date", "cohort_end_date", "index_date")
+                        "vax_covid_date2", "death_date", "cohort_end_date", "index_date",
+                         "out_covid_date",
+                         "out_first_post_viral_fatigue_date_after_pandemic")
+
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
   
@@ -170,7 +173,7 @@ stage1_eligibility <- function(cohort){
   if(cohort == "all"){
     ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
     ## lcovid_cens_vax_c: indicator for long covid   
-    input_select <- input_select%>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
+    input_select <- input_select %>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
                                                                           vax_covid_date1,
                                                                           death_date, 
                                                                           cohort_end_date,
@@ -181,6 +184,20 @@ stage1_eligibility <- function(cohort){
                                                                  !is.na(out_first_long_covid_date)), 1, 0))
   }
   
+  # Define time to post-viral fatigue defined between 29 January 2020 and 29 November 2020
+  if(cohort == "all"){
+    input_select <- input_select %>% mutate(fup_end_date_fatigue=min(out_first_post_viral_fatigue_date_after_pandemic,
+                                                                                death_date, 
+                                                                                cohort_end_date,
+                                                                                na.rm = TRUE))
+    # time to post-viral fatigue diagnosis date
+    input_select$fatigue_surv<- as.numeric(input_select$fup_end_date_fatigue - input_select$index_date)+1
+    input_select <- input_select %>% mutate(fatigue_cens = ifelse((out_first_post_viral_fatigue_date_after_pandemic <= fup_end_date_fatigue &
+                                                                     out_first_post_viral_fatigue_date_after_pandemic >= out_covid_date &
+                                                                     out_first_post_viral_fatigue_date_after_pandemic >= index_date &
+                                                                    !is.na(out_first_post_viral_fatigue_date_after_pandemic) &
+                                                                    !is.na(out_covid_date)), 1, 0))
+  }
   ################################################################################
   # Part 3. Create and output datasets                                           #
   ################################################################################
@@ -189,7 +206,7 @@ stage1_eligibility <- function(cohort){
   if(cohort == "all"){
     variables_to_keep <-c("patient_id", "fup_end_date",
                           "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
-                          "fup_end_date_vax_c", "vax2_surv")
+                          "fup_end_date_vax_c", "vax2_surv", "fatigue_surv","fatigue_cens")
   }else{
     variables_to_keep <-c("patient_id", "fup_end_date",
                           "lcovid_surv", "lcovid_cens", "vax2_surv")

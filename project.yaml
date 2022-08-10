@@ -56,6 +56,7 @@ actions:
         variable_check_table_CSV: output/not_for_review/descriptives/table_0_all.csv
         variable_check_table_HTML: output/not_for_review/descriptives/table_0_all.html
         histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_all.svg
+        table_gp: output/not_for_review/descriptives/table_gp_*_all*
 
   ## Stage 0 Data Cleaning - vaccinated 
 
@@ -70,6 +71,7 @@ actions:
         variable_check_table_CSV: output/not_for_review/descriptives/table_0_vaccinated.csv
         variable_check_table_HTML: output/not_for_review/descriptives/table_0_vaccinated.html
         histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_vaccinated.svg
+        table_gp: output/not_for_review/descriptives/table_gp_*_vaccinated*
 
   ## Stage 0 Data Cleaning - infected 
 
@@ -84,6 +86,7 @@ actions:
         variable_check_table_CSV: output/not_for_review/descriptives/table_0_infected.csv
         variable_check_table_HTML: output/not_for_review/descriptives/table_0_infected.html
         histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_infected.svg
+        table_gp: output/not_for_review/descriptives/table_gp_*_infected*
 
   ## Define eligible population 
   ## Stage 1 define eligible population - all 
@@ -311,6 +314,17 @@ actions:
 
   ## Part 4. Modelling 
   ## Development Cox model 
+  ## post-viral fatigue 
+
+  development_cox_model_fatigue:
+    run: r:latest analysis/stage3_fatigue_survival_analysis.R
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        summary_survival_data: output/review/model/analysis_data_summary_fatigue*
+        cox_model_output: output/review/model/hazard_ratio_estimates_fatigue*
+
   ## Development Cox Model - all 
 
   development_cox_model_all:

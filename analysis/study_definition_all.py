@@ -137,19 +137,33 @@ study = StudyDefinition(
     ),
     # "loop_over_codes" provides any post viral fatigue code that a patient has been given and the first time that the specific code is given.
     # because of this, the post viral fatigue date can also be derived outside study definition
-    cov_cat_post_viral_fatigue=patients.with_these_clinical_events(
+    cov_cat_post_viral_fatigue_pre_pandemic=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_before=pandemic_start,
         return_expectations={"incidence": 0.05},
     ),
-    first_post_viral_fatigue_date=patients.with_these_clinical_events(
+    latest_post_viral_fatigue_date_pre_pandemic=patients.with_these_clinical_events(
         post_viral_fatigue_codes,
         on_or_before=pandemic_start,
         returning="date",
         date_format="YYYY-MM-DD",
-        #find_first_match_in_period=True,
         find_last_match_in_period=True,
         return_expectations={"incidence": 0.1, "date": {"latest": pandemic_start}},
+    ),
+    # extract post_viral_fatigue between 2020-01-30 and 2020-11-30 as an outcome
+    out_post_viral_fatigue_after_pandemic=patients.with_these_clinical_events(
+        post_viral_fatigue_codes,
+        #on_or_before=pandemic_start,
+        between=["index_date + 1 day", "2020-11-30"],
+        return_expectations={"incidence": 0.05},
+    ),
+    out_first_post_viral_fatigue_date_after_pandemic=patients.with_these_clinical_events(
+        post_viral_fatigue_codes,
+        on_or_after="index_date",
+        returning="date",
+        date_format="YYYY-MM-DD",
+        find_first_match_in_period=True,
+        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date + 1 day", "latest": "2020-11-30"}},
     ),
     **loop_over_codes(post_viral_fatigue_codes),
     practice_id=patients.registered_practice_as_of(
