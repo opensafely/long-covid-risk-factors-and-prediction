@@ -87,7 +87,7 @@ table2_creation <- function(cohort){
   ## extend to subgroups by demographics + post viral fatigue
   demographics <- c("cov_cat_sex", "cov_cat_age_group", "cov_cat_region", 
                     "cov_cat_ethnicity", "cov_cat_imd", "cov_cat_healthcare_worker",
-                    "cov_cat_post_viral_fatigue")
+                    "cov_cat_post_viral_fatigue_pre_pandemic")
 
   
   #RK - not sure if this is just a dummy data check but if you think it could be in

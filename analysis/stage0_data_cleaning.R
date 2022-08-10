@@ -18,9 +18,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"       # infected population
+  cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -41,7 +41,6 @@ stage0_data_cleaning <- function(cohort){
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
   study_days = cohort_end - index_date
   input$cohort_end_date = cohort_end
-  
   if(cohort == "vaccinated"){
     # select people who were vaccinated during the study period
     input <- input %>% filter(!is.na(vax_covid_date2) &vax_covid_date2 >= index_date & vax_covid_date2 <= cohort_end_date)
@@ -169,8 +168,12 @@ stage0_data_cleaning <- function(cohort){
     if(i!="cov_num_gp_consultation"){
       hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
     }else{
-      input_frequent_consultation <- input[which(input[,i]>12),i]
-      hist(input_frequent_consultation, main=paste0("Histogram of ", i), xlab =i)
+      #input_consultation_g12 <- input[which(input[,i]>12),i]
+      #hist( input_consultation_g12 , main=paste0("Histogram of ", i), xlab =i)
+      input_consultation_1e12 <- input[which(input[,i]<=20),i]
+      hist(input_consultation_1e12,breaks=10, main=paste0("Histogram of ", i), xlab =i)
+      df_gp <- table(input[,i])
+      write.csv(df_gp, file= paste0("output/not_for_review/descriptives/table_gp_", i,"_", cohort, ".csv"))
     }
     dev.off()
   }

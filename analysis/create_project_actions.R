@@ -84,7 +84,8 @@ apply_stage0_data_cleaning <- function(cohort){
       moderately_sensitive = list(
         variable_check_table_CSV = glue("output/not_for_review/descriptives/table_0_{cohort}.csv"),
         variable_check_table_HTML = glue("output/not_for_review/descriptives/table_0_{cohort}.html"),
-        histogram_numerical_variable = glue("output/not_for_review/descriptives/histogram_*_{cohort}.svg")
+        histogram_numerical_variable = glue("output/not_for_review/descriptives/histogram_*_{cohort}.svg"),
+        table_gp = glue("output/not_for_review/descriptives/table_gp_*_{cohort}*")
       )
     )
   )
@@ -143,6 +144,7 @@ apply_stage1_eligibility <- function(cohort){
     )
   )
 }
+
 
 apply_development_cox_model <- function(analysis){
   splice(
@@ -459,7 +461,17 @@ actions_list <- splice(
   ),
   comment("Part 4. Modelling"),
   comment("Development Cox model"),
-  
+  comment("post-viral fatigue"),
+  action(
+    name = "development_cox_model_fatigue",
+    run = "r:latest analysis/stage3_fatigue_survival_analysis.R",
+    needs = list("stage1_define_eligible_population_all"),
+    moderately_sensitive = list(
+      summary_survival_data = glue("output/review/model/analysis_data_summary_fatigue*"),
+      cox_model_output = glue("output/review/model/hazard_ratio_estimates_fatigue*")
+    )
+  ),
+  # long COVID code
   splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
   ),

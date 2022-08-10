@@ -51,7 +51,7 @@ if(length(selected_covariate_names)>0){
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
       "+rms::rcs(cov_num_age,parms=knot_placement)", 
-      "+ cluster(practice_id)"
+      "+ strat(sub_cat_region)"
     )
   }
   if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == FALSE){
@@ -60,14 +60,15 @@ if(length(selected_covariate_names)>0){
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
       "+ cov_num_age", 
-      "+ cluster(practice_id)"
+      "+ strat(sub_cat_region)"
     )
   }
   if(!("cov_num_age" %in% selected_covariate_names)){
     surv_formula_selected <- paste0(
       "Surv(lcovid_surv, lcovid_cens) ~ ",
       paste(selected_covariate_names, collapse = "+"),
-      "+ cluster(practice_id)")
+      "+ strat(sub_cat_region)"
+      )
   }
   print("Selected models: survival formula is")
   print(surv_formula_selected)
