@@ -240,13 +240,12 @@ study = StudyDefinition(
             "incidence": 0.6
         },
     ),
-
     ###No. primary care consultation in year prior to index date
     cov_num_gp_consultation=patients.with_gp_consultations(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
         return_expectations={
-            "int": {"distribution": "poisson", "mean": 20},
+            "int": {"distribution": "poisson", "mean": 7},
         },
     ),
     # Smoking status

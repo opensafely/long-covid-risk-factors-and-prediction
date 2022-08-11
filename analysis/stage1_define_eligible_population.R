@@ -68,6 +68,11 @@ stage1_eligibility <- function(cohort){
   input <- input%>%filter(cov_num_age <=105)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
+  # make age at 10 years increment
+  input <- input %>% 
+    rename(sub_num_age = cov_num_age) %>% # rename to keep in exploration but not to include in the model
+    mutate(cov_num_age = sub_num_age/10) 
+  
   # ## Ethnicity: remove if missing
   # input <- input%>%filter(!is.na(cov_cat_ethnicity))
   # flow_chart_n <- c(flow_chart_n, nrow(input))

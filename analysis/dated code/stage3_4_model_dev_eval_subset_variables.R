@@ -13,7 +13,7 @@ library(stringr)
 fs::dir_create(here::here("output", "not_for_review", "model"))
 fs::dir_create(here::here("output", "review", "model"))
 
-source("analysis/stage3_model_input_set_up.R")
+source("analysis/stage2_model_input_set_up.R")
 source("analysis/functions/function_cox_output.R")
 source("analysis/functions/function_model_evaluation.R")
 print("source files successfully!")

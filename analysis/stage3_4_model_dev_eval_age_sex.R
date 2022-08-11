@@ -1,7 +1,7 @@
 # Purpose: to fit Cox model with age and sex as predictors
 
 library(readr)
-source("analysis/stage3_model_input_set_up.R")
+source("analysis/stage2_model_input_set_up.R")
 source("analysis/functions/function_cox_output.R")
 source("analysis/functions/function_model_evaluation.R")
 ################################################################################

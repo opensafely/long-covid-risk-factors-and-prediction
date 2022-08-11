@@ -1,5 +1,5 @@
 library(readr)
-source("analysis/stage3_model_input_set_up.R")
+source("analysis/stage2_model_input_set_up.R")
 
 ################################################################################
 # Part 1: Assess if non-linear term is needed for continuous age               #
