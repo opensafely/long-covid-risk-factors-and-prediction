@@ -188,3 +188,10 @@ which_model = "fatigue_full_linear"
 output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
 cox_output2(fit_full_cox_model_linear, which_model, output_file, save_output = TRUE)
 
+# model selection
+
+fit_cox_model_selected <- fastbw(fit_full_cox_model_splines, sls=0.20)
+
+which_model = "fatigue_selected_splines"
+output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
+cox_output2(fit_full_cox_model_linear, which_model, output_file, save_output = TRUE)
