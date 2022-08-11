@@ -10,7 +10,7 @@
 ## 4. containing "_date" indicate date variables
 ## 5. prefix "sub_" indicate patient characteristics which are not included
 ##    in the analysis / modelling, but are of interest in exploration
-
+source("analysis/functions/redactor2.R")
 library(readr); library(dplyr); library("arrow"); library(lubridate); library(tidyr)
 
 fs::dir_create(here::here("output", "not_for_review", "descriptives"))
@@ -173,6 +173,10 @@ stage0_data_cleaning <- function(cohort){
       input_consultation_1e12 <- input[which(input[,i]<=20),i]
       hist(input_consultation_1e12,breaks=10, main=paste0("Histogram of ", i), xlab =i)
       df_gp <- table(input[,i])
+      df_gp <- cbind(df_gp,prop.table(df_gp))
+      df_gp <- data.frame(df_gp)
+      df_gp[,2] <- redactor2(df_gp[,2])
+      df_gp[which(is.na(df_gp[,2])),3]=NA
       write.csv(df_gp, file= paste0("output/not_for_review/descriptives/table_gp_", i,"_", cohort, ".csv"))
     }
     dev.off()
