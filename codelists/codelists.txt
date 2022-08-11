@@ -46,6 +46,5 @@ opensafely/chronic-kidney-disease-snomed/2020-04-14
 primis-covid19-vacc-uptake/sev_mental/v1
 opensafely/rheumatoid-arthritis/2020-05-12
 primis-covid19-vacc-uptake/cns_cov/v1
-opensafely/other-neurological-conditions/2020-06-02
 opensafely/systemic-lupus-erythematosus-sle/2020-05-12
 opensafely/psoriasis/01091de1
