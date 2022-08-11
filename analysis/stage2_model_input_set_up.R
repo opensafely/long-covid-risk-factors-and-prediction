@@ -8,6 +8,7 @@ library(readr); library(dplyr); library(rms); library(MASS)
 fs::dir_create(here::here("output", "not_for_review", "model"))
 fs::dir_create(here::here("output", "review", "model"))
 
+source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
@@ -87,7 +88,9 @@ if(analysis == "all_vax_td"){
 ## handling variables
 
 ## remove region as a covariate
-input <- rename(input, sub_cat_region = "cov_cat_region")
+input <- input %>% rename(sub_cat_region = "cov_cat_region")  %>%
+  rename(sub_cat_age_group = "cov_cat_age_group")
+
 
 ## extract candidate predictors
 covariate_names <- names(input)[grep("cov_", names(input))]
@@ -101,7 +104,7 @@ print(covariate_names)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "lcovid_surv", "lcovid_cens", covariate_names,
-                       "cov_num_age", "weight", "sub_cat_region")
+                       "cov_num_age", "weight", "sub_cat_region", "sub_cat_age_group")
 
 if(analysis == "all_vax_td"){
   variables_to_keep <- c(variables_to_keep, "vax2_surv")
@@ -115,56 +118,7 @@ print("Part 1: load data, define inverse probability weighting is completed!")
 ################################################################################
 # Part 2: number of people in each covariate level                             #
 ################################################################################
-
-df_summary <- data.frame(variable = character(),
-                      number  = numeric(),
-                      percent = numeric(),
-                      mean    = numeric(),
-                      sd      = numeric(), 
-                      IQR   = numeric(),
-                      stringsAsFactors = FALSE)
-
-cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
-cov_num_names <- names(input)[grepl("cov_num", names(input))]
-# factor variables: number and percentage---------------------------------------
-input_factor_vars <- input[, cov_factor_names]
-for(i in 1:length(cov_factor_names)){
-  levels = names(table(input_factor_vars[,i]))
-  start = nrow(df_summary)+1
-  df_summary[start,1] = cov_factor_names[i]
-  start = nrow(df_summary)+1
-  end = nrow(df_summary)+length(levels)
-  df_summary[start:end,1] <- c(levels)            # variable name
-  df_summary[start:end,2] <- c(table(input_factor_vars[,i]))  # number
-  df_summary[start:end,3] <- 100*round(c(table(input_factor_vars[,i]))/nrow(input_factor_vars),4)  # percentage
-  print(levels)
-}
-
-# numerical variables: number and percentage of observations, mean and standard deviations
-input_num_vars <- input[,cov_num_names]
-if(length(cov_num_names) == 1){
-  index = nrow(df_summary)+1
-  df_summary[index,1] <- cov_num_names
-  df_summary[index,2] <- length(which(!is.na(unlist(input_num_vars)))) # number of observations
-  df_summary[index,4] <- round(mean(unlist(input_num_vars)),2) # mean
-  df_summary[index,5] <- round(sd(unlist(input_num_vars)),2) # sd
-  df_summary[index,6] <- round(IQR(unlist(input_num_vars)),2)  # IQR
-}
-if(length(cov_num_names)>1){
-  for(i in 1:length(cov_num_names)){
-    index = nrow(df_summary)+1
-    df_summary[index,1] <- cov_num_names[i]
-    df_summary[index,2] <- length(which(!is.na(unlist(input_num_vars[,i])))) # number of observations
-    df_summary[index,4] <- round(mean(unlist(input_num_vars[,i])),2) # mean
-    df_summary[index,5] <- round(sd(unlist(input_num_vars[,i])),2) # sd
-    df_summary[index,6] <- round(IQR(unlist(input_num_vars[,i])),2)  # IQR
-  }
-}
-
-# Output as help file: number of observations from the sampled population in each covariate level
-write.csv(df_summary, file=paste0("output/review/model/analysis_data_summary_", analysis,".csv"), row.names = F)
-rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd",
-                  output_file=paste0("analysis_data_summary_", analysis),output_dir="output/review/model")
+function_df_summary(input, analysis)
 
 ## set up before using rms::cph
 dd <<- datadist(input) #
@@ -177,7 +131,7 @@ options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 ##  a restricted cubic spline for gp consultation rate + clustering effect for practice
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 
-## Age sex model
+## Age sex model - age spline
 surv_formula_age_spl_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex",
@@ -185,12 +139,22 @@ surv_formula_age_spl_sex <- paste0(
   "+ strat(sub_cat_region)"
 )
 
-## Age sex model
+## Age sex model - age linear
 surv_formula_age_linear_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex", "+ cov_num_age", "+ strat(sub_cat_region)"
 )
 
+## Age sex model - age categorical
+surv_formula_age_cat_sex <- paste0(
+  "Surv(lcovid_surv, lcovid_cens) ~ ",
+  "cov_cat_sex", "+ sub_cat_age_group", "+ strat(sub_cat_region)"
+)
+## Age sex model - age categorical
+# surv_formula_age_linear_sex <- paste0(
+#   "Surv(lcovid_surv, lcovid_cens) ~ ",
+#   "cov_cat_sex", "+ cov_num_age", "+ strat(sub_cat_region)"
+# )
 ## Age sex model
 if(analysis == "all_vax_td"){
   surv_formula_age_spl_sex <- paste0(
@@ -204,7 +168,7 @@ if(analysis == "all_vax_td"){
   )
 }
 
-## Full model
+## Full model - age spline
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
@@ -212,7 +176,7 @@ surv_formula <- paste0(
   "+ strat(sub_cat_region)"
 )
 
-## full model: age is added as a linear predictor
+## full model: age linear
 surv_formula_lp <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
@@ -220,22 +184,13 @@ surv_formula_lp <- paste0(
   "+ strat(sub_cat_region)"
 )
 
-# the following lines are not needed because ie.status has been specified as a covariate if analysis == "all_vax_td"
-# if(analysis == "all_vax_td"){
-#   surv_formula <- paste0(
-#     "Surv(lcovid_surv, lcovid_cens) ~ ",
-#     paste(covariate_names, collapse = "+"),
-#     "+rms::rcs(cov_num_age,parms=knot_placement)", 
-#     "+ strat(sub_cat_region)"
-#   )
-#   ## age is added as a linear predictor
-#   surv_formula_lp <- paste0(
-#     "Surv(lcovid_surv, lcovid_cens) ~ ",
-#     paste(covariate_names, collapse = "+"),
-#     "+ cov_num_age", 
-#     "+ strat(sub_cat_region)"
-#   )
-# }
+## Full model - age categorical
+surv_formula_age_categorical <- paste0(
+  "Surv(lcovid_surv, lcovid_cens) ~ ",
+  paste(covariate_names, collapse = "+"),
+  "+ sub_cat_age_group", 
+  "+ strat(sub_cat_region)"
+)
 ## only predictors
 surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")
 ## only linear predictors
