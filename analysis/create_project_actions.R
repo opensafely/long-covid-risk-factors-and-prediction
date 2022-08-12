@@ -184,14 +184,9 @@ apply_development_cox_model_age_sex <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis}.csv"),
-        #supporting_document_CSV = glue("output/review/model/analysis_data_summary_{analysis}.csv"),
-        #supporting_document_html = glue("output/review/model/analysis_data_summary_{analysis}.html"),
         fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_{analysis}.rds"),
-        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}.csv"),
-        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}.html"),
-        performance_measure_CSV = glue("output/review/model/performance_measures_age_sex_*_{analysis}.csv"),
-        performance_measure_HTML = glue("output/review/model/performance_measures_age_sex_*_{analysis}.html"),
+        hazard_ratios = glue("output/review/model/hazard_ratio_estimates_age_sex_*_{analysis}*"),
+        performance_measure = glue("output/review/model/performance_measures_age_sex_*_{analysis}*"),
         survival_plot = glue("output/review/model/survival_plot_*_age_sex_*_{analysis}.svg")
       )
     )
@@ -211,10 +206,8 @@ apply_development_cox_model_age_sex_adjusted <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        hazard_ratios_CSV = glue("output/review/model/HR_estimates_age_sex_adjusted_{analysis}.csv"),
-        hazard_ratios_HTML = glue("output/review/model/HR_estimates_age_sex_adjusted_{analysis}.html"),
-        performance_measure_CSV = glue("output/review/model/performance_measures_age_sex_adjusted_{analysis}.csv"),
-        performance_measure_HTML = glue("output/review/model/performance_measures_age_sex_adjusted_{analysis}.html")
+        hazard_ratios = glue("output/review/model/HR_estimates_age_sex_adjusted_{analysis}*"),
+        performance_measure = glue("output/review/model/performance_measures_age_sex_adjusted_{analysis}*")
       )
     )
   )
