@@ -128,6 +128,7 @@ stage1_eligibility <- function(cohort){
                                               ifelse(input$sub_num_age>=40 & input$sub_num_age<=59,"40_59",
                                                      ifelse(input$sub_num_age>=60 & input$sub_num_age<=79, "60_79",
                                                             "80_105"))))
+  input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
   # input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
   # input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
   # input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)

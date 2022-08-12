@@ -8,7 +8,7 @@ cohort = "all"
 input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
 input <- input %>% select(lcovid_surv, lcovid_cens, contains("sex"), contains("cov_cat_age"))
 
-levels(input$cov_cat_age_group) <- c("18-39", "40-59", "60-79", "80+")
+levels(input$cov_cat_age_group) <- c("18-39", "40-59", "60-79", "80-105")
 table(input$cov_cat_age_group)
 table(input$cov_cat_sex)
 levels(input$cov_cat_sex) <- c("Female", "Male")
