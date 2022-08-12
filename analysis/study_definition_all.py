@@ -245,7 +245,8 @@ study = StudyDefinition(
         between=["index_date - 12 months", "index_date"],
         returning="number_of_matches_in_period",
         return_expectations={
-            "int": {"distribution": "poisson", "mean": 7},
+            "int": {"distribution": "normal", "mean": 7, "stddev": 6},
+            "incidence": 1,
         },
     ),
     # Smoking status
