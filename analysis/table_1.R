@@ -125,9 +125,7 @@ if (cohort == "all_cohorts") {
 
 ## Response 2:
 ## Good question.
-## This was intended to describe whether the GP consultation is frequent or not, agreed it is subjective
-## Re-thinking about it, currently exploring the truncation to 365 days as GP consultation is defined
-## as number of consultation 12 months prior to the baseline 
+## This was intended to describe whether the GP consultation is frequent or not
 
 # Note:
 # inter_quartile_range for GP consultation or *_truncated is 0 which is odd.

@@ -492,14 +492,11 @@ actions_list <- splice(
   comment("Evaluation Cox model"),
   splice(
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
-  ),
-  # splice(
-  #   unlist(lapply(analysis, function(x) apply_evaluation_cox_model_age_sex(analysis = x)), recursive = FALSE)
-  # ),
-  comment("Validation Cox model"),
-  splice(
-    unlist(lapply(analysis, function(x) apply_validation_cox_model_iecv(analysis = x)), recursive = FALSE)
   )
+  # comment("Validation Cox model"),
+  # splice(
+  #   unlist(lapply(analysis, function(x) apply_validation_cox_model_iecv(analysis = x)), recursive = FALSE)
+  # )
 )
   ## combine everything ----
   project_list <- splice(

@@ -181,15 +181,31 @@ stage0_data_cleaning <- function(cohort){
     }
     dev.off()
   }
-  ## cov_num_gp_consultation
-  ## truncated gp consultation to 365 days
-  input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 365, "Greater than 365", "less than or equal to 365")
-  input <- input%>%mutate(cov_num_gp_consultation_truncated = 
-                            ifelse(cov_num_gp_consultation>365, 365, cov_num_gp_consultation))%>%
-                  rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
-                  rename(sub_cat_gp_consultation = cov_cat_gp_consultation) # rename so it is not included in modelling but only for exploration
+  # cov_num_gp_consultation
+  # truncated gp consultation to 365 days
+  # input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 365, "Greater than 365", "less than or equal to 365")
+  # input <- input%>%mutate(cov_num_gp_consultation_truncated =
+  #                            ifelse(cov_num_gp_consultation>365, 365, cov_num_gp_consultation))%>%
+  #                  rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
+  #                  rename(sub_cat_gp_consultation = cov_cat_gp_consultation) # rename so it is not included in modelling but only for exploration
+
   #a <- input%>%dplyr::select(contains("gp")); View(a)
   
+  input <- input %>% mutate(cov_cat_gp_consultation = ifelse(input$cov_num_gp_consultation > 12,
+                                                             "12 or more",
+                                                            ifelse(input$cov_num_gp_consultation >= 9,
+                                                             "9 to 12",
+                                                                ifelse(input$cov_num_gp_consultation >=4,
+                                                                      "4 to 8",
+                                                                         ifelse(input$cov_num_gp_consultation >=1,
+                                                                                          "1 to 3", "0")))))
+  table(input$cov_cat_gp_consultation)
+  table(input$cov_num_gp_consultation)
+  # quantile(input$cov_num_gp_consultation[which(input$cov_num_gp_consultation>0)])
+  input <- input%>% rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
+    mutate(cov_cat_gp_consultation = as.factor(cov_cat_gp_consultation)) %>%
+    mutate(cov_cat_gp_consultation = relevel(cov_cat_gp_consultation, ref = "0"))
+
   ################################################################################
   ## Part 3. define variable types: factor or numerical                          #
   ################################################################################

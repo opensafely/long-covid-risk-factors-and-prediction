@@ -1,7 +1,7 @@
 # Purpose: to fit Cox model: age and sex adjusted and add one other predictor at a time
 
 library(readr)
-source("analysis/stage3_model_input_set_up.R")
+source("analysis/stage2_model_input_set_up.R")
 source("analysis/functions/function_cox_output.R")
 source("analysis/functions/function_model_evaluation.R")
 
