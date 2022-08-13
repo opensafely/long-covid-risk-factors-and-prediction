@@ -8,19 +8,17 @@ source("analysis/stage2_model_input_set_up.R")
 fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
-fit_cox_model <- fit_cox_model_splines
+fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
+                                data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
+if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
+  surv_formula = surv_formula_lp
+  surv_formula_predictors = surv_formula_predictors_lp
+  fit_cox_model <- fit_cox_model_linear
+} else{
+  fit_cox_model <- fit_cox_model_splines
+}
 
-# fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
-#                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-# 
-# if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
-#   surv_formula = surv_formula_lp
-#   surv_formula_predictors = surv_formula_predictors_lp
-#   fit_cox_model <- fit_cox_model_linear
-# } else{
-#   fit_cox_model <- fit_cox_model_splines
-# }
 # 
 # print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
 # print(paste0("The formula for fitting Cox model is: ", surv_formula))
@@ -31,7 +29,7 @@ print("Part 1 is completed!")
 ################################################################################
 # Part 2: backward elimination                                                 #
 ################################################################################
-## backward elimination
+## backward elimination: 
 fit_cox_model_selected <- fastbw(fit_cox_model, sls=0.20)
 # sls: Significance level for staying in a model if rule="p"
 

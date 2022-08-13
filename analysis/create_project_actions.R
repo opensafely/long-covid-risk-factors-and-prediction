@@ -160,12 +160,11 @@ apply_development_cox_model <- function(analysis){
         ),
       moderately_sensitive = list(
         #ph_test_CSV = glue("output/review/model/PH_test_*_{analysis}.csv"),
-        supporting_document_CSV = glue("output/review/model/analysis_data_summary_{analysis}.csv"),
-        supporting_document_html = glue("output/review/model/analysis_data_summary_{analysis}.html"),
-        hazard_ratios_CSV = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.csv"),
-        hazard_ratios_HTML = glue("output/review/model/hazard_ratio_estimates_*_{analysis}.html"),
+        supporting_document = glue("output/review/model/analysis_data_summary_{analysis}*"),
+        hazard_ratios = glue("output/review/model/hazard_ratio_estimates_*_{analysis}*"),
         selected_variables = glue("output/not_for_review/model/selected_variables_{analysis}.csv"),
-        model_selection = glue("output/not_for_review/model/model_selection_{analysis}.csv")
+        model_selection = glue("output/not_for_review/model/model_selection_{analysis}.csv"),
+        AIC = glue("output/review/model/AIC_{analysis}.csv")
       )
     )
   )

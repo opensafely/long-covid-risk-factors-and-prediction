@@ -333,12 +333,11 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        supporting_document_CSV: output/review/model/analysis_data_summary_all.csv
-        supporting_document_html: output/review/model/analysis_data_summary_all.html
-        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all.csv
-        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all.html
+        supporting_document: output/review/model/analysis_data_summary_all*
+        hazard_ratios: output/review/model/hazard_ratio_estimates_*_all*
         selected_variables: output/not_for_review/model/selected_variables_all.csv
         model_selection: output/not_for_review/model/model_selection_all.csv
+        AIC: output/review/model/AIC_all.csv
 
   ## Development Cox Model - all_vax_c 
 
@@ -348,12 +347,11 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        supporting_document_CSV: output/review/model/analysis_data_summary_all_vax_c.csv
-        supporting_document_html: output/review/model/analysis_data_summary_all_vax_c.html
-        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_c.csv
-        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_c.html
+        supporting_document: output/review/model/analysis_data_summary_all_vax_c*
+        hazard_ratios: output/review/model/hazard_ratio_estimates_*_all_vax_c*
         selected_variables: output/not_for_review/model/selected_variables_all_vax_c.csv
         model_selection: output/not_for_review/model/model_selection_all_vax_c.csv
+        AIC: output/review/model/AIC_all_vax_c.csv
 
   ## Development Cox Model - vaccinated 
 
@@ -363,12 +361,11 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        supporting_document_CSV: output/review/model/analysis_data_summary_vaccinated.csv
-        supporting_document_html: output/review/model/analysis_data_summary_vaccinated.html
-        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_vaccinated.csv
-        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_vaccinated.html
+        supporting_document: output/review/model/analysis_data_summary_vaccinated*
+        hazard_ratios: output/review/model/hazard_ratio_estimates_*_vaccinated*
         selected_variables: output/not_for_review/model/selected_variables_vaccinated.csv
         model_selection: output/not_for_review/model/model_selection_vaccinated.csv
+        AIC: output/review/model/AIC_vaccinated.csv
 
   ## Development Cox Model - all_vax_td 
 
@@ -378,12 +375,11 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        supporting_document_CSV: output/review/model/analysis_data_summary_all_vax_td.csv
-        supporting_document_html: output/review/model/analysis_data_summary_all_vax_td.html
-        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_all_vax_td.csv
-        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_all_vax_td.html
+        supporting_document: output/review/model/analysis_data_summary_all_vax_td*
+        hazard_ratios: output/review/model/hazard_ratio_estimates_*_all_vax_td*
         selected_variables: output/not_for_review/model/selected_variables_all_vax_td.csv
         model_selection: output/not_for_review/model/model_selection_all_vax_td.csv
+        AIC: output/review/model/AIC_all_vax_td.csv
 
   ## Development Cox Model - infected 
 
@@ -393,12 +389,11 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        supporting_document_CSV: output/review/model/analysis_data_summary_infected.csv
-        supporting_document_html: output/review/model/analysis_data_summary_infected.html
-        hazard_ratios_CSV: output/review/model/hazard_ratio_estimates_*_infected.csv
-        hazard_ratios_HTML: output/review/model/hazard_ratio_estimates_*_infected.html
+        supporting_document: output/review/model/analysis_data_summary_infected*
+        hazard_ratios: output/review/model/hazard_ratio_estimates_*_infected*
         selected_variables: output/not_for_review/model/selected_variables_infected.csv
         model_selection: output/not_for_review/model/model_selection_infected.csv
+        AIC: output/review/model/AIC_infected.csv
 
   ## Development Cox Model - all 
 
