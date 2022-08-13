@@ -425,7 +425,7 @@ actions_list <- splice(
     moderately_sensitive = list(
       figure_days_c_to_lc = glue("output/review/descriptives/figure_hist*"),
       table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long*"),
-      table_bin_count= glue("output/review/descriptives/hist_*")
+      table_bin_count= glue("output/review/descriptives/supporting_doc_hist_*")
     )
   ),
   # comment("Figure - hazard ratio plot"),

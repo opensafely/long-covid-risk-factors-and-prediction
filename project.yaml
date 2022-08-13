@@ -290,7 +290,7 @@ actions:
       moderately_sensitive:
         figure_days_c_to_lc: output/review/descriptives/figure_hist*
         table_csv_summary: output/review/descriptives/summary_days_c_to_long*
-        table_bin_count: output/review/descriptives/hist_*
+        table_bin_count: output/review/descriptives/supporting_doc_hist_*
 
   ## Figure - cumulative probability plot 
 
