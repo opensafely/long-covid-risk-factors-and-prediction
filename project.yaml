@@ -99,8 +99,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_all.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_all.csv
-        flow_chart_html: output/flow_chart_all.html
+        table_flow_chart: output/flow_chart_all*
 
   ## Stage 1 define eligible population - vaccinated 
 
@@ -112,8 +111,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_vaccinated.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_vaccinated.csv
-        flow_chart_html: output/flow_chart_vaccinated.html
+        table_flow_chart: output/flow_chart_vaccinated*
 
   ## Stage 1 define eligible population - infected 
 
@@ -125,8 +123,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_infected.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_infected.csv
-        flow_chart_html: output/flow_chart_infected.html
+        table_flow_chart: output/flow_chart_infected*
 
   ## Part 3. Figures and tables 
   ## Table 1. Patient Characteristics - all 
@@ -174,8 +171,8 @@ actions:
       moderately_sensitive:
         table: output/review/descriptives/table_1_combined*
 
-  ## Define eligible population 
-  ## Table 2. Event count and incidence rate - all 
+  ## Table 2 event count 
+  ## Table 2. Event count - all 
 
   table_2_all:
     run: r:latest analysis/table_2.R all
@@ -183,10 +180,9 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_all.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_all.html
+        event_count_table: output/review/descriptives/table_2_all*
 
-  ## Table 2. Event count and incidence rate - all_vax_c 
+  ## Table 2. Event count - all_vax_c 
 
   table_2_all_vax_c:
     run: r:latest analysis/table_2.R all_vax_c
@@ -194,10 +190,9 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_all_vax_c.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_all_vax_c.html
+        event_count_table: output/review/descriptives/table_2_all_vax_c*
 
-  ## Table 2. Event count and incidence rate - vaccinated 
+  ## Table 2. Event count - vaccinated 
 
   table_2_vaccinated:
     run: r:latest analysis/table_2.R vaccinated
@@ -205,10 +200,9 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_vaccinated.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_vaccinated.html
+        event_count_table: output/review/descriptives/table_2_vaccinated*
 
-  ## Table 2. Event count and incidence rate - infected 
+  ## Table 2. Event count - infected 
 
   table_2_infected:
     run: r:latest analysis/table_2.R infected
@@ -216,8 +210,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_infected.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_infected.html
+        event_count_table: output/review/descriptives/table_2_infected*
 
   ## Table_2_combined - all table 2 combined 
 
@@ -232,16 +225,48 @@ actions:
       moderately_sensitive:
         table: output/review/descriptives/table_2_combined*
 
-  ## table_3 - sequence count 
+  ## Table - sequence count 
+  ## Table. Sequence count - all 
 
-  table_3_all:
-    run: r:latest analysis/table_3.R
+  table_sequence_all:
+    run: r:latest analysis/table_sequence.R all
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        sequence_count_table_CSV: output/review/descriptives/table_3.csv
-        sequence_count_table_HTML: output/review/descriptives/table_3.html
+        sequence_count_table: output/review/descriptives/table_sequence_all*
+
+  ## Table. Sequence count - vaccinated 
+
+  table_sequence_vaccinated:
+    run: r:latest analysis/table_sequence.R vaccinated
+    needs:
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        sequence_count_table: output/review/descriptives/table_sequence_vaccinated*
+
+  ## Table. Sequence count - infected 
+
+  table_sequence_infected:
+    run: r:latest analysis/table_sequence.R infected
+    needs:
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        sequence_count_table: output/review/descriptives/table_sequence_infected*
+
+  ## Table sequence combined - all tables for sequence count combined 
+
+  table_sequence_combined:
+    run: r:latest analysis/table_sequence_combined.R
+    needs:
+    - table_sequence_all
+    - table_sequence_vaccinated
+    - table_sequence_infected
+    outputs:
+      moderately_sensitive:
+        table: output/review/descriptives/table_sequence_combined*
 
   ## Figure_1 - long covid count 
 
@@ -263,8 +288,8 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_days_c_to_lc: output/review/descriptives/figure_hist.svg
-        table_csv_summary: output/review/descriptives/summary_days_c_to_long.csv
+        figure_days_c_to_lc: output/review/descriptives/figure_hist*
+        table_csv_summary: output/review/descriptives/summary_days_c_to_long*
         table_bin_count: output/review/descriptives/hist_*
 
   ## Figure - cumulative probability plot 

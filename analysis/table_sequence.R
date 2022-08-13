@@ -1,23 +1,34 @@
-library(dplyr)
-library(tidyverse)
+library(dplyr); library(tidyverse); library(readr)
 
 fs::dir_create(here::here("output", "review", "descriptives"))
 
 source("analysis/functions/redactor2.R")
 
-cohort = "all"
+args <- commandArgs(trailingOnly=TRUE)
 
+# Specify cohort 
+if(length(args)==0){
+  #cohort <- "all"          # all eligible population
+  #cohort <- "vaccinated"    # vaccinated population
+  cohort <- "infected"      # infected population
+}else{
+  cohort <- args[[1]]
+}
+# Read in data
 input <- read_rds(paste0("output/input_stage1_", cohort, ".rds"))
 
+# remove covariates
 covariate_names <- names(input)[grepl("cov_", names(input))]
 variables_to_keep <-names(input)[!names(input)%in%(covariate_names)]
 input <- input[,variables_to_keep]
 
+# Q: no need to censor by index date and follow-up end as this just describe the sequence?
+
 # transform data to long format and calculate sequence of events
 input_long_1 <- input %>% 
   as_tibble() %>%
-  dplyr::select(patient_id, out_covid_date, vax_covid_date2, out_first_long_covid_date) %>%
-  pivot_longer(
+ dplyr::select(patient_id, out_covid_date, vax_covid_date2, out_first_long_covid_date) %>%
+ pivot_longer(
     cols = -patient_id
     ) %>%
   arrange(patient_id, name) %>%
@@ -47,7 +58,7 @@ input_wide_1 <- input_long_1 %>%
   mutate(order = row_number()) 
 
 # clean names
-table3 <- input_wide_1 %>%
+table_sequence <- input_wide_1 %>%
   pivot_longer(
     cols = c(covid, vax, long)
   ) %>%
@@ -89,7 +100,7 @@ table3 <- input_wide_1 %>%
   mutate(across(n, ~if_else(is.na(.x), "[redacted]", scales::comma(.x, accuracy = 1))))
     
 # highlight the sequences you're interested in
-table3<- table3 %>%
+table_sequence<- table_sequence %>%
   mutate(
     seq_label = case_when(
       sequence == "(covid < vax < long)" ~ 1,
@@ -102,9 +113,8 @@ table3<- table3 %>%
     )
   )
 
-write.csv(table3,file="output/review/descriptives/table_3.csv",row.names=F)
-
-csv_file ="table_3"
-rmarkdown::render("analysis/compilation/compiled_table3_results.Rmd", output_file="table_3",
-                  output_dir="output/review/descriptives")
+# output sequence count table
+write.csv(table_sequence,
+          file=paste0("output/review/descriptives/table_sequence_", cohort,".csv"),
+          row.names=F)
 

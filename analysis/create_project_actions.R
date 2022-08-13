@@ -109,7 +109,7 @@ apply_table1 <- function(cohort){
 
 apply_table2 <- function(cohort){
   splice(
-    comment(glue("Table 2. Event count and incidence rate - {cohort}")),
+    comment(glue("Table 2. Event count - {cohort}")),
     action(
       name = glue("table_2_{cohort}"),
       run = "r:latest analysis/table_2.R",
@@ -120,12 +120,29 @@ apply_table2 <- function(cohort){
         }
       ),
       moderately_sensitive = list(
-        incidence_rate_table_CSV = glue("output/review/descriptives/table_2_{cohort}.csv"),
-        incidence_rate_talbe_HTML = glue("output/review/descriptives/table_2_{cohort}.html")
+        event_count_table = glue("output/review/descriptives/table_2_{cohort}*")
       )
     )
   )
 }
+
+apply_table_sequence <- function(cohort){
+  splice(
+    comment(glue("Table. Sequence count - {cohort}")),
+    action(
+      name = glue("table_sequence_{cohort}"),
+      run = "r:latest analysis/table_sequence.R",
+      arguments = c(cohort),
+      needs = list(
+          glue("stage1_define_eligible_population_{cohort}")
+      ),
+      moderately_sensitive = list(
+        sequence_count_table = glue("output/review/descriptives/table_sequence_{cohort}*")
+      )
+    )
+  )
+}
+
 apply_stage1_eligibility <- function(cohort){
   splice(
     comment(glue("Stage 1 define eligible population - {cohort}")),
@@ -138,8 +155,7 @@ apply_stage1_eligibility <- function(cohort){
         cohort = glue("output/input_stage1_{cohort}.rds")
       ),
       moderately_sensitive = list(
-        flow_chart_csv = glue("output/flow_chart_{cohort}.csv"),
-        flow_chart_html = glue("output/flow_chart_{cohort}.html")
+        table_flow_chart = glue("output/flow_chart_{cohort}*")
       )
     )
   )
@@ -356,7 +372,7 @@ actions_list <- splice(
     )
   ),
   # Table 2 Event count and incidence rate
-  comment("Define eligible population"),
+  comment("Table 2 event count"),
   splice(
     unlist(lapply(cohort2, function(x) apply_table2(cohort = x)), recursive = FALSE)
   ),
@@ -369,16 +385,27 @@ actions_list <- splice(
       table = glue("output/review/descriptives/table_2_combined*")
     )
   ),
-  comment("table_3 - sequence count"),
+  comment("Table - sequence count"),
+  splice(
+    unlist(lapply(cohort, function(x) apply_table_sequence(cohort = x)), recursive = FALSE)
+  ),
+  comment("Table sequence combined - all tables for sequence count combined"),
   action(
-    name = "table_3_all",
-    run = "r:latest analysis/table_3.R",
-    needs = list("stage1_define_eligible_population_all"),
+    name = "table_sequence_combined",
+    run = "r:latest analysis/table_sequence_combined.R",
+    needs = list("table_sequence_all", "table_sequence_vaccinated", "table_sequence_infected"),
     moderately_sensitive = list(
-      sequence_count_table_CSV = glue("output/review/descriptives/table_3.csv"),
-      sequence_count_table_HTML = glue("output/review/descriptives/table_3.html")
+      table = glue("output/review/descriptives/table_sequence_combined*")
     )
   ),
+  # action(
+  #   name = "table_sequence_all",
+  #   run = "r:latest analysis/table_sequence.R",
+  #   needs = list("stage1_define_eligible_population_all"),
+  #   moderately_sensitive = list(
+  #     sequence_count_table = glue("output/review/descriptives/table_sequence*")
+  #   )
+  # ),
   comment("Figure_1 - long covid count"),
   action(
     name = "figure_1_all",
@@ -396,8 +423,8 @@ actions_list <- splice(
     run = "r:latest analysis/figure_hist.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      figure_days_c_to_lc = glue("output/review/descriptives/figure_hist.svg"),
-      table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long.csv"),
+      figure_days_c_to_lc = glue("output/review/descriptives/figure_hist*"),
+      table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long*"),
       table_bin_count= glue("output/review/descriptives/hist_*")
     )
   ),

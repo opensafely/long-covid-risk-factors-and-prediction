@@ -55,7 +55,7 @@ for(i in variables){
 #RK - in the diff columns there are still some counts of 0,1,2 etc- what are these? Do these differences matter?
 # Does anything else need to be redacted?
 
-## YW - I have amended the code above: a) to make the redaction by outcome (covid and long covid)
+##YW - I have amended the code above: a) to make the redaction by outcome (covid and long covid)
 ## and b) to use index[index2] for example, to redact the relevant row
 
 index <- which(is.na(table_2_wide$diff_all_vax))
@@ -69,10 +69,5 @@ table_2_wide[index,4:26] = "[redacted]"
 
 # make table 2 a single file
 write.csv(table_2_wide, file="output/review/descriptives/table_2_combined.csv", row.names = F)
-
-# output help file for table 2
-CSV_file = "output/review/descriptives/table_2_combined.csv"
-rmarkdown::render("analysis/compilation/compiled_table.Rmd",
-                  output_file="table_2_combined",output_dir="output/review/descriptives")
 
 print("Table 2 saved successfully!")
