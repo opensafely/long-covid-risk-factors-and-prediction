@@ -26,26 +26,26 @@ for(i in 1:length(cov_names)){
   surv_formula_age_spl_sex_adjusted <- paste0(surv_formula_age_spl_sex,"+", cov_names[i])
   surv_formula_age_linear_sex_adjusted <- paste0(surv_formula_age_linear_sex,"+", cov_names[i])
   # age as splines
-  fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula_age_spl_sex_adjusted),
+  fit_cox_model <- fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formula_age_spl_sex_adjusted),
                                    data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   
-  # age as linear predictor
-  fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_age_linear_sex_adjusted),
-                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-  
-  # a crude comparison
-  if(AIC(fit_cox_model_linear) <= AIC(fit_cox_model_splines)){
-    surv_formula = surv_formula_age_linear_sex
-    #surv_formula_predictors = surv_formula_predictors_lp
-    fit_cox_model <- fit_cox_model_linear
-    print("Linear term is selected for age!")
-  } else{
-    surv_formula <- surv_formula_age_spl_sex
-    fit_cox_model <- fit_cox_model_splines
-    print("Restricted cubic splines is selected for age!")
-  }
-  print("The selected model is")
-  print(fit_cox_model)
+  # # age as linear predictor
+  # fit_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_age_linear_sex_adjusted),
+  #                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
+  # 
+  # # a crude comparison
+  # if(AIC(fit_cox_model_linear) <= AIC(fit_cox_model_splines)){
+  #   surv_formula = surv_formula_age_linear_sex
+  #   #surv_formula_predictors = surv_formula_predictors_lp
+  #   fit_cox_model <- fit_cox_model_linear
+  #   print("Linear term is selected for age!")
+  # } else{
+  #   surv_formula <- surv_formula_age_spl_sex
+  #   fit_cox_model <- fit_cox_model_splines
+  #   print("Restricted cubic splines is selected for age!")
+  # }
+  # print("The selected model is")
+  # print(fit_cox_model)
   ################################################################################
   # Part 3: Output results from the Cox Model                                    #
   ################################################################################
