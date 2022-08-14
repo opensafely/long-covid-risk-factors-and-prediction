@@ -82,8 +82,7 @@ apply_stage0_data_cleaning <- function(cohort){
         cohort = glue("output/input_stage0_{cohort}.rds")
       ),
       moderately_sensitive = list(
-        variable_check_table_CSV = glue("output/not_for_review/descriptives/table_0_{cohort}.csv"),
-        variable_check_table_HTML = glue("output/not_for_review/descriptives/table_0_{cohort}.html"),
+        variable_check_table = glue("output/not_for_review/descriptives/table_0_{cohort}.csv"),
         histogram_numerical_variable = glue("output/not_for_review/descriptives/histogram_*_{cohort}.svg"),
         table_gp = glue("output/not_for_review/descriptives/table_gp_*_{cohort}*")
       )
@@ -100,8 +99,7 @@ apply_table1 <- function(cohort){
       arguments = c(cohort),
       needs = list(glue("stage1_define_eligible_population_{cohort}")),
       moderately_sensitive = list(
-        descriptive_table_CSV = glue("output/review/descriptives/table_1_{cohort}.csv"),
-        descriptive_table_HTML = glue("output/review/descriptives/table_1_{cohort}.html")
+        descriptive_table = glue("output/review/descriptives/table_1_{cohort}.csv")
       )
     )
   )
@@ -257,7 +255,6 @@ apply_evaluation_cox_model <- function(analysis){
         }),
       moderately_sensitive = list(
         performance_measure_CSV = glue("output/review/model/performance_measures_*_{analysis}.csv"),
-        performance_measure_HTML = glue("output/review/model/performance_measures_*_{analysis}.html"),
         survival_plot = glue("output/review/model/survival_plot_*_{analysis}.svg")
         # calibration_plot = glue("output/review/model/calibration_plot_{analysis}.svg"),
         # risk_histogram = glue("output/review/model/risk_histogram_{analysis}.svg"),
@@ -279,7 +276,6 @@ apply_validation_cox_model_iecv <- function(analysis){
         }),
       moderately_sensitive = list(
         val_performance_measure_CSV = glue("output/review/model/iecv_performance_measures_{analysis}.csv"),
-        val_performance_measure_html = glue("output/review/model/iecv_performance_measures_{analysis}.html"),
         val_cal_plot = glue("output/review/model/iecv_calibration_plot_*_{analysis}.svg") 
       )
     )
@@ -382,8 +378,7 @@ actions_list <- splice(
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
       figure_long_covid_count_all = glue("output/figure_long_covid*"),
-      table_csv_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.csv"),
-      table_html_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.html")
+      table_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all*")
     )
   ),
   comment("Figure_hist - Histogram of days from covid to long covid"),
@@ -433,7 +428,7 @@ actions_list <- splice(
     run = "r:latest analysis/stage2_summarise_survival_data.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      summary_survival_data = glue("output/not_for_review/descriptives/summarise_survival_data*")
+      summary_survival_data = glue("output/review/descriptives/summarise_survival_data*")
     )
   ),
   comment("Part 4. Modelling"),
