@@ -24,7 +24,4 @@ results <- rbind(a,b)
 
 rownames(results) <- c("median follow-up", "median survival time")
 #colnames(results) <- c("quantile")
-write.csv(results, file="output/review/descriptives/summarise_survival_data.csv")
-
-rmarkdown::render("analysis/compilation/compiled_summarsied_survival_data.Rmd",
-                  output_file="summarise_survival_data",output_dir="output/review/descriptives")
+write.csv(results, file="output/not_for_review/descriptives/summarise_survival_data.csv")

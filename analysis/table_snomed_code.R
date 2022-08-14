@@ -62,15 +62,12 @@ suppl_figure_pie <- ggplot(count_data_active, aes(x = "", y = count, fill = snom
 suppl_figure_pie
 
 #supplementary figure - pie chart
-ggsave(file="output/review/descriptives/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
+ggsave(file="output/not_for_review/descriptives/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
 
 # output underlying count data for supplementary figure - pie chart
 
 # small number suppression - indicate NA as redacted
 count_data[which(is.na(count_data$count)),col_names]="[redacted]" 
 
-write.csv(count_data, file="output/review/descriptives/suppl_table_1.csv")
+write.csv(count_data, file="output/not_for_review/descriptives/table_snomed_code.csv")
 
-rmarkdown::render("analysis/compilation/compiled_snomed_count.Rmd",
-                  output_file="suppl_table_1",output_dir="output/review/descriptives")
- 

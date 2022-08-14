@@ -268,15 +268,15 @@ actions:
       moderately_sensitive:
         table: output/review/descriptives/table_sequence_combined*
 
-  ## Figure_1 - long covid count 
+  ## Figure - long covid count 
 
-  figure_1_all:
-    run: r:latest analysis/figure_1.R
+  figure_long_covid_count_all:
+    run: r:latest analysis/figure_long_covid_count.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_all: output/figure_1_*.svg
+        figure_long_covid_count_all: output/figure_long_covid*
         table_csv_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.csv
         table_html_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.html
 
@@ -302,29 +302,28 @@ actions:
       moderately_sensitive:
         cum_prob_plot: output/review/descriptives/figure_cum_incidence_*.svg
 
-  ## Suppl_table_1 - frequencies of snomed code for long covid diagnosis 
+  ## Table - frequencies of snomed code for long covid diagnosis 
 
-  suppl_table_1_all:
-    run: r:latest analysis/suppl_table_1.R
+  table_snomed_codes_all:
+    run: r:latest analysis/table_snomed_code.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        pie_chart_long_covid_code: output/review/descriptives/suppl_figure_pie.svg
-        table_csv_long_covid_code: output/review/descriptives/suppl_table_1.csv
-        table_html_long_covid_code: output/review/descriptives/suppl_table_1.html
+        pie_chart_long_covid_code: output/not_for_review/descriptives/suppl_figure_pie.svg
+        table_long_covid_code: output/not_for_review/descriptives/table_snomed*
 
-  ## Suppl_figure_1 - long covid count by region 
+  ## figure - long covid count by region 
 
-  suppl_figure_1_all:
-    run: r:latest analysis/suppl_figure_1.R
+  figure_long_covid_region_all:
+    run: r:latest analysis/figure_long_covid_count_region.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_region: output/review/descriptives/suppl_figure_1_*.svg
-        table_csv_long_covid_count_region: output/review/descriptives/long_covid_count_*.csv
-        table_html_long_covid_region: output/review/descriptives/long_covid_count_*.html
+        monthly_long_covid_count_region: output/not_for_review/descriptives/figure_monthly*
+        weekly_long_covid_count_region: output/not_for_review/descriptives/figure_weekly*
+        table_long_covid_count_region: output/not_for_review/descriptives/long_covid_count_*
 
   ## Summarise survival data 
 
@@ -334,8 +333,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        summary_survival_data_CSV: output/review/descriptives/summarise_survival_data.csv
-        summary_survival_data_HTML: output/review/descriptives/summarise_survival_data.html
+        summary_survival_data: output/not_for_review/descriptives/summarise_survival_data*
 
   ## Part 4. Modelling 
   ## Development Cox model 

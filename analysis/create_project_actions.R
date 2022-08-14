@@ -125,7 +125,6 @@ apply_table2 <- function(cohort){
     )
   )
 }
-
 apply_table_sequence <- function(cohort){
   splice(
     comment(glue("Table. Sequence count - {cohort}")),
@@ -142,7 +141,6 @@ apply_table_sequence <- function(cohort){
     )
   )
 }
-
 apply_stage1_eligibility <- function(cohort){
   splice(
     comment(glue("Stage 1 define eligible population - {cohort}")),
@@ -160,8 +158,6 @@ apply_stage1_eligibility <- function(cohort){
     )
   )
 }
-
-
 apply_development_cox_model <- function(analysis){
   splice(
     comment(glue("Development Cox Model - {analysis}")),
@@ -185,7 +181,6 @@ apply_development_cox_model <- function(analysis){
     )
   )
 }
-
 apply_development_cox_model_age_sex <- function(analysis){
   splice(
     comment(glue("Development Cox Model - {analysis}")),
@@ -207,7 +202,6 @@ apply_development_cox_model_age_sex <- function(analysis){
     )
   )
 }
-
 apply_development_cox_model_age_sex_adjusted <- function(analysis){
   splice(
     comment(glue("Development Cox Model - {analysis}")),
@@ -272,23 +266,6 @@ apply_evaluation_cox_model <- function(analysis){
     )
   )
 }
-
-# apply_evaluation_cox_model_age_sex <- function(analysis){
-#   splice(
-#     action(
-#       name = glue("evaluation_cox_model_age_sex_{analysis}"),
-#       run = "r:latest analysis/stage4_model_eval_age_sex.R",
-#       arguments = c(analysis),
-#       needs = list(glue("development_model_age_sex_{analysis}")),
-#       moderately_sensitive = list(
-#         performance_measure_CSV = glue("output/review/model/performance_measures_age_sex_*_{analysis}.csv"),
-#         performance_measure_HTML = glue("output/review/model/performance_measures_age_sex_*_{analysis}.html"),
-#         survival_plot = glue("output/review/model/survival_plot_age_sex_*_{analysis}.svg")
-#       )
-#     )
-#   )
-# }
-
 apply_validation_cox_model_iecv <- function(analysis){
   splice(
     comment(glue("Validation Cox Model - {analysis}")),
@@ -398,21 +375,13 @@ actions_list <- splice(
       table = glue("output/review/descriptives/table_sequence_combined*")
     )
   ),
-  # action(
-  #   name = "table_sequence_all",
-  #   run = "r:latest analysis/table_sequence.R",
-  #   needs = list("stage1_define_eligible_population_all"),
-  #   moderately_sensitive = list(
-  #     sequence_count_table = glue("output/review/descriptives/table_sequence*")
-  #   )
-  # ),
-  comment("Figure_1 - long covid count"),
+  comment("Figure - long covid count"),
   action(
-    name = "figure_1_all",
-    run = "r:latest analysis/figure_1.R",
+    name = "figure_long_covid_count_all",
+    run = "r:latest analysis/figure_long_covid_count.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      figure_long_covid_count_all = glue("output/figure_1_*.svg"),
+      figure_long_covid_count_all = glue("output/figure_long_covid*"),
       table_csv_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.csv"),
       table_html_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all.html")
     )
@@ -428,24 +397,6 @@ actions_list <- splice(
       table_bin_count= glue("output/review/descriptives/supporting_doc_hist_*")
     )
   ),
-  # comment("Figure - hazard ratio plot"),
-  # action(
-  #   name = "figure_hazard_ratio",
-  #   run = "r:latest analysis/figure_hazard_ratio_plot.R",
-  #   needs = glue("development_cox_model_{analysis_to_run}"),
-  #   moderately_sensitive = list(
-  #     figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
-  #   )
-  # ),
-  # comment("Figure - cumulative probability plot"),
-  # action(
-  #   name = "figure_cum_prob_km_all",
-  #   run = "r:latest analysis/figure_cum_prob_km.R",
-  #   needs = list("stage1_define_eligible_population_all"),
-  #   moderately_sensitive = list(
-  #     cum_prob_plot = glue("output/not_for_review/descriptives/figure_cum_*.svg")
-  #   )
-  # ),
   comment("Figure - cumulative incidence plot"),
   action(
     name = "figure_cum_incidence_km_all",
@@ -455,26 +406,25 @@ actions_list <- splice(
       cum_prob_plot = glue("output/review/descriptives/figure_cum_incidence_*.svg")
     )
   ),
-  comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),
+  comment("Table - frequencies of snomed code for long covid diagnosis"),
   action(
-    name = "suppl_table_1_all",
-    run = "r:latest analysis/suppl_table_1.R",
+    name = "table_snomed_codes_all",
+    run = "r:latest analysis/table_snomed_code.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      pie_chart_long_covid_code = glue("output/review/descriptives/suppl_figure_pie.svg"),
-      table_csv_long_covid_code = glue("output/review/descriptives/suppl_table_1.csv"),
-      table_html_long_covid_code = glue("output/review/descriptives/suppl_table_1.html")
+      pie_chart_long_covid_code = glue("output/not_for_review/descriptives/suppl_figure_pie.svg"),
+      table_long_covid_code = glue("output/not_for_review/descriptives/table_snomed*")
     )
   ),
-  comment("Suppl_figure_1 - long covid count by region"),
+  comment("figure - long covid count by region"),
   action(
-    name = "suppl_figure_1_all",
-    run = "r:latest analysis/suppl_figure_1.R",
+    name = "figure_long_covid_region_all",
+    run = "r:latest analysis/figure_long_covid_count_region.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      figure_long_covid_count_region = glue("output/review/descriptives/suppl_figure_1_*.svg"),
-      table_csv_long_covid_count_region = glue("output/review/descriptives/long_covid_count_*.csv"),
-      table_html_long_covid_region = glue("output/review/descriptives/long_covid_count_*.html")
+      monthly_long_covid_count_region = glue("output/not_for_review/descriptives/figure_monthly*"),
+      weekly_long_covid_count_region = glue("output/not_for_review/descriptives/figure_weekly*"),
+      table_long_covid_count_region = glue("output/not_for_review/descriptives/long_covid_count_*")
     )
   ),
   comment("Summarise survival data"),
@@ -483,8 +433,7 @@ actions_list <- splice(
     run = "r:latest analysis/stage2_summarise_survival_data.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      summary_survival_data_CSV = glue("output/review/descriptives/summarise_survival_data.csv"),
-      summary_survival_data_HTML = glue("output/review/descriptives/summarise_survival_data.html")
+      summary_survival_data = glue("output/not_for_review/descriptives/summarise_survival_data*")
     )
   ),
   comment("Part 4. Modelling"),
@@ -503,12 +452,11 @@ actions_list <- splice(
   splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model(analysis = x)), recursive = FALSE)
   ),
-
-  
+  # Age sex Cox model
   splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex(analysis = x)), recursive = FALSE)
   ),
-  
+  # Age sex adjsuted Cox model
   splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex_adjusted(analysis = x)), recursive = FALSE)
   ),
