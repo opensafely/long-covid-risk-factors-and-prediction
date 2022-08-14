@@ -17,7 +17,7 @@ KM <- survfit(Surv(lcovid_surv, lcovid_cens) ~ cov_cat_age_group, type="kaplan-m
               conf.type="log")
 N <- length(unique(input$cov_cat_age_group))
 
-svg("output/review/descriptives/figure_cum_prob_age_sex.svg", width = 9, height = 5,)
+svg(file="output/not_for_review/descriptives/figure_cum_prob_age_sex.svg", width = 9, height = 5,)
 
 ggsurvplot_facet(KM, fun=function(x) { 1- x }, data=input, facet.by = "cov_cat_sex",
                 palette = "jco", 

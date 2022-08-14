@@ -437,13 +437,22 @@ actions_list <- splice(
   #     figure_hazard_ratio_plot = glue("output/review/model/figure_hr_*.svg")
   #   )
   # ),
-  comment("Figure - cumulative probability plot"),
+  # comment("Figure - cumulative probability plot"),
+  # action(
+  #   name = "figure_cum_prob_km_all",
+  #   run = "r:latest analysis/figure_cum_prob_km.R",
+  #   needs = list("stage1_define_eligible_population_all"),
+  #   moderately_sensitive = list(
+  #     cum_prob_plot = glue("output/not_for_review/descriptives/figure_cum_*.svg")
+  #   )
+  # ),
+  comment("Figure - cumulative incidence plot"),
   action(
-    name = "figure_cum_prob_km_all",
-    run = "r:latest analysis/figure_cum_prob_km.R",
+    name = "figure_cum_incidence_km_all",
+    run = "r:latest analysis/figure_kaplan_meier.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      cum_prob_plot = glue("output/review/descriptives/figure_cum_*.svg")
+      cum_prob_plot = glue("output/review/descriptives/figure_cum_incidence_*.svg")
     )
   ),
   comment("Suppl_table_1 - frequencies of snomed code for long covid diagnosis"),

@@ -2,7 +2,7 @@
 # Author:  Yinghui Wei
 # Content: cumulative probability of long COVID by age and  sex
 # Output:  Two KM plots by age and sex
-library(readr); library(dplyr);library(survival);library(survminer);library(tidyverse)
+library(readr); library(dplyr);library(survival);library(survminer);library(tidyverse); library(ggplot2)
 source("analysis/functions/function_round_km.R")
 fs::dir_create(here::here("output", "review", "descriptives"))
 cohort = "all"
@@ -12,16 +12,71 @@ input <- input %>% select(lcovid_surv, lcovid_cens, contains("sex"), contains("c
 levels(input$cov_cat_age_group) <- c("18-39", "40-59", "60-79", "80+")
 table(input$cov_cat_age_group)
 table(input$cov_cat_sex)
-levels(input$cov_cat_sex) <- c("Female", "Male")
+#levels(input$cov_cat_sex) <- c("Male", "Female")
 
-dat_sex <- round_km(input, "lcovid_surv", "lcovid_cens", "cov_cat_sex", threshold=6)
+# dat_sex <- round_km(input, "lcovid_surv", "lcovid_cens", "cov_cat_sex", threshold=6)
+# 
+# for(i in c("Female", "Male")){
+#   dat_sex$x[which(dat_sex$cov_cat_sex ==i)] <- seq(length=length(which(dat_sex$cov_cat_sex ==i))) #Add case numbers (in order, since sorted)
+#   dat_sex$y[which(dat_sex$cov_cat_sex ==i)] <- cumsum(replace_na(dat_sex$n.event[which(dat_sex$cov_cat_sex ==i)], 0))
+# }
+# library(ggplot2)
+#   ggplot(dat_sex, aes(x,y, group = cov_cat_sex)) + geom_path() + #Ploting
+#   # scale_y_continuous(name= "Days since follow-up start date") +
+#   # scale_x_continuous(name= "Cumulative incidence of long COVID")+
+#   labs(title="",x="\nDays since 1 December 2020", y = "\nCumulative incidence of long COVID\n")
 
-for(i in c("Female", "Male")){
-  dat_sex$x[which(dat_sex$cov_cat_sex ==i)] <- seq(length=length(which(dat_sex$cov_cat_sex ==i))) #Add case numbers (in order, since sorted)
-  dat_sex$y[which(dat_sex$cov_cat_sex ==i)] <- cumsum(replace_na(dat_sex$n.event[which(dat_sex$cov_cat_sex ==i)], 0))
-}
-library(ggplot2)
-  ggplot(dat_sex, aes(x,y, group = cov_cat_sex)) + geom_path() + #Ploting
-  # scale_y_continuous(name= "Days since follow-up start date") +
-  # scale_x_continuous(name= "Cumulative incidence of long COVID")+
-  labs(title="",x="\nDays since 1 December 2020", y = "\nCumulative incidence of long COVID\n")
+# two KM graphs by sex, with each graph, curves by age group
+
+sex= c("M","F")
+
+# Not sure why the following doesn't work as a loop or function
+
+# Male: cumulative incidence plot-----------------------------------------------------------------
+  input_sex_m <- input %>% filter(cov_cat_sex == sex[1])
+  dat_age <- round_km(input_sex_m, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
+  dat_age$x <- dat_age$y <- NA
+  for(i in c("18-39", "40-59","60-79", "80+")){
+    dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
+    dat_age$y[which(dat_age$cov_cat_age_group ==i)] <- cumsum(replace_na(dat_age$n.event[which(dat_age$cov_cat_age_group ==i)], 0))
+  }
+  dat_age_m <- dat_age
+  dat_age_m$sex <- "Male"
+# Female: -----------------------------------------------------------------------------------------
+  input_sex_f <- input %>% filter(cov_cat_sex == sex[2])
+  dat_age <- round_km(input_sex_f, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
+  dat_age$x <- dat_age$y <- NA
+  for(i in c("18-39", "40-59","60-79", "80+")){
+    dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
+    dat_age$y[which(dat_age$cov_cat_age_group ==i)] <- cumsum(replace_na(dat_age$n.event[which(dat_age$cov_cat_age_group ==i)], 0))
+  }
+  dat_age_f <- dat_age
+  dat_age_f$sex <- "Female"
+  dat_age <- rbind(dat_age_m, dat_age_f)
+  
+# Create the cumulative incidence plot -----------------------------------------------------------
+  svglite::svglite("output/review/descriptives/figure_cum_incidence_age_sex.svg", width = 9, height = 5,)
+  
+  ggplot(dat_age, 
+         aes(x,y, group = cov_cat_age_group, color=cov_cat_age_group, linetype = cov_cat_age_group)) +
+    geom_path() + #Ploting
+    geom_line(aes(linetype=cov_cat_age_group),size=1)+
+    scale_linetype_manual(values=c("18-39" = "longdash",
+                                   "40-59" = "dotted",
+                                   "60-79" = "dotdash",
+                                   "80+"   = "solid"))+
+    scale_color_manual(values = c("18-39" = "#808080",
+                                  "40-59"="#FF8000",
+                                  "60-79"= "#B266FF",
+                                  "80+" = "red"))+
+    labs(title="",x="\nDays since 1 December 2020", y = "\nCumulative incidence of long COVID\n") +
+    labs(linetype='Age group', colour="Age group") +
+    facet_grid(cols = vars(sex)) +
+    theme(legend.position="bottom", legend.title=element_text(size=13), 
+          legend.text=element_text(size=13),
+          axis.text = element_text(size = 13),
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+          panel.background = element_blank(), axis.line = element_line(colour = "black"))
+ 
+  dev.off()
+  
