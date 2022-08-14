@@ -14,7 +14,7 @@ table(input$cov_cat_age_group)
 table(input$cov_cat_sex)
 
 # Male: Create KM data -----------------------------------------------------------------
-input_sex_m <- input %>% filter(cov_cat_sex == sex[1])
+input_sex_m <- input %>% filter(cov_cat_sex == "M")
 dat_age <- round_km(input_sex_m, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
 dat_age$x <- dat_age$y <- NA
 for(i in c("18-39", "40-59","60-79", "80+")){
@@ -25,7 +25,7 @@ dat_age_m <- dat_age
 dat_age_m$sex <- "Male"
 
 # Female: Create KM data ----------------------------------------------------------------
-input_sex_f <- input %>% filter(cov_cat_sex == sex[2])
+input_sex_f <- input %>% filter(cov_cat_sex == "F")
 dat_age <- round_km(input_sex_f, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
 dat_age$x <- dat_age$y <- NA
 for(i in c("18-39", "40-59","60-79", "80+")){
