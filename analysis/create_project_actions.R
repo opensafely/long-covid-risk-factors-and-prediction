@@ -407,8 +407,8 @@ actions_list <- splice(
     run = "r:latest analysis/table_snomed_code.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      pie_chart_long_covid_code = glue("output/not_for_review/descriptives/suppl_figure_pie.svg"),
-      table_long_covid_code = glue("output/not_for_review/descriptives/table_snomed*")
+      pie_chart_long_covid_code = glue("output/review/descriptives/suppl_figure_pie.svg"),
+      table_long_covid_code = glue("output/review/descriptives/table_snomed*")
     )
   ),
   comment("figure - long covid count by region"),

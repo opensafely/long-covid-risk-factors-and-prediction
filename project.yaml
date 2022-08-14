@@ -303,8 +303,8 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        pie_chart_long_covid_code: output/not_for_review/descriptives/suppl_figure_pie.svg
-        table_long_covid_code: output/not_for_review/descriptives/table_snomed*
+        pie_chart_long_covid_code: output/review/descriptives/suppl_figure_pie.svg
+        table_long_covid_code: output/review/descriptives/table_snomed*
 
   ## figure - long covid count by region 
 

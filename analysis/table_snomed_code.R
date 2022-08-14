@@ -7,6 +7,7 @@
 source("analysis/functions/redactor2.R")
 
 fs::dir_create(here::here("output", "review", "descriptives"))
+fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 
 library(readr); library(dplyr); library(ggplot2)
 
@@ -62,12 +63,12 @@ suppl_figure_pie <- ggplot(count_data_active, aes(x = "", y = count, fill = snom
 suppl_figure_pie
 
 #supplementary figure - pie chart
-ggsave(file="output/not_for_review/descriptives/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
+ggsave(file="output/review/descriptives/suppl_figure_pie.svg", plot=suppl_figure_pie, width=16, height=8)
 
 # output underlying count data for supplementary figure - pie chart
 
 # small number suppression - indicate NA as redacted
 count_data[which(is.na(count_data$count)),col_names]="[redacted]" 
 
-write.csv(count_data, file="output/not_for_review/descriptives/table_snomed_code.csv")
+write.csv(count_data, file="output/review/descriptives/table_snomed_code.csv")
 
