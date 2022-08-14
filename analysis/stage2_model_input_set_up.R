@@ -88,7 +88,10 @@ if(analysis == "all_vax_td"){
 ## handling variables
 
 ## remove region as a covariate
-input <- input %>% rename(sub_cat_region = "cov_cat_region")  %>%
+# input <- input %>% rename(sub_cat_region = "cov_cat_region")  %>%
+#   rename(sub_cat_age_group = "cov_cat_age_group")
+
+input <- input %>% 
   rename(sub_cat_age_group = "cov_cat_age_group")
 
 
@@ -104,7 +107,7 @@ print(covariate_names)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "lcovid_surv", "lcovid_cens", covariate_names,
-                       "cov_num_age", "weight", "sub_cat_region", "sub_cat_age_group")
+                       "cov_num_age", "weight", "sub_cat_age_group") 
 
 if(analysis == "all_vax_td"){
   variables_to_keep <- c(variables_to_keep, "vax2_surv")
@@ -135,36 +138,36 @@ knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 surv_formula_age_spl_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex",
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ strat(sub_cat_region)"
+  "+rms::rcs(cov_num_age,parms=knot_placement)"
+  #"+ strat(sub_cat_region)"
 )
 
 ## Age sex model - age linear
 surv_formula_age_linear_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
-  "cov_cat_sex", "+ cov_num_age", "+ strat(sub_cat_region)"
+  "cov_cat_sex", "+ cov_num_age"
+  #"+ strat(sub_cat_region)"
 )
 
 ## Age sex model - age categorical
 surv_formula_age_cat_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
-  "cov_cat_sex", "+ sub_cat_age_group", "+ strat(sub_cat_region)"
+  "cov_cat_sex", "+ sub_cat_age_group"
+  #"+ strat(sub_cat_region)"
 )
-## Age sex model - age categorical
-# surv_formula_age_linear_sex <- paste0(
-#   "Surv(lcovid_surv, lcovid_cens) ~ ",
-#   "cov_cat_sex", "+ cov_num_age", "+ strat(sub_cat_region)"
-# )
+
 ## Age sex model
 if(analysis == "all_vax_td"){
   surv_formula_age_spl_sex <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     "cov_cat_sex", "+rms::rcs(cov_num_age,parms=knot_placement)", 
-    "+ cov_cat_ie.status", "+ strat(sub_cat_region)"
+    "+ cov_cat_ie.status" 
+    #"+ strat(sub_cat_region)"
   )
   surv_formula_age_linear_sex <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
-    "cov_cat_sex", "+ cov_num_age", "+ cov_cat_ie.status", "+ strat(sub_cat_region)"
+    "cov_cat_sex", "+ cov_num_age", "+ cov_cat_ie.status"
+    #"+ strat(sub_cat_region)"
   )
 }
 
@@ -172,24 +175,24 @@ if(analysis == "all_vax_td"){
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ strat(sub_cat_region)"
+  "+rms::rcs(cov_num_age,parms=knot_placement)"
+  #"+ strat(sub_cat_region)"
 )
 
 ## full model: age linear
 surv_formula_lp <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+ cov_num_age", 
-  "+ strat(sub_cat_region)"
+  "+ cov_num_age"
+  #"+ strat(sub_cat_region)"
 )
 
 ## Full model - age categorical
 surv_formula_age_categorical <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+ sub_cat_age_group", 
-  "+ strat(sub_cat_region)"
+  "+ sub_cat_age_group"
+  #"+ strat(sub_cat_region)"
 )
 ## only predictors
 surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")
