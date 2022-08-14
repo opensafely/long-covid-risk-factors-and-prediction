@@ -13,34 +13,46 @@ levels(input$cov_cat_age_group) <- c("18-39", "40-59", "60-79", "80+")
 table(input$cov_cat_age_group)
 table(input$cov_cat_sex)
 
+# Define a function to extract KM data ---------------------------------------------------------
+function_km_data <-function(input_sex){
+  dat_age <- round_km(input_sex, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
+  dat_age$x <- dat_age$y <- dat_age$y_prob <-NA
+  for(i in c("18-39", "40-59","60-79", "80+")){
+    dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
+    dat_age$y[which(dat_age$cov_cat_age_group ==i)] <- cumsum(replace_na(dat_age$n.event[which(dat_age$cov_cat_age_group ==i)], 0))
+  }
+  i="40-59"
+  for(i in c("18-39", "40-59","60-79", "80+")){
+    index = which(dat_age$cov_cat_age_group==i)
+
+    dat_age_select <- dat_age %>% filter(cov_cat_age_group == i)
+    dat_age_select$y_prob <- NA
+    total.events = dat_age_select$y[nrow(dat_age_select)]
+    dat_age_select$y_prob = dat_age_select$y/total.events
+    
+    dat_age$y_prob[index] <- dat_age_select$y_prob
+  }
+  return(dat_age)
+}
 # Male: Create KM data -----------------------------------------------------------------
 input_sex_m <- input %>% filter(cov_cat_sex == "M")
-dat_age <- round_km(input_sex_m, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
-dat_age$x <- dat_age$y <- NA
-for(i in c("18-39", "40-59","60-79", "80+")){
-  dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
-  dat_age$y[which(dat_age$cov_cat_age_group ==i)] <- cumsum(replace_na(dat_age$n.event[which(dat_age$cov_cat_age_group ==i)], 0))
-}
-dat_age_m <- dat_age
+dat_age_m <- function_km_data(input_sex_m)
 dat_age_m$sex <- "Male"
 
 # Female: Create KM data ----------------------------------------------------------------
 input_sex_f <- input %>% filter(cov_cat_sex == "F")
-dat_age <- round_km(input_sex_f, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
-dat_age$x <- dat_age$y <- NA
-for(i in c("18-39", "40-59","60-79", "80+")){
-  dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
-  dat_age$y[which(dat_age$cov_cat_age_group ==i)] <- cumsum(replace_na(dat_age$n.event[which(dat_age$cov_cat_age_group ==i)], 0))
-}
-dat_age_f <- dat_age
+dat_age_f <- function_km_data(input_sex_f) 
 dat_age_f$sex <- "Female"
 dat_age <- rbind(dat_age_m, dat_age_f)
-  
+
+
+
 # Create the cumulative incidence plot -----------------------------------------------------------
-svglite::svglite("output/review/descriptives/figure_cum_incidence_age_sex.svg", width = 9, height = 5,)
+svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex.svg", width = 9, height = 5,)
 
 ggplot(dat_age, 
-       aes(x,y, group = cov_cat_age_group, color=cov_cat_age_group, linetype = cov_cat_age_group)) +
+       aes(x,y_prob, group = cov_cat_age_group, color=cov_cat_age_group, 
+           linetype = cov_cat_age_group)) +
   geom_path() + #Ploting
   geom_line(aes(linetype=cov_cat_age_group),size=1)+
   scale_linetype_manual(values=c("18-39" = "longdash",
@@ -51,7 +63,7 @@ ggplot(dat_age,
                                 "40-59"="#FF8000",
                                 "60-79"= "#B266FF",
                                 "80+" = "red"))+
-  labs(title="",x="\nDays since 1 December 2020", y = "\nCumulative incidence of long COVID\n") +
+  labs(title="",x="\nDays since 1 December 2020", y = "\nCumulative probability of long COVID code\n") +
   labs(linetype='Age group', colour="Age group") +
   facet_grid(cols = vars(sex)) +
   theme(legend.position="bottom", legend.title=element_text(size=13), 

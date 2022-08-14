@@ -392,13 +392,13 @@ actions_list <- splice(
       table_bin_count= glue("output/review/descriptives/supporting_doc_hist_*")
     )
   ),
-  comment("Figure - cumulative incidence plot"),
+  comment("Figure - Kaplan Meier plot"),
   action(
-    name = "figure_cum_incidence_km_all",
+    name = "figure__km_all",
     run = "r:latest analysis/figure_kaplan_meier.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      cum_prob_plot = glue("output/review/descriptives/figure_cum_incidence_*.svg")
+      plot_km = glue("output/review/descriptives/figure_kaplan_meier_*.svg")
     )
   ),
   comment("Table - frequencies of snomed code for long covid diagnosis"),

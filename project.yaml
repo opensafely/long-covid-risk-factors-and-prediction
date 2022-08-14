@@ -285,15 +285,15 @@ actions:
         table_csv_summary: output/review/descriptives/summary_days_c_to_long*
         table_bin_count: output/review/descriptives/supporting_doc_hist_*
 
-  ## Figure - cumulative incidence plot 
+  ## Figure - Kaplan Meier plot 
 
-  figure_cum_incidence_km_all:
+  figure__km_all:
     run: r:latest analysis/figure_kaplan_meier.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        cum_prob_plot: output/review/descriptives/figure_cum_incidence_*.svg
+        plot_km: output/review/descriptives/figure_kaplan_meier_*.svg
 
   ## Table - frequencies of snomed code for long covid diagnosis 
 
