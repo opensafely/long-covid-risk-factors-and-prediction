@@ -45,9 +45,7 @@ dat_age_f <- function_km_data(input_sex_f)
 dat_age_f$sex <- "Female"
 dat_age <- rbind(dat_age_m, dat_age_f)
 
-
-
-# Create the cumulative incidence plot -----------------------------------------------------------
+# Create cumulative incidence plot -----------------------------------------------------------
 svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex.svg", width = 9, height = 5,)
 
 ggplot(dat_age, 
