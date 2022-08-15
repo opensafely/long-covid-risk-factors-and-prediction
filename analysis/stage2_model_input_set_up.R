@@ -7,7 +7,6 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 fs::dir_create(here::here("output", "not_for_review", "model"))
 fs::dir_create(here::here("output", "review", "model"))
-fs::dir_create(here::here("output"))
 source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 

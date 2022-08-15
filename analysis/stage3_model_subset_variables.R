@@ -82,6 +82,7 @@ if(len!=0){
   # In addition: Warning message:
   #In file(file, "rt") :
   #  cannot open file 'output/not_for_review/model/selected_variables_all.csv': No such file or directory
+  # YW 2020/08/15 - this error message is now resolved by calling stage_1_ action as a need in the yaml
   
   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)

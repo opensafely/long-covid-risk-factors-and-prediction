@@ -30,7 +30,7 @@ print("Part 1 is completed!")
 # Part 2: backward elimination                                                 #
 ################################################################################
 ## backward elimination: 
-fit_cox_model_selected <- fastbw(fit_cox_model, rule= "p", sls=0.05)
+fit_cox_model_selected <- fastbw(fit_cox_model, rule= "p", sls=0.20)
 # sls: Significance level for staying in a model if rule="p"
 
 print("selected model:")
