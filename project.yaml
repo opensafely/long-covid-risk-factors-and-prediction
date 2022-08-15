@@ -515,6 +515,80 @@ actions:
         hazard_ratios: output/review/model/HR_estimates_age_sex_adjusted_infected*
         performance_measure: output/review/model/performance_measures_age_sex_adjusted_infected*
 
+  ## Subset variables 
+
+  identify_subset_variables:
+    run: r:latest analysis/stage3_identify_subset_variables.R
+    needs:
+    - development_cox_model_all
+    - development_cox_model_all_vax_c
+    - development_cox_model_all_vax_td
+    - development_cox_model_vaccinated
+    - development_cox_model_infected
+    outputs:
+      moderately_sensitive:
+        subset_variables: output/review/model/selected_vars.csv
+
+  ## Development Cox Model using a subset of variables - all 
+
+  model_subset_variables_all:
+    run: r:latest analysis/stage3_model_subset_variables.R all
+    needs:
+    - identify_subset_variables
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        hazard_ratios: output/review/model/hazard_ratio_estimates_subset*_all*
+        performance_measure: output/review/model/performance_measures_subset*_all*
+
+  ## Development Cox Model using a subset of variables - all_vax_c 
+
+  model_subset_variables_all_vax_c:
+    run: r:latest analysis/stage3_model_subset_variables.R all_vax_c
+    needs:
+    - identify_subset_variables
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        hazard_ratios: output/review/model/hazard_ratio_estimates_subset*_all_vax_c*
+        performance_measure: output/review/model/performance_measures_subset*_all_vax_c*
+
+  ## Development Cox Model using a subset of variables - vaccinated 
+
+  model_subset_variables_vaccinated:
+    run: r:latest analysis/stage3_model_subset_variables.R vaccinated
+    needs:
+    - identify_subset_variables
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        hazard_ratios: output/review/model/hazard_ratio_estimates_subset*_vaccinated*
+        performance_measure: output/review/model/performance_measures_subset*_vaccinated*
+
+  ## Development Cox Model using a subset of variables - all_vax_td 
+
+  model_subset_variables_all_vax_td:
+    run: r:latest analysis/stage3_model_subset_variables.R all_vax_td
+    needs:
+    - identify_subset_variables
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        hazard_ratios: output/review/model/hazard_ratio_estimates_subset*_all_vax_td*
+        performance_measure: output/review/model/performance_measures_subset*_all_vax_td*
+
+  ## Development Cox Model using a subset of variables - infected 
+
+  model_subset_variables_infected:
+    run: r:latest analysis/stage3_model_subset_variables.R infected
+    needs:
+    - identify_subset_variables
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        hazard_ratios: output/review/model/hazard_ratio_estimates_subset*_infected*
+        performance_measure: output/review/model/performance_measures_subset*_infected*
+
   ## Evaluation Cox model 
 
   evaluation_cox_model_all:

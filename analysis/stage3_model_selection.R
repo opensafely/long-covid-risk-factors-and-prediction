@@ -30,7 +30,7 @@ print("Part 1 is completed!")
 # Part 2: backward elimination                                                 #
 ################################################################################
 ## backward elimination: 
-fit_cox_model_selected <- fastbw(fit_cox_model, sls=0.20)
+fit_cox_model_selected <- fastbw(fit_cox_model, rule= "p", sls=0.05)
 # sls: Significance level for staying in a model if rule="p"
 
 print("selected model:")
@@ -39,7 +39,7 @@ fit_cox_model_selected$names.kept
 selected_covariate_names <- fit_cox_model_selected$names.kept
 
 if(length(fit_cox_model_selected$names.kept)==0){
-  selected_covariate_names <- NULL
+  selected_covariate_names <- "None"
 }
 write.csv(selected_covariate_names, 
           file = paste0("output/not_for_review/model/selected_variables_",analysis,".csv"), row.names=FALSE)

@@ -235,6 +235,27 @@ apply_development_cox_model_age_sex_adjusted <- function(analysis){
 #   )
 # }
 
+apply_cox_model_subset_variables <- function(analysis){
+  splice(
+    comment(glue("Development Cox Model using a subset of variables - {analysis}")),
+    action(
+      name = list(glue("model_subset_variables_{analysis}")),
+      run = "r:latest analysis/stage3_model_subset_variables.R",
+      arguments = c(analysis),
+      #needs =list("identify_subset_variables"),
+      needs = list(glue("identify_subset_variables"),if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{analysis}")
+        }
+      ),
+      moderately_sensitive = list(
+        hazard_ratios = glue("output/review/model/hazard_ratio_estimates_subset*_{analysis}*"),
+        performance_measure = glue("output/review/model/performance_measures_subset*_{analysis}*")
+      )
+    )
+  )
+}
+
 apply_evaluation_cox_model <- function(analysis){
   splice(
     action(
@@ -476,10 +497,20 @@ actions_list <- splice(
   splice(
     unlist(lapply(analysis, function(x) apply_development_cox_model_age_sex_adjusted(analysis = x)), recursive = FALSE)
   ),
-  
-  # splice(
-  #   unlist(lapply(analysis, function(x) apply_development_cox_model_subset_variables(analysis = x)), recursive = FALSE)
-  # ),
+  comment("Subset variables"),
+  action(
+    name = "identify_subset_variables",
+    run = "r:latest analysis/stage3_identify_subset_variables.R",
+    needs = list("development_cox_model_all", "development_cox_model_all_vax_c",
+                 "development_cox_model_all_vax_td", "development_cox_model_vaccinated",
+                 "development_cox_model_infected"),
+    moderately_sensitive = list(
+      subset_variables = glue("output/review/model/selected_vars.csv")
+    )
+  ),
+  splice(
+    unlist(lapply(analysis, function(x) apply_cox_model_subset_variables(analysis = x)), recursive = FALSE)
+  ),
   
   comment("Evaluation Cox model"),
   splice(
