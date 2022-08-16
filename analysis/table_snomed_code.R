@@ -43,8 +43,8 @@ col_names <- c("count","percent","labels")
 count_data[index,col_names]= NA
 
 # use redactor for small number suppression
-index <- which(count_data$count < 6)
-count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
+# index <- which(count_data$count < 6)
+# count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
 
 count_data_active = count_data%>%filter(count>5)
 # Pie Chart
