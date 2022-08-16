@@ -51,9 +51,10 @@ index1 <- which(is.na(table_seq_wide$diff_all_vaccinated)&(!is.na(table_seq_wide
 
 index2 <- which(is.na(table_seq_wide$diff_all_infected)&(!is.na(table_seq_wide$numeric.all) &
                                                             !is.na(table_seq_wide$numeric.infected)))
-index1 <- c(1,2,3) # for testing
-index2 <- c(3,4,5) # for testing
+# index1 <- c(1,2,3) # for testing
+# index2 <- c(3,4,5) # for testing
 index <- c(unique(c(index1, index2)))
+# if running locally read extracted data:
 table_seq_wide$n.all[index] = table_seq_wide$n.vaccinated[index]= table_seq_wide$n.infected[index] = "[redacted]"
 
 table_seq_wide <- table_seq_wide %>% select(!contains("numeric")) 
