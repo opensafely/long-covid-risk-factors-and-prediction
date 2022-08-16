@@ -166,7 +166,7 @@ figure_1_weekly <- ggplot(table_lc_weekly_count, aes(x=year_week,
 figure_1_weekly
 
 # figure_1_weekly_count
-ggsave(file="output/review/descriptives/figure_long_covid_weekly_count.svg", 
+ggsave(file="output/figure_long_covid_weekly_count.svg", 
        plot=figure_1_weekly, width=16, height=8)
 
 
