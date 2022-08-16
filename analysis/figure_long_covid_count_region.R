@@ -156,7 +156,7 @@ suppl_figure_1_weekly <- ggplot(table_lc_weekly_count,
 # table_lc_weekly_count$count[index] = "[redacted]"
 
 # Output supplementary figure -------------------------------------------------
-ggsave(file=paste0("output/not_for_review/descriptives/figure_weekly", ".svg"), 
+ggsave(file=paste0("output/not_for_review/descriptives/figure_weekly_by_region", ".svg"), 
        plot=suppl_figure_1, width=16, height=8)
 
 # Output underlying monthly count data for supplementary figure ----------------------
