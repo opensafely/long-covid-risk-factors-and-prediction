@@ -61,7 +61,7 @@ ggplot(dat_age,
                                 "40-59"="#FF8000",
                                 "60-79"= "#B266FF",
                                 "80+" = "red"))+
-  labs(title="",x="\nDays since 1 December 2020", y = "\nCumulative probability of long COVID code\n") +
+  labs(title="",x="\nDays since 29 January 2020", y = "\nCumulative probability of long COVID code\n") +
   labs(linetype='Age group', colour="Age group") +
   facet_grid(cols = vars(sex)) +
   theme(legend.position="bottom", legend.title=element_text(size=13), 

@@ -192,7 +192,7 @@ stage0_data_cleaning <- function(cohort){
   #a <- input%>%dplyr::select(contains("gp")); View(a)
   
   input <- input %>% mutate(cov_cat_gp_consultation = ifelse(input$cov_num_gp_consultation > 12,
-                                                             "12 or more",
+                                                             "13 or more",
                                                             ifelse(input$cov_num_gp_consultation >= 9,
                                                              "9 to 12",
                                                                 ifelse(input$cov_num_gp_consultation >=4,

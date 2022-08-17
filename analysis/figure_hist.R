@@ -57,8 +57,8 @@ function_summary_histogram_days <- function(input, subgroup){
   write.csv(results, file=paste0("output/review/descriptives/summary_days_c_to_long_",subgroup, ".csv"), row.names = F)
   
   figure_hist<-ggplot(as.data.frame(days), aes(x=days)) +
-    geom_histogram(color="black", fill="gray", bins = 15) +
-    scale_x_continuous(breaks = seq(0, 800, by = 100), limits = c(0,800)) +
+    geom_histogram(color="black", fill="gray", binwidth = 50) +
+    scale_x_continuous(breaks = seq(0, 800, by = 50), limits = c(0,800)) +
     labs(title="",x="Days from COVID infection to long COVID diagnosis", y = "Count") +
     theme_classic() +  
     theme(axis.line = element_line(arrow = arrow(angle = 15, length = unit(.1,"inches"),type = "closed")))
