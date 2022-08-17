@@ -157,9 +157,6 @@ table2_creation <- function(cohort){
     cohort = "all_vax_c"
   }
   write.csv(table_2, file=paste0("output/review/descriptives/table_2_", cohort,".csv"),row.names=F)
-  
-  rmarkdown::render("analysis/compilation/compiled_table2_results.Rmd", 
-                    output_file=paste0("table_2_", cohort),output_dir="output/review/descriptives")
 }
 if(cohort == "all_cohorts") {
   table2_creation("all")

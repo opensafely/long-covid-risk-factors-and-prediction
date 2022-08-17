@@ -53,8 +53,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage0_all.rds
       moderately_sensitive:
-        variable_check_table_CSV: output/not_for_review/descriptives/table_0_all.csv
-        variable_check_table_HTML: output/not_for_review/descriptives/table_0_all.html
+        variable_check_table: output/not_for_review/descriptives/table_0_all.csv
         histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_all.svg
         table_gp: output/not_for_review/descriptives/table_gp_*_all*
 
@@ -68,8 +67,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage0_vaccinated.rds
       moderately_sensitive:
-        variable_check_table_CSV: output/not_for_review/descriptives/table_0_vaccinated.csv
-        variable_check_table_HTML: output/not_for_review/descriptives/table_0_vaccinated.html
+        variable_check_table: output/not_for_review/descriptives/table_0_vaccinated.csv
         histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_vaccinated.svg
         table_gp: output/not_for_review/descriptives/table_gp_*_vaccinated*
 
@@ -83,8 +81,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage0_infected.rds
       moderately_sensitive:
-        variable_check_table_CSV: output/not_for_review/descriptives/table_0_infected.csv
-        variable_check_table_HTML: output/not_for_review/descriptives/table_0_infected.html
+        variable_check_table: output/not_for_review/descriptives/table_0_infected.csv
         histogram_numerical_variable: output/not_for_review/descriptives/histogram_*_infected.svg
         table_gp: output/not_for_review/descriptives/table_gp_*_infected*
 
@@ -99,8 +96,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_all.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_all.csv
-        flow_chart_html: output/flow_chart_all.html
+        table_flow_chart: output/flow_chart_all*
 
   ## Stage 1 define eligible population - vaccinated 
 
@@ -112,8 +108,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_vaccinated.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_vaccinated.csv
-        flow_chart_html: output/flow_chart_vaccinated.html
+        table_flow_chart: output/flow_chart_vaccinated*
 
   ## Stage 1 define eligible population - infected 
 
@@ -125,8 +120,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_infected.rds
       moderately_sensitive:
-        flow_chart_csv: output/flow_chart_infected.csv
-        flow_chart_html: output/flow_chart_infected.html
+        table_flow_chart: output/flow_chart_infected*
 
   ## Part 3. Figures and tables 
   ## Table 1. Patient Characteristics - all 
@@ -137,8 +131,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        descriptive_table_CSV: output/review/descriptives/table_1_all.csv
-        descriptive_table_HTML: output/review/descriptives/table_1_all.html
+        descriptive_table: output/review/descriptives/table_1_all.csv
 
   ## Table 1. Patient Characteristics - vaccinated 
 
@@ -148,8 +141,7 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        descriptive_table_CSV: output/review/descriptives/table_1_vaccinated.csv
-        descriptive_table_HTML: output/review/descriptives/table_1_vaccinated.html
+        descriptive_table: output/review/descriptives/table_1_vaccinated.csv
 
   ## Table 1. Patient Characteristics - infected 
 
@@ -159,8 +151,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        descriptive_table_CSV: output/review/descriptives/table_1_infected.csv
-        descriptive_table_HTML: output/review/descriptives/table_1_infected.html
+        descriptive_table: output/review/descriptives/table_1_infected.csv
 
   ## Table_1_combined - all table 1 combined 
 
@@ -174,8 +165,8 @@ actions:
       moderately_sensitive:
         table: output/review/descriptives/table_1_combined*
 
-  ## Define eligible population 
-  ## Table 2. Event count and incidence rate - all 
+  ## Table 2 event count 
+  ## Table 2. Event count - all 
 
   table_2_all:
     run: r:latest analysis/table_2.R all
@@ -183,10 +174,9 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_all.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_all.html
+        event_count_table: output/review/descriptives/table_2_all*
 
-  ## Table 2. Event count and incidence rate - all_vax_c 
+  ## Table 2. Event count - all_vax_c 
 
   table_2_all_vax_c:
     run: r:latest analysis/table_2.R all_vax_c
@@ -194,10 +184,9 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_all_vax_c.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_all_vax_c.html
+        event_count_table: output/review/descriptives/table_2_all_vax_c*
 
-  ## Table 2. Event count and incidence rate - vaccinated 
+  ## Table 2. Event count - vaccinated 
 
   table_2_vaccinated:
     run: r:latest analysis/table_2.R vaccinated
@@ -205,10 +194,9 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_vaccinated.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_vaccinated.html
+        event_count_table: output/review/descriptives/table_2_vaccinated*
 
-  ## Table 2. Event count and incidence rate - infected 
+  ## Table 2. Event count - infected 
 
   table_2_infected:
     run: r:latest analysis/table_2.R infected
@@ -216,8 +204,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        incidence_rate_table_CSV: output/review/descriptives/table_2_infected.csv
-        incidence_rate_talbe_HTML: output/review/descriptives/table_2_infected.html
+        event_count_table: output/review/descriptives/table_2_infected*
 
   ## Table_2_combined - all table 2 combined 
 
@@ -232,28 +219,59 @@ actions:
       moderately_sensitive:
         table: output/review/descriptives/table_2_combined*
 
-  ## table_3 - sequence count 
+  ## Table - sequence count 
+  ## Table. Sequence count - all 
 
-  table_3_all:
-    run: r:latest analysis/table_3.R
+  table_sequence_all:
+    run: r:latest analysis/table_sequence.R all
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        sequence_count_table_CSV: output/review/descriptives/table_3.csv
-        sequence_count_table_HTML: output/review/descriptives/table_3.html
+        sequence_count_table: output/review/descriptives/table_sequence_all*
 
-  ## Figure_1 - long covid count 
+  ## Table. Sequence count - vaccinated 
 
-  figure_1_all:
-    run: r:latest analysis/figure_1.R
+  table_sequence_vaccinated:
+    run: r:latest analysis/table_sequence.R vaccinated
+    needs:
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        sequence_count_table: output/review/descriptives/table_sequence_vaccinated*
+
+  ## Table. Sequence count - infected 
+
+  table_sequence_infected:
+    run: r:latest analysis/table_sequence.R infected
+    needs:
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        sequence_count_table: output/review/descriptives/table_sequence_infected*
+
+  ## Table sequence combined - all tables for sequence count combined 
+
+  table_sequence_combined:
+    run: r:latest analysis/table_sequence_combined.R
+    needs:
+    - table_sequence_all
+    - table_sequence_vaccinated
+    - table_sequence_infected
+    outputs:
+      moderately_sensitive:
+        table: output/review/descriptives/table_sequence_combined*
+
+  ## Figure - long covid count 
+
+  figure_long_covid_count_all:
+    run: r:latest analysis/figure_long_covid_count.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_all: output/figure_1_*.svg
-        table_csv_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.csv
-        table_html_long_covid_count_all: output/review/descriptives/long_covid_count_*_all.html
+        figure_long_covid_count_all: output/figure_long_covid*
+        table_long_covid_count_all: output/review/descriptives/long_covid_count_*_all*
 
   ## Figure_hist - Histogram of days from covid to long covid 
 
@@ -263,43 +281,42 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_days_c_to_lc: output/review/descriptives/figure_hist.svg
-        table_csv_summary: output/review/descriptives/summary_days_c_to_long.csv
-        table_bin_count: output/review/descriptives/hist_*
+        figure_days_c_to_lc: output/review/descriptives/figure_hist*
+        table_csv_summary: output/review/descriptives/summary_days_c_to_long*
+        table_bin_count: output/review/descriptives/supporting_doc_hist_*
 
-  ## Figure - cumulative probability plot 
+  ## Figure - Kaplan Meier plot 
 
-  figure_cum_prob_km_all:
-    run: r:latest analysis/figure_cum_prob_km.R
+  figure__km_all:
+    run: r:latest analysis/figure_kaplan_meier.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        cum_prob_plot: output/review/descriptives/figure_cum_*.svg
+        plot_km: output/review/descriptives/figure_kaplan_meier_*.svg
 
-  ## Suppl_table_1 - frequencies of snomed code for long covid diagnosis 
+  ## Table - frequencies of snomed code for long covid diagnosis 
 
-  suppl_table_1_all:
-    run: r:latest analysis/suppl_table_1.R
+  table_snomed_codes_all:
+    run: r:latest analysis/table_snomed_code.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
         pie_chart_long_covid_code: output/review/descriptives/suppl_figure_pie.svg
-        table_csv_long_covid_code: output/review/descriptives/suppl_table_1.csv
-        table_html_long_covid_code: output/review/descriptives/suppl_table_1.html
+        table_long_covid_code: output/review/descriptives/table_snomed*
 
-  ## Suppl_figure_1 - long covid count by region 
+  ## figure - long covid count by region 
 
-  suppl_figure_1_all:
-    run: r:latest analysis/suppl_figure_1.R
+  figure_long_covid_region_all:
+    run: r:latest analysis/figure_long_covid_count_region.R
     needs:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_region: output/review/descriptives/suppl_figure_1_*.svg
-        table_csv_long_covid_count_region: output/review/descriptives/long_covid_count_*.csv
-        table_html_long_covid_region: output/review/descriptives/long_covid_count_*.html
+        monthly_long_covid_count_region: output/not_for_review/descriptives/figure_monthly*
+        weekly_long_covid_count_region: output/not_for_review/descriptives/figure_weekly*
+        table_long_covid_count_region: output/not_for_review/descriptives/long_covid_count_*
 
   ## Summarise survival data 
 
@@ -309,8 +326,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        summary_survival_data_CSV: output/review/descriptives/summarise_survival_data.csv
-        summary_survival_data_HTML: output/review/descriptives/summarise_survival_data.html
+        summary_survival_data: output/review/descriptives/summarise_survival_data*
 
   ## Part 4. Modelling 
   ## Development Cox model 
@@ -524,7 +540,6 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all.csv
-        performance_measure_HTML: output/review/model/performance_measures_*_all.html
         survival_plot: output/review/model/survival_plot_*_all.svg
 
   evaluation_cox_model_all_vax_c:
@@ -534,7 +549,6 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all_vax_c.csv
-        performance_measure_HTML: output/review/model/performance_measures_*_all_vax_c.html
         survival_plot: output/review/model/survival_plot_*_all_vax_c.svg
 
   evaluation_cox_model_vaccinated:
@@ -544,7 +558,6 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_vaccinated.csv
-        performance_measure_HTML: output/review/model/performance_measures_*_vaccinated.html
         survival_plot: output/review/model/survival_plot_*_vaccinated.svg
 
   evaluation_cox_model_all_vax_td:
@@ -554,7 +567,6 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_all_vax_td.csv
-        performance_measure_HTML: output/review/model/performance_measures_*_all_vax_td.html
         survival_plot: output/review/model/survival_plot_*_all_vax_td.svg
 
   evaluation_cox_model_infected:
@@ -564,6 +576,5 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/performance_measures_*_infected.csv
-        performance_measure_HTML: output/review/model/performance_measures_*_infected.html
         survival_plot: output/review/model/survival_plot_*_infected.svg
 

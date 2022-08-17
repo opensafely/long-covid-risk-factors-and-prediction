@@ -98,7 +98,7 @@ figure_1 <- ggplot(table_lc_monthly_count, aes(x=year_month,
                      legend.position = "bottom")
 
 # figure_1 - long covid monthly
-ggsave(file="output/figure_1_long_covid_monthly_count.svg", 
+ggsave(file="output/figure_long_covid_monthly_count.svg", 
        plot=figure_1, width=16, height=8)
 
 #############################################
@@ -166,7 +166,7 @@ figure_1_weekly <- ggplot(table_lc_weekly_count, aes(x=year_week,
 figure_1_weekly
 
 # figure_1_weekly_count
-ggsave(file="output/review/descriptives/figure_1_long_covid_weekly_count.svg", 
+ggsave(file="output/figure_long_covid_weekly_count.svg", 
        plot=figure_1_weekly, width=16, height=8)
 
 

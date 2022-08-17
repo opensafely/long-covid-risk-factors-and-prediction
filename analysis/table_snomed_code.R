@@ -7,6 +7,7 @@
 source("analysis/functions/redactor2.R")
 
 fs::dir_create(here::here("output", "review", "descriptives"))
+fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 
 library(readr); library(dplyr); library(ggplot2)
 
@@ -42,8 +43,8 @@ col_names <- c("count","percent","labels")
 count_data[index,col_names]= NA
 
 # use redactor for small number suppression
-index <- which(count_data$count < 6)
-count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
+# index <- which(count_data$count < 6)
+# count_data$count[index] = count_data$percent[index] = count_data$labels[index] = NA
 
 count_data_active = count_data%>%filter(count>5)
 # Pie Chart
@@ -69,8 +70,5 @@ ggsave(file="output/review/descriptives/suppl_figure_pie.svg", plot=suppl_figure
 # small number suppression - indicate NA as redacted
 count_data[which(is.na(count_data$count)),col_names]="[redacted]" 
 
-write.csv(count_data, file="output/review/descriptives/suppl_table_1.csv")
+write.csv(count_data, file="output/review/descriptives/table_snomed_code.csv")
 
-rmarkdown::render("analysis/compilation/compiled_snomed_count.Rmd",
-                  output_file="suppl_table_1",output_dir="output/review/descriptives")
- 

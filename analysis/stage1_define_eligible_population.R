@@ -8,9 +8,9 @@ library(readr); library(dplyr); library(htmlTable)
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"     # infected population
+  cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -25,7 +25,7 @@ stage1_eligibility <- function(cohort){
   input$cohort_end_date = cohort_end
   #RK - I would move any hard coded dates to to the top of the script so you don't have to be searching through
   #scripts to find/check what dates you've been using
-  # YW: this has now been moved to the top of the script
+  #YW: this has now been moved to the top of the script
   ################################################################################
   ## Part 1. Define eligible population                                          #
   ################################################################################
@@ -91,19 +91,23 @@ stage1_eligibility <- function(cohort){
   #RK - copied from stage 0 comment: should sub_cat_covid_history be a TRUE/FALSE variable - I'm not sure that 'Missing' makes sense?
   #This is a date variable so if they don't have a date, its not that they're missing information (as you don't expect
   #the whole population to have a covid date), they just never had covid so should they actually be FALSE?
+  #YW 2022/08/13: sub_cat_covid_history has been defined as a TRUE/FALSE variable in stage0 script
   
   # ##table(input$cov_cat_previous_covid)
   # input <- input%>%filter(sub_cat_previous_covid == "No COVID code")
   # flow_chart_n <- c(flow_chart_n, nrow(input))
   
-  ## for individuals whose first long covid date is after follow-up end, set first long covid date as na
-  index <- which(input$out_first_long_covid_date > input$fup_end_date)
-  input$out_first_long_covid_date[index] <- NA
-  
-  sum(!is.na(input$out_first_long_covid_date))
+  # ## for individuals whose first long covid date is after cohort end date, set first long covid date as na
+  # index <- which(input$out_first_long_covid_date > input$cohort_end_date)
+  # input$out_first_long_covid_date[index] <- NA
+  # 
+  # sum(!is.na(input$out_first_long_covid_date))
   
   #RK - fup_end_date is defined later in this script and hasn't been defined yet so index just returns
   #empty
+  #YW response 2022/08/13: You are right, though now I think setting out_first_long_covid_date outside
+  # cohort period is not needed, as the fup_end_date is defined later to compute the survival time.
+  # So I have commented these out.
   
   ## previous long covid
   #RK- in your study defs your index date is "2020-01-29"? Does this need to be changed? If you want to use any date variables
@@ -122,6 +126,7 @@ stage1_eligibility <- function(cohort){
   input$cov_cat_region <- relevel(input$cov_cat_region, ref = "London")
   #RK - need to check whether you want to be removing those who have region set to 'Missing'
   #as by this script no one should have any NA values in region
+  #YW: 2022/08/13, you are right, na has been set to "Missing", and this is updated in above to remove missing region
   
   ## redefine age group
   input <- input %>% mutate(cov_cat_age_group = ifelse(input$sub_num_age>=18 & input$sub_num_age<=39, "18_39",
@@ -129,11 +134,6 @@ stage1_eligibility <- function(cohort){
                                                      ifelse(input$sub_num_age>=60 & input$sub_num_age<=79, "60_79",
                                                             "80_105"))))
   input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
-  # input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
-  # input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
-  # input$cov_cat_age_group <- ifelse(input$cov_num_age>=60 & input$cov_num_age<=79, "60_79", input$cov_cat_age_group)
-  # input$cov_cat_age_group <- ifelse(input$cov_num_age>=80, "80_105", input$cov_cat_age_group)
-  # input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
   
   #RK - this was defined in stage 0 - why are you redefining it here?
   #YW - A good question, this is because the dummy data have some observations under 18, and by removing them,
@@ -151,11 +151,13 @@ stage1_eligibility <- function(cohort){
 
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
-  
-  ## Construct time to long COVID for analysis 1, analysis 2 and analysis 3-----------------
+  ####################################################################################
+  ## Cohort 1 - all eligible adults; Cohort 3: post-vaccination; Cohort 4: post-covid
+  ## Construct time to long COVID 
+  ## lcovid_cens: indicator for long covid  
   ## lcovid_surv: days from index date to long COVID, without censoring by vaccination 
-  ## lcovid_cens: indicator for long covid          
-  
+  ## for the following cohorts
+  ####################################################################################
   input_select <- input_select%>% rowwise() %>% mutate(fup_end_date=min(out_first_long_covid_date, 
                                                                          death_date, 
                                                                          cohort_end_date,
@@ -181,8 +183,11 @@ stage1_eligibility <- function(cohort){
   #YW - agree, and have changed to (vax_covid_date2 +14) >= index_date
   ## Define survival data for eligible -----------------------------------------------------
   if(cohort == "all"){
-    ## lcovid_surv_vax_c: days from index date to long COVID, censored by vaccination 
-    ## lcovid_cens_vax_c: indicator for long covid   
+    ################################################################################################
+    ## Cohort 2: pre-vaccination cohort - all eligible adults but censored by the first vaccination 
+    ## lcovid_surv_vax_c: days from index date to long COVID, censored by the first vaccination 
+    ## lcovid_cens_vax_c: indicator for long covid  
+    ###############################################################################################
     input_select <- input_select %>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
                                                                           vax_covid_date1,
                                                                           death_date, 
@@ -193,8 +198,9 @@ stage1_eligibility <- function(cohort){
                                                                  out_first_long_covid_date >= index_date &
                                                                  !is.na(out_first_long_covid_date)), 1, 0))
   }
-  
-  # Define time to post-viral fatigue defined between 29 January 2020 and 29 November 2020
+  #############################################################################################
+  # Define time to post-viral fatigue defined between 29 January 2020 and 29 November 2020    #
+  #############################################################################################
   if(cohort == "all"){
     input_select <- input_select %>% mutate(fup_end_date_fatigue=min(out_first_post_viral_fatigue_date_after_pandemic,
                                                                                 death_date, 
@@ -218,7 +224,7 @@ stage1_eligibility <- function(cohort){
                           "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
                           "fup_end_date_vax_c", "vax2_surv", "fatigue_surv","fatigue_cens")
   }else{
-    variables_to_keep <-c("patient_id", "fup_end_date",
+    variables_to_keep <-c("patient_id", "fup_end_date","index_date",
                           "lcovid_surv", "lcovid_cens", "vax2_surv")
   }
   
@@ -259,10 +265,6 @@ stage1_eligibility <- function(cohort){
   # flow_chart[is.na(flow_chart$drop),2:3] = "[redacted]"
   
   write.csv(flow_chart, file=paste0("output/flow_chart_", cohort, ".csv"), row.names = F)
-  
-  rmarkdown::render("analysis/compilation/compiled_flow_chart_results.Rmd",output_file =paste0("flow_chart_", cohort), 
-                    output_dir = "output")
-  
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))
 }
 
