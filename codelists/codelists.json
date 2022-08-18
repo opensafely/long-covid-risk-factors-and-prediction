@@ -299,6 +299,12 @@
       "url": "https://codelists.opensafely.org/codelist/opensafely/psoriasis/01091de1/",
       "downloaded_at": "2022-04-19 22:33:07.050001Z",
       "sha": "9bcaf40cef8b3624037e8b4ed318cefa62f8cc8c"
+    },
+    "user-RochelleKnight-confirmed-hospitalised-covid-19.csv": {
+      "id": "user/RochelleKnight/confirmed-hospitalised-covid-19/1f0d2526",
+      "url": "https://codelists.opensafely.org/codelist/user/RochelleKnight/confirmed-hospitalised-covid-19/1f0d2526/",
+      "downloaded_at": "2022-08-18 10:27:55.662908Z",
+      "sha": "7b472652a66eed89b0495a2cf43cf6e894451cb8"
     }
   }
 }

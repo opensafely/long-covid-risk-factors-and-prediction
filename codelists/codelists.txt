@@ -48,3 +48,4 @@ opensafely/rheumatoid-arthritis/2020-05-12
 primis-covid19-vacc-uptake/cns_cov/v1
 opensafely/systemic-lupus-erythematosus-sle/2020-05-12
 opensafely/psoriasis/01091de1
+user/RochelleKnight/confirmed-hospitalised-covid-19/1f0d2526

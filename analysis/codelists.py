@@ -216,3 +216,8 @@ dialysis_codes = codelist_from_csv(
 creatinine_codes = codelist(["XE2q5"], system="ctv3")
 hba1c_new_codes = codelist(["XaPbt", "Xaeze", "Xaezd"], system="ctv3")
 hba1c_old_codes = codelist(["X772q", "XaERo", "XaERp"], system="ctv3")
+covid_codes2 = codelist_from_csv(
+    "codelists/user-RochelleKnight-confirmed-hospitalised-covid-19.csv",
+    system="icd10",
+    column="code",
+)
