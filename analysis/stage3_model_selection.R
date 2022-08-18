@@ -19,10 +19,6 @@ if(AIC(fit_cox_model_linear) < AIC(fit_cox_model_splines)){
   fit_cox_model <- fit_cox_model_splines
 }
 
-# 
-# print(paste0("Does the model with lower AIC include splines for age? ",  grepl("rms::rcs", surv_formula)))
-# print(paste0("The formula for fitting Cox model is: ", surv_formula))
-# print(paste0("The predictors included in the Cox model are: ", surv_formula_predictors))
 print(paste0("Model set up completed for ", analysis, "!"))
 print("Part 1 is completed!")
 

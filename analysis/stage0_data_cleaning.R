@@ -10,6 +10,7 @@
 ## 4. containing "_date" indicate date variables
 ## 5. prefix "sub_" indicate patient characteristics which are not included
 ##    in the analysis / modelling, but are of interest in exploration
+
 source("analysis/functions/redactor2.R")
 library(readr); library(dplyr); library("arrow"); library(lubridate); library(tidyr)
 
@@ -19,8 +20,8 @@ args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
   #cohort <- "all"           # all eligible population
-  #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"       # infected population
+  cohort <- "vaccinated"    # vaccinated population
+  #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -58,14 +59,9 @@ stage0_data_cleaning <- function(cohort){
   # create an indicator variable for covid infection
   input$out_covid <- ifelse(is.na(input$out_covid_date), FALSE, TRUE)
   
-  ## create a categorical variable to indicate covid phenotype: ------------------
-  ## no infection, non-hospitalised covid and hospitalised covid
-  ## this variable is not included in the Cox model but will create and keep it for now
-  # input$sub_cat_covid_phenotype <- ifelse(is.na(input$out_covid_date), "no_infection", "non_hospitalised")
-  # index = which(!is.na(input$hospital_covid))  # index for hospitalised covid
-  # input$sub_cat_covid_phenotype[index] <- "hospitalised"
-  # 
-  # Define COVID-19 severity ---------------------------------------------------
+  # Define COVID-19 phenotype / severity ---------------------------------------------------
+  ## three categories: no infection, non-hospitalised covid and hospitalised covid
+  ## this variable is not included in the Cox model unless it is the infected cohort of interest
   # Hospitalized COVID defined as admitted to hospitals within 28 days following COVID positive test
   input$sub_cat_covid_phenotype <- "no_infection"
   
@@ -73,14 +69,13 @@ stage0_data_cleaning <- function(cohort){
                                           "non_hospitalised",input$sub_cat_covid_phenotype)
   
   input$sub_cat_covid_phenotype <- ifelse(!is.na(input$out_covid_date) & 
-                                            !is.na(input$sub_cat_covid_phenotype) &
+                                            !is.na(input$hospital_covid) &
                                             (input$hospital_covid-input$out_covid_date>=0 &
                                                input$hospital_covid-input$out_covid_date<29),
                                           "hospitalised",input$sub_cat_covid_phenotype)
   
   input$sub_cat_covid_phenotype <- as.factor(input$sub_cat_covid_phenotype)
-  #input[,c("hospital_covid")] <- NULL
-  #input <- input[!is.na(input$patient_id),]
+
   if(cohort == "infected"){
     input <- input[!is.na(input$sub_cat_covid_phenotype),]
   }
@@ -168,8 +163,6 @@ stage0_data_cleaning <- function(cohort){
     if(i!="cov_num_gp_consultation"){
       hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
     }else{
-      #input_consultation_g12 <- input[which(input[,i]>12),i]
-      #hist( input_consultation_g12 , main=paste0("Histogram of ", i), xlab =i)
       input_consultation_1e12 <- input[which(input[,i]<=20),i]
       hist(input_consultation_1e12,breaks=10, main=paste0("Histogram of ", i), xlab =i)
       df_gp <- table(input[,i])
@@ -182,15 +175,6 @@ stage0_data_cleaning <- function(cohort){
     dev.off()
   }
   # cov_num_gp_consultation
-  # truncated gp consultation to 365 days
-  # input$cov_cat_gp_consultation <- ifelse(input$cov_num_gp_consultation > 365, "Greater than 365", "less than or equal to 365")
-  # input <- input%>%mutate(cov_num_gp_consultation_truncated =
-  #                            ifelse(cov_num_gp_consultation>365, 365, cov_num_gp_consultation))%>%
-  #                  rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
-  #                  rename(sub_cat_gp_consultation = cov_cat_gp_consultation) # rename so it is not included in modelling but only for exploration
-
-  #a <- input%>%dplyr::select(contains("gp")); View(a)
-  
   input <- input %>% mutate(cov_cat_gp_consultation = ifelse(input$cov_num_gp_consultation > 12,
                                                              "13 or more",
                                                             ifelse(input$cov_num_gp_consultation >= 9,
@@ -201,7 +185,6 @@ stage0_data_cleaning <- function(cohort){
                                                                                           "1 to 3", "0")))))
   table(input$cov_cat_gp_consultation)
   table(input$cov_num_gp_consultation)
-  # quantile(input$cov_num_gp_consultation[which(input$cov_num_gp_consultation>0)])
   input <- input%>% rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
     mutate(cov_cat_gp_consultation = as.factor(cov_cat_gp_consultation)) %>%
     mutate(cov_cat_gp_consultation = relevel(cov_cat_gp_consultation, ref = "0"))
@@ -228,7 +211,7 @@ stage0_data_cleaning <- function(cohort){
   
   ## cov_cat_imd by quintile------------------------------------------------------
   #RK - do you get any missing deprivations in your real data? I'm not sure it's something we've included
-  #YW responses - Yes, I do have some deprivations in the real data, and they are included as a catgory.
+  #YW responses - Yes, I do have some missing deprivations in the real data, and they are included as a catgory.
   # in other projects as it shoudln't be missing I don't think. Is this just a dummy data thing?
   table(input$cov_cat_imd)
   levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
@@ -255,7 +238,6 @@ stage0_data_cleaning <- function(cohort){
                                                             "S" = "Current smoker",
                                                             "E" = "Ever smoker",
                                                             "M" = "Missing"))
-  #levels(input$cov_cat_smoking_status) <- list("Ever smoker" = "E", "Missing" = "M", "Never smoker" = "N", "Current smoker" = "S")
   input$cov_cat_smoking_status <- ordered(input$cov_cat_smoking_status, levels = c("Never smoker","Ever smoker","Current smoker","Missing"))
   table(input$cov_cat_smoking_status)
   
@@ -295,14 +277,6 @@ stage0_data_cleaning <- function(cohort){
     mutate(cov_cat_region = replace_na(cov_cat_region, "Missing")) %>%
     mutate(cov_cat_region = as.factor(cov_cat_region))
   
-  # # cov_cat_ethnicity: merge "Missing" with "Other"
-  # input_factor_vars <- input_factor_vars %>% mutate(cov_cat_ethnicity = recode(cov_cat_ethnicity,
-  #                                                       Missing ="Missing or Other",
-  #                                                       Other = "Missing or Other"))
-  # input_factor_vars <- input_factor_vars %>%
-  #   mutate(cov_cat_ethnicity = case_when(cov_cat_ethnicity == "Missing" ~ "Missing or Other",
-  #                                        cov_cat_ethnicity == "Other" ~ "Missing or Other"))
-  
   input_factor_vars$cov_cat_ethnicity <- relevel(input_factor_vars$cov_cat_ethnicity, ref = "White")
   
   # cov_cat_smoking_status
@@ -310,10 +284,9 @@ stage0_data_cleaning <- function(cohort){
     mutate(cov_cat_smoking_status = replace_na(cov_cat_smoking_status, "Missing")) %>%
     mutate(cov_cat_smoking_status = as.factor(cov_cat_smoking_status))
     
-  #reset the reference to not current smoker
+  #reset the reference
   input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Never smoker")
-  #input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Not current smoker")
-  
+
   ## sub_cat_covid_history: two categories: false and missing, as patients with covid history was excluded
   input_factor_vars <- input_factor_vars %>% mutate(sub_cat_covid_history = as.character(sub_cat_covid_history)) %>%
     mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "FALSE")) %>%

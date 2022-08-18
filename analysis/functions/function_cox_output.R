@@ -20,16 +20,22 @@ cox_output2 <- function(fit_cox_model, which_model, output_file, save_output){
   
   # Hazard ratio and 95% CI, P-value and S.E.
   results$hazard_ratio=exp(fit_cox_model$coefficients)
-  results$conf.low = exp(fit_cox_model$coefficients - 1.96* sqrt(diag(vcov(fit_cox_model))))
-  results$conf.high = exp(fit_cox_model$coefficients + 1.96* sqrt(diag(vcov(fit_cox_model))))                                                   
-  results$p.value = round(pnorm(abs(fit_cox_model$coefficients/sqrt(diag(fit_cox_model$var))),lower.tail=F)*2,3)
-  results$std.error=exp(sqrt(diag(vcov(fit_cox_model))))
+  # Determine which S.E. to use
+  if(all.equal(input$weight,1)==T){
+    # if all weights equal 1, use standard method for S.E.
+    results$conf.low = exp(fit_cox_model$coefficients - 1.96* sqrt(diag(vcov(fit_cox_model))))
+    results$conf.high = exp(fit_cox_model$coefficients + 1.96* sqrt(diag(vcov(fit_cox_model))))                                                   
+    results$p.value = round(pnorm(abs(fit_cox_model$coefficients/sqrt(diag(fit_cox_model$var))),lower.tail=F)*2,3)
+    results$std.error=exp(sqrt(diag(vcov(fit_cox_model))))
+  }else{
+    # if not all weights equal 1, i.e. sampling in use, use robust S.E.
+    # Hazard ratio and robust estimation for variance, and the resulting 95% CI, P-value and S.E.
+    results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate 95% CI
+    results$robust.conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
+    results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
+    results$robust.se=round(exp(sqrt(diag(vcov(robust_fit_cox_model)))),3)
+  }
   
-  # Hazard ratio and robust estimation for variance, and the resulting 95% CI, P-value and S.E.
-  results$robust.conf.low=exp(confint(robust_fit_cox_model,level=0.95)[,1]) #use robust standard errors to calculate 95% CI
-  results$robust.conf.high=exp(confint(robust_fit_cox_model,level=0.95)[,2])
-  results$robust.p.value = round(pnorm(abs(robust_fit_cox_model$coefficients/sqrt(diag(robust_fit_cox_model$var))),lower.tail=F)*2,3)
-  results$robust.se=round(exp(sqrt(diag(vcov(robust_fit_cox_model)))),3)
   
   results$concordance <- results$concordance.lower <- results$concordance.upper <- NA
   

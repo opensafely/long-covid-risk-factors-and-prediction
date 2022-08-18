@@ -4,13 +4,13 @@
 # Output:  input_stage1_all.rds; input_stage1_vaccinated.rds; input_stage1_infected.rds
 
 library(readr); library(dplyr); library(htmlTable)
-
+source("analysis/functions/redactor2.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"     # infected population
+  #cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -33,7 +33,7 @@ stage1_eligibility <- function(cohort){
   steps <- c("starting point","dead before index date", "missing region", "missing sex", 
              "missing age", "age <18y", "age>105y",  
              "covid before index date", "long covid before cohort start")
-
+  
   ## starting point
   flow_chart_n <- nrow(input)
   
@@ -49,15 +49,14 @@ stage1_eligibility <- function(cohort){
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
   #RK - in stage 0 you set NA's to 'Missing' so do you want to be removing 'Missing' instead?
-  #YW - this is now changed to remove the "Missing" category for region
+  #YW - this is now changed to remove the "Missing" category for region and sex
   ## Sex: remove if missing
-  input <- input%>%filter(!is.na(cov_cat_sex))
+  input <- input%>%filter(cov_cat_sex!="Missing")
   table(input$cov_cat_sex)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
   ## Age: remove if missing
   input <- input%>%filter(!is.na(cov_num_age))
-  #table(input$cov_cat_age)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
   ## Adult: remove if age < 18
@@ -115,7 +114,7 @@ stage1_eligibility <- function(cohort){
   #Should the below criteria be for individual index date rather than cohort start date?
   #YW - the cohort start date is now changed to "2020-01-29", 
   #also the specification of cohort start/end dates have now been moved to the top of the script
- 
+  
   input <- input%>%filter(out_first_long_covid_date >= cohort_start |
                             is.na(out_first_long_covid_date))
   flow_chart_n <- c(flow_chart_n, nrow(input))
@@ -130,9 +129,9 @@ stage1_eligibility <- function(cohort){
   
   ## redefine age group
   input <- input %>% mutate(cov_cat_age_group = ifelse(input$sub_num_age>=18 & input$sub_num_age<=39, "18_39",
-                                              ifelse(input$sub_num_age>=40 & input$sub_num_age<=59,"40_59",
-                                                     ifelse(input$sub_num_age>=60 & input$sub_num_age<=79, "60_79",
-                                                            "80_105"))))
+                                                       ifelse(input$sub_num_age>=40 & input$sub_num_age<=59,"40_59",
+                                                              ifelse(input$sub_num_age>=60 & input$sub_num_age<=79, "60_79",
+                                                                     "80_105"))))
   input$cov_cat_age_group <- factor(input$cov_cat_age_group, ordered = TRUE)
   
   #RK - this was defined in stage 0 - why are you redefining it here?
@@ -146,11 +145,11 @@ stage1_eligibility <- function(cohort){
   ## To improve efficiency: keep only necessary variables
   variables_to_keep <-c("patient_id", "out_first_long_covid_date", "vax_covid_date1",
                         "vax_covid_date2", "death_date", "cohort_end_date", "index_date",
-                         "out_covid_date",
-                         "out_first_post_viral_fatigue_date_after_pandemic")
-
+                        "out_covid_date",
+                        "out_first_post_viral_fatigue_date_after_pandemic")
   
   input_select <- input%>% dplyr::select(all_of(variables_to_keep))
+  
   ####################################################################################
   ## Cohort 1 - all eligible adults; Cohort 3: post-vaccination; Cohort 4: post-covid
   ## Construct time to long COVID 
@@ -159,24 +158,23 @@ stage1_eligibility <- function(cohort){
   ## for the following cohorts
   ####################################################################################
   input_select <- input_select%>% rowwise() %>% mutate(fup_end_date=min(out_first_long_covid_date, 
-                                                                         death_date, 
-                                                                         cohort_end_date,
-                                                                         na.rm = TRUE))
+                                                                        death_date, 
+                                                                        cohort_end_date,
+                                                                        na.rm = TRUE))
   input_select <- input_select %>% filter(fup_end_date >= index_date & fup_end_date != Inf)
   input_select$lcovid_surv<- as.numeric(input_select$fup_end_date - input_select$index_date)+1
-  # max_fup <- as.numeric(cohort_end - input_select$index_date[1])+1 
-  # input_select <- input_select %>% filter(lcovid_surv >= 0 & lcovid_surv<= max_fup) 
+
   ## define event indicator, without censoring for vaccination
   input_select <- input_select %>% mutate(lcovid_cens = ifelse((out_first_long_covid_date <= fup_end_date & 
-                                                       out_first_long_covid_date >= index_date &
-                                                       !is.na(out_first_long_covid_date)), 1, 0)) %>%
-  ## define 2nd vaccination as an intervening event - a time-dependent variable
-  ## add 14 days as buffer to allow vaccination to take effects
-                                  mutate(vax2_surv = ifelse((vax_covid_date2 +14)>= index_date & 
-                                                            (vax_covid_date2 + 14) <= fup_end_date &
-                                                            !is.na(vax_covid_date2) & 
-                                                            ((vax_covid_date2+14) <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
-                                                            as.numeric(vax_covid_date2 - index_date)+14, NA))
+                                                                  out_first_long_covid_date >= index_date &
+                                                                  !is.na(out_first_long_covid_date)), 1, 0)) %>%
+    ## define 2nd vaccination as an intervening event - a time-dependent variable
+    ## add 14 days as buffer to allow vaccination to take effects
+    mutate(vax2_surv = ifelse((vax_covid_date2 +14)>= index_date & 
+                                (vax_covid_date2 + 14) <= fup_end_date &
+                                !is.na(vax_covid_date2) & 
+                                ((vax_covid_date2+14) <= out_first_long_covid_date | is.na(out_first_long_covid_date)),
+                              as.numeric(vax_covid_date2 - index_date)+14, NA))
   #RK - should line 139 vax_covid_date2 >= index_date instead be (vax_covid_date2 + 14) >= index_date otherwise you
   #might not be inlcuding people who were vaccinated prior to index but by index were classed as vaccinated as the 14 days had
   #passed by then
@@ -189,30 +187,30 @@ stage1_eligibility <- function(cohort){
     ## lcovid_cens_vax_c: indicator for long covid  
     ###############################################################################################
     input_select <- input_select %>% rowwise() %>% mutate(fup_end_date_vax_c=min(out_first_long_covid_date, 
-                                                                          vax_covid_date1,
-                                                                          death_date, 
-                                                                          cohort_end_date,
-                                                                          na.rm = TRUE))
+                                                                                 vax_covid_date1,
+                                                                                 death_date, 
+                                                                                 cohort_end_date,
+                                                                                 na.rm = TRUE))
     input_select$lcovid_surv_vax_c<- as.numeric(input_select$fup_end_date_vax_c - input_select$index_date)+1
     input_select <- input_select %>% mutate(lcovid_cens_vax_c = ifelse((out_first_long_covid_date <= fup_end_date_vax_c & 
-                                                                 out_first_long_covid_date >= index_date &
-                                                                 !is.na(out_first_long_covid_date)), 1, 0))
+                                                                          out_first_long_covid_date >= index_date &
+                                                                          !is.na(out_first_long_covid_date)), 1, 0))
   }
   #############################################################################################
   # Define time to post-viral fatigue defined between 29 January 2020 and 29 November 2020    #
   #############################################################################################
   if(cohort == "all"){
     input_select <- input_select %>% mutate(fup_end_date_fatigue=min(out_first_post_viral_fatigue_date_after_pandemic,
-                                                                                death_date, 
-                                                                                cohort_end_date,
-                                                                                na.rm = TRUE))
+                                                                     death_date, 
+                                                                     cohort_end_date,
+                                                                     na.rm = TRUE))
     # time to post-viral fatigue diagnosis date
     input_select$fatigue_surv<- as.numeric(input_select$fup_end_date_fatigue - input_select$index_date)+1
     input_select <- input_select %>% mutate(fatigue_cens = ifelse((out_first_post_viral_fatigue_date_after_pandemic <= fup_end_date_fatigue &
                                                                      out_first_post_viral_fatigue_date_after_pandemic >= out_covid_date &
                                                                      out_first_post_viral_fatigue_date_after_pandemic >= index_date &
-                                                                    !is.na(out_first_post_viral_fatigue_date_after_pandemic) &
-                                                                    !is.na(out_covid_date)), 1, 0))
+                                                                     !is.na(out_first_post_viral_fatigue_date_after_pandemic) &
+                                                                     !is.na(out_covid_date)), 1, 0))
   }
   ################################################################################
   # Part 3. Create and output datasets                                           #
@@ -253,17 +251,12 @@ stage1_eligibility <- function(cohort){
   flow_chart$drop <- rep(0, nrow(flow_chart))
   for(i in 2:nrow(flow_chart)){
     flow_chart$drop[i] = flow_chart$flow_chart_n[i-1] - flow_chart$flow_chart_n[i]
-    if(flow_chart$drop[i]<=5 & flow_chart$drop[i]!=0){
-      flow_chart$drop[i] = "redacted"
-      flow_chart$flow_chart_n[i] = flow_chart$flow_chart_n[i-1]
-    }
   }
   
   # function for small number suppression
-  # source("analysis/functions/redactor2.R")
-  # flow_chart$drop <- redactor2(flow_chart$drop)
-  # flow_chart[is.na(flow_chart$drop),2:3] = "[redacted]"
-  
+  flow_chart$drop[2:nrow(flow_chart)] <- redactor2(flow_chart$drop[2:nrow(flow_chart)])
+  flow_chart[is.na(flow_chart$drop),2:3] = "[redacted]"
+
   write.csv(flow_chart, file=paste0("output/flow_chart_", cohort, ".csv"), row.names = F)
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))
 }
@@ -275,4 +268,3 @@ if (cohort == "all_cohorts") {
 } else{
   stage1_eligibility(cohort)
 }
-
