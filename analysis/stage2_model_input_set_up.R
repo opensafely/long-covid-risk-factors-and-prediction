@@ -7,14 +7,13 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
 fs::dir_create(here::here("output", "not_for_review", "model"))
 fs::dir_create(here::here("output", "review", "model"))
-
 source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  analysis <- "all"          # all eligible population
+  #analysis <- "all"          # all eligible population
   #analysis <- "all_vax_c"        # all eligible population but censored them by the 1st vaccination
-  #analysis <- "vaccinated"   # vaccinated population
+  analysis <- "vaccinated"   # vaccinated population
   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
   #analysis <- "infected"
 }else{
