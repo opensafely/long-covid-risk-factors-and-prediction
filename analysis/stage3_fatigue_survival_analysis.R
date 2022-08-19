@@ -79,30 +79,28 @@ knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 surv_formula_age_spl_sex <- paste0(
   "Surv(fatigue_surv, fatigue_cens) ~ ",
   "cov_cat_sex",
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ strat(sub_cat_region)"
+  "+rms::rcs(cov_num_age,parms=knot_placement)"
+  # "+ strat(sub_cat_region)"
 )
 
 ## Age sex model
 surv_formula_age_linear_sex <- paste0(
   "Surv(fatigue_surv, fatigue_cens) ~ ",
-  "cov_cat_sex", "+ cov_num_age", "+ strat(sub_cat_region)"
+  "cov_cat_sex", "+ cov_num_age"
 )
 
 ## Full model
 surv_formula <- paste0(
   "Surv(fatigue_surv, fatigue_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+rms::rcs(cov_num_age,parms=knot_placement)", 
-  "+ strat(sub_cat_region)"
+  "+rms::rcs(cov_num_age,parms=knot_placement)"
 )
 
 ## full model: age is added as a linear predictor
 surv_formula_lp <- paste0(
   "Surv(fatigue_surv, fatigue_cens) ~ ",
   paste(covariate_names, collapse = "+"),
-  "+ cov_num_age", 
-  "+ strat(sub_cat_region)"
+  "+ cov_num_age"
 )
 
 print("Part 3: define survival analysis formula is completed!")
