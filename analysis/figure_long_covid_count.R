@@ -50,14 +50,6 @@ table_lc_monthly_count <- calculate_long_covid_monthly_cases(input)
 # use redactor function as it suppresses small numbers until total suppressed is > threshold
 table_lc_monthly_count$count <- redactor2(table_lc_monthly_count$count)
 
-# # Work out the limit for y axis ------------------------------------------------
-# count_min <- min(data$count)
-# count_max <- max(data$count)
-# 
-# y_min = count_min - count_min%%10
-# y_max = count_max - count_max%%10 + 10
-# interval = round((y_max - y_min)/10,0)
-
 # Produce Figure 1--------------------------------------------------------------
 figure_1 <- ggplot(table_lc_monthly_count, aes(x=year_month, 
                  y=count))+

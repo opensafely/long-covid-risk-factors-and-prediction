@@ -1,7 +1,7 @@
 # Purpose: Long COVID risk factors and prediction models
 # Author:  Yinghui Wei
 # Content: Cox model: input set up, define survival formula through variables selection and AIC
-# Output:  survival formula for selected model
+# Output:  survival formula 
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
@@ -11,9 +11,9 @@ source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #analysis <- "all"          # all eligible population
+  analysis <- "all"          # all eligible population
   #analysis <- "all_vax_c"        # all eligible population but censored them by the 1st vaccination
-  analysis <- "vaccinated"   # vaccinated population
+  #analysis <- "vaccinated"   # vaccinated population
   #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
   #analysis <- "infected"
 }else{

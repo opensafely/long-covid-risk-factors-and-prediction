@@ -65,35 +65,48 @@ study = StudyDefinition(
         "registered AND (cov_cat_sex = 'M' OR cov_cat_sex = 'F') AND cov_num_age >= 18 AND cov_num_age <= 105",
         registered=patients.registered_as_of("index_date"),
     ),
-    # COVID infection
+     # COVID infection
     sgss_positive=patients.with_test_result_in_sgss(
         pathogen="SARS-CoV-2",
         test_result="positive",
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
-        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}}, 
     ),
+    # primary care recorded covid
     primary_care_covid=patients.with_these_clinical_events(
         any_primary_care_code,
         returning="date",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        # return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
-        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
+        return_expectations={"incidence": 0.1, "date": {"earliest":"index_date"}},
     ),
+    # hospitalised covid
     hospital_covid=patients.admitted_to_hospital(
-        with_these_diagnoses=covid_codes,
+        with_these_diagnoses=covid_codes2,
+        on_or_after= "index_date",
         returning="date_admitted",
         date_format="YYYY-MM-DD",
         find_first_match_in_period=True,
-        #return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
-        return_expectations={"incidence": 0.1, "date": {"earliest": pandemic_start}},
+        return_expectations={"incidence": 0.1, "date": {"earliest": "index_date"}},
     ),
-    # first covid infection date
+    ## Date of death with SARS-COV-2 infection listed as primary or underlying cause
+    covid_confirmed_death=patients.with_these_codes_on_death_certificate(
+        covid_codes2,
+        returning="date_of_death",
+        on_or_after="index_date",
+        match_only_underlying_cause=True,
+        date_format="YYYY-MM-DD",
+        return_expectations={
+            "date": {"earliest": "index_date", "latest" : "today"},
+            "rate": "uniform",
+            "incidence": 0.3
+        },
+    ),
+    # Outcome
     out_covid_date = patients.minimum_of(
-        "sgss_positive", "primary_care_covid", "hospital_covid"
+        "sgss_positive", "primary_care_covid", "hospital_covid", "covid_confirmed_death"
     ),
     # long covid diagnosis
     out_long_covid=patients.with_these_clinical_events(

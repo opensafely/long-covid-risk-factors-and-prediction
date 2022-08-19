@@ -42,12 +42,6 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
         ## Deprivation
         cov_cat_imd=patients.categorised_as(
             {
-                # "0": "DEFAULT",
-                # "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
-                # "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
-                # "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
-                # "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
-                # "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
                 "0": "DEFAULT",
                 "1": "imd >= 0 AND imd < 32800*1/5",
                 "2": "imd >= 32800*1/5 AND imd < 32800*2/5",
@@ -74,39 +68,6 @@ def generate_common_variables(index_date_variable, index_date_variable_3y):
                },
            },
         ),
-        # cov_cat_ethnicity=patients.categorised_as(
-        #     {
-        #         "Missing": "DEFAULT",
-        #         "White": "ethnicity_code=1",
-        #         "Mixed": "ethnicity_code=2",
-        #         "South Asian": "ethnicity_code=3",
-        #         "Black": "ethnicity_code=4",
-        #         "Other": "ethnicity_code=5",
-        #    },
-        #     return_expectations={
-        #         "rate": "universal",
-        #         "category": {
-        #             "ratios": {
-        #                 "Missing": 0.4,
-        #                 "White": 0.2,
-        #                 "Mixed": 0.1,
-        #                 "South Asian": 0.1,
-        #                 "Black": 0.1,
-        #                 "Other": 0.1,
-        #            }
-        #        },
-        #    },
-        #     ethnicity_code=patients.with_these_clinical_events(
-        #         ethnicity_codes,
-        #         returning="category",
-        #         find_last_match_in_period=True,
-        #         on_or_before=f"{index_date_variable}",
-        #         return_expectations={
-        #         "category": {"ratios": {"1": 0.4, "2": 0.4, "3": 0.2, "4":0.2,"5": 0.2}},
-        #         "incidence": 0.75,
-        #        },
-        #     ),
-        # ),
         # Define ethnicity using the 2022-07-15 codelist
         cov_cat_ethnicity=patients.categorised_as(
             {

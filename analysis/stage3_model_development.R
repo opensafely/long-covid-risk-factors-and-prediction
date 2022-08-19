@@ -2,9 +2,7 @@
 # Author:  Yinghui Wei
 # Content: Cox model: model development and some evaluation
 # Output:  hazard ratios and 95% CI
-#          two CSV files, Two HTML files, and TWO SVG files
-# to do 1. output standard errors of c statistics
-#       2. output calibration slope, se and 95% CI
+
 
 library(readr); library(dplyr); library(rms); library(MASS)
 # library(survcomp) ## not yet available
@@ -48,7 +46,6 @@ print("Finished stage3_model_development.R")
 
 # Output AIC from all three models
 
-
 df_aic <- data.frame(analysis,AIC(fit_cox_model_splines), AIC(fit_cox_model_linear))
 
 if(which_model == "selected"){
@@ -60,4 +57,5 @@ write.csv(df_aic, file=paste0("output/review/model/AIC_",analysis,".csv"))
 #RK - you're getting large robust SE's in your results - I ran your model without +cluster(practice_id)
 #and the robust SE's were then fine - potentially something to invetsigate?
 
-#YW - That's a good point! I am now trying to use strat(sub_cat_region) instead
+#YW - That's a good point! I am now trying to use strat(sub_cat_region) instead - it does work well
+# with strat(sub_cat_region). But we now use region as a covariate instead
