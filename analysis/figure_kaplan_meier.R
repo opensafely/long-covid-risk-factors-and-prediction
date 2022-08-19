@@ -21,15 +21,12 @@ function_km_data <-function(input_sex){
     dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
     dat_age$y[which(dat_age$cov_cat_age_group ==i)] <- cumsum(replace_na(dat_age$n.event[which(dat_age$cov_cat_age_group ==i)], 0))
   }
-  i="40-59"
   for(i in c("18-39", "40-59","60-79", "80+")){
     index = which(dat_age$cov_cat_age_group==i)
-
     dat_age_select <- dat_age %>% filter(cov_cat_age_group == i)
     dat_age_select$y_prob <- NA
-    total.events = dat_age_select$y[nrow(dat_age_select)]
-    dat_age_select$y_prob = dat_age_select$y/total.events
-    
+    total = dat_age_select$n.risk[1]
+    dat_age_select$y_prob = dat_age_select$y/total
     dat_age$y_prob[index] <- dat_age_select$y_prob
   }
   return(dat_age)
@@ -46,7 +43,34 @@ dat_age_f$sex <- "Female"
 dat_age <- rbind(dat_age_m, dat_age_f)
 
 # Create cumulative incidence plot -----------------------------------------------------------
-svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex.svg", width = 9, height = 5,)
+svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_incidence.svg", width = 9, height = 5,)
+
+ggplot(dat_age, 
+       aes(x,y, group = cov_cat_age_group, color=cov_cat_age_group, 
+           linetype = cov_cat_age_group)) +
+  geom_path() + #Ploting
+  geom_line(aes(linetype=cov_cat_age_group),size=1)+
+  scale_linetype_manual(values=c("18-39" = "longdash",
+                                 "40-59" = "dotted",
+                                 "60-79" = "dotdash",
+                                 "80+"   = "solid"))+
+  scale_color_manual(values = c("18-39" = "#808080",
+                                "40-59"="#FF8000",
+                                "60-79"= "#B266FF",
+                                "80+" = "red"))+
+  labs(title="",x="\nDays since 29 January 2020", y = "\nCumulative incidence of long COVID code\n") +
+  labs(linetype='Age group', colour="Age group") +
+  facet_grid(cols = vars(sex)) +
+  theme(legend.position="bottom", legend.title=element_text(size=13), 
+        legend.text=element_text(size=13),
+        axis.text = element_text(size = 13),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"))
+
+dev.off()
+
+# Create cumulative probability plot -----------------------------------------------------------
+svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_porobability.svg", width = 9, height = 5,)
 
 ggplot(dat_age, 
        aes(x,y_prob, group = cov_cat_age_group, color=cov_cat_age_group, 
@@ -71,4 +95,3 @@ ggplot(dat_age,
         panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 dev.off()
-  

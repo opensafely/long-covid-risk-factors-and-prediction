@@ -35,7 +35,7 @@ cox_output2(fit_cox_model_splines, "full_model_age_splines",output_file, save_ou
 print("Output Cox model with age linear:")
 print(fit_cox_model_linear)
 output_file = paste0("output/review/model/hazard_ratio_estimates_", "full_model_age_linear", "_", analysis)
-cox_output2(fit_cox_model_splines, "full_model_age_linear",output_file, save_output=TRUE)
+cox_output2(fit_cox_model_linear, "full_model_age_linear",output_file, save_output=TRUE)
 
 # Model 3
 if(which_model == "selected"){

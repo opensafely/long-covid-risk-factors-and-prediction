@@ -287,7 +287,7 @@ actions:
 
   ## Figure - Kaplan Meier plot 
 
-  figure__km_all:
+  figure_km_all:
     run: r:latest analysis/figure_kaplan_meier.R
     needs:
     - stage1_define_eligible_population_all

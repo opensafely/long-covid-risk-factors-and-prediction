@@ -415,7 +415,7 @@ actions_list <- splice(
   ),
   comment("Figure - Kaplan Meier plot"),
   action(
-    name = "figure__km_all",
+    name = "figure_km_all",
     run = "r:latest analysis/figure_kaplan_meier.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
