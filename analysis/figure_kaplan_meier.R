@@ -43,7 +43,7 @@ dat_age_f <- function_km_data(input_sex_f)
 dat_age_f$sex <- "Female"
 dat_age <- rbind(dat_age_m, dat_age_f)
 # Create a supporting document to show evidence of rounding for small number suppression control
-write.csv(dat_age,"output/review/descriptives/support_doc_km_dat_age.csv", row.names=F)
+write.csv(dat_age,"output/review/descriptives/supporting_doc_km_dat_age.csv", row.names=F)
 # Create cumulative incidence plot -----------------------------------------------------------
 svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_incidence.svg", width = 9, height = 5,)
 
