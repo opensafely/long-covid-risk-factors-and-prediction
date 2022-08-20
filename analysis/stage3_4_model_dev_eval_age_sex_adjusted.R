@@ -69,18 +69,11 @@ for(i in 1:length(cov_names)){
 
 # Output hazard ratio estimates
 which_model = "age_sex_adjusted"
-output_file = paste0("output/review/model/HR_estimates_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 write.csv(combined_results_hr, file=paste0(output_file,".csv"), row.names=F)
-rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
-                  output_file=output_file,
-                  output_dir="output/review/model")
 
 # output performance measures
 subset_vars = ""; which_model = "age_sex_adjusted"
 write.csv(combined_results_pm, 
-          file=paste0("output/review/model/performance_measures_", subset_vars,which_model, "_", analysis, ".csv"), 
+          file=paste0("output/review/model/PM_", subset_vars,which_model, "_", analysis, ".csv"), 
           row.names=F)
-
-rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
-                  output_file=paste0("performance_measures_", subset_vars, which_model,"_", analysis),
-                  output_dir="output/review/model")

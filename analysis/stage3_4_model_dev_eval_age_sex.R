@@ -60,15 +60,15 @@ print("Part 2. Finished fitting Cox models with categorical age!")
 # Part 3: Output results from the Cox Model                                    #
 ################################################################################
 which_model = "model"
-output_file = paste0("output/review/model/hazard_ratio_estimates_age_sex_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_age_sex_", which_model, "_", analysis)
 cox_output2(fit_cox_model, which_model, output_file, save_output = TRUE)
 
 which_model = "model_categorical"
-output_file = paste0("output/review/model/hazard_ratio_estimates_age_sex_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_age_sex_", which_model, "_", analysis)
 cox_output2(fit_cox_model_categorical, which_model, output_file, save_output = TRUE)
 
 which_model = "model_full_categorical" # this is a fully adjusted model, but put it in this script for convenience
-output_file = paste0("output/review/model/hazard_ratio_estimates_age_sex_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_age_sex_", which_model, "_", analysis)
 cox_output2(fit_cox_model_full_categorical, which_model, output_file, save_output = TRUE)
 
 print("Part 3. Finished output results from Cox models!")

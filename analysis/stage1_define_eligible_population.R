@@ -8,9 +8,9 @@ source("analysis/functions/redactor2.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"     # infected population
+  cohort <- "infected"     # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -44,7 +44,7 @@ stage1_eligibility <- function(cohort){
   #input$cov_cat_region[1:10] = NA # impose NA for testing
   ## Region: remove if missing
   #input <- input%>%filter(!is.na(cov_cat_region))
-  input2 <- input%>%filter(cov_cat_region!="Missing") # keep if not missing
+  input <- input%>%filter(cov_cat_region!="Missing") # keep if not missing
   table(input$cov_cat_region)
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
@@ -218,7 +218,7 @@ stage1_eligibility <- function(cohort){
   ## Create data set for analysis 1 and analysis 2
   
   if(cohort == "all"){
-    variables_to_keep <-c("patient_id", "fup_end_date",
+    variables_to_keep <-c("patient_id", "fup_end_date","index_date",
                           "lcovid_surv", "lcovid_cens","lcovid_surv_vax_c", "lcovid_cens_vax_c",
                           "fup_end_date_vax_c", "vax2_surv", "fatigue_surv","fatigue_cens")
   }else{
@@ -232,6 +232,7 @@ stage1_eligibility <- function(cohort){
   
   input_select <- input_select[,variables_to_keep]
   
+  input <- input%>%select(-index_date)
   ## left join: keep all observations in input_select
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
   
