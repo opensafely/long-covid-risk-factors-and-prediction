@@ -258,12 +258,12 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   names(pm) <- c("performance measure", "value")
   
   if(save_output==TRUE){
-  write.csv(pm, file=paste0("output/review/model/performance_measures_", subset_vars,which_model, "_", analysis, ".csv"), 
+  write.csv(pm, file=paste0("output/review/model/PM_", subset_vars,which_model, "_", analysis, ".csv"), 
             row.names=F)
   
-  rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
-                    output_file=paste0("performance_measures_", subset_vars, which_model,"_", analysis),
-                    output_dir="output/review/model")
+  # rmarkdown::render(paste0("analysis/compilation/compiled_performance_measure_table",".Rmd"), 
+  #                   output_file=paste0("performance_measures_", subset_vars, which_model,"_", analysis),
+  #                   output_dir="output/review/model")
   }
   print(paste0("Part 7. Shrinkage & Optimism adjusted performance measures is completed successfully for",
                which_model, " ", analysis, "!"))

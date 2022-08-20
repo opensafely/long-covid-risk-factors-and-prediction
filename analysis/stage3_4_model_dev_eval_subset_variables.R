@@ -89,7 +89,7 @@ print(fit_cox_model)
 # Part 3: Output results from the Cox Model                                    #
 ################################################################################
 which_model = "selected_vars"
-output_file = paste0("output/review/model/hazard_ratio_estimates_",which_model,"_",  analysis)
+output_file = paste0("output/review/model/HR_",which_model,"_",  analysis)
 results <- cox_output2(fit_cox_model, which_model, output_file, save_output=TRUE)
 
 ################################################################################

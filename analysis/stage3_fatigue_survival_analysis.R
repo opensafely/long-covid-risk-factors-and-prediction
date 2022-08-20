@@ -115,13 +115,13 @@ print("End of stage3_model_input_setup.R")
 fit_age_sex_cox_model_splines <-rms::cph(formula= as.formula(surv_formula_age_spl_sex),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 which_model = "fatigue_age_sex_splines"
-output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_age_sex_cox_model_splines, which_model, output_file, save_output = TRUE)
 
 fit_age_sex_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_age_linear_sex),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 which_model = "fatigue_age_sex_linear"
-output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_age_sex_cox_model_linear, which_model, output_file, save_output = TRUE)
 
 # full model
@@ -129,13 +129,13 @@ fit_full_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
 which_model = "fatigue_full_splines"
-output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_full_cox_model_splines, which_model, output_file, save_output = TRUE)
 
 fit_full_cox_model_linear <-rms::cph(formula= as.formula(surv_formula_lp),
                                 data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 which_model = "fatigue_full_linear"
-output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_full_cox_model_linear, which_model, output_file, save_output = TRUE)
 
 # model selection
@@ -143,5 +143,5 @@ cox_output2(fit_full_cox_model_linear, which_model, output_file, save_output = T
 fit_cox_model_selected <- fastbw(fit_full_cox_model_splines, sls=0.20)
 
 which_model = "fatigue_selected_splines"
-output_file = paste0("output/review/model/hazard_ratio_estimates_", which_model, "_", analysis)
+output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_full_cox_model_linear, which_model, output_file, save_output = TRUE)

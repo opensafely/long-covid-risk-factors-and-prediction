@@ -5,6 +5,7 @@
 library(readr); library(dplyr);library(survival);library(survminer);library(tidyverse); library(ggplot2)
 source("analysis/functions/function_round_km.R")
 fs::dir_create(here::here("output", "review", "descriptives"))
+fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 cohort = "all"
 input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
 input <- input %>% select(lcovid_surv, lcovid_cens, contains("sex"), contains("cov_cat_age"))
@@ -41,7 +42,8 @@ input_sex_f <- input %>% filter(cov_cat_sex == "F")
 dat_age_f <- function_km_data(input_sex_f) 
 dat_age_f$sex <- "Female"
 dat_age <- rbind(dat_age_m, dat_age_f)
-
+# Create a supporting document to show evidence of rounding for small number suppression control
+write.csv(dat_age,"output/review/descriptives/supporting_doc_km_dat_age.csv", row.names=F)
 # Create cumulative incidence plot -----------------------------------------------------------
 svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_incidence.svg", width = 9, height = 5,)
 

@@ -94,7 +94,7 @@ if(len!=0){
   # Part 3: Output results from the Cox Model                                    #
   ################################################################################
   which_model = "subset_vars"
-  output_file = paste0("output/review/model/hazard_ratio_estimates_",which_model,"_",  analysis)
+  output_file = paste0("output/review/model/HR_",which_model,"_",  analysis)
   results <- cox_output2(fit_cox_model, which_model, output_file, save_output=TRUE)
   
   ################################################################################
@@ -108,13 +108,13 @@ if(len!=0){
   # Output file otherwise return error in opensafely run
   results <- "None"
   which_model = "subset_vars"
-  output_file = paste0("output/review/model/hazard_ratio_estimates_",which_model,"_",  analysis)
+  output_file = paste0("output/review/model/HR_",which_model,"_",  analysis)
   write.csv(results, file = output_file)
   #Output file otherwise return error in opensafely run
   results.pm <- "None"
   subset_vars = "subset_vars"
   which_model = ""
-  output_file=paste0("output/review/model/performance_measures_", subset_vars,which_model, "_", analysis, ".csv")
+  output_file=paste0("output/review/model/PM_", subset_vars,which_model, "_", analysis, ".csv")
   write.csv(results.pm, file = output_file)
   print("No variable is selected")
 }

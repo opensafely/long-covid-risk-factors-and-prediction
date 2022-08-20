@@ -16,7 +16,7 @@ fs::dir_create(here::here("output", "review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"          # all eligible population
+  #cohort <- "all"          # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
   #cohort <- "infected"      # infected population
   #cohort <- "all_vax_c"     # all eligible population but follow-up censored by 1st vaccination
