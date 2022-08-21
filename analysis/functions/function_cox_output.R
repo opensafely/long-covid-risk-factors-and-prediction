@@ -52,9 +52,9 @@ cox_output2 <- function(fit_cox_model, which_model, output_file, save_output){
   
   if(save_output==TRUE){
   write.csv(results, file=paste0(output_file,".csv"), row.names=F)
-  rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
-                    output_file=output_file,
-                    output_dir="output/review/model")
+  # rmarkdown::render(paste0("analysis/compilation/compiled_HR_results",".Rmd"), 
+  #                   output_file=output_file,
+  #                   output_dir="output/review/model")
   }
   print(paste0("Hazard ratio estimates are saved successfully for ", which_model, " ", analysis, "!"))
   return(results)

@@ -62,11 +62,23 @@ study = StudyDefinition(
         "int": {"distribution": "normal", "mean": 25, "stddev": 5},
         "float": {"distribution": "normal", "mean": 25, "stddev": 5},
     },
-    # index_date="2020-12-01",
     index_date = "2020-01-29",
+    # Not all eligibility are written into study definition and hence they are later written in to stage 1 eligibility
     population=patients.satisfying(
-        "registered AND (cov_cat_sex = 'M' OR cov_cat_sex = 'F') AND cov_num_age >= 18 AND cov_num_age <= 105",
-        registered=patients.registered_as_of("index_date"),
+        "NOT has_died AND registered AND has_follow_up_previous_12months AND (cov_cat_sex = 'M' OR cov_cat_sex = 'F') AND cov_num_age >= 18 AND cov_num_age <= 105",
+        has_died = patients.died_from_any_cause(
+        on_or_before = "index_date",
+        returning="binary_flag",
+        ),
+        registered = patients.satisfying(
+        "registered_at_start",
+        registered_at_start = patients.registered_as_of("index_date"),
+        ),
+        has_follow_up_previous_12months = patients.registered_with_one_practice_between(
+        start_date = "index_date - 12 months",
+        end_date = "index_date",
+        return_expectations = {"incidence": 0.95},
+        ),
     ),
     # COVID infection
     sgss_positive=patients.with_test_result_in_sgss(

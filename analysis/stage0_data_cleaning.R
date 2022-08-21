@@ -19,9 +19,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"       # infected population
+  #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -42,6 +42,15 @@ stage0_data_cleaning <- function(cohort){
   cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
   study_days = cohort_end - index_date
   input$cohort_end_date = cohort_end
+  
+  # remove potential recording errors in the EHR data
+  # remove if covid date is before pandemic start "2020-01-29"
+  # Here index_date = "2020-01-29" though index_date is set to be cohort specific later
+  input <- input %>% filter(is.na(out_covid_date) |out_covid_date >= index_date) 
+  
+  # remove if long covid date is before pandemic start "2020-01-29"
+  input <- input %>% filter(is.na(out_first_long_covid_date) |out_first_long_covid_date >= index_date) 
+  
   if(cohort == "vaccinated"){
     # select people who were vaccinated during the study period
     input <- input %>% filter(!is.na(vax_covid_date2) &vax_covid_date2 >= index_date & vax_covid_date2 <= cohort_end_date)
@@ -256,7 +265,8 @@ stage0_data_cleaning <- function(cohort){
   
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
-
+  #input <- input %>% filter(sub_cat_covid_history==F) # remove if has covid before index date
+  
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
   #################################################################################
@@ -345,9 +355,7 @@ stage0_data_cleaning <- function(cohort){
     print(paste0("cohort is ", cohort))
     
     write.csv(table_0, file=paste0("output/not_for_review/descriptives/table_0_", cohort, ".csv"), row.names =F)
-    rmarkdown::render("analysis/compilation/compiled_table0_results.Rmd",
-                      output_file=paste0("table_0_", cohort),output_dir="output/not_for_review/descriptives")
-  }
+ }
   
   output_table_0(input)
   print("table_0 is saved successfully!") 
