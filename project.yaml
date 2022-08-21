@@ -96,7 +96,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_all.rds
       moderately_sensitive:
-        table_flow_chart: output/flow_chart_all*
+        table_flow_chart: output/not_for_review/descriptives/flow_chart_all*
 
   ## Stage 1 define eligible population - vaccinated 
 
@@ -108,7 +108,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_vaccinated.rds
       moderately_sensitive:
-        table_flow_chart: output/flow_chart_vaccinated*
+        table_flow_chart: output/not_for_review/descriptives/flow_chart_vaccinated*
 
   ## Stage 1 define eligible population - infected 
 
@@ -120,7 +120,7 @@ actions:
       highly_sensitive:
         cohort: output/input_stage1_infected.rds
       moderately_sensitive:
-        table_flow_chart: output/flow_chart_infected*
+        table_flow_chart: output/not_for_review/descriptives/flow_chart_infected*
 
   ## Part 3. Figures and tables 
   ## Table 1. Patient Characteristics - all 
@@ -423,7 +423,7 @@ actions:
         fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_all.rds
         hazard_ratios: output/review/model/HR_age_sex_*_all*
         performance_measure: output/review/model/PM_age_sex_*_all*
-        survival_plot: output/review/model/survival_plot_*_age_sex_*_all.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_all.svg
 
   ## Development Cox Model - all_vax_c 
 
@@ -436,7 +436,7 @@ actions:
         fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_all_vax_c.rds
         hazard_ratios: output/review/model/HR_age_sex_*_all_vax_c*
         performance_measure: output/review/model/PM_age_sex_*_all_vax_c*
-        survival_plot: output/review/model/survival_plot_*_age_sex_*_all_vax_c.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_all_vax_c.svg
 
   ## Development Cox Model - vaccinated 
 
@@ -449,7 +449,7 @@ actions:
         fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_vaccinated.rds
         hazard_ratios: output/review/model/HR_age_sex_*_vaccinated*
         performance_measure: output/review/model/PM_age_sex_*_vaccinated*
-        survival_plot: output/review/model/survival_plot_*_age_sex_*_vaccinated.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_vaccinated.svg
 
   ## Development Cox Model - all_vax_td 
 
@@ -462,7 +462,7 @@ actions:
         fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_all_vax_td.rds
         hazard_ratios: output/review/model/HR_age_sex_*_all_vax_td*
         performance_measure: output/review/model/PM_age_sex_*_all_vax_td*
-        survival_plot: output/review/model/survival_plot_*_age_sex_*_all_vax_td.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_all_vax_td.svg
 
   ## Development Cox Model - infected 
 
@@ -475,7 +475,7 @@ actions:
         fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_infected.rds
         hazard_ratios: output/review/model/HR_age_sex_*_infected*
         performance_measure: output/review/model/PM_age_sex_*_infected*
-        survival_plot: output/review/model/survival_plot_*_age_sex_*_infected.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_infected.svg
 
   ## Development Cox Model - all 
 
@@ -615,7 +615,7 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/PM_*_all.csv
-        survival_plot: output/review/model/survival_plot_*_all.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_all.svg
 
   evaluation_cox_model_all_vax_c:
     run: r:latest analysis/stage4_model_evaluation.R all_vax_c
@@ -624,7 +624,7 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/PM_*_all_vax_c.csv
-        survival_plot: output/review/model/survival_plot_*_all_vax_c.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_all_vax_c.svg
 
   evaluation_cox_model_vaccinated:
     run: r:latest analysis/stage4_model_evaluation.R vaccinated
@@ -633,7 +633,7 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/PM_*_vaccinated.csv
-        survival_plot: output/review/model/survival_plot_*_vaccinated.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_vaccinated.svg
 
   evaluation_cox_model_all_vax_td:
     run: r:latest analysis/stage4_model_evaluation.R all_vax_td
@@ -642,7 +642,7 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/PM_*_all_vax_td.csv
-        survival_plot: output/review/model/survival_plot_*_all_vax_td.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_all_vax_td.svg
 
   evaluation_cox_model_infected:
     run: r:latest analysis/stage4_model_evaluation.R infected
@@ -651,5 +651,5 @@ actions:
     outputs:
       moderately_sensitive:
         performance_measure_CSV: output/review/model/PM_*_infected.csv
-        survival_plot: output/review/model/survival_plot_*_infected.svg
+        survival_plot: output/not_for_review/model/survival_plot_*_infected.svg
 

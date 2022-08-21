@@ -53,7 +53,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   
   if(graphics_output==TRUE){
   #Plot of apparent separation across 4 groups
-  svglite::svglite(file = paste0("output/review/model/survival_plot_by_risk_groups_", subset_vars,which_model, "_", analysis, ".svg"))
+  svglite::svglite(file = paste0("output/not_for_review/model/survival_plot_by_risk_groups_", subset_vars,which_model, "_", analysis, ".svg"))
   if(which_model == "full"){
     centile_LP <- cut(pred_LP,breaks=quantile(pred_LP, prob = c(0,0.25,0.50,0.75,1), na.rm=T),
                       labels=c(1:4),include.lowest=TRUE)
@@ -137,7 +137,7 @@ function_model_evaluation <- function(input,fit_cox_model, which_model, analysis
   patient_low_shrunk$pred_LP <- patient_low$pred_LP*vanH
   
   if(graphics_output==TRUE){
-  svglite::svglite(file = paste0("output/review/model/surival_plot_with_shrunken_LP_",subset_vars, which_model, ".svg"))
+  svglite::svglite(file = paste0("output/not_for_review/model/surival_plot_with_shrunken_LP_",subset_vars, which_model, ".svg"))
   
   plot(survfit(fit_cox_model,newdata=data.frame(patient_high)),main="Cox proportional hazards regression",xlab="Days",ylab="Survival",col=1,conf.int=FALSE)
   lines(survfit(fit_cox_model,newdata=data.frame(patient_high_shrunk)),col=2,conf.int=FALSE)

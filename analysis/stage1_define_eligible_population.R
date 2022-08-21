@@ -5,6 +5,7 @@
 
 library(readr); library(dplyr); library(htmlTable)
 source("analysis/functions/redactor2.R")
+fs::dir_create(here::here("output", "review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
@@ -32,7 +33,7 @@ stage1_eligibility <- function(cohort){
   
   steps <- c("starting point","dead before index date", "missing region", "missing sex", 
              "missing age", "age <18y", "age>105y",  
-             "covid before index date", "long covid before cohort start")
+             "covid before index date", "long covid before index date")
   
   ## starting point
   flow_chart_n <- nrow(input)
@@ -115,7 +116,7 @@ stage1_eligibility <- function(cohort){
   #YW - the cohort start date is now changed to "2020-01-29", 
   #also the specification of cohort start/end dates have now been moved to the top of the script
   
-  input <- input%>%filter(out_first_long_covid_date >= cohort_start |
+  input <- input%>%filter(out_first_long_covid_date >= index_date |
                             is.na(out_first_long_covid_date))
   flow_chart_n <- c(flow_chart_n, nrow(input))
   
@@ -258,7 +259,7 @@ stage1_eligibility <- function(cohort){
   flow_chart$drop[2:nrow(flow_chart)] <- redactor2(flow_chart$drop[2:nrow(flow_chart)])
   flow_chart[is.na(flow_chart$drop),2:3] = "[redacted]"
 
-  write.csv(flow_chart, file=paste0("output/flow_chart_", cohort, ".csv"), row.names = F)
+  write.csv(flow_chart, file=paste0("output/not_for_review/descriptives/flow_chart_", cohort, ".csv"), row.names = F)
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))
 }
 

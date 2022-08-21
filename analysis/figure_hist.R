@@ -75,4 +75,3 @@ function_summary_histogram_days <- function(input, subgroup){
 
 function_summary_histogram_days(input, "hospitalised")
 function_summary_histogram_days(input, "non_hospitalised")
-

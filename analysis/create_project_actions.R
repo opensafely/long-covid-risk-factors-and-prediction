@@ -151,7 +151,7 @@ apply_stage1_eligibility <- function(cohort){
         cohort = glue("output/input_stage1_{cohort}.rds")
       ),
       moderately_sensitive = list(
-        table_flow_chart = glue("output/flow_chart_{cohort}*")
+        table_flow_chart = glue("output/not_for_review/descriptives/flow_chart_{cohort}*")
       )
     )
   )
@@ -195,7 +195,7 @@ apply_development_cox_model_age_sex <- function(analysis){
         fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_{analysis}.rds"),
         hazard_ratios = glue("output/review/model/HR_age_sex_*_{analysis}*"),
         performance_measure = glue("output/review/model/PM_age_sex_*_{analysis}*"),
-        survival_plot = glue("output/review/model/survival_plot_*_age_sex_*_{analysis}.svg")
+        survival_plot = glue("output/not_for_review/model/survival_plot_*_age_sex_*_{analysis}.svg")
       )
     )
   )
@@ -253,7 +253,7 @@ apply_evaluation_cox_model <- function(analysis){
         }),
       moderately_sensitive = list(
         performance_measure_CSV = glue("output/review/model/PM_*_{analysis}.csv"),
-        survival_plot = glue("output/review/model/survival_plot_*_{analysis}.svg")
+        survival_plot = glue("output/not_for_review/model/survival_plot_*_{analysis}.svg")
         # calibration_plot = glue("output/review/model/calibration_plot_{analysis}.svg"),
         # risk_histogram = glue("output/review/model/risk_histogram_{analysis}.svg"),
         # risk_histogram_bin_count = glue("output/review/descriptives/risk_hist_bin_count_{analysis}*")
