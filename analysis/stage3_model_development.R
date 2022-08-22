@@ -47,12 +47,10 @@ print("Finished stage3_model_development.R")
 # Output AIC from all three models
 
 df_aic <- data.frame(analysis,AIC(fit_cox_model_splines), AIC(fit_cox_model_linear))
-
+df_aic[,2:3]<- round(df_aic[,2:3],2)
 if(which_model == "selected"){
-  df_aic <- cbind(df_aic, AIC(fit_cox_model_selected))
+  df_aic <- cbind(df_aic, round(AIC(fit_cox_model_selected),2))
 }
-
-df_aic[,2:4]<- round(df_aic[,2:4],2)
 
 write.csv(df_aic, file=paste0("output/review/model/AIC_",analysis,".csv"))
 

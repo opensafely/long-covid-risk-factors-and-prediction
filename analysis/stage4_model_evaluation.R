@@ -35,9 +35,9 @@ if(which_model == "selected"){
   function_model_evaluation(input,fit_cox_model_selected_refit, which_model, analysis, 
                             subset_vars, graphics_output = TRUE, save_output = TRUE)
   print("Fished model evaluation for the selected model!")
+  print(fit_cox_model_selected_refit)
 }
 
-print(fit_cox_model_selected_refit)
 print(fit_cox_model_selected)
 
 ## fit_cox_model is the full model
