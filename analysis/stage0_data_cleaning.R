@@ -64,14 +64,14 @@ stage0_data_cleaning <- function(cohort){
     input$index_date = input$out_covid_date
   }
   
-  # Step 1. Define variables: COVID infection-------------------------------------
-  # create an indicator variable for covid infection
+  ## Step 1. Define variables: COVID infection-------------------------------------
+  ## create an indicator variable for covid infection
   input$out_covid <- ifelse(is.na(input$out_covid_date), FALSE, TRUE)
   
-  # Define COVID-19 phenotype / severity ---------------------------------------------------
+  ## Define COVID-19 phenotype / severity ---------------------------------------------------
   ## three categories: no infection, non-hospitalised covid and hospitalised covid
   ## this variable is not included in the Cox model unless it is the infected cohort of interest
-  # Hospitalized COVID defined as admitted to hospitals within 28 days following COVID positive test
+  ## Hospitalized COVID defined as admitted to hospitals within 28 days following COVID positive test
   input$sub_cat_covid_phenotype <- "no_infection"
   
   input$sub_cat_covid_phenotype <- ifelse(!is.na(input$out_covid_date),
@@ -91,11 +91,11 @@ stage0_data_cleaning <- function(cohort){
 
   print("COVID19 severity determined successfully")
   
-  #RK - not that it matters if you're not using it but this isn't how hospitalised covid has been defined in our current post covid
-  # events opensafely projects
+  ## RK - not that it matters if you're not using it but this isn't how hospitalised covid has been defined in our current post covid
+  ## events opensafely projects
   
-  # YW response - a really good point - I have now amended and specified hospitalised covid as
-  # admission to hospital within 28 days after covid positive test
+  ## YW response - a really good point - I have now amended and specified hospitalised covid as
+  ## admission to hospital within 28 days after covid positive test
   
   ## Step 2. Remove variables which are not included in the prediction------------
   ## remove variables start with snomed
@@ -125,11 +125,11 @@ stage0_data_cleaning <- function(cohort){
   input[vars_dates] = lapply(input[vars_dates], convert_to_date)
   lapply(input[vars_dates], is.Date)
   
-  #if you wanted to simplify the above you could use something like
-  # for (i in colnames(input)[grepl("date",colnames(input))]) {
-  # input[,i] <- as.Date(input[,i], format = "%Y-%m-%d")
-  # }
-  # Somehow this doesnt work on mine..and so have sticked to the above
+  ## if you wanted to simplify the above you could use something like
+  ## for (i in colnames(input)[grepl("date",colnames(input))]) {
+  ## input[,i] <- as.Date(input[,i], format = "%Y-%m-%d")
+  ## }
+  ## Somehow this doesnt work on mine..and so have sticked to the above
   
   ################################################################################
   ## Part 2 define multimorbidity                                                #
@@ -163,7 +163,7 @@ stage0_data_cleaning <- function(cohort){
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
   rm(input_select)
   
-  # For numerical variables, produce histogram for numerical variable
+  ## For numerical variables, produce histogram for numerical variable
   num_var <- colnames(input)[grepl("cov_num_",colnames(input))]
   for(i in num_var){
     print(paste0("Summary statistics for ", i))
@@ -183,7 +183,7 @@ stage0_data_cleaning <- function(cohort){
     }
     dev.off()
   }
-  # cov_num_gp_consultation
+  ## cov_num_gp_consultation
   input <- input %>% mutate(cov_cat_gp_consultation = ifelse(input$cov_num_gp_consultation > 12,
                                                              "13 or more",
                                                             ifelse(input$cov_num_gp_consultation >= 9,
@@ -219,9 +219,9 @@ stage0_data_cleaning <- function(cohort){
                                 )
   
   ## cov_cat_imd by quintile------------------------------------------------------
-  #RK - do you get any missing deprivations in your real data? I'm not sure it's something we've included
-  #YW responses - Yes, I do have some missing deprivations in the real data, and they are included as a catgory.
-  # in other projects as it shoudln't be missing I don't think. Is this just a dummy data thing?
+  ## RK - do you get any missing deprivations in your real data? I'm not sure it's something we've included
+  ## YW responses - Yes, I do have some missing deprivations in the real data, and they are included as a catgory.
+  ## in other projects as it shoudln't be missing I don't think. Is this just a dummy data thing?
   table(input$cov_cat_imd)
   levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==0] <-"0 (missing)"
   levels(input$cov_cat_imd)[levels(input$cov_cat_imd)==1] <-"1 (most deprived)"
@@ -251,11 +251,10 @@ stage0_data_cleaning <- function(cohort){
   table(input$cov_cat_smoking_status)
   
   ## cov_cat_sex -----------------------------------------------------------------
-  # set Male as the reference level for sex
+  ## set Male as the reference level for sex
   input$cov_cat_sex <- relevel(input$cov_cat_sex, ref = "M")
 
   ## cov_cat_age_group------------------------------------------------------------
-  ## Define age groups
   input$cov_cat_age_group <- ""
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=18 & input$cov_num_age<=39, "18_39", input$cov_cat_age_group)
   input$cov_cat_age_group <- ifelse(input$cov_num_age>=40 & input$cov_num_age<=59, "40_59", input$cov_cat_age_group)
@@ -265,8 +264,7 @@ stage0_data_cleaning <- function(cohort){
   
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
-  #input <- input %>% filter(sub_cat_covid_history==F) # remove if has covid before index date
-  
+
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
   #################################################################################
@@ -275,12 +273,10 @@ stage0_data_cleaning <- function(cohort){
   cov_factor_names <- names(input)[grepl("_cat", names(input))]
   
   input_factor_vars <- input[,cov_factor_names]
-  #
+ 
   lapply(input[,cov_factor_names], is.factor)
   lapply(input_factor_vars, is.factor)
   
-  ## impose some NA and check if this works
-  #input_factor_vars$cov_cat_region[1:10] =NA
   print("Replace missing values with a Missing category!")
   
   input_factor_vars <- input_factor_vars %>% mutate(cov_cat_region = as.character(cov_cat_region)) %>%
@@ -289,12 +285,12 @@ stage0_data_cleaning <- function(cohort){
   
   input_factor_vars$cov_cat_ethnicity <- relevel(input_factor_vars$cov_cat_ethnicity, ref = "White")
   
-  # cov_cat_smoking_status
+  ## cov_cat_smoking_status
   input_factor_vars <- input_factor_vars %>% mutate(cov_cat_smoking_status = as.character(cov_cat_smoking_status)) %>%
     mutate(cov_cat_smoking_status = replace_na(cov_cat_smoking_status, "Missing")) %>%
     mutate(cov_cat_smoking_status = as.factor(cov_cat_smoking_status))
     
-  #reset the reference
+  ## reset the reference
   input_factor_vars$cov_cat_smoking_status <- relevel(input_factor_vars$cov_cat_smoking_status, ref = "Never smoker")
 
   ## sub_cat_covid_history: two categories: false and missing, as patients with covid history was excluded
@@ -302,10 +298,10 @@ stage0_data_cleaning <- function(cohort){
     mutate(sub_cat_covid_history = replace_na(sub_cat_covid_history, "FALSE")) %>%
     mutate(sub_cat_covid_history = as.factor(sub_cat_covid_history))
   
-  #RK - should sub_cat_covid_history be a TRUE/FALSE variable - I'm not sure that 'Missing' makes sense?
-  #YW - agreed and changed "Missing" to "FALSE" for sub_cat_covid_history
-  #For the all/vaccinated population you don't remove anyone so anyone without a covid date should be set to FALSE
-  #and then for the infected population everyone with covid prior to start date is removed so everyone should be FALSE?
+  ##RK - should sub_cat_covid_history be a TRUE/FALSE variable - I'm not sure that 'Missing' makes sense?
+  ##YW - agreed and changed "Missing" to "FALSE" for sub_cat_covid_history
+  ##For the all/vaccinated population you don't remove anyone so anyone without a covid date should be set to FALSE
+  ##and then for the infected population everyone with covid prior to start date is removed so everyone should be FALSE?
   
   print("Finished replacing missing values with a Missing category!")
   
@@ -349,7 +345,6 @@ stage0_data_cleaning <- function(cohort){
     }
     names(table_0) <- c("factor variables", "number of missing observations", "is.factor")
     names(table_0)[4:ncol(table_0)] = rep("level name or number of observations", (ncol(table_0)-3))
-    #table_0
     
     print("Finished constructing table_0 successfully!")
     print(paste0("cohort is ", cohort))

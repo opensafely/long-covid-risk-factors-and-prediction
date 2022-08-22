@@ -1,10 +1,10 @@
-# Purpose: Long COVID risk factors and prediction models
-# Author:  Yinghui Wei
-# Content: Cox model: input set up, define survival formula through variables selection and AIC
-# Output:  survival formula 
+## Purpose: Long COVID risk factors and prediction models
+## Author:  Yinghui Wei
+## Content: Cox model: input set up, define survival formula through variables selection and AIC
+## Output:  survival formula 
 
 library(readr); library(dplyr); library(rms); library(MASS)
-# library(survcomp) ## not yet available
+## library(survcomp) ## not yet available
 fs::dir_create(here::here("output", "not_for_review", "model"))
 fs::dir_create(here::here("output", "review", "model"))
 source("analysis/functions/function_df_summary.R")
@@ -24,7 +24,7 @@ ratio_non_cases_to_cases = 20 # this is used in sampling non-cases to increase e
 set.seed(123456) # to ensure reproducibility in the sampling
 
 ################################################################################
-# Part 1: load data, define inverse probability weighting                      #
+## Part 1: load data, define inverse probability weighting                    ##
 ################################################################################
 ## Analyses 1 and 4: all eligible patients, without censoring individuals by vaccination
 if(analysis == "all"){
@@ -51,10 +51,6 @@ if(analysis == "infected"){
   input <- read_rds("output/input_stage1_infected.rds")
 }
 ##--specify inverse probability weighting
-
-## YW 2022-08-10: Shouldn't this be simply lcovid_cens==1
-# cases <- input %>% filter(!is.na(out_first_long_covid_date) &
-#                                   (out_first_long_covid_date == fup_end_date))
 
 cases <- input %>% filter(lcovid_cens==1)
 
@@ -87,8 +83,8 @@ if(analysis == "all_vax_td"){
 ## handling variables
 
 ## remove region as a covariate
-# input <- input %>% rename(sub_cat_region = "cov_cat_region")  %>%
-#   rename(sub_cat_age_group = "cov_cat_age_group")
+## input <- input %>% rename(sub_cat_region = "cov_cat_region")  %>%
+##   rename(sub_cat_age_group = "cov_cat_age_group")
 
 input <- input %>% 
   rename(sub_cat_age_group = "cov_cat_age_group")
@@ -113,12 +109,12 @@ if(analysis == "all_vax_td"){
 }
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
-# readr::write_rds(input, paste0("output/input_samples_", analysis, ".rds")) 
+## readr::write_rds(input, paste0("output/input_samples_", analysis, ".rds")) 
 
 print("Part 1: load data, define inverse probability weighting is completed!")
 
 ################################################################################
-# Part 2: number of people in each covariate level                             #
+## Part 2: number of people in each covariate level                           ##
 ################################################################################
 function_df_summary(input, analysis)
 
@@ -127,10 +123,10 @@ dd <<- datadist(input) #
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 
 ################################################################################
-# Part 3: define survival analysis formula                                     #
+## Part 3: define survival analysis formula                                   ##
 ################################################################################
 ## linear predictors + a restricted cubic spline for age + 
-##  a restricted cubic spline for gp consultation rate + clustering effect for practice
+##  a restricted cubic spline for gp consultation rate 
 knot_placement=as.numeric(quantile(input$cov_num_age, probs=c(0.1,0.5,0.9)))
 
 ## Age sex model - age spline
@@ -138,21 +134,18 @@ surv_formula_age_spl_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex",
   "+rms::rcs(cov_num_age,parms=knot_placement)"
-  #"+ strat(sub_cat_region)"
 )
 
 ## Age sex model - age linear
 surv_formula_age_linear_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex", "+ cov_num_age"
-  #"+ strat(sub_cat_region)"
 )
 
 ## Age sex model - age categorical
 surv_formula_age_cat_sex <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   "cov_cat_sex", "+ sub_cat_age_group"
-  #"+ strat(sub_cat_region)"
 )
 
 ## Age sex model
@@ -161,12 +154,10 @@ if(analysis == "all_vax_td"){
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     "cov_cat_sex", "+rms::rcs(cov_num_age,parms=knot_placement)", 
     "+ cov_cat_ie.status" 
-    #"+ strat(sub_cat_region)"
   )
   surv_formula_age_linear_sex <- paste0(
     "Surv(lcovid_surv, lcovid_cens) ~ ",
     "cov_cat_sex", "+ cov_num_age", "+ cov_cat_ie.status"
-    #"+ strat(sub_cat_region)"
   )
 }
 
@@ -175,7 +166,6 @@ surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+rms::rcs(cov_num_age,parms=knot_placement)"
-  #"+ strat(sub_cat_region)"
 )
 
 ## full model: age linear
@@ -183,7 +173,6 @@ surv_formula_lp <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+ cov_num_age"
-  #"+ strat(sub_cat_region)"
 )
 
 ## Full model - age categorical
@@ -191,7 +180,6 @@ surv_formula_age_categorical <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
   paste(covariate_names, collapse = "+"),
   "+ sub_cat_age_group"
-  #"+ strat(sub_cat_region)"
 )
 ## only predictors
 surv_formula_predictors <- stringr::str_extract(surv_formula, " ~.+")
@@ -203,4 +191,3 @@ print(paste0("survival formula: ", surv_formula))
 print("Part 3: define survival analysis formula is completed!")
 
 print("End of stage3_model_input_setup.R")
-

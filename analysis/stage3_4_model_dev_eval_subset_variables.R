@@ -64,20 +64,13 @@ print("Define selected variables successfully!")
 ################################################################################
 surv_formula <- paste0(
   "Surv(lcovid_surv, lcovid_cens) ~ ",
-  paste(selected_vars, collapse = "+"),
-  "+ cluster(practice_id)"
+  paste(selected_vars, collapse = "+")
 )
 
 if(length(index3)!=0){
   surv_formula <- paste0(surv_formula, "+ rms::rcs(cov_num_age,parms=knot_placement)") 
   #surv_formula_linear <- paste0(surv_formula, "+ cov_num_age") 
 }
-#RK - where index3 is defined has been commented out? Do you still need this?
-# YW - I have now uncomment index3 and related code. This script currently can only run locally 
-# and some how it doesn't work on yaml， error message:
-# In addition: Warning message:
-#In file(file, "rt") :
-#  cannot open file 'output/not_for_review/model/selected_variables_all.csv': No such file or directory
 
 fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)

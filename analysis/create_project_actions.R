@@ -375,8 +375,7 @@ actions_list <- splice(
     run = "r:latest analysis/figure_long_covid_count.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      figure_long_covid_count_all = glue("output/figure_long_covid*"),
-      table_long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all*")
+      long_covid_count_all = glue("output/review/descriptives/long_covid_count_*_all*") # all regions
     )
   ),
   comment("Figure_hist - Histogram of days from covid to long covid"),
@@ -385,8 +384,7 @@ actions_list <- splice(
     run = "r:latest analysis/figure_hist.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      figure_days_c_to_lc = glue("output/review/descriptives/figure_hist*"),
-      table_csv_summary= glue("output/review/descriptives/summary_days_c_to_long*"),
+      days_covid_to_long= glue("output/review/descriptives/days_c_to_long*"),
       table_bin_count= glue("output/review/descriptives/supporting_doc_hist_*")
     )
   ),
@@ -406,21 +404,18 @@ actions_list <- splice(
     run = "r:latest analysis/table_snomed_code.R",
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
-      pie_chart_long_covid_code = glue("output/review/descriptives/suppl_figure_pie.svg"),
-      table_long_covid_code = glue("output/review/descriptives/table_snomed*")
+      snomed_code = glue("output/not_for_review/descriptives/snomed_code*")
     )
   ),
-  comment("figure - long covid count by region"),
-  action(
-    name = "figure_long_covid_region_all",
-    run = "r:latest analysis/figure_long_covid_count_region.R",
-    needs = list("stage1_define_eligible_population_all"),
-    moderately_sensitive = list(
-      monthly_long_covid_count_region = glue("output/not_for_review/descriptives/figure_monthly*"),
-      weekly_long_covid_count_region = glue("output/not_for_review/descriptives/figure_weekly*"),
-      table_long_covid_count_region = glue("output/not_for_review/descriptives/long_covid_count_*")
-    )
-  ),
+  # comment("figure - long covid count by region"),
+  # action(
+  #   name = "figure_long_covid_region_all",
+  #   run = "r:latest analysis/figure_long_covid_count_region.R",
+  #   needs = list("stage1_define_eligible_population_all"),
+  #   moderately_sensitive = list(
+  #     long_covid_count_region = glue("output/not_for_review/descriptives/long_covid_count_*_region*")
+  #   )
+  # ),
   comment("Summarise survival data"),
   action(
     name = "summarise_survival_data_all",

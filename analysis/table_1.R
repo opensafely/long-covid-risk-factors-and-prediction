@@ -7,43 +7,42 @@
 # Output:  table1.csv, table1.html
 
 library(readr); library(dplyr); library(lubridate)
-# library(scales): not available in opensafely yet
 fs::dir_create(here::here("output", "review", "descriptives"))
 
-# function for small number suppression
+## function for small number suppression
 source("analysis/functions/redactor2.R")
 
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"          # all eligible population
-  #cohort <- "vaccinated"   # vaccinated population
+  ##cohort <- "all"          # all eligible population
+  ##cohort <- "vaccinated"   # vaccinated population
   cohort <- "infected"      # infected population
 }else{
   cohort <- args[[1]]
 }
 
 table1_creation <- function(cohort){
-  # Read in data and identify factor variables and numerical variables------------
+  ## Read in data and identify factor variables and numerical variables------------
   input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
   cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
   sub_factor_names <- names(input)[grepl("sub_cat", names(input))]
   cov_factor_names <- c(cov_factor_names, sub_factor_names)   # to include sub_cat_covid_phenotype
   cov_num_names <- names(input)[grepl("cov_num", names(input))]
   sub_num_names <- names(input)[grepl("sub_num", names(input))]
-  # to include sub_num_gp_consultation which stores the original values before truncation
+  ## to include sub_num_gp_consultation which stores the original values before truncation
   cov_num_names <- c(cov_num_names, sub_num_names) 
   
-  # summary table for practice id - for exploration only
+  ## summary table for practice id - for exploration only
   print("summary statistics for practice id")
   dtable <- table(input$practice_id)
-  #print(table(input$practice_id))
+  ##print(table(input$practice_id))
   print("number of practice id")
   print(nrow(dtable))
   print("number of missing practice id")
   print(length(which(is.na(input$practice_id))))
   
-  # Create an empty data frame ---------------------------------------------------
+  ## Create an empty data frame ---------------------------------------------------
   table_1 <- data.frame(variable = character(),
                         subgroup_level = character(),
                         number  = numeric(),  
@@ -53,13 +52,13 @@ table1_creation <- function(cohort){
                         inter_quartile_range     = numeric(),
                         stringsAsFactors = FALSE)
   
-  # factor variables: number and percentage---------------------------------------
+  ## factor variables: number and percentage---------------------------------------
   input_factor_vars <- input[, cov_factor_names]
   for(i in 1:length(cov_factor_names)){
     levels = names(table(input_factor_vars[,i]))
     start = nrow(table_1)+1
-    #table_1[start,1] = cov_factor_names[i]
-    #start = nrow(table_1)+1
+    ##table_1[start,1] = cov_factor_names[i]
+    ##start = nrow(table_1)+1
     end = nrow(table_1)+length(levels)
     table_1[start:end,1] <- rep(cov_factor_names[i], length(levels)) # covariate name
     table_1[start:end,2] <- c(levels)            # subgroup level
@@ -67,11 +66,11 @@ table1_creation <- function(cohort){
     table_1[start:end,4] <- 100*round(c(table(input_factor_vars[,i]))/nrow(input_factor_vars),4)  # percentage
     print(levels)
     
-    # small number suppression by variable
+    ## small number suppression by variable
     table_1$number[start:end] = redactor2(table_1$number[start:end])
   }
   
-  # numerical variables: number and percentage of observations, mean and standard deviations
+  ## numerical variables: number and percentage of observations, mean and standard deviations
   input_num_vars <- input[,cov_num_names]
   if(length(cov_num_names) == 1){
     index = nrow(table_1)+1
@@ -80,7 +79,7 @@ table1_creation <- function(cohort){
     table_1[index,5] <- round(mean(unlist(input_num_vars)),2) # mean
     table_1[index,6] <- round(sd(unlist(input_num_vars)),2) # sd
     table_1[index,7] <- round(IQR(unlist(input_num_vars)),2)  # IQR
-    # small number suppression by variable
+    ## small number suppression by variable
     table_1$number[index] = redactor2(table_1$number[index])
   }
   if(length(cov_num_names)>1){

@@ -158,7 +158,7 @@ figure_1_weekly <- ggplot(table_lc_weekly_count, aes(x=year_week,
 figure_1_weekly
 
 # figure_1_weekly_count
-ggsave(file="output/figure_long_covid_weekly_count.svg", 
+ggsave(file="output/long_covid_count_weekly_all.svg", 
        plot=figure_1_weekly, width=16, height=8)
 
 
@@ -166,12 +166,8 @@ ggsave(file="output/figure_long_covid_weekly_count.svg",
 time_interval = "monthly"
 region="all"  # all regions
 table_lc_monthly_count$count[is.na(table_lc_monthly_count$count)] = "[redacted]"
-write.csv(table_lc_monthly_count,file="output//review/descriptives/long_covid_count_monthly_all.csv", 
+write.csv(table_lc_monthly_count,file="output/review/descriptives/long_covid_count_monthly_all.csv", 
           row.names = F)
-
-rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
-                  output_file="long_covid_count_monthly_all",output_dir="output/review/descriptives")
-
 
 #-- output weekly count table as additional check -----------------------------
 time_interval = "weekly"
@@ -179,5 +175,4 @@ region="all"  # all regions
 table_lc_weekly_count$count[is.na(table_lc_weekly_count$count)] = "[redacted]"
 write.csv(table_lc_weekly_count,file="output/review/descriptives/long_covid_count_weekly_all.csv", 
           row.names = F)
-rmarkdown::render("analysis/compilation/compiled_long_covid_count.Rmd",
-                  output_file="long_covid_count_weekly_all",output_dir="output/review/descriptives")
+

@@ -54,7 +54,7 @@ function_summary_histogram_days <- function(input, subgroup){
   results <- data.frame(results)
   results <- round(results, 3)
   results$subgroup <- subgroup
-  write.csv(results, file=paste0("output/review/descriptives/summary_days_c_to_long_",subgroup, ".csv"), row.names = F)
+  write.csv(results, file=paste0("output/review/descriptives/days_c_to_long_summary_",subgroup, ".csv"), row.names = F)
   
   figure_hist<-ggplot(as.data.frame(days), aes(x=days)) +
     geom_histogram(color="black", fill="gray", binwidth = 50) +
@@ -67,7 +67,7 @@ function_summary_histogram_days <- function(input, subgroup){
   bin_count <- ggplot_build(figure_hist)$data[[1]]$count
   bin_count <- data.frame(seq(1:length(bin_count)), bin_count)
   names(bin_count) <- c("bin", "count")
-  ggsave(file=paste0("output/review/descriptives/figure_hist_", subgroup,".svg"), 
+  ggsave(file=paste0("output/review/descriptives/days_c_to_long_hist_", subgroup,".svg"), 
          plot=figure_hist, width=16, height=8)
   
   write.csv(bin_count, file=paste0("output/review/descriptives/supporting_doc_hist_bin_count_", subgroup,".csv"), row.names = F)

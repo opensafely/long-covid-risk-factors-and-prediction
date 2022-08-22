@@ -1,10 +1,9 @@
-# Purpose: Long COVID risk factors and prediction models
-# Author:  Yinghui Wei
-# Content: Cox model: input set up, define survival formula through variables selection and AIC
-# Output:  survival formula for selected model
+## Purpose: Long COVID risk factors and prediction models
+## Author:  Yinghui Wei
+## Content: Cox model: input set up, define survival formula through variables selection and AIC
+## Output:  survival formula for selected model
 
 library(readr); library(dplyr); library(rms); library(MASS)
-# library(survcomp) ## not yet available
 fs::dir_create(here::here("output", "not_for_review", "model"))
 fs::dir_create(here::here("output", "review", "model"))
 source("analysis/functions/function_cox_output.R")
@@ -14,7 +13,7 @@ ratio_non_cases_to_cases = 20 # this is used in sampling non-cases to increase e
 set.seed(123456) # to ensure reproducibility in the sampling
 
 ################################################################################
-# Part 1: load data, define inverse probability weighting                      #
+## Part 1: load data, define inverse probability weighting                    ##
 ################################################################################
 input <- read_rds("output/input_stage1_all.rds")
 
@@ -61,7 +60,7 @@ input <- input %>% dplyr::select(all_of(variables_to_keep))
 print("Part 1: load data, define inverse probability weighting is completed!")
 
 ################################################################################
-# Part 2: number of people in each covariate level                             #
+## Part 2: number of people in each covariate level                           ##
 ################################################################################
 function_df_summary(input, analysis)
 ## set up before using rms::cph
@@ -69,7 +68,7 @@ dd <<- datadist(input) #
 options(datadist="dd", contrasts=c("contr.treatment", "contr.treatment")) #
 
 ################################################################################
-# Part 3: define survival analysis formula                                     #
+## Part 3: define survival analysis formula                                   ##
 ################################################################################
 ## linear predictors + a restricted cubic spline for age + 
 ##  a restricted cubic spline for gp consultation rate + clustering effect for practice
@@ -108,9 +107,9 @@ print("Part 3: define survival analysis formula is completed!")
 print("End of stage3_model_input_setup.R")
 
 ################################################################################
-# Part 4: Fit Cox model with post-viral fatigue as an outcome                  #
+## Part 4: Fit Cox model with post-viral fatigue as an outcome                ##
 ################################################################################
-# age sex model
+## age sex model
 
 fit_age_sex_cox_model_splines <-rms::cph(formula= as.formula(surv_formula_age_spl_sex),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
@@ -124,7 +123,7 @@ which_model = "fatigue_age_sex_linear"
 output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_age_sex_cox_model_linear, which_model, output_file, save_output = TRUE)
 
-# full model
+## full model
 fit_full_cox_model_splines <-rms::cph(formula= as.formula(surv_formula),
                                  data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
 
@@ -138,7 +137,7 @@ which_model = "fatigue_full_linear"
 output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
 cox_output2(fit_full_cox_model_linear, which_model, output_file, save_output = TRUE)
 
-# model selection
+## model selection
 
 fit_cox_model_selected <- fastbw(fit_full_cox_model_splines, sls=0.20)
 

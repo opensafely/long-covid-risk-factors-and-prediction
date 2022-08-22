@@ -76,14 +76,7 @@ if(len!=0){
     surv_formula <- paste0(surv_formula, " + cov_cat_ie.status")
   }
   print(surv_formula)
-  #RK - where index3 is defined has been commented out? Do you still need this?
-  # YW - I have now uncomment index3 and related code. This script currently can only run locally 
-  # and some how it doesn't work on yaml， error message:
-  # In addition: Warning message:
-  #In file(file, "rt") :
-  #  cannot open file 'output/not_for_review/model/selected_variables_all.csv': No such file or directory
-  # YW 2020/08/15 - this error message is now resolved by calling stage_1_ action as a need in the yaml
-  
+
   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   

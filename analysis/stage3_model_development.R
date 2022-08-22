@@ -19,7 +19,7 @@ source("analysis/functions/function_cox_output.R")
 print("Starting stage3_model_development.R")
 
 if(which_model == "selected"){
-  fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula),
+  fit_cox_model_selected <-rms::cph(formula= as.formula(surv_formula_selected),
                                      data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   print("The selected model is")
   print(fit_cox_model_selected)
