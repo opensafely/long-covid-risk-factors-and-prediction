@@ -46,7 +46,7 @@ fp_two <- fp_two +
         # facet title size
         strip.text.x = element_text(size = 18))
 cohort = "pre_vax_post_vax"
-ggsave(file=paste0("plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
+ggsave(file=paste0("v2_plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
        plot=fp_two, width=25, height=15)
 
 ## One cohort
@@ -66,5 +66,5 @@ fp_one <- fp_one +
                              b = 20,  # Bottom margin
                              l = 20))
 cohort = "pre_vax"
-ggsave(file=paste0("plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
+ggsave(file=paste0("v2_plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
        plot=fp_one, width=12, height=15)

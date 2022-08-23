@@ -59,9 +59,9 @@ function_HR_df <- function(df_list,csv_index){
   
   temp <- hr$term[order(hr$term, decreasing = T)]
   
-  #hr_fixed <- hr %>% dplyr::select(c(term, variable, pred_name, pred_level, variable))
-  #hr_fixed <- hr_fixed[order(hr_fixed$variable, hr_fixed$term),]
-  #write.csv(hr_fixed, file=paste0(common_dir,"hr_fixed.csv"),row.names=F)
+  # hr_fixed <- hr %>% dplyr::select(c(term, variable, pred_name, pred_level, variable))
+  # hr_fixed <- hr_fixed[order(hr_fixed$variable, hr_fixed$term),]
+  # write.csv(hr_fixed, file=paste0(common_dir,"hr_fixed2.csv"),row.names=F)
   
   ## read in a pre-specified document
   df <- read.csv(file=paste0(common_dir, "hr_fixed.csv"))
