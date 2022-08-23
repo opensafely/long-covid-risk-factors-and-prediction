@@ -1,4 +1,5 @@
-# Purpose: to fit Cox model with age and sex as predictors
+## Programmed by Yinghui Wei
+## Purpose: to fit Cox model with age and sex as predictors
 
 library(readr)
 source("analysis/stage2_model_input_set_up.R")

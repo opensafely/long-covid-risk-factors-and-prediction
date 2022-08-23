@@ -1,10 +1,10 @@
-# Purpose: to combine all table 1 into one table
+## Purpose: to combine all table 1 into one table
 library(readr); library(dplyr)
 fs::dir_create(here::here("output", "review", "descriptives"))
 
 print("Starting to combine table 1 files")
 
-# function for small number suppression
+## function for small number suppression
 source("analysis/functions/redactor2.R")
 
 table_1_all.csv <-read.csv("output/review/descriptives/table_1_all.csv")
@@ -26,7 +26,7 @@ table_1_com$subgroup_level[index] <- table_1_com$variable[index]
 
 table_1_wide <- reshape(table_1_com, idvar = c("variable","subgroup_level"), timevar = "analysis", direction = "wide")
 
-# according to the definition
+## according to the definition
 index <- which(table_1_wide$variable == "sub_cat_covid_phenotype" &
                  table_1_wide$subgroup_level == "no_infection")
 table_1_wide$number.infected[index] = 0 # change from NA to 0 because no infection have been excluded for infected population
@@ -35,18 +35,9 @@ index <- which(table_1_wide$variable == "sub_cat_covid_history" &
                     table_1_wide$subgroup_level == "FALSE"))
 table_1_wide$number.infected[index] = 0 # change from NA to 0 because prior covid history have been excluded for infected population
 table_1_wide$percent.infected[index] = 0 # as above
-# That is fine. I think you should also correct percent.infected which remain 100% while the associated number has been changed to 0.
-# Response: percent.infected[index] is now also set to 0
 
 table_1_wide$diff_all_vax = abs(table_1_wide$number.all-table_1_wide$number.vaccinated)
 table_1_wide$diff_all_infected = abs(table_1_wide$number.all-table_1_wide$number.infected)
-
-# It doesn't look like abs() is needed here, on lines 40-41. 
-# Maybe you added abs() in case the number.all is smaller then either number.vax or number.inf?
-# Response: abs() is needed because only positive values are allowed in the redactor2 function
-
-# table_1_wide <- table_1_wide %>% filter(subgroup_level!="FALSE") %>%
-#   filter(variable != "cov_cat_covid_phenotype")
 
 table_1_wide <- table_1_wide %>%
   filter(variable != "cov_cat_covid_phenotype")

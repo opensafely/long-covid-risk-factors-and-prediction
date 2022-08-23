@@ -25,6 +25,8 @@ print("Part 1 is completed!")
 ################################################################################
 # Part 2: backward elimination                                                 #
 ################################################################################
+## Set defult model as full model
+which_model = "full"
 ## backward elimination: 
 fit_cox_model_selected <- fastbw(fit_cox_model, rule= "p", sls=0.20)
 # sls: Significance level for staying in a model if rule="p"
@@ -39,43 +41,40 @@ if(length(fit_cox_model_selected$names.kept)==0){
 }
 write.csv(selected_covariate_names, 
           file = paste0("output/not_for_review/model/selected_variables_",analysis,".csv"), row.names=FALSE)
-
-if(length(selected_covariate_names)>0){
-  if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == TRUE){
-    selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
-    surv_formula_selected <- paste0(
-      "Surv(lcovid_surv, lcovid_cens) ~ ",
-      paste(selected_covariate_names, collapse = "+"),
-      "+rms::rcs(cov_num_age,parms=knot_placement)"
-      #"+ strat(sub_cat_region)"
-    )
-  }
-  if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == FALSE){
-    selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
-    surv_formula_selected <- paste0(
-      "Surv(lcovid_surv, lcovid_cens) ~ ",
-      paste(selected_covariate_names, collapse = "+"),
-      "+ cov_num_age" 
-     # "+ strat(sub_cat_region)"
-    )
-  }
-  if(!("cov_num_age" %in% selected_covariate_names)){
-    surv_formula_selected <- paste0(
-      "Surv(lcovid_surv, lcovid_cens) ~ ",
-      paste(selected_covariate_names, collapse = "+")
-     # "+ strat(sub_cat_region)"
+if(selected_covariate_names!="None"){
+  if(length(selected_covariate_names)>0){
+    if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == TRUE){
+      selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
+      surv_formula_selected <- paste0(
+        "Surv(lcovid_surv, lcovid_cens) ~ ",
+        paste(selected_covariate_names, collapse = "+"),
+        "+rms::rcs(cov_num_age,parms=knot_placement)"
       )
+    }
+    if("cov_num_age" %in% selected_covariate_names & grepl("rms::rcs", surv_formula) == FALSE){
+      selected_covariate_names <- selected_covariate_names[-grep("age", selected_covariate_names)]
+      surv_formula_selected <- paste0(
+        "Surv(lcovid_surv, lcovid_cens) ~ ",
+        paste(selected_covariate_names, collapse = "+"),
+        "+ cov_num_age" 
+      )
+    }
+    if(!("cov_num_age" %in% selected_covariate_names)){
+      surv_formula_selected <- paste0(
+        "Surv(lcovid_surv, lcovid_cens) ~ ",
+        paste(selected_covariate_names, collapse = "+")
+        )
+    }
+    print("Selected models: survival formula is")
+    print(surv_formula_selected)
   }
-  print("Selected models: survival formula is")
-  print(surv_formula_selected)
+  
+  if(length(selected_covariate_names)>0){
+    which_model = "selected"
+  }else{
+    which_model = "full"
+  }
 }
-
-if(length(selected_covariate_names)>0){
-  which_model = "selected"
-}else{
-  which_model = "full"
-}
-
 selection <- data.frame(analysis = analysis, which_model = which_model)
 
 write.csv(selection, file = paste0("output/not_for_review/model/model_selection_",analysis,".csv"), row.names=FALSE)

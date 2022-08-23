@@ -174,4 +174,3 @@ for(csv_index in 1:length(df_list)){
   ggsave(file=paste0("plot_hr",b, ".svg"), path = output_dir,
          plot=hr_plot, width=10, height=12)
 }
-

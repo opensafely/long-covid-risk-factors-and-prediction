@@ -5,7 +5,7 @@
 
 library(readr); library(dplyr);library(lubridate)
 
-# function for small number suppression
+## function for small number suppression
 source("analysis/functions/redactor2.R")
 
 cohort_start = as.Date("2020-01-29", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
@@ -90,11 +90,11 @@ table2_creation <- function(cohort){
                     "cov_cat_post_viral_fatigue_pre_pandemic")
 
   
-  #RK - not sure if this is just a dummy data check but if you think it could be in
-  #the real data, should this be moved to before calculating the main IR on line 77/78?
+  ##RK - not sure if this is just a dummy data check but if you think it could be in
+  ##the real data, should this be moved to before calculating the main IR on line 77/78?
   
-  #YW - it could be move to before line 77/78 to save some computing time
-  #although it would not make a difference in results it is before or after
+  ##YW - it could be move to before line 77/78 to save some computing time
+  ##although it would not make a difference in results it is before or after
   
   
   ##start.time = Sys.time()
@@ -130,16 +130,16 @@ table2_creation <- function(cohort){
             }
       }
   }
-  #table_2 <- table_2 %>%filter(outcome == "long covid")
+  table_2 <- table_2 %>%filter(outcome == "long covid")
   table(table_2$subgrp)
 
-  # redaction by subgroup
-  #RK - the redactor function looks like it's doing what it needs to do.
-  #Currently you put both the long covid and covid counts in as one but should these be redacted separately
-  #as these are separate outcomes? Otherwise you might redact one level in long covid then when it tries to 
-  #redact the next smallest it might do it in the covid outcome which won't remove the disclosure.
+  ## redaction by subgroup
+  ##RK - the redactor function looks like it's doing what it needs to do.
+  ##Currently you put both the long covid and covid counts in as one but should these be redacted separately
+  ##as these are separate outcomes? Otherwise you might redact one level in long covid then when it tries to 
+  ##redact the next smallest it might do it in the covid outcome which won't remove the disclosure.
   
-  # YW: You are right! This is now amended by using redactor for covid and long covid seperately
+  ## YW: You are right! This is now amended by using redactor for covid and long covid seperately
   
   
   for(i in demographics){
@@ -150,7 +150,6 @@ table2_creation <- function(cohort){
     }
   }
   col_names <- c("event_count","person_years","ir", "ir_lower", "ir_upper")
-  #table_2[is.na(table_2$event_count),col_names] =rep("[redacted]",length(col_names))
   table_2$subgrp <- gsub("cov_cat_", "", table_2$subgrp)
   
   if(vax_c == TRUE){

@@ -17,11 +17,6 @@ print("Starting stage_4_model_evaluation.R")
 fs::dir_create(here::here("output", "review", "descriptives"))
 fs::dir_create(here::here("output", "review", "model"))
 
-# if(which_model == "selected"){
-#   # loading the selected model as fit_cox_model_vs from backward elimination is not a standard Cox model object
-#   fit_cox_model <-rms::cph(formula= as.formula(surv_formula),
-#                            data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
-# }
 #the full model is already loaded in stage3_model_input_set_up, so no need to refit
 
 print("Part 1. Finished loading fitted cox model!")
@@ -35,14 +30,14 @@ source("analysis/functions/function_model_evaluation.R")
 subset_vars =""
 if(which_model == "selected"){
   print(fit_cox_model_selected)
-  fit_cox_model_selected_refit <-rms::cph(formula= as.formula(surv_formula),
+  fit_cox_model_selected_refit <-rms::cph(formula= as.formula(surv_formula_selected),
                              data= input, weight=input$weight,surv = TRUE,x=TRUE,y=TRUE)
   function_model_evaluation(input,fit_cox_model_selected_refit, which_model, analysis, 
                             subset_vars, graphics_output = TRUE, save_output = TRUE)
-  # print("Fished model evaluation for the selected model!")
+  print("Fished model evaluation for the selected model!")
+  print(fit_cox_model_selected_refit)
 }
 
-print(fit_cox_model_selected_refit)
 print(fit_cox_model_selected)
 
 ## fit_cox_model is the full model

@@ -270,8 +270,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_long_covid_count_all: output/figure_long_covid*
-        table_long_covid_count_all: output/review/descriptives/long_covid_count_*_all*
+        long_covid_count_all: output/review/descriptives/long_covid_count_*_all*
 
   ## Figure_hist - Histogram of days from covid to long covid 
 
@@ -281,8 +280,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_days_c_to_lc: output/review/descriptives/figure_hist*
-        table_csv_summary: output/review/descriptives/summary_days_c_to_long*
+        days_covid_to_long: output/review/descriptives/days_c_to_long*
         table_bin_count: output/review/descriptives/supporting_doc_hist_*
 
   ## Figure - Kaplan Meier plot 
@@ -304,20 +302,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        pie_chart_long_covid_code: output/review/descriptives/suppl_figure_pie.svg
-        table_long_covid_code: output/review/descriptives/table_snomed*
-
-  ## figure - long covid count by region 
-
-  figure_long_covid_region_all:
-    run: r:latest analysis/figure_long_covid_count_region.R
-    needs:
-    - stage1_define_eligible_population_all
-    outputs:
-      moderately_sensitive:
-        monthly_long_covid_count_region: output/not_for_review/descriptives/figure_monthly*
-        weekly_long_covid_count_region: output/not_for_review/descriptives/figure_weekly*
-        table_long_covid_count_region: output/not_for_review/descriptives/long_covid_count_*
+        snomed_code: output/not_for_review/descriptives/snomed_code*
 
   ## Summarise survival data 
 
