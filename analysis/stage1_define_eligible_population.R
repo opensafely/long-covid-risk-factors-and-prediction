@@ -232,7 +232,7 @@ stage1_eligibility <- function(cohort){
   
   input_select <- input_select[,variables_to_keep]
   
-  input <- input%>%select(-index_date)
+  input <- input%>%dplyr::select(-index_date)
   ## left join: keep all observations in input_select
   input <- merge(x = input_select, y = input, by = "patient_id", all.x = TRUE)
   

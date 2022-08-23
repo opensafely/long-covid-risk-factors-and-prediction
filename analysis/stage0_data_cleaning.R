@@ -19,9 +19,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  cohort <- "all"           # all eligible population
+  #cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  #cohort <- "infected"       # infected population
+  cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -265,6 +265,9 @@ stage0_data_cleaning <- function(cohort){
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
 
+  ## cov_cat_gp_consultation ----------------------------------------------------
+  input <- input%>% mutate(cov_cat_gp_consultation = relevel(cov_cat_gp_consultation, ref = "0"))
+  
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
   #################################################################################
