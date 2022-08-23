@@ -6,7 +6,6 @@ library(grid)
 library(forestploter)
 source("analysis/externals/ext_figure_hazard_ratio_v2.R")
 
-
 function_HR_plot_num <- function(df, cohort, outputdir){
   # Add blank column for the forest plot to display CI.
   # Adjust the column width with space. 
@@ -22,10 +21,8 @@ function_HR_plot_num <- function(df, cohort, outputdir){
               ci_column = 2,
               ref_line = 1,
               arrow_lab = c("Lower risk", "Higher risk"),
-              #xlim = c(0, ceiling(max(df$conf.high,na.rm =T))),
-              #ticks_at = c(0,0.5,1, seq(2,ceiling(max(df$conf.high,na.rm =T)),by=2)),
-              xlim = c(0, 6),
-              ticks_at = c(0,0.5,1, seq(2,6,by=2)),
+              xlim = c(0, ceiling(max(df$conf.high,na.rm =T))),
+              ticks_at = c(0,0.5,1, seq(2,ceiling(max(df$conf.high,na.rm =T)),by=2)),
               footnote = "")
   p
   ggsave(file=paste0("v3_plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
