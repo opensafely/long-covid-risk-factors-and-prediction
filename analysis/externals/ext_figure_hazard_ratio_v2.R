@@ -1,7 +1,7 @@
 # Purpose: to create hazard ratio plot externally
 # Programmed by Yinghui Wei
-# Date: 2022-06-17
-# https://cran.r-project.org/web/packages/forestploter/vignettes/forestploter-intro.html
+# Date: 2022-08-22
+
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
 source("analysis/externals/ext_function_HR_df.R")
@@ -18,7 +18,6 @@ for (i in 1:length(file_list)){
 
 df_list <- list(HR_full_model_age_spline_all_vax_c.csv, 
                 HR_full_model_age_spline_vaccinated.csv) 
-csv_index = 1
 
 infected_cohort <- grep("infected",file_list)
 td_analysis <- grep("td", file_list)
@@ -46,21 +45,11 @@ fp_two <- fp_two +
         axis.title=element_text(size=15,face="bold"),
         # facet title size
         strip.text.x = element_text(size = 18))
-
 cohort = "pre_vax_post_vax"
 ggsave(file=paste0("plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
        plot=fp_two, width=25, height=15)
 
 ## One cohort
-fp <- ggplot(data=hr_vax_c, aes(y=hazard_ratio, x = reorder(term, desc(row.num)), 
-                          ymin=conf.low, ymax=conf.high)) +
-  geom_pointrange() + 
-  geom_hline(yintercept=1, lty=2) +  # add a dotted line at x=1 after flip
-  coord_flip() +  # flip coordinates (puts labels on y axis)
-  xlab("Predictors\n") + ylab(label = "\nHazard Ratio") +
-  theme_bw()  # use a white background
-fp + scale_y_log10(breaks=c(0,0.25, 0.5,1,seq(2:ceiling(max(hr_vax_c$conf.high,na.rm =T),by=2))))
-
 fp_one <- ggplot(data=hr_vax_c, aes(y=hazard_ratio, x = reorder(term, desc(row.num)), 
                                           ymin=conf.low, ymax=conf.high, colour=subgroup)) +
   geom_pointrange() + 
@@ -76,7 +65,6 @@ fp_one <- fp_one +
                              r = 20,  # Right margin
                              b = 20,  # Bottom margin
                              l = 20))
-
 cohort = "pre_vax"
 ggsave(file=paste0("plot_HR_",cohort, ".svg"), path = paste0(output_dir, "figures"),
        plot=fp_one, width=12, height=15)

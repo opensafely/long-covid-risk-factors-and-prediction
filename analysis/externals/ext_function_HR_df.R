@@ -24,7 +24,9 @@ function_HR_df <- function(df_list,csv_index){
     rename(conf.low=robust.conf.low) %>%
     rename(conf.high = robust.conf.high)
   hr <- hr[order(hr$variable, hr$term),]
-  hr <- hr %>% mutate('HR (95% CI)' = paste0(hazard_ratio, " (", conf.low, ", ", conf.high, ")"))
+  hr <- hr %>% mutate('HR (95% CI)' = paste0(format(round(hazard_ratio,3), nsmall = 3), 
+                                             " (", format(round(conf.low,3),nsmall=3), ", ", 
+                                             format(round(conf.high,3),nsmall=3), ")"))
   
   hr <- hr[order(hr$term),]
   
