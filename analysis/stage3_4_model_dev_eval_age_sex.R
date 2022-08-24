@@ -32,12 +32,12 @@ fit_cox_model <- fit_cox_model_splines <-rms::cph(formula= as.formula(surv_formu
 # print("The selected model is")
 # print(fit_cox_model)
 
-# save model as rds file
-readr::write_rds(
-  fit_cox_model,
-  paste0("output/not_for_review/model/fit_cox_model_age_sex_", analysis, ".rds")
-  #compress = "gz"
-)
+# # save model as rds file
+# readr::write_rds(
+#   fit_cox_model,
+#   paste0("output/not_for_review/model/fit_cox_model_age_sex_", analysis, ".rds")
+#   #compress = "gz"
+# )
 
 print("Part 1. Finished fitting age and sex models: age splines and age linear!")
 

@@ -192,7 +192,7 @@ apply_development_cox_model_age_sex <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_{analysis}.rds"),
+        # fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_{analysis}.rds"),
         hazard_ratios = glue("output/review/model/HR_age_sex_*_{analysis}*"),
         performance_measure = glue("output/review/model/PM_age_sex_*_{analysis}*"),
         survival_plot = glue("output/not_for_review/model/survival_plot_*_age_sex_*_{analysis}.svg")
