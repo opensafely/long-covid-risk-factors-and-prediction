@@ -109,5 +109,11 @@ function_HR_df <- function(df_list,csv_index){
     rename(pred_level = pred_level.x) %>%
     dplyr::select(c("term", "row.num","variable", "pred_name", "pred_level", "subgroup",
                     "hazard_ratio", "conf.low", "conf.high", "robust.se", "HR (95% CI)"))
+  
+  # indent each disease history
+  index <- which(hr$variable=="Disease History")
+  index2 <- which(hr$term[index]=="History of diseases")
+  index <- index[-index2]
+  hr$term[index] <- paste0("       ", hr$term[index])
   return(hr)
 }
