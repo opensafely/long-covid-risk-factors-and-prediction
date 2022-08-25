@@ -151,7 +151,8 @@ apply_stage1_eligibility <- function(cohort){
         cohort = glue("output/input_stage1_{cohort}.rds")
       ),
       moderately_sensitive = list(
-        table_flow_chart = glue("output/not_for_review/descriptives/flow_chart_{cohort}*")
+        table_flow_chart = glue("output/not_for_review/descriptives/flow_chart_{cohort}*"),
+        table_gp_interactions = glue("output/not_for_review/descriptives/table_quantile_gp*_{cohort}*")
       )
     )
   )

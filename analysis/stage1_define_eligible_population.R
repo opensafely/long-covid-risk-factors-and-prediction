@@ -260,6 +260,13 @@ stage1_eligibility <- function(cohort){
 
   write.csv(flow_chart, file=paste0("output/not_for_review/descriptives/flow_chart_", cohort, ".csv"), row.names = F)
   print(paste0("Flowchart table is saved successfully for ", cohort, "population!"))
+  
+  ## output GP-patient interaction quantiles
+  df_gp <- quantile(input$sub_num_gp_patient_interaction, probs = seq(0, 1, 0.125), na.rm = TRUE)
+  df_gp <- data.frame(df_gp, seq(0,1,0.125))
+  names(df_gp) <- c("sub_num_gp_patient_interaction", "Quantile")
+  rownames(df_gp) <- NULL
+  write.csv(df_gp, file= paste0("output/not_for_review/descriptives/table_quantile_gp_patient_", cohort, ".csv"), row.names=F)
 }
 
 if (cohort == "all_cohorts") {
