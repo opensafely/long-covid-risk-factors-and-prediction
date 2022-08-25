@@ -19,9 +19,9 @@ fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  #cohort <- "all"           # all eligible population
+  cohort <- "all"           # all eligible population
   #cohort <- "vaccinated"    # vaccinated population
-  cohort <- "infected"       # infected population
+  #cohort <- "infected"       # infected population
 }else{
   cohort <- args[[1]]
 }
@@ -30,7 +30,8 @@ stage0_data_cleaning <- function(cohort){
   input <- read_feather(paste0("output/input_", cohort, ".feather"))
   
   # remove ra-sle-psoriasis because they have been included individually
-  input <- input %>% dplyr::select(-cov_cat_ra_sle_psoriasis)
+  input <- input %>% dplyr::select(-cov_cat_ra_sle_psoriasis) %>%
+    rename(cov_num_gp_patient_interaction = cov_num_gp_consultation)
   ################################################################################
   ## Part 1. define index date and remove variables, specify date variable       #
   ################################################################################
@@ -169,7 +170,7 @@ stage0_data_cleaning <- function(cohort){
     print(paste0("Summary statistics for ", i))
     print(summary(input[,i]))
     svglite::svglite(file = paste0("output/not_for_review/descriptives/histogram_", i,"_", cohort, ".svg"))
-    if(i!="cov_num_gp_consultation"){
+    if(i!="cov_num_gp_patient_interaction"){
       hist(input[,i], main=paste0("Histogram of ", i), xlab =i)
     }else{
       input_consultation_1e12 <- input[which(input[,i]<=20),i]
@@ -183,20 +184,20 @@ stage0_data_cleaning <- function(cohort){
     }
     dev.off()
   }
-  ## cov_num_gp_consultation
-  input <- input %>% mutate(cov_cat_gp_consultation = ifelse(input$cov_num_gp_consultation > 12,
+  ## cov_num_gp_patient_interaction
+  input <- input %>% mutate(cov_cat_gp_patient_interaction = ifelse(input$cov_num_gp_patient_interaction > 12,
                                                              "13 or more",
-                                                            ifelse(input$cov_num_gp_consultation >= 9,
+                                                            ifelse(input$cov_num_gp_patient_interaction >= 9,
                                                              "9 to 12",
-                                                                ifelse(input$cov_num_gp_consultation >=4,
+                                                                ifelse(input$cov_num_gp_patient_interaction >=4,
                                                                       "4 to 8",
-                                                                         ifelse(input$cov_num_gp_consultation >=1,
+                                                                         ifelse(input$cov_num_gp_patient_interaction >=1,
                                                                                           "1 to 3", "0")))))
-  table(input$cov_cat_gp_consultation)
-  table(input$cov_num_gp_consultation)
-  input <- input%>% rename(sub_num_gp_consultation = cov_num_gp_consultation) %>% # rename so it is not included in modelling but only for exploration
-    mutate(cov_cat_gp_consultation = as.factor(cov_cat_gp_consultation)) %>%
-    mutate(cov_cat_gp_consultation = relevel(cov_cat_gp_consultation, ref = "0"))
+  table(input$cov_cat_gp_patient_interaction)
+  table(input$cov_num_gp_patient_interaction)
+  input <- input%>% rename(sub_num_gp_patient_interaction = cov_num_gp_patient_interaction) %>% # rename so it is not included in modelling but only for exploration
+    mutate(cov_cat_gp_patient_interaction = as.factor(cov_cat_gp_patient_interaction)) %>%
+    mutate(cov_cat_gp_patient_interaction = relevel(cov_cat_gp_patient_interaction, ref = "0"))
 
   ################################################################################
   ## Part 3. define variable types: factor or numerical                          #
@@ -265,8 +266,8 @@ stage0_data_cleaning <- function(cohort){
   ## define a variable covid_history to indicate if individuals have covid infection before the start of the cohort
   input$sub_cat_covid_history <-ifelse(input$out_covid_date < input$index_date, TRUE, FALSE)
 
-  ## cov_cat_gp_consultation ----------------------------------------------------
-  input <- input%>% mutate(cov_cat_gp_consultation = relevel(cov_cat_gp_consultation, ref = "0"))
+  ## cov_cat_gp_patient_interaction ----------------------------------------------------
+  input <- input%>% mutate(cov_cat_gp_patient_interaction = relevel(cov_cat_gp_patient_interaction, ref = "0"))
   
   #################################################################################
   ## Part 4. For categorical variables, replace "na" with "Missing" as a category #
@@ -308,7 +309,7 @@ stage0_data_cleaning <- function(cohort){
   
   print("Finished replacing missing values with a Missing category!")
   
-  input_factor_vars$cov_cat_region <- relevel(input_factor_vars$cov_cat_region, ref = "London")
+  #input_factor_vars$cov_cat_region <- relevel(input_factor_vars$cov_cat_region, ref = "East")
   
   table(input_factor_vars$cov_cat_region)
   

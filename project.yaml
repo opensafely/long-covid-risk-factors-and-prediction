@@ -97,6 +97,7 @@ actions:
         cohort: output/input_stage1_all.rds
       moderately_sensitive:
         table_flow_chart: output/not_for_review/descriptives/flow_chart_all*
+        table_gp_interactions: output/not_for_review/descriptives/table_quantile_gp*_all*
 
   ## Stage 1 define eligible population - vaccinated 
 
@@ -109,6 +110,7 @@ actions:
         cohort: output/input_stage1_vaccinated.rds
       moderately_sensitive:
         table_flow_chart: output/not_for_review/descriptives/flow_chart_vaccinated*
+        table_gp_interactions: output/not_for_review/descriptives/table_quantile_gp*_vaccinated*
 
   ## Stage 1 define eligible population - infected 
 
@@ -121,6 +123,7 @@ actions:
         cohort: output/input_stage1_infected.rds
       moderately_sensitive:
         table_flow_chart: output/not_for_review/descriptives/flow_chart_infected*
+        table_gp_interactions: output/not_for_review/descriptives/table_quantile_gp*_infected*
 
   ## Part 3. Figures and tables 
   ## Table 1. Patient Characteristics - all 
