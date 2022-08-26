@@ -241,7 +241,24 @@ apply_cox_model_subset_variables <- function(analysis){
     )
   )
 }
-
+apply_figure_loghr_age <- function(analysis){
+  splice(
+    comment(glue("Figure. Log hazard ratio against age - {analysis}")),
+    action(
+      name = glue("figure_loghr_age_{analysis}"),
+      run = "r:latest analysis/figure_log_hr_vs_age.R",
+      arguments = c(analysis),
+      needs = list(glue("development_cox_model_{analysis}"),if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{analysis}")
+        }
+      ),
+      moderately_sensitive = list(
+        figure_loghr_age = glue("output/review/model/figure_loghr_age_{analysis}*")
+      )
+    )
+  )
+}
 apply_evaluation_cox_model <- function(analysis){
   splice(
     action(
@@ -464,7 +481,10 @@ actions_list <- splice(
   splice(
     unlist(lapply(analysis, function(x) apply_cox_model_subset_variables(analysis = x)), recursive = FALSE)
   ),
-  
+  comment("Figure - log hazard ratio against continuous age"),
+  splice(
+    unlist(lapply(analysis, function(x) apply_figure_loghr_age(analysis = x)), recursive = FALSE)
+  ),
   comment("Evaluation Cox model"),
   splice(
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)

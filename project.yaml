@@ -589,6 +589,62 @@ actions:
         hazard_ratios: output/review/model/HR_subset*_infected*
         performance_measure: output/review/model/PM_subset*_infected*
 
+  ## Figure - log hazard ratio against continuous age 
+  ## Figure. Log hazard ratio against age - all 
+
+  figure_loghr_age_all:
+    run: r:latest analysis/figure_log_hr_vs_age.R all
+    needs:
+    - development_cox_model_all
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        figure_loghr_age: output/review/model/figure_loghr_age_all*
+
+  ## Figure. Log hazard ratio against age - all_vax_c 
+
+  figure_loghr_age_all_vax_c:
+    run: r:latest analysis/figure_log_hr_vs_age.R all_vax_c
+    needs:
+    - development_cox_model_all_vax_c
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        figure_loghr_age: output/review/model/figure_loghr_age_all_vax_c*
+
+  ## Figure. Log hazard ratio against age - vaccinated 
+
+  figure_loghr_age_vaccinated:
+    run: r:latest analysis/figure_log_hr_vs_age.R vaccinated
+    needs:
+    - development_cox_model_vaccinated
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        figure_loghr_age: output/review/model/figure_loghr_age_vaccinated*
+
+  ## Figure. Log hazard ratio against age - all_vax_td 
+
+  figure_loghr_age_all_vax_td:
+    run: r:latest analysis/figure_log_hr_vs_age.R all_vax_td
+    needs:
+    - development_cox_model_all_vax_td
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        figure_loghr_age: output/review/model/figure_loghr_age_all_vax_td*
+
+  ## Figure. Log hazard ratio against age - infected 
+
+  figure_loghr_age_infected:
+    run: r:latest analysis/figure_log_hr_vs_age.R infected
+    needs:
+    - development_cox_model_infected
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        figure_loghr_age: output/review/model/figure_loghr_age_infected*
+
   ## Evaluation Cox model 
 
   evaluation_cox_model_all:
