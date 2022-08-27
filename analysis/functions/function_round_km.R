@@ -34,7 +34,7 @@ round_km <- function(data, time, event, strata, threshold=6){
       }),
       surv_obj_tidy = map(surv_obj, ~broom::tidy(.x)),
     ) %>%
-    select(strata, n_events, surv_obj_tidy) %>%
+    dplyr::select(strata, n_events, surv_obj_tidy) %>%
     unnest(surv_obj_tidy)
   dat_surv_rounded <-
     dat_surv %>%
@@ -50,6 +50,6 @@ round_km <- function(data, time, event, strata, threshold=6){
       n.censor = c(NA, diff(cml.censor)),
       n.risk = ceiling_any(max(n.risk, na.rm=TRUE), threshold) - (cml.event + cml.censor)
     ) %>%
-    select(all_of(strata), time, surv, surv.ll, surv.ul, n.risk, n.event, n.censor)
+    dplyr::select(all_of(strata), time, surv, surv.ll, surv.ul, n.risk, n.event, n.censor)
   dat_surv_rounded
 }

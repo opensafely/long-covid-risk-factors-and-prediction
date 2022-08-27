@@ -8,7 +8,7 @@ fs::dir_create(here::here("output", "review", "descriptives"))
 fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 cohort = "all"
 input <- read_rds(paste0("output/input_stage1_", cohort,".rds"))
-input <- input %>% select(lcovid_surv, lcovid_cens, contains("sex"), contains("cov_cat_age"))
+input <- input %>% dplyr::select(lcovid_surv, lcovid_cens, contains("sex"), contains("cov_cat_age"))
 
 levels(input$cov_cat_age_group) <- c("18-39", "40-59", "60-79", "80+")
 table(input$cov_cat_age_group)
@@ -72,7 +72,7 @@ ggplot(dat_age,
 dev.off()
 
 # Create cumulative probability plot -----------------------------------------------------------
-svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_porobability.svg", width = 9, height = 5,)
+svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_porobability.svg", width = 9, height = 5)
 
 ggplot(dat_age, 
        aes(x,y_prob, group = cov_cat_age_group, color=cov_cat_age_group, 
