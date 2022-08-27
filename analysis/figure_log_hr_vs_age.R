@@ -25,21 +25,42 @@ b <- input$cov_num_age-age_ref
 est_a1 <- log(hr_est$hazard_ratio[1]) # loghr for age
 est_a2 <- log(hr_est$hazard_ratio[2]) # loghr for the second basis function
 
+# se for log HR
+se_logHR1 <- (est_a1 - log(hr_est$robust.conf.low[1]))/1.96
+se_logHR2 <- (est_a2 - log(hr_est$robust.conf.low[2]))/1.96
+var_est_a1 <- se_logHR1^2
+var_est_a2 <- se_logHR2^2
+# se_logHR1 <-log(hr_est$robust.se[1]) 
+# se_logHR1 <-log(hr_est$robust.se[2]) 
+
 # calculate log hazard ratio by age
 log_hr_age <- est_a1*b+est_a2*(c1-cm)
-df<-data.frame(input$cov_num_age,log_hr_age)
+
+var_log_hr_age <- var_est_a1*b^2 + var_est_a2*(c1-cm)^2
+se_log_hr_age <- sqrt(var_log_hr_age)
+
+log_hr_age_low <- log_hr_age - 1.96 * se_log_hr_age
+log_hr_age_high <- log_hr_age + 1.96 * se_log_hr_age
+
+df<-data.frame(input$cov_num_age,log_hr_age, log_hr_age_low, log_hr_age_high)
 
 p = ggplot(df)+aes(input$cov_num_age,log_hr_age)+geom_line()+
-  labs( x = '\nAge in years', y = 'Log Hazard ratio compared to age 55 years\n')
+  labs( x = '\nAge in years', y = 'Log hazard ratio compared to age 55 years\n')
 
 p <- p +    scale_x_continuous(breaks = seq(20, 100, by = 20)) +
-            theme(legend.text=element_text(size=20),
-            axis.text = element_text(size =20),
-            axis.title = element_text(size =20),
-            panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(),
-            panel.background = element_blank(), 
-            axis.line = element_line(colour = "black"))
+  theme(legend.text=element_text(size=20),
+        axis.text = element_text(size =20),
+        axis.title = element_text(size =20),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"))
 
 ggsave(file=paste0("output/review/model/figure_loghr_age_",analysis,".svg"), 
        plot=p, width=15, height=10)
+
+
+p <- p + geom_ribbon(aes(ymin = log_hr_age_low, ymax = log_hr_age_high), alpha = 0.1)
+
+ggsave(file=paste0("output/review/model/figure_loghr_age_ci_",analysis,".svg"), 
+       plot=p, width=12, height=8)
