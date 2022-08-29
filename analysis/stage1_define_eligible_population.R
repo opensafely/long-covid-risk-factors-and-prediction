@@ -124,7 +124,7 @@ stage1_eligibility <- function(cohort){
   ## redefine factor level for region since NA is now removed
   input <- input %>% mutate(cov_cat_region = as.character(cov_cat_region)) %>%
     mutate(cov_cat_region = as.factor(cov_cat_region))
-  input$cov_cat_region <- relevel(input$cov_cat_region, ref = "East")
+  #input$cov_cat_region <- relevel(input$cov_cat_region, ref = "East")
   ##RK - need to check whether you want to be removing those who have region set to 'Missing'
   ##as by this script no one should have any NA values in region
   ##YW: 2022/08/13, you are right, na has been set to "Missing", and this is updated in above to remove missing region
