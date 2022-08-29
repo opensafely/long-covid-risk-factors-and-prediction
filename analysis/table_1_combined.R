@@ -76,7 +76,7 @@ write.csv(table_1_wide, file="output/review/descriptives/table_1_combined.csv", 
 
 # output help file for table 1
 CSV_file = "output/review/descriptives/table_1_combined.csv"
-rmarkdown::render("analysis/compilation/compiled_table.Rmd",
-                  output_file="table_1_combined",output_dir="output/review/descriptives")
+# rmarkdown::render("analysis/compilation/compiled_table.Rmd",
+#                   output_file="table_1_combined",output_dir="output/review/descriptives")
 
 print("Table 1 saved successfully!")

@@ -45,6 +45,6 @@ function_df_summary <- function(input, analysis){
   
   # Output as help file: number of observations from the sampled population in each covariate level
   write.csv(df_summary, file=paste0("output/review/model/analysis_data_summary_", analysis,".csv"), row.names = F)
-  rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd",
-                    output_file=paste0("analysis_data_summary_", analysis),output_dir="output/review/model")
+  # rmarkdown::render("analysis/compilation/compiled_analysis_data_summary.Rmd",
+  #                   output_file=paste0("analysis_data_summary_", analysis),output_dir="output/review/model")
 }
