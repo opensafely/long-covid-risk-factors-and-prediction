@@ -6,9 +6,9 @@ function_figure_hr_vs_age <- function(input, fit_cox_model_splines, analysis){
   p <- ggplot(data = pdata)  +
     geom_hline(aes(yintercept = 1), linetype = 3) +
     xlab("\nAge in years\n") + ylab(label = "\nHazard ratio (95% CI) compared to 55 years\n") 
-  
   p_hr_vs_age <- p + coord_trans(y = "log10") + 
     scale_x_continuous(breaks = seq(20, 100, by = 20),limits=c(18,100)) +
+    scale_y_continuous(breaks = c(0.1, 0.5, 1, 2, 3),limits=c(0.1,3)) +
     theme(axis.text = element_text(size =20),
           axis.title = element_text(size =20),
           panel.grid.major = element_blank(), 
