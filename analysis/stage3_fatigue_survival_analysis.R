@@ -39,7 +39,7 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
                        non_case_inverse_weight, 1)
 
 ## remove region as a covariate
-input <- rename(input, sub_cat_region = "cov_cat_region")
+#input <- rename(input, sub_cat_region = "cov_cat_region")
 
 ## extract candidate predictors
 covariate_names <- names(input)[grep("cov_", names(input))]
