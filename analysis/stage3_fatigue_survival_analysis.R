@@ -53,7 +53,7 @@ print(covariate_names)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "fatigue_surv", "fatigue_cens", covariate_names,
-                       "cov_num_age", "weight", "sub_cat_region")
+                       "cov_num_age", "weight")
 
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))
