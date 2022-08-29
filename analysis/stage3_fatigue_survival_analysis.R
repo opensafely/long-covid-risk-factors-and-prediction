@@ -39,7 +39,7 @@ input$weight <- ifelse(input$patient_id %in% noncase_ids,
                        non_case_inverse_weight, 1)
 
 ## remove region as a covariate
-input <- rename(input, sub_cat_region = "cov_cat_region")
+#input <- rename(input, sub_cat_region = "cov_cat_region")
 
 ## extract candidate predictors
 covariate_names <- names(input)[grep("cov_", names(input))]
@@ -53,7 +53,7 @@ print(covariate_names)
 ## for computational efficiency, only keep the variables needed in fitting the model
 variables_to_keep <- c("patient_id", "practice_id",
                        "fatigue_surv", "fatigue_cens", covariate_names,
-                       "cov_num_age", "weight", "sub_cat_region")
+                       "cov_num_age", "weight")
 
 
 input <- input %>% dplyr::select(all_of(variables_to_keep))

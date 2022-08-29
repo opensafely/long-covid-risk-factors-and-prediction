@@ -6,6 +6,9 @@ source("analysis/stage2_model_input_set_up.R")
 source("analysis/functions/function_cox_output.R")
 source("analysis/functions/function_model_evaluation.R")
 
+fs::dir_create(here::here("output", "review", "model"))
+fs::dir_create(here::here("output", "not_for_review", "model"))
+
 combined_results_hr <- data.frame()
 combined_results_pm <- data.frame()
 ################################################################################
@@ -14,7 +17,12 @@ combined_results_pm <- data.frame()
 cov_factor_names <- names(input)[grepl("cov_cat", names(input))]
 cov_num_names <- names(input)[grepl("cov_num", names(input))]
 
-cov_factor_names <- cov_factor_names[!cov_factor_names %in% c("cov_cat_sex","cov_cat_ie.status")] # remove sex and vaccination status
+if(analysis != "infected"){
+cov_factor_names <- cov_factor_names[!cov_factor_names %in% c("cov_cat_sex","cov_cat_ie.status",
+                                                              "cov_cat_covid_phenotype")] # remove sex and vaccination status
+}else{
+  cov_factor_names <- cov_factor_names[!cov_factor_names %in% c("cov_cat_sex","cov_cat_ie.status")] # remove sex and vaccination status
+}
 cov_num_names <- cov_num_names[! cov_num_names %in% "cov_num_age"] # remove age
 
 cov_names <- c(cov_factor_names, cov_num_names)
@@ -56,6 +64,7 @@ for(i in 1:length(cov_names)){
   results$model <- "age_sex_adjusted"
   results$predictor <- cov_factor_names[i]
   combined_results_hr <- rbind(combined_results_hr, results)
+  saveRDS(fit_cox_model, file=paste0("output/not_for_review/model/fit_cox_model_age_sex_adjusted_", cov_names[i],"_", analysis,".rds"))
   
   ################################################################################
   ## Part 4: Model evaluation                                                   ##
