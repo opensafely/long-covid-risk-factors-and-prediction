@@ -493,6 +493,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_all*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_all*
         performance_measure: output/review/model/PM_age_sex_adjusted_all*
 
@@ -504,6 +505,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_all_vax_c*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_all_vax_c*
         performance_measure: output/review/model/PM_age_sex_adjusted_all_vax_c*
 
@@ -515,6 +517,7 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_vaccinated*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_vaccinated*
         performance_measure: output/review/model/PM_age_sex_adjusted_vaccinated*
 
@@ -526,6 +529,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_all_vax_td*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_all_vax_td*
         performance_measure: output/review/model/PM_age_sex_adjusted_all_vax_td*
 
@@ -537,6 +541,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_infected*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_infected*
         performance_measure: output/review/model/PM_age_sex_adjusted_infected*
 
