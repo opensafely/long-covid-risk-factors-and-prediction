@@ -175,7 +175,8 @@ apply_development_cox_model <- function(analysis){
         hazard_ratios = glue("output/review/model/HR_*_{analysis}*"),
         selected_variables = glue("output/not_for_review/model/selected_variables_{analysis}.csv"),
         model_selection = glue("output/not_for_review/model/model_selection_{analysis}.csv"),
-        AIC = glue("output/review/model/AIC_{analysis}.csv")
+        AIC = glue("output/review/model/AIC_{analysis}.csv"),
+        fit_cox_model = glue("output/not_for_review/model/fit_cox_model_*_{analysis}*")
       )
     )
   )
@@ -193,9 +194,12 @@ apply_development_cox_model_age_sex <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        # fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_{analysis}.rds"),
+        age_sex_model = glue("output/not_for_review/model/fit_cox_model_age_sex_model_*_{analysis}*"),
+        full_model = glue("output/not_for_review/model/fit_cox_model_full_model_*_{analysis}*"),
         hazard_ratios = glue("output/review/model/HR_age_sex_*_{analysis}*"),
+        hazard_ratios_full_model = glue("output/review/model/HR_full_model_*_{analysis}*"),
         performance_measure = glue("output/review/model/PM_age_sex_*_{analysis}*"),
+        performance_measure_full_model = glue("output/review/model/PM_full_model_*_{analysis}*"),
         survival_plot = glue("output/not_for_review/model/survival_plot_*_age_sex_*_{analysis}.svg")
       )
     )
@@ -214,6 +218,7 @@ apply_development_cox_model_age_sex_adjusted <- function(analysis){
         }
       ),
       moderately_sensitive = list(
+        fit_cox_model = glue("output/not_for_review/model/fit_cox_model_age_sex_adjusted*_{analysis}*"),
         hazard_ratios = glue("output/review/model/HR_age_sex_adjusted_{analysis}*"),
         performance_measure = glue("output/review/model/PM_age_sex_adjusted_{analysis}*")
       )
@@ -255,6 +260,24 @@ apply_figure_loghr_age <- function(analysis){
       ),
       moderately_sensitive = list(
         figure_loghr_age = glue("output/review/model/figure_loghr_age_{analysis}*")
+      )
+    )
+  )
+}
+apply_figure_hr_age <- function(analysis){
+  splice(
+    comment(glue("Figure. Hazard ratio against age - {analysis}")),
+    action(
+      name = glue("figure_hr_age_{analysis}"),
+      run = "r:latest analysis/figure_hr_vs_age.R",
+      arguments = c(analysis),
+      needs = list(glue("development_cox_model_{analysis}"),if(analysis == "all" | analysis == "all_vax_c" | analysis == "all_vax_td"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{analysis}")
+        }
+      ),
+      moderately_sensitive = list(
+        plot_hr_age = glue("output/review/model/plot_HR_vs_age_{analysis}*")
       )
     )
   )
@@ -484,6 +507,10 @@ actions_list <- splice(
   comment("Figure - log hazard ratio against continuous age"),
   splice(
     unlist(lapply(analysis, function(x) apply_figure_loghr_age(analysis = x)), recursive = FALSE)
+  ),
+  comment("Figure - hazard ratio against continuous age"),
+  splice(
+    unlist(lapply(analysis, function(x) apply_figure_hr_age(analysis = x)), recursive = FALSE)
   ),
   comment("Evaluation Cox model"),
   splice(

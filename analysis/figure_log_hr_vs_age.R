@@ -44,12 +44,11 @@ log_hr_age_high <- log_hr_age + 1.96 * se_log_hr_age
 
 df<-data.frame(input$cov_num_age,log_hr_age, log_hr_age_low, log_hr_age_high)
 
-p = ggplot(df)+aes(input$cov_num_age,log_hr_age)+geom_line()+
+p = ggplot(df)+aes(input$cov_num_age,log_hr_age)+geom_line()+ 
   labs( x = '\nAge in years', y = 'Log hazard ratio compared to age 55 years\n')
 
-p <- p +    scale_x_continuous(breaks = seq(20, 100, by = 20)) +
-  theme(legend.text=element_text(size=20),
-        axis.text = element_text(size =20),
+p <- p +    scale_x_continuous(breaks = seq(20, 100, by = 20))  +
+  theme(axis.text = element_text(size =20),
         axis.title = element_text(size =20),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -63,4 +62,4 @@ ggsave(file=paste0("output/review/model/figure_loghr_age_",analysis,".svg"),
 p <- p + geom_ribbon(aes(ymin = log_hr_age_low, ymax = log_hr_age_high), alpha = 0.1)
 
 ggsave(file=paste0("output/review/model/figure_loghr_age_ci_",analysis,".svg"), 
-       plot=p, width=12, height=8)
+       plot=p, width=15, height=10)

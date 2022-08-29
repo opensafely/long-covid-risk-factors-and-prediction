@@ -343,6 +343,7 @@ actions:
         selected_variables: output/not_for_review/model/selected_variables_all.csv
         model_selection: output/not_for_review/model/model_selection_all.csv
         AIC: output/review/model/AIC_all.csv
+        fit_cox_model: output/not_for_review/model/fit_cox_model_*_all*
 
   ## Development Cox Model - all_vax_c 
 
@@ -357,6 +358,7 @@ actions:
         selected_variables: output/not_for_review/model/selected_variables_all_vax_c.csv
         model_selection: output/not_for_review/model/model_selection_all_vax_c.csv
         AIC: output/review/model/AIC_all_vax_c.csv
+        fit_cox_model: output/not_for_review/model/fit_cox_model_*_all_vax_c*
 
   ## Development Cox Model - vaccinated 
 
@@ -371,6 +373,7 @@ actions:
         selected_variables: output/not_for_review/model/selected_variables_vaccinated.csv
         model_selection: output/not_for_review/model/model_selection_vaccinated.csv
         AIC: output/review/model/AIC_vaccinated.csv
+        fit_cox_model: output/not_for_review/model/fit_cox_model_*_vaccinated*
 
   ## Development Cox Model - all_vax_td 
 
@@ -385,6 +388,7 @@ actions:
         selected_variables: output/not_for_review/model/selected_variables_all_vax_td.csv
         model_selection: output/not_for_review/model/model_selection_all_vax_td.csv
         AIC: output/review/model/AIC_all_vax_td.csv
+        fit_cox_model: output/not_for_review/model/fit_cox_model_*_all_vax_td*
 
   ## Development Cox Model - infected 
 
@@ -399,6 +403,7 @@ actions:
         selected_variables: output/not_for_review/model/selected_variables_infected.csv
         model_selection: output/not_for_review/model/model_selection_infected.csv
         AIC: output/review/model/AIC_infected.csv
+        fit_cox_model: output/not_for_review/model/fit_cox_model_*_infected*
 
   ## Development Cox Model - all 
 
@@ -408,8 +413,12 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        age_sex_model: output/not_for_review/model/fit_cox_model_age_sex_model_*_all*
+        full_model: output/not_for_review/model/fit_cox_model_full_model_*_all*
         hazard_ratios: output/review/model/HR_age_sex_*_all*
+        hazard_ratios_full_model: output/review/model/HR_full_model_*_all*
         performance_measure: output/review/model/PM_age_sex_*_all*
+        performance_measure_full_model: output/review/model/PM_full_model_*_all*
         survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_all.svg
 
   ## Development Cox Model - all_vax_c 
@@ -420,8 +429,12 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        age_sex_model: output/not_for_review/model/fit_cox_model_age_sex_model_*_all_vax_c*
+        full_model: output/not_for_review/model/fit_cox_model_full_model_*_all_vax_c*
         hazard_ratios: output/review/model/HR_age_sex_*_all_vax_c*
+        hazard_ratios_full_model: output/review/model/HR_full_model_*_all_vax_c*
         performance_measure: output/review/model/PM_age_sex_*_all_vax_c*
+        performance_measure_full_model: output/review/model/PM_full_model_*_all_vax_c*
         survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_all_vax_c.svg
 
   ## Development Cox Model - vaccinated 
@@ -432,8 +445,12 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
+        age_sex_model: output/not_for_review/model/fit_cox_model_age_sex_model_*_vaccinated*
+        full_model: output/not_for_review/model/fit_cox_model_full_model_*_vaccinated*
         hazard_ratios: output/review/model/HR_age_sex_*_vaccinated*
+        hazard_ratios_full_model: output/review/model/HR_full_model_*_vaccinated*
         performance_measure: output/review/model/PM_age_sex_*_vaccinated*
+        performance_measure_full_model: output/review/model/PM_full_model_*_vaccinated*
         survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_vaccinated.svg
 
   ## Development Cox Model - all_vax_td 
@@ -444,8 +461,12 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        age_sex_model: output/not_for_review/model/fit_cox_model_age_sex_model_*_all_vax_td*
+        full_model: output/not_for_review/model/fit_cox_model_full_model_*_all_vax_td*
         hazard_ratios: output/review/model/HR_age_sex_*_all_vax_td*
+        hazard_ratios_full_model: output/review/model/HR_full_model_*_all_vax_td*
         performance_measure: output/review/model/PM_age_sex_*_all_vax_td*
+        performance_measure_full_model: output/review/model/PM_full_model_*_all_vax_td*
         survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_all_vax_td.svg
 
   ## Development Cox Model - infected 
@@ -456,8 +477,12 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
+        age_sex_model: output/not_for_review/model/fit_cox_model_age_sex_model_*_infected*
+        full_model: output/not_for_review/model/fit_cox_model_full_model_*_infected*
         hazard_ratios: output/review/model/HR_age_sex_*_infected*
+        hazard_ratios_full_model: output/review/model/HR_full_model_*_infected*
         performance_measure: output/review/model/PM_age_sex_*_infected*
+        performance_measure_full_model: output/review/model/PM_full_model_*_infected*
         survival_plot: output/not_for_review/model/survival_plot_*_age_sex_*_infected.svg
 
   ## Development Cox Model - all 
@@ -468,6 +493,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_all*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_all*
         performance_measure: output/review/model/PM_age_sex_adjusted_all*
 
@@ -479,6 +505,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_all_vax_c*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_all_vax_c*
         performance_measure: output/review/model/PM_age_sex_adjusted_all_vax_c*
 
@@ -490,6 +517,7 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_vaccinated*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_vaccinated*
         performance_measure: output/review/model/PM_age_sex_adjusted_vaccinated*
 
@@ -501,6 +529,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_all_vax_td*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_all_vax_td*
         performance_measure: output/review/model/PM_age_sex_adjusted_all_vax_td*
 
@@ -512,6 +541,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
+        fit_cox_model: output/not_for_review/model/fit_cox_model_age_sex_adjusted*_infected*
         hazard_ratios: output/review/model/HR_age_sex_adjusted_infected*
         performance_measure: output/review/model/PM_age_sex_adjusted_infected*
 
@@ -644,6 +674,62 @@ actions:
     outputs:
       moderately_sensitive:
         figure_loghr_age: output/review/model/figure_loghr_age_infected*
+
+  ## Figure - hazard ratio against continuous age 
+  ## Figure. Hazard ratio against age - all 
+
+  figure_hr_age_all:
+    run: r:latest analysis/figure_hr_vs_age.R all
+    needs:
+    - development_cox_model_all
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        plot_hr_age: output/review/model/plot_HR_vs_age_all*
+
+  ## Figure. Hazard ratio against age - all_vax_c 
+
+  figure_hr_age_all_vax_c:
+    run: r:latest analysis/figure_hr_vs_age.R all_vax_c
+    needs:
+    - development_cox_model_all_vax_c
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        plot_hr_age: output/review/model/plot_HR_vs_age_all_vax_c*
+
+  ## Figure. Hazard ratio against age - vaccinated 
+
+  figure_hr_age_vaccinated:
+    run: r:latest analysis/figure_hr_vs_age.R vaccinated
+    needs:
+    - development_cox_model_vaccinated
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        plot_hr_age: output/review/model/plot_HR_vs_age_vaccinated*
+
+  ## Figure. Hazard ratio against age - all_vax_td 
+
+  figure_hr_age_all_vax_td:
+    run: r:latest analysis/figure_hr_vs_age.R all_vax_td
+    needs:
+    - development_cox_model_all_vax_td
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        plot_hr_age: output/review/model/plot_HR_vs_age_all_vax_td*
+
+  ## Figure. Hazard ratio against age - infected 
+
+  figure_hr_age_infected:
+    run: r:latest analysis/figure_hr_vs_age.R infected
+    needs:
+    - development_cox_model_infected
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        plot_hr_age: output/review/model/plot_HR_vs_age_infected*
 
   ## Evaluation Cox model 
 

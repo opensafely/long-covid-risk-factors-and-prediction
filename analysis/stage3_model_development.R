@@ -15,7 +15,6 @@ library(readr); library(dplyr); library(rms); library(MASS)
 # # load data, with defined weight, and import formula for survival analysis 
 source("analysis/stage3_model_selection.R")
 source("analysis/functions/function_cox_output.R")
-
 print("Starting stage3_model_development.R")
 
 if(which_model == "selected"){
@@ -30,17 +29,20 @@ print("Output Cox model with age as spline:")
 print(fit_cox_model_splines)
 output_file = paste0("output/review/model/HR_", "full_model_age_spline", "_", analysis)
 cox_output2(fit_cox_model_splines, "full_model_age_splines",output_file, save_output=TRUE)
+saveRDS(fit_cox_model_splines, file=paste0("output/not_for_review/model/fit_cox_model_splines_", analysis,".rds"))
 
 # Model 2
 print("Output Cox model with age linear:")
 print(fit_cox_model_linear)
 output_file = paste0("output/review/model/HR_", "full_model_age_linear", "_", analysis)
 cox_output2(fit_cox_model_linear, "full_model_age_linear",output_file, save_output=TRUE)
+saveRDS(fit_cox_model_linear, file=paste0("output/not_for_review/model/fit_cox_model_linear_", analysis,".rds"))
 
 # Model 3
 if(which_model == "selected"){
   output_file = paste0("output/review/model/HR_", which_model, "_", analysis)
   cox_output2(fit_cox_model_selected, "selected_model", output_file, save_output = TRUE)
+  saveRDS(fit_cox_model_selected, file=paste0("output/not_for_review/model/fit_cox_model_selected_", analysis,".rds"))
 }
 print("Finished stage3_model_development.R")
 
