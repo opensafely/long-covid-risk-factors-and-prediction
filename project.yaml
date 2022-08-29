@@ -629,7 +629,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_loghr_age: output/review/model/figure_loghr_age_all*
+        figure_loghr_age: output/review/model/figure_loghr_age*_all*
 
   ## Figure. Log hazard ratio against age - all_vax_c 
 
@@ -640,7 +640,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_loghr_age: output/review/model/figure_loghr_age_all_vax_c*
+        figure_loghr_age: output/review/model/figure_loghr_age*_all_vax_c*
 
   ## Figure. Log hazard ratio against age - vaccinated 
 
@@ -651,7 +651,7 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        figure_loghr_age: output/review/model/figure_loghr_age_vaccinated*
+        figure_loghr_age: output/review/model/figure_loghr_age*_vaccinated*
 
   ## Figure. Log hazard ratio against age - all_vax_td 
 
@@ -662,7 +662,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        figure_loghr_age: output/review/model/figure_loghr_age_all_vax_td*
+        figure_loghr_age: output/review/model/figure_loghr_age*_all_vax_td*
 
   ## Figure. Log hazard ratio against age - infected 
 
@@ -673,7 +673,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        figure_loghr_age: output/review/model/figure_loghr_age_infected*
+        figure_loghr_age: output/review/model/figure_loghr_age*_infected*
 
   ## Figure - hazard ratio against continuous age 
   ## Figure. Hazard ratio against age - all 

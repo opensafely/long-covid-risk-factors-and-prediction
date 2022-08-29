@@ -259,7 +259,7 @@ apply_figure_loghr_age <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        figure_loghr_age = glue("output/review/model/figure_loghr_age_{analysis}*")
+        figure_loghr_age = glue("output/review/model/figure_loghr_age*_{analysis}*")
       )
     )
   )
