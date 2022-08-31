@@ -13,6 +13,9 @@ hr_est <- hr_est %>% filter(term == "cov_num_age" |  term == "cov_num_age'")
 # set age reference
 age_ref <- 55
 
+# output supporting document
+write.csv(table(input$cov_num_age),file=paste0("output/review/model/support_loghr_vs_age_table_age_", analysis, ".csv"))
+
 # compute restricted cubic splines
 c1 <- rms::rcs(input$cov_num_age,parms=knot_placement)
 c1 <- as.vector(c1[,2])

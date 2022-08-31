@@ -16,6 +16,6 @@ function_figure_hr_vs_age <- function(input, fit_cox_model_splines, analysis){
           panel.background = element_blank(), 
           axis.line = element_line(colour = "black"))
   
-  ggsave(file=paste0("output/review/model/plot_HR_vs_age_",analysis, ".svg"),
+  ggsave(file=paste0("output/review/model/figure_HR_vs_age_",analysis, ".svg"),
          plot=p_hr_vs_age, width=15, height=10)
 }
