@@ -259,7 +259,8 @@ apply_figure_loghr_age <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        figure_loghr_age = glue("output/review/model/figure_loghr_age*_{analysis}*")
+        figure_loghr_age = glue("output/review/model/figure_loghr_age*_{analysis}*"),
+        table_age = glue("output/review/model/support_loghr_*_table_age*_{analysis}*")
       )
     )
   )
@@ -277,7 +278,8 @@ apply_figure_hr_age <- function(analysis){
         }
       ),
       moderately_sensitive = list(
-        plot_hr_age = glue("output/review/model/plot_HR_vs_age_{analysis}*")
+        figure_hr_age = glue("output/review/model/figure_HR_vs_age_{analysis}*"),
+        table_age = glue("output/review/model/support_hr_*_table_age*_{analysis}*")
       )
     )
   )
