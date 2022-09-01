@@ -6,6 +6,8 @@ fs::dir_create(here::here("output", "review", "model"))
 
 source("analysis/stage2_model_input_set_up.R")
 
+input <- input %>% filter(input$cov_num_age<=100)
+
 # Load data
 hr_est <- read.csv(paste0("output/review/model/HR_full_model_age_spline_", analysis,".csv"))
 hr_est <- hr_est %>% filter(term == "cov_num_age" |  term == "cov_num_age'")

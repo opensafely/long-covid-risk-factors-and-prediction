@@ -5,6 +5,8 @@ library(readr); library(dplyr); library(rms); library(MASS)
 fs::dir_create(here::here("output", "review", "model"))
 
 source("analysis/stage2_model_input_set_up.R")
+input <- input %>% filter(input$cov_num_age<=100)
+
 source("analysis/functions/function_HR_vs_age.R")
 splines_model <- read_rds(paste0("output/not_for_review/model/fit_cox_model_splines_", analysis, ".rds"))
 
