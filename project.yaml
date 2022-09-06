@@ -295,7 +295,7 @@ actions:
     outputs:
       moderately_sensitive:
         plot_km: output/review/descriptives/figure_kaplan_meier_*
-        data_km: output/review/descriptives/supporting_doc_km_*
+        data_km: output/review/descriptives/tbl_km_*
 
   ## Table - frequencies of snomed code for long covid diagnosis 
 
