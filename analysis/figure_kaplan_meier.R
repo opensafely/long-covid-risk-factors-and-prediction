@@ -32,8 +32,8 @@ function_km_data <-function(input_sex, index_date){
     dat_age_select$y_prob = dat_age_select$y/total
     dat_age$y_prob[index] <- dat_age_select$y_prob
   }
-  dat_age$time = index_date + dat_age$time
-  dat_age$x_date = index_date + dat_age$x
+  dat_age$x_date = index_date + dat_age$time
+ # dat_age$x_date = index_date + dat_age$x
   return(dat_age)
 }
 # Male: Create KM data -----------------------------------------------------------------
