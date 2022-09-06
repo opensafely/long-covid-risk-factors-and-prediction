@@ -92,8 +92,8 @@ df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics"
 
 df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
   rename("Fully aHR (95% CI) " = "HR (95% CI) ") %>%
-  rename("Age and sex aHR (95%)" = age_sex_aHR.x) %>%
-  rename("Age and sex aHR (95%) " = age_sex_aHR.y) 
+  rename("Age-sex aHR (95% CI)" = age_sex_aHR.x) %>%
+  rename("Age-sex aHR (95% CI) " = age_sex_aHR.y) 
 
 
 v10_plot(df,var_grp="demographics", cohort)
@@ -138,8 +138,8 @@ df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics"
 
 df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
   rename("Fully aHR (95% CI) " = "HR (95% CI) ") %>%
-  rename("Age and sex aHR (95%)" = age_sex_aHR.x) %>%
-  rename("Age and sex aHR (95%) " = age_sex_aHR.y) 
+  rename("Age-sex aHR (95% CI)" = age_sex_aHR.x) %>%
+  rename("Age-sex aHR (95% CI) " = age_sex_aHR.y) 
 
 
 v10_plot(df,var_grp="demographics", cohort)
