@@ -69,7 +69,7 @@ ggplot(dat_age,
   facet_grid(cols = vars(sex)) +
   scale_x_date(
                #limits = c(index_date, end_date), 
-               date_breaks = "3 months", 
+               date_breaks = "6 months", 
                date_labels =  "%b %Y") +
   theme(legend.position="bottom", legend.title=element_text(size=13), 
         legend.text=element_text(size=13),

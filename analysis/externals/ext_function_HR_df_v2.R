@@ -1,5 +1,45 @@
-function_HR_df <- function(df_list,csv_index){
-  hr <- data.frame(df_list[csv_index])
+function_combine_hr <- function(df_list_full, df_list_full_categorical, csv_index, cohort){
+  # HR from full models with age splines
+  df_hr <- data.frame(df_list_full[csv_index])
+  # HR from full models with age categorical
+  df_hr_cat_age <- data.frame(df_list_full_categorical[csv_index])
+  df_hr_cat_age <- df_hr_cat_age %>% filter(grepl("age", term))
+  df_hr_cat_age <- df_hr_cat_age %>% mutate(term = sub("40_59", "40 to 59", term)) %>%
+    mutate(term = sub("60_79", "60 to 79", term)) %>%
+    mutate(term = sub("80_105", "80 to 105", term))
+  df_hr_combined <- rbind(df_hr, df_hr_cat_age)
+  df_hr_combined <- df_hr_combined %>% filter(!grepl("num_age", term)) # remove estimated coefficients for age splines
+  df_hr_combined$cohort = cohort
+  return(df_hr_combined)
+}
+
+function_combine_as_hr <- function(df_list_age_sex_adjusted, df_list_age_sex, df_list_age_sex_categorical, csv_index, cohort){
+  # To obtain age sex adjusted hazard ratios for all other covariates apart from age and sex
+  df_hr_as_adj <- as.data.frame(df_list_age_sex_adjusted[csv_index])
+  df_hr_as_adj <- df_hr_as_adj %>% filter(term != "cov_cat_sex=F") %>%
+    filter(term != "cov_num_age") %>% filter(term != "cov_num_age'")
+  df_hr_as_adj <- df_hr_as_adj %>% select(!c(model, predictor))
+  
+  # To obtain HR for sex using age-sex model with age spline
+  df_hr_as_spl <- as.data.frame(df_list_age_sex[csv_index])
+  df_hr_as_spl <- df_hr_as_spl %>% filter(term != "cov_num_age") %>% 
+    filter(term != "cov_num_age'")
+  
+  # To obtain HR for categorical age using age-sex model with age categorical
+  df_hr_as_cat <- as.data.frame(df_list_age_sex_categorical[csv_index])
+  df_hr_as_cat <- df_hr_as_cat %>% filter(term != "cov_cat_sex=F")
+  
+  # combine hr from age-sex adjusted models
+  df_hr_as <- rbind(df_hr_as_adj, df_hr_as_spl, df_hr_as_cat)
+  df_hr_as$cohort = cohort
+  df_hr_as <- df_hr_as %>% mutate(term = sub("40_59", "40 to 59", term)) %>%
+    mutate(term = sub("60_79", "60 to 79", term)) %>%
+    mutate(term = sub("80_105", "80 to 105", term))
+  return(df_hr_as)
+}
+
+function_HR_df_v2 <- function(df_hr, csv_hr_order){
+  hr <- df_hr
   hr$variable = NULL
   hr <- hr%>% mutate(variable = ifelse(grepl("age",term), "Demographics",
                                        ifelse(grepl("sex",term), "Demographics",
@@ -7,26 +47,28 @@ function_HR_df <- function(df_list,csv_index){
                                                      ifelse(grepl("ethnicity", term), "Demographics",
                                                             ifelse(grepl("region", term), "Demographics", 
                                                                    ifelse(grepl("imd", term), "Demographics",
-                                                                          ifelse(grepl("gp", term), "GP Consultation Rate", "Disease History"))))))))
-  
+                                                                          ifelse(grepl("gp", term), "GP-Patient Interaction", "Disease History"))))))))
+  cohort = hr$cohor[1]
   hr <- hr %>% 
     dplyr::select(c("term","hazard_ratio", contains("conf"), contains("se"), "variable")) %>%
     # keep all characters before =
     mutate(pred_name = sub("=.*", "", term))  %>%
     mutate(pred_name = sub("cov_cat_", "", pred_name)) %>%
+    mutate(pred_name = sub("sub_cat_", "", pred_name)) %>%
     mutate(pred_name = sub("cov_num_", "", pred_name)) %>%
     # keep all characters after =
     mutate(pred_level = sub(".*=", "", term)) %>%
     mutate(term = sub("cov_cat_", "", term)) %>%
+    mutate(term = sub("sub_cat_", "", term)) %>%
     mutate(term = sub("cov_num_", "", term)) %>%
     mutate(term = gsub("_", " ", term)) %>%
-    mutate(term = gsub("=TRUE", "", term)) %>%
-    rename(conf.low=robust.conf.low) %>%
-    rename(conf.high = robust.conf.high)
+    mutate(term = gsub("=TRUE", "", term)) 
+  hr <- hr %>% rename(conf.low=robust.conf.low) %>%
+     rename(conf.high = robust.conf.high)
   hr <- hr[order(hr$variable, hr$term),]
-  hr <- hr %>% mutate('HR (95% CI)' = paste0(format(round(hazard_ratio,3), nsmall = 3), 
-                                             " (", format(round(conf.low,3),nsmall=3), ", ", 
-                                             format(round(conf.high,3),nsmall=3), ")"))
+  hr <- hr %>% mutate('HR (95% CI)' = paste0(format(round(hazard_ratio,2), nsmall = 2), 
+                                             " (", format(round(conf.low,2),nsmall=2), ", ", 
+                                             format(round(conf.high,2),nsmall=2), ")"))
   
   hr <- hr[order(hr$term),]
   
@@ -64,15 +106,16 @@ function_HR_df <- function(df_list,csv_index){
   # write.csv(hr_fixed, file=paste0(common_dir,"hr_fixed2.csv"),row.names=F)
   
   ## read in a pre-specified document
-  df <- read.csv(file=paste0(common_dir, "hr_fixed.csv"))
-  #df <- read.csv(file=paste0(common_dir, csv_hr_order))
+  #df <- read.csv(file=paste0(common_dir, "hr_fixed.csv"))
+  df <- read.csv(file=paste0(common_dir, csv_hr_order))
   #View(df)
   
   # remove Ie.status if the HR are not from Cox model with vaccination status as a time-dependent variable
-  if(!csv_index%in%td_analysis){
+  if(cohort != "vax_td"){
     df <- df%>%filter(!grepl("Ie", df$term, fixed = TRUE))
   }
-  if(!csv_index%in%infected_cohort){
+  # remove covid if the cohort is not infected cohort
+  if(cohort != "Post-COVID"){
     df <- df%>%filter(!grepl("Covid", term, fixed = TRUE)) %>%
       filter(!grepl("COVID", term, fixed = TRUE))
   }
