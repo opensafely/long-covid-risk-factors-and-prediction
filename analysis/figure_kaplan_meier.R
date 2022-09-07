@@ -99,7 +99,7 @@ ggplot(dat_age,
   labs(title="",x="\nDate", y = "\nCumulative probability of long COVID code\n") +
   labs(linetype='Age group', colour="Age group") +
   facet_grid(cols = vars(sex)) +
-  scale_x_date(date_breaks = "3 months", date_labels =  "%b %Y") +
+  scale_x_date(date_breaks = "6 months", date_labels =  "%b %Y") +
   theme(legend.position="bottom", legend.title=element_text(size=13), 
         legend.text=element_text(size=13),
         axis.text = element_text(size = 13),
