@@ -438,7 +438,7 @@ actions_list <- splice(
     needs = list("stage1_define_eligible_population_all"),
     moderately_sensitive = list(
       plot_km = glue("output/review/descriptives/figure_kaplan_meier_*"),
-      data_km = glue("output/review/descriptives/supporting_doc_km_*")
+      data_km = glue("output/review/descriptives/tbl_km_*")
     )
   ),
   comment("Table - frequencies of snomed code for long covid diagnosis"),

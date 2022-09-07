@@ -32,8 +32,8 @@ function_km_data <-function(input_sex, index_date){
     dat_age_select$y_prob = dat_age_select$y/total
     dat_age$y_prob[index] <- dat_age_select$y_prob
   }
-  dat_age$time = index_date + dat_age$time
-  dat_age$x_date = index_date + dat_age$x
+  dat_age$x_date = index_date + dat_age$time
+ # dat_age$x_date = index_date + dat_age$x
   return(dat_age)
 }
 # Male: Create KM data -----------------------------------------------------------------
@@ -47,7 +47,7 @@ dat_age_f <- function_km_data(input_sex_f, index_date)
 dat_age_f$sex <- "Female"
 dat_age <- rbind(dat_age_m, dat_age_f)
 # Create a supporting document to show evidence of rounding for small number suppression control
-write.csv(dat_age,"output/review/descriptives/supporting_doc_km_dat_age.csv", row.names=F)
+write.csv(dat_age,"output/review/descriptives/tbl_km_dat_age.csv", row.names=F)
 # Create cumulative incidence plot -----------------------------------------------------------
 svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_incidence.svg", width = 9, height = 5,)
 
@@ -69,7 +69,7 @@ ggplot(dat_age,
   facet_grid(cols = vars(sex)) +
   scale_x_date(
                #limits = c(index_date, end_date), 
-               date_breaks = "3 months", 
+               date_breaks = "6 months", 
                date_labels =  "%b %Y") +
   theme(legend.position="bottom", legend.title=element_text(size=13), 
         legend.text=element_text(size=13),
