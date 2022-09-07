@@ -34,6 +34,7 @@ function_km_data <-function(input_sex, index_date){
   }
   dat_age$x_date = index_date + dat_age$time
  # dat_age$x_date = index_date + dat_age$x
+  dat_age <- dat_age %>% filter(n.risk >=0)
   return(dat_age)
 }
 # Male: Create KM data -----------------------------------------------------------------
