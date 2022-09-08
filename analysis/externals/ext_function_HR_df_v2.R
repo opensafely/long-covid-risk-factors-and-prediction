@@ -16,15 +16,23 @@ function_combine_hr <- function(df_list_full, df_list_full_categorical, csv_inde
 function_combine_as_hr <- function(df_list_age_sex_adjusted, df_list_age_sex, df_list_age_sex_categorical, csv_index, cohort){
   # To obtain age sex adjusted hazard ratios for all other covariates apart from age and sex
   df_hr_as_adj <- as.data.frame(df_list_age_sex_adjusted[csv_index])
-  df_hr_as_adj <- df_hr_as_adj %>% filter(term != "cov_cat_sex=F") %>%
-    filter(term != "cov_num_age") %>% filter(term != "cov_num_age'")
+  if(cohort != "Vaccination time-dependent"){
+    df_hr_as_adj <- df_hr_as_adj %>% filter(term != "cov_cat_sex=F") %>%
+      filter(term != "cov_num_age") %>% filter(term != "cov_num_age'")
+  }else{
+    df_hr_as_adj <- df_hr_as_adj %>% filter(term != "cov_cat_sex=F") %>%
+      filter(term != "cov_num_age") %>% filter(term != "cov_num_age'") %>%
+      filter(term != "cov_cat_ie.status=1")
+  }
+
   df_hr_as_adj <- df_hr_as_adj %>% select(!c(model, predictor))
   
   # To obtain HR for sex using age-sex model with age spline
   df_hr_as_spl <- as.data.frame(df_list_age_sex[csv_index])
+
   df_hr_as_spl <- df_hr_as_spl %>% filter(term != "cov_num_age") %>% 
     filter(term != "cov_num_age'")
-  
+ 
   # To obtain HR for categorical age using age-sex model with age categorical
   df_hr_as_cat <- as.data.frame(df_list_age_sex_categorical[csv_index])
   df_hr_as_cat <- df_hr_as_cat %>% filter(term != "cov_cat_sex=F")
@@ -38,7 +46,7 @@ function_combine_as_hr <- function(df_list_age_sex_adjusted, df_list_age_sex, df
   return(df_hr_as)
 }
 
-function_HR_df_v2 <- function(df_hr, csv_hr_order){
+function_HR_df_v2 <- function(df_hr, csv_hr_order, cohort, common_dir){
   hr <- df_hr
   hr$variable = NULL
   hr <- hr%>% mutate(variable = ifelse(grepl("age",term), "Demographics",
@@ -48,7 +56,7 @@ function_HR_df_v2 <- function(df_hr, csv_hr_order){
                                                             ifelse(grepl("region", term), "Demographics", 
                                                                    ifelse(grepl("imd", term), "Demographics",
                                                                           ifelse(grepl("gp", term), "GP-Patient Interaction", "Disease History"))))))))
-  cohort = hr$cohor[1]
+  cohort = hr$cohort[1]
   hr <- hr %>% 
     dplyr::select(c("term","hazard_ratio", contains("conf"), contains("se"), "variable")) %>%
     # keep all characters before =
@@ -111,9 +119,11 @@ function_HR_df_v2 <- function(df_hr, csv_hr_order){
   #View(df)
   
   # remove Ie.status if the HR are not from Cox model with vaccination status as a time-dependent variable
-  if(cohort != "vax_td"){
+  if(cohort != "Vaccination time-dependent"){
     df <- df%>%filter(!grepl("Ie", df$term, fixed = TRUE))
   }
+  
+  #df$term <-sub("Ie", "ie", df$term)
   # remove covid if the cohort is not infected cohort
   if(cohort != "Post-COVID"){
     df <- df%>%filter(!grepl("Covid", term, fixed = TRUE)) %>%

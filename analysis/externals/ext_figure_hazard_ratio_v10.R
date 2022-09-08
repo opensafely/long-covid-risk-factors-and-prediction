@@ -55,7 +55,44 @@ v10_plot <- function(df,var_grp, cohort){
               xlim = c(0, 10),
               ticks_at = c(0.1, 0.5, 1, 2, 6, 10),
               nudge_y = 0.2,
+              xlab = c("\nFully adjusted hazard ratio", "\nFully adjusted hazard ratio"),
               theme = tm2)
+  ggsave(file=paste0("v10_plot_HR_",cohort, "_", var_grp,".svg"), path = paste0(output_dir, "figures"),
+         plot=p, width=30, height=20)
+}
+
+# Set-up theme for one cohort
+tm1 <- forest_theme(base_size = 10,
+                    refline_lty = "solid",
+                    ci_pch = 15,
+                    ci_col = c("#377eb8", "#4daf4a"),
+                    footnote_col = "blue",
+                    legend_name = "Cox Model", legend_position = "bottom",
+                    legend_value = c("Fully adjusted   ", "Age and sex adjusted"),
+                    vertline_lty = c("dashed", "dotted"),
+                    vertline_col = c("#d6604d", "#bababa"))
+
+
+v10_plot_one_cohort <- function(df,var_grp, cohort){
+  # show in order: 1 Characteristic, 13 Space for CI, 8 = HR.x, and 14 Space for CI, 12 = HR.y
+  # 16 age-sex adjusted HR; 17 age-sex adjusted HR
+  
+  df <- df %>% filter(variable==var_grp)
+  p <- forest(
+    # 1-characteristic; 10-space for CI; 8-HR;9: age-sex adjusted HR pre-vax
+    df[,c(1, 10, 8, 9)],  
+    est = df$hazard_ratio,
+    lower = df$conf.low,
+    upper = df$conf.high,
+    ci_column = 2,
+    ref_line = 1,
+    x_trans = "log10",
+    vert_line = c(0.5, 2),
+    xlim = c(0, 10),
+    ticks_at = c(0.1, 0.5, 1, 2, 6, 10),
+    nudge_y = 0.2,
+    xlab = "\nFully adjusted hazard ratio",
+    theme = tm1)
   ggsave(file=paste0("v10_plot_HR_",cohort, "_", var_grp,".svg"), path = paste0(output_dir, "figures"),
          plot=p, width=30, height=20)
 }
@@ -144,3 +181,40 @@ df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
 
 v10_plot(df,var_grp="demographics", cohort)
 v10_plot(df,var_grp="non_demographics", cohort)
+
+
+#################################################################################
+## Part 4. Vaccination time-dependent                                          ##
+#################################################################################
+
+cohort = "Vaccination time-dependent"
+
+df <- tbl_hr_vaxtd_combined
+
+df <- arrange(df,row.num)
+
+# replace na with empty space
+df[is.na(df$age_sex_aHR),"age_sex_aHR"] <- ""
+df[is.na(df$`HR (95% CI)`),"HR (95% CI)"] <- ""
+
+
+df <- df %>% select(c(term,row.num,variable, subgroup, hazard_ratio, conf.low, conf.high,
+                      "HR (95% CI)", hazard_ratio, conf.low, conf.high, "HR (95% CI)",
+                      age_sex_aHR, age_sex_aHR)) %>%
+  rename(variable = variable) %>% rename(subgroup = subgroup) %>%
+  rename(Characteristic = term) 
+
+# Add two blank column for CI
+df$`Vaccination time-dependent` <- paste(rep(" ", 25), collapse = " ")
+df$` ` <- paste(rep(" ", 5), collapse = " ")
+
+df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
+
+df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
+  rename("Age-sex aHR (95% CI)" = age_sex_aHR)
+
+df = df
+var_grp="demographics"
+cohort = "vtd"
+v10_plot_one_cohort(df,var_grp="demographics", cohort)
+v10_plot_one_cohort(df,var_grp="non_demographics", cohort)

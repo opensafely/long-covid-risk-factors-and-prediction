@@ -37,7 +37,8 @@ df_list_age_sex_adjusted <- list(
                 HR_age_sex_adjusted_all.csv,        # primary
                 HR_age_sex_adjusted_all_vax_c.csv,  # pre-vax
                 HR_age_sex_adjusted_vaccinated.csv, # post-vax
-                HR_age_sex_adjusted_infected.csv    # post-covid
+                HR_age_sex_adjusted_infected.csv,   # post-covid
+                HR_age_sex_adjusted_all_vax_td.csv  # vaccination time-dependent
                 )
 
 df_list_age_sex <-list(
@@ -69,7 +70,8 @@ td_analysis <- grep("td", file_list)
 csv_index = 1
 cohort = "Primary"
 df_hr_primary <- function_combine_hr(df_list_full, df_list_full_categorical, csv_index, cohort)
-tbl_hr_primary <- function_HR_df_v2(df_hr_primary, csv_hr_order="hr_fixed2.csv")
+tbl_hr_primary <- function_HR_df_v2(df_hr_primary, csv_hr_order="hr_fixed2.csv",
+                                    cohort = cohort, common_dir = common_dir)
 
 #-------------------------------------------------------------------------------
 # Pre-vaccination cohort
@@ -77,7 +79,8 @@ tbl_hr_primary <- function_HR_df_v2(df_hr_primary, csv_hr_order="hr_fixed2.csv")
 csv_index = 2
 cohort = "Pre-vaccination"
 df_hr_prevax <- function_combine_hr(df_list_full, df_list_full_categorical, csv_index, cohort)
-tbl_hr_prevax <- function_HR_df_v2(df_hr_prevax, csv_hr_order="hr_fixed2.csv")
+tbl_hr_prevax <- function_HR_df_v2(df_hr_prevax, csv_hr_order="hr_fixed2.csv",
+                                   cohort = cohort, common_dir = common_dir)
 
 #-------------------------------------------------------------------------------
 # Post-vaccination cohort
@@ -85,7 +88,8 @@ tbl_hr_prevax <- function_HR_df_v2(df_hr_prevax, csv_hr_order="hr_fixed2.csv")
 csv_index = 3
 cohort = "Post-vaccination"
 df_hr_vax <- function_combine_hr(df_list_full, df_list_full_categorical, csv_index, cohort)
-tbl_hr_vax <- function_HR_df_v2(df_hr_vax, csv_hr_order="hr_fixed2.csv")
+tbl_hr_vax <- function_HR_df_v2(df_hr_vax, csv_hr_order="hr_fixed2.csv",
+                                cohort = cohort, common_dir = common_dir)
 
 #-------------------------------------------------------------------------------
 # Post-COVID cohort
@@ -93,15 +97,17 @@ tbl_hr_vax <- function_HR_df_v2(df_hr_vax, csv_hr_order="hr_fixed2.csv")
 csv_index = 4
 cohort = "Post-COVID"
 df_hr_infected <- function_combine_hr(df_list_full, df_list_full_categorical, csv_index, cohort)
-tbl_hr_infected <- function_HR_df_v2(df_hr_infected, csv_hr_order="hr_fixed2.csv")
+tbl_hr_infected <- function_HR_df_v2(df_hr_infected, csv_hr_order="hr_fixed2.csv",
+                                     cohort = cohort, common_dir = common_dir)
 
 #-------------------------------------------------------------------------------
 # Primary cohort: Vaccination time-dependent
 #-------------------------------------------------------------------------------
 csv_index = 5
-cohort = "vax_td"
+cohort = "Vaccination time-dependent"
 df_hr_vaxtd <- function_combine_hr(df_list_full, df_list_full_categorical, csv_index, cohort)
-tbl_hr_vaxtd <- function_HR_df_v2(df_hr_vaxtd, csv_hr_order="hr_fixed2.csv")
+tbl_hr_vaxtd <- function_HR_df_v2(df_hr_vaxtd, csv_hr_order="hr_fixed2.csv",
+                                  cohort = cohort, common_dir = common_dir)
 
 ################################################################################
 # Part 2. HR from age-sex adjusted models                                      #
@@ -112,7 +118,8 @@ cohort = "Primary"
 df_hr_as_primary <- function_combine_as_hr(df_list_age_sex_adjusted, df_list_age_sex, 
                                            df_list_age_sex_categorical, csv_index,
                                            cohort)
-tbl_hr_as_primary <- function_HR_df_v2(df_hr_as_primary, csv_hr_order="hr_fixed2.csv")
+tbl_hr_as_primary <- function_HR_df_v2(df_hr_as_primary, csv_hr_order="hr_fixed2.csv",
+                                       cohort = cohort, common_dir = common_dir)
 
 tbl_hr_as_primary$age_sex_aHR = tbl_hr_as_primary$`HR (95% CI)`
 tbl_hr_as_primary <- tbl_hr_as_primary %>% select(c(row.num, age_sex_aHR))
@@ -125,7 +132,8 @@ cohort = "Pre-Vaccination"
 df_hr_as_prevax <- function_combine_as_hr(df_list_age_sex_adjusted, df_list_age_sex, 
                                            df_list_age_sex_categorical, csv_index,
                                            cohort)
-tbl_hr_as_prevax <- function_HR_df_v2(df_hr_as_prevax, csv_hr_order="hr_fixed2.csv")
+tbl_hr_as_prevax <- function_HR_df_v2(df_hr_as_prevax, csv_hr_order="hr_fixed2.csv",
+                                      cohort = cohort, common_dir = common_dir)
 tbl_hr_as_prevax$age_sex_aHR = tbl_hr_as_prevax$`HR (95% CI)`
 tbl_hr_as_prevax <- tbl_hr_as_prevax %>% select(c(row.num, age_sex_aHR))
 
@@ -137,7 +145,8 @@ cohort = "Post-Vaccination"
 df_hr_as_vax <- function_combine_as_hr(df_list_age_sex_adjusted, df_list_age_sex, 
                                            df_list_age_sex_categorical, csv_index,
                                            cohort)
-tbl_hr_as_vax <- function_HR_df_v2(df_hr_as_vax, csv_hr_order="hr_fixed2.csv")
+tbl_hr_as_vax <- function_HR_df_v2(df_hr_as_vax, csv_hr_order="hr_fixed2.csv",
+                                   cohort = cohort, common_dir = common_dir)
 tbl_hr_as_vax$age_sex_aHR = tbl_hr_as_vax$`HR (95% CI)`
 tbl_hr_as_vax <- tbl_hr_as_vax %>% select(c(row.num, age_sex_aHR))
 
@@ -149,11 +158,23 @@ cohort = "Post-COVID"
 df_hr_as_infected <- function_combine_as_hr(df_list_age_sex_adjusted, df_list_age_sex, 
                                        df_list_age_sex_categorical, csv_index,
                                        cohort)
-tbl_hr_as_infected <- function_HR_df_v2(df_hr_as_infected, csv_hr_order="hr_fixed2.csv")
+tbl_hr_as_infected <- function_HR_df_v2(df_hr_as_infected, csv_hr_order="hr_fixed2.csv",
+                                        cohort = cohort, common_dir = common_dir)
 tbl_hr_as_infected$age_sex_aHR = tbl_hr_as_infected$`HR (95% CI)`
 tbl_hr_as_infected<- tbl_hr_as_infected %>% select(c(row.num, age_sex_aHR))
 
 tbl_hr_infected_combined <- merge(tbl_hr_infected, tbl_hr_as_infected, by="row.num", all.x=T)
 
-# Waiting for age-sex adjusted HR for vax_td to be released
+# Vaccination time-dependent
+csv_index = 5
+cohort = "Vaccination time-dependent"
+df_hr_as_vaxtd <- function_combine_as_hr(df_list_age_sex_adjusted, df_list_age_sex, 
+                                            df_list_age_sex_categorical, csv_index,
+                                            cohort)
+tbl_hr_as_vaxtd <- function_HR_df_v2(df_hr = df_hr_as_vaxtd, csv_hr_order="hr_fixed2.csv",
+                                     cohort = cohort, common_dir = common_dir)
+tbl_hr_as_vaxtd$age_sex_aHR = tbl_hr_as_vaxtd$`HR (95% CI)`
+tbl_hr_as_vaxtd<- tbl_hr_as_vaxtd %>% select(c(row.num, age_sex_aHR))
+
+tbl_hr_vaxtd_combined <- merge(tbl_hr_vaxtd, tbl_hr_as_vaxtd, by="row.num", all.x=T)
 
