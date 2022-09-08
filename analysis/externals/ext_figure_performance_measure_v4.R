@@ -56,14 +56,14 @@ pm <- reshape(pm, idvar = "Cohort", timevar = "model", direction = "wide")
 df <-pm
 df$` ` <- paste(rep("            ", nrow(df)), collapse = " ")
 dec_pl = 3
-df$`Fully adjusted \n C-Statistic` <- paste0(format(round(df$c_stat.full,dec_pl),nsmall=dec_pl), " (", 
+df$`C-Statistic from \n the full model` <- paste0(format(round(df$c_stat.full,dec_pl),nsmall=dec_pl), " (", 
                                      format(round(df$c_stat_lower.full,dec_pl),nsmall=dec_pl),", ", 
                                      format(round(df$c_stat_upper.full,dec_pl),nsmall=dec_pl), ")")
-df$`Age-sex adjusted \n C-Statistic ` <- paste0(format(round(df$c_stat.as,dec_pl),nsmall=dec_pl), " (", 
+df$`C-Statistic from \n age and sex model` <- paste0(format(round(df$c_stat.as,dec_pl),nsmall=dec_pl), " (", 
                                     format(round(df$c_stat_lower.as,dec_pl),nsmall=dec_pl),", ", 
                                     format(round(df$c_stat_upper.as,dec_pl),nsmall=dec_pl), ")")
 #df <- df %>% rename('Calibration Slope' = "cali_slope")
-#pm$model = c(rep("Fully adjsuted", 5), rep("Age-sex adjusted", 5))
+#pm$model = c(rep("Full model", 5), rep("Age and sex model", 5))
 
 tm2 <- forest_theme(base_size = 10,
                    refline_lty = "solid",
@@ -74,7 +74,7 @@ tm2 <- forest_theme(base_size = 10,
                    footnote_col = "blue",
                    legend_name = "Model   ",
                    legend_position = "bottom",
-                   legend_value = c("Fully adjusted  ", "Age-sex adjusted                "),
+                   legend_value = c("  Full model   ", "  Age and sex model                        "),
                    vertline_lty = c("dashed", "dotted"),
                    vertline_col = c("#d6604d", "#bababa"))
 
