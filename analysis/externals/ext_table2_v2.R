@@ -23,10 +23,10 @@ df <- df %>% mutate(ir.all = format(round(1000* ir.all, 1), nsmall=1)) %>%
   mutate(ir_lower.infected = format(round(1000*ir_lower.infected, 1), nsmall=1)) %>%
   mutate(ir_upper.infected = format(round(1000*ir_upper.infected, 21), nsmall=1))
 
-df <- df %>% mutate(primary = paste0(ir.all, " (", ir_lower.all, ",", ir_upper.all,  ")" )) %>%
-  mutate(prevax = paste0(ir.all_vax_c, " (", ir_lower.all_vax_c, ",", ir_upper.all_vax_c,  ")" )) %>%
-  mutate(vax = paste0(ir.vaccinated, " (", ir_lower.vaccinated, ",", ir_upper.vaccinated,  ")" )) %>%
-  mutate(infected = paste0(ir.infected, " (", ir_lower.infected, ",", ir_upper.infected,  ")"))
+df <- df %>% mutate(primary = paste0(ir.all, " (", ir_lower.all, ", ", ir_upper.all,  ")" )) %>%
+  mutate(prevax = paste0(ir.all_vax_c, " (", ir_lower.all_vax_c, ", ", ir_upper.all_vax_c,  ")" )) %>%
+  mutate(vax = paste0(ir.vaccinated, " (", ir_lower.vaccinated, ", ", ir_upper.vaccinated,  ")" )) %>%
+  mutate(infected = paste0(ir.infected, " (", ir_lower.infected, ", ", ir_upper.infected,  ")"))
 
 df <- df %>% mutate(event_count.all = format(event_count.all, big.mark=",", scientific=FALSE)) %>%
   mutate(event_count.all_vax_c = format(event_count.all_vax_c, big.mark=",", scientific=FALSE)) %>%
