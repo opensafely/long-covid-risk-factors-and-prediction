@@ -28,7 +28,7 @@ table_2_wide <- reshape(table_2_com, idvar = c("outcome","subgrp","subgrp_level"
 print("table_2_wide created successfully!")
 
 temp <- table_2_wide %>% select(contains("event_count"))
-table_2_wide$diff_all_vax = abs(table_2_wide$event_count.all-table_2_wide$event_count.all_vax_c)
+table_2_wide$diff_all_prevax = abs(table_2_wide$event_count.all-table_2_wide$event_count.all_vax_c)
 table_2_wide$diff_all_vaccinated = abs(table_2_wide$event_count.all-table_2_wide$event_count.vaccinated)
 table_2_wide$diff_all_infected = abs(table_2_wide$event_count.all-table_2_wide$event_count.infected)
 
@@ -40,8 +40,8 @@ for(i in variables){
     index = which(table_2_wide$subgrp == i & table_2_wide$outcome == j)#RK - I don't think $variable exists in table 2 wide? Should it be subgrp?
     ## YW: changed "variable" to "subgrp" now.
     
-    index2 <- which(!is.na(table_2_wide$diff_all_vax[index]))
-    table_2_wide$diff_all_vax[index[index2]] = redactor2(table_2_wide$diff_all_vax[index[index2]])
+    index2 <- which(!is.na(table_2_wide$diff_all_prevax[index]))
+    table_2_wide$diff_all_prevax[index[index2]] = redactor2(table_2_wide$diff_all_prevax[index[index2]])
     
     index3 <- which(!is.na(table_2_wide$diff_all_infected[index]))
     table_2_wide$diff_all_infected[index[index3]] = redactor2(table_2_wide$diff_all_infected[index[index3]])
@@ -58,7 +58,7 @@ for(i in variables){
 ##YW - I have amended the code above: a) to make the redaction by outcome (covid and long covid)
 ## and b) to use index[index2] for example, to redact the relevant row
 
-index <- which(is.na(table_2_wide$diff_all_vax))
+index <- which(is.na(table_2_wide$diff_all_prevax))
 ## although person-years do not need to be redacted, I would still do so for now
 table_2_wide[index,4:26] = "[redacted]"   
 index <- which(is.na(table_2_wide$diff_all_vaccinated))
