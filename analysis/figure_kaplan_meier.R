@@ -18,7 +18,7 @@ index_date=as.Date("2020-01-29")
 end_date = as.Date("2022-03-31")
 # Define a function to extract KM data ---------------------------------------------------------
 function_km_data <-function(input_sex, index_date){
-  dat_age <- round_km2(input_sex, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
+  dat_age <- round_km(input_sex, "lcovid_surv", "lcovid_cens", "cov_cat_age_group", threshold=6)
   dat_age$x <- dat_age$y <- dat_age$y_prob <-NA
   for(i in c("18-39", "40-59","60-79", "80+")){
     dat_age$x[which(dat_age$cov_cat_age_group ==i)] <- seq(length=length(which(dat_age$cov_cat_age_group ==i))) #Add case numbers (in order, since sorted)
