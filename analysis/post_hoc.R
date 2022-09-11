@@ -1,7 +1,7 @@
+# Purpose: to produce a contigency table to explore the relationship between gp_patient_interaction and smoking status
+# Programme by Yinghui Wei
 library(readr); library(dplyr); library(rms); library(MASS)
-## library(survcomp) ## not yet available
-fs::dir_create(here::here("output", "not_for_review", "model"))
-fs::dir_create(here::here("output", "review", "model"))
+fs::dir_create(here::here("output", "review", "descriptives"))
 source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 
@@ -41,6 +41,13 @@ if(analysis == "infected"){
 }
 
 tbl_gp_interaction_smoking <- table(input$cov_cat_gp_patient_interaction, input$cov_cat_smoking_status)
+
+results <- chisq.test(tbl_gp_interaction_smoking)
+
+results <- c(results$statistic, results$parameter, results$p.value, results$method)
+
+write.csv(results, file=paste0("output/review/descriptives/table_gp_smoking_chi_square_test_", 
+                                 analysis, ".csv"), row.names = F )
 
 write.csv(tbl_gp_interaction_smoking, file=paste0("output/review/descriptives/table_gp_smoking_", 
                                                   analysis, ".csv"), row.names = F)
