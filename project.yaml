@@ -222,6 +222,47 @@ actions:
       moderately_sensitive:
         table: output/review/descriptives/table_2_combined*
 
+  ## Table - GP-Patient interaction and smoking status 
+  ## Table. GP-Patient interaction and Smoking Status - all 
+
+  table_contingency_all:
+    run: r:latest analysis/post_hoc.R all
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        contingency_table: output/review/descriptives/table_gp_smoking_all*
+
+  ## Table. GP-Patient interaction and Smoking Status - all_vax_c 
+
+  table_contingency_all_vax_c:
+    run: r:latest analysis/post_hoc.R all_vax_c
+    needs:
+    - stage1_define_eligible_population_all
+    outputs:
+      moderately_sensitive:
+        contingency_table: output/review/descriptives/table_gp_smoking_all_vax_c*
+
+  ## Table. GP-Patient interaction and Smoking Status - vaccinated 
+
+  table_contingency_vaccinated:
+    run: r:latest analysis/post_hoc.R vaccinated
+    needs:
+    - stage1_define_eligible_population_vaccinated
+    outputs:
+      moderately_sensitive:
+        contingency_table: output/review/descriptives/table_gp_smoking_vaccinated*
+
+  ## Table. GP-Patient interaction and Smoking Status - infected 
+
+  table_contingency_infected:
+    run: r:latest analysis/post_hoc.R infected
+    needs:
+    - stage1_define_eligible_population_infected
+    outputs:
+      moderately_sensitive:
+        contingency_table: output/review/descriptives/table_gp_smoking_infected*
+
   ## Table - sequence count 
   ## Table. Sequence count - all 
 
@@ -630,6 +671,7 @@ actions:
     outputs:
       moderately_sensitive:
         figure_loghr_age: output/review/model/figure_loghr_age*_all*
+        table_loghr_age: output/review/model/table_loghr_age*_all*
         table_age: output/review/model/support_loghr_*_table_age*_all*
 
   ## Figure. Log hazard ratio against age - all_vax_c 
@@ -642,6 +684,7 @@ actions:
     outputs:
       moderately_sensitive:
         figure_loghr_age: output/review/model/figure_loghr_age*_all_vax_c*
+        table_loghr_age: output/review/model/table_loghr_age*_all_vax_c*
         table_age: output/review/model/support_loghr_*_table_age*_all_vax_c*
 
   ## Figure. Log hazard ratio against age - vaccinated 
@@ -654,6 +697,7 @@ actions:
     outputs:
       moderately_sensitive:
         figure_loghr_age: output/review/model/figure_loghr_age*_vaccinated*
+        table_loghr_age: output/review/model/table_loghr_age*_vaccinated*
         table_age: output/review/model/support_loghr_*_table_age*_vaccinated*
 
   ## Figure. Log hazard ratio against age - all_vax_td 
@@ -666,6 +710,7 @@ actions:
     outputs:
       moderately_sensitive:
         figure_loghr_age: output/review/model/figure_loghr_age*_all_vax_td*
+        table_loghr_age: output/review/model/table_loghr_age*_all_vax_td*
         table_age: output/review/model/support_loghr_*_table_age*_all_vax_td*
 
   ## Figure. Log hazard ratio against age - infected 
@@ -678,6 +723,7 @@ actions:
     outputs:
       moderately_sensitive:
         figure_loghr_age: output/review/model/figure_loghr_age*_infected*
+        table_loghr_age: output/review/model/table_loghr_age*_infected*
         table_age: output/review/model/support_loghr_*_table_age*_infected*
 
   ## Figure - hazard ratio against continuous age 

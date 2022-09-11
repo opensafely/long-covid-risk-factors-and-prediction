@@ -123,6 +123,26 @@ apply_table2 <- function(cohort){
     )
   )
 }
+
+apply_table_contingency <- function(cohort){
+  splice(
+    comment(glue("Table. GP-Patient interaction and Smoking Status - {cohort}")),
+    action(
+      name = glue("table_contingency_{cohort}"),
+      run = "r:latest analysis/post_hoc.R",
+      arguments = c(cohort),
+      needs = list(if(cohort == "all_vax_c"){
+        glue("stage1_define_eligible_population_all")}else{
+          glue("stage1_define_eligible_population_{cohort}")
+        }
+      ),
+      moderately_sensitive = list(
+        contingency_table = glue("output/review/descriptives/table_gp_smoking_{cohort}*")
+      )
+    )
+  )
+}
+
 apply_table_sequence <- function(cohort){
   splice(
     comment(glue("Table. Sequence count - {cohort}")),
@@ -260,6 +280,7 @@ apply_figure_loghr_age <- function(analysis){
       ),
       moderately_sensitive = list(
         figure_loghr_age = glue("output/review/model/figure_loghr_age*_{analysis}*"),
+        table_loghr_age = glue("output/review/model/table_loghr_age*_{analysis}*"),
         table_age = glue("output/review/model/support_loghr_*_table_age*_{analysis}*")
       )
     )
@@ -399,6 +420,12 @@ actions_list <- splice(
       table = glue("output/review/descriptives/table_2_combined*")
     )
   ),
+  # Contingency table 
+  comment("Table - GP-Patient interaction and smoking status"),
+  splice(
+    unlist(lapply(cohort2, function(x) apply_table_contingency(cohort = x)), recursive = FALSE)
+  ),
+  
   comment("Table - sequence count"),
   splice(
     unlist(lapply(cohort, function(x) apply_table_sequence(cohort = x)), recursive = FALSE)

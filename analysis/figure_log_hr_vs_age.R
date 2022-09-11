@@ -49,6 +49,10 @@ log_hr_age_high <- log_hr_age + 1.96 * se_log_hr_age
 
 df<-data.frame(input$cov_num_age,log_hr_age, log_hr_age_low, log_hr_age_high)
 
+# output underlying data
+write.csv(df, file=paste0("output/review/model/table_loghr_age_", 
+                                 analysis, ".csv"), row.names = F)
+
 p = ggplot(df)+aes(input$cov_num_age,log_hr_age)+geom_line()+ 
   geom_hline(aes(yintercept = 0), linetype = 3)
 
