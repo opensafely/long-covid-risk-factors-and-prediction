@@ -1,4 +1,4 @@
-# Purpose: to produce a contigency table to explore the relationship between gp_patient_interaction and smoking status
+# Purpose: to produce a contingency table to explore the relationship between gp_patient_interaction and smoking status
 # Programme by Yinghui Wei
 library(readr); library(dplyr); library(rms); library(MASS)
 fs::dir_create(here::here("output", "review", "descriptives"))
