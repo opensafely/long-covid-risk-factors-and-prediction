@@ -231,7 +231,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        chisq_test: output/review/descriptives/table_gp_smoking_chi*_all*
+        chisq_test: output/review/descriptives/table_gp_smoking_all*_chi*
         contingency_table: output/not_for_review/descriptives/table_gp_smoking_all*
 
   ## Table. GP-Patient interaction and Smoking Status - all_vax_c 
@@ -242,7 +242,7 @@ actions:
     - stage1_define_eligible_population_all
     outputs:
       moderately_sensitive:
-        chisq_test: output/review/descriptives/table_gp_smoking_chi*_all_vax_c*
+        chisq_test: output/review/descriptives/table_gp_smoking_all_vax_c*_chi*
         contingency_table: output/not_for_review/descriptives/table_gp_smoking_all_vax_c*
 
   ## Table. GP-Patient interaction and Smoking Status - vaccinated 
@@ -253,7 +253,7 @@ actions:
     - stage1_define_eligible_population_vaccinated
     outputs:
       moderately_sensitive:
-        chisq_test: output/review/descriptives/table_gp_smoking_chi*_vaccinated*
+        chisq_test: output/review/descriptives/table_gp_smoking_vaccinated*_chi*
         contingency_table: output/not_for_review/descriptives/table_gp_smoking_vaccinated*
 
   ## Table. GP-Patient interaction and Smoking Status - infected 
@@ -264,7 +264,7 @@ actions:
     - stage1_define_eligible_population_infected
     outputs:
       moderately_sensitive:
-        chisq_test: output/review/descriptives/table_gp_smoking_chi*_infected*
+        chisq_test: output/review/descriptives/table_gp_smoking_infected*_chi*
         contingency_table: output/not_for_review/descriptives/table_gp_smoking_infected*
 
   ## Table - sequence count 
