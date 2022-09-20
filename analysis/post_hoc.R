@@ -45,9 +45,12 @@ tbl_gp_interaction_smoking <- table(input$cov_cat_gp_patient_interaction, input$
 
 results <- chisq.test(tbl_gp_interaction_smoking)
 
-results <- c(results$statistic, results$parameter, results$p.value, results$method)
+tbl_results <- data.frame(round(results$statistic,2), results$parameter,
+                     round(results$p.value,2), results$method)
 
-write.csv(results, file=paste0("output/review/descriptives/table_gp_smoking_", 
+colnames(tbl_results) <- c("test_statistic", "df", "P-value", "method")
+
+write.csv(tbl_results, file=paste0("output/review/descriptives/table_gp_smoking_", 
                                  analysis, "_chi_square_test.csv"), row.names = F )
 
 write.csv(tbl_gp_interaction_smoking, file=paste0("output/not_for_review/descriptives/table_gp_smoking_", 
