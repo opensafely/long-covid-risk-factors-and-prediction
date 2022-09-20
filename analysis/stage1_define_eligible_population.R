@@ -16,6 +16,10 @@ if(length(args)==0){
   cohort <- args[[1]]
 }
 
+cohort_start = as.Date("2020-01-29", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
+cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
+cohort_days = cohort_end - cohort_start + 1
+
 stage1_eligibility <- function(cohort){
   input <- read_rds(paste0("output/input_stage0_", cohort, ".rds"))
   ## Specify study period
@@ -231,6 +235,10 @@ stage1_eligibility <- function(cohort){
   ## warnings if non-neg follow-up time
   if (!all(input_select$lcovid_surv>=0)) warning("lcovid_surv should be  >= 0 in input_select")
   if (!all(input_select$lcovid_cens>=0)) warning("lcovid_surv should be  >= 0 in input_select")
+  
+  ## warnings if follow-up days greater than maximum cohort days
+  if (!all(input_select$lcovid_surv <= cohort_days)) warning("lcovid_surv should be  <= cohort_days in input_select")
+  if (!all(input_select$lcovid_cens <= cohort_days)) warning("lcovid_surv should be  <= cohort_days in input_select")
   
   input_select <- input_select[,variables_to_keep]
   

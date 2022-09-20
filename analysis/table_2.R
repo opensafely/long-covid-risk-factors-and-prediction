@@ -10,7 +10,7 @@ source("analysis/functions/redactor2.R")
 
 cohort_start = as.Date("2020-01-29", format="%Y-%m-%d") # this is the same as the index date column - do you need both?
 cohort_end = as.Date("2022-03-31", format="%Y-%m-%d")
-cohort_days = cohort_end - cohort_start
+cohort_days = cohort_end - cohort_start + 1
 fs::dir_create(here::here("output", "review", "descriptives"))
 
 args <- commandArgs(trailingOnly=TRUE)
@@ -71,7 +71,12 @@ table2_creation <- function(cohort){
   outcome <- c("covid", "long covid")
   subgrp <- subgrp_level <- c("main","main")
   # #hist(data$person_days)
-  data <- data %>% filter(person_days >= 1 & person_days <= cohort_days)
+  # YW: 21/09/2022, ideally the following filter should be removed or placed in stage_1_eligibility
+  print("before applying filter [0, cohort_days]!")
+  print(nrow(data))
+  data <- data %>% filter(person_days >= 0 & person_days <= cohort_days)
+  print("after applying filter [0, cohort_days]!")
+  print(nrow(data))
   ## long covid count
   long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
                                      data$out_first_long_covid_date <= data$fup_end_date))
