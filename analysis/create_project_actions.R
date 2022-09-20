@@ -137,7 +137,8 @@ apply_table_contingency <- function(cohort){
         }
       ),
       moderately_sensitive = list(
-        contingency_table = glue("output/review/descriptives/table_gp_smoking_{cohort}*")
+        chisq_test = glue("output/review/descriptives/table_gp_smoking_{cohort}*_chi*"),
+        contingency_table = glue("output/not_for_review/descriptives/table_gp_smoking_{cohort}*")
       )
     )
   )

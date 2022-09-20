@@ -2,6 +2,7 @@
 # Programme by Yinghui Wei
 library(readr); library(dplyr); library(rms); library(MASS)
 fs::dir_create(here::here("output", "review", "descriptives"))
+fs::dir_create(here::here("output", "not_for_review", "descriptives"))
 source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 
@@ -46,8 +47,8 @@ results <- chisq.test(tbl_gp_interaction_smoking)
 
 results <- c(results$statistic, results$parameter, results$p.value, results$method)
 
-write.csv(results, file=paste0("output/review/descriptives/table_gp_smoking_chi_square_test_", 
-                                 analysis, ".csv"), row.names = F )
+write.csv(results, file=paste0("output/review/descriptives/table_gp_smoking_", 
+                                 analysis, "_chi_square_test.csv"), row.names = F )
 
-write.csv(tbl_gp_interaction_smoking, file=paste0("output/review/descriptives/table_gp_smoking_", 
-                                                  analysis, ".csv"), row.names = F)
+write.csv(tbl_gp_interaction_smoking, file=paste0("output/not_for_review/descriptives/table_gp_smoking_", 
+                                                   analysis, ".csv"), row.names = F)
