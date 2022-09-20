@@ -44,15 +44,8 @@ table2_creation <- function(cohort){
   ## calculate follow-up days
   data <- data %>% rename(person_days = lcovid_surv) # days from time origin to follow-up end date, previously calculated
   hist(data$person_days)
-  person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
-  
-  ## long covid count
-  long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
-                                   data$out_first_long_covid_date <= data$fup_end_date))
-  
-  ## covid count
-  covid_count <- length(which(data$out_covid_date >= data$index_date &
-                                     data$out_covid_date <= data$fup_end_date))
+
+
   
   ## function to calculate incidence rate for covid infection, do not calculate if event count <= 5
   compute_incidence_rate <- function(event_count, person_days_total){
@@ -79,6 +72,15 @@ table2_creation <- function(cohort){
   subgrp <- subgrp_level <- c("main","main")
   # #hist(data$person_days)
   data <- data %>% filter(person_days >= 1 & person_days <= cohort_days)
+  ## long covid count
+  long_covid_count <- length(which(data$out_first_long_covid_date >= data$index_date &
+                                     data$out_first_long_covid_date <= data$fup_end_date))
+  
+  ## covid count
+  covid_count <- length(which(data$out_covid_date >= data$index_date &
+                                data$out_covid_date <= data$fup_end_date))
+  person_days_total = round(sum(data$person_days, na.rm=TRUE),1)
+  
   table_2[1,4:8] <- compute_incidence_rate(covid_count, person_days_total)
   table_2[2,4:8] <- compute_incidence_rate(long_covid_count, person_days_total)
   table_2$outcome <- outcome
@@ -140,7 +142,7 @@ table2_creation <- function(cohort){
   ##as these are separate outcomes? Otherwise you might redact one level in long covid then when it tries to 
   ##redact the next smallest it might do it in the covid outcome which won't remove the disclosure.
   
-  ## YW: You are right! This is now amended by using redactor for covid and long covid seperately
+  ## YW: You are right! This is now amended by using redactor for covid and long covid separately
   
   
   for(i in demographics){
