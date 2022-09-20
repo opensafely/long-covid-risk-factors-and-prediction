@@ -7,10 +7,10 @@ source("analysis/functions/function_df_summary.R")
 args <- commandArgs(trailingOnly=TRUE)
 
 if(length(args)==0){
-  analysis <- "all"          # all eligible population
-  #analysis <- "all_vax_c"        # all eligible population but censored them by the 1st vaccination
+  analysis <- "all"           # all eligible population
+  #analysis <- "all_vax_c"    # all eligible population but censored them by the 1st vaccination
   #analysis <- "vaccinated"   # vaccinated population
-  #analysis <- "all_vax_td"    # vaccination status is included as a time-dependent covariate
+  #analysis <- "all_vax_td"   # vaccination status is included as a time-dependent covariate
   #analysis <- "infected"
 }else{
   analysis <- args[[1]]
@@ -41,12 +41,13 @@ if(analysis == "infected"){
   input <- read_rds("output/input_stage1_infected.rds")
 }
 
-tbl_gp_interaction_smoking <- table(input$cov_cat_gp_patient_interaction, input$cov_cat_smoking_status)
+tbl_gp_interaction_smoking <- table(input$cov_cat_gp_patient_interaction, 
+                                    input$cov_cat_smoking_status)
 
 results <- chisq.test(tbl_gp_interaction_smoking)
 
 tbl_results <- data.frame(round(results$statistic,2), results$parameter,
-                     round(results$p.value,2), results$method)
+                          results$p.value, results$method)
 
 colnames(tbl_results) <- c("test_statistic", "df", "P-value", "method")
 
