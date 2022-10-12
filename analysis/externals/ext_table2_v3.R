@@ -1,6 +1,6 @@
 # Purpose: to format table 1 for the manuscript
 # Programmed by Yinghui Wei
-# 8 September 2022
+# 29 September 2022
 
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
@@ -34,10 +34,10 @@ df <- df %>% mutate(event_count.all = format(event_count.all, big.mark=",", scie
   mutate(event_count.infected = format(event_count.infected, big.mark=",", scientific=FALSE)) 
 
 
-df <- df %>% mutate(count_pr.all = paste0(event_count.all, "/", format(round(person_years.all,1), big.mark=",", scientific=FALSE))) %>%
-  mutate(count_pr.prevax = paste0(event_count.all_vax_c, "/", format(round(person_years.all_vax_c,1), big.mark=",", scientific=FALSE))) %>%
-  mutate(count_pr.vax = paste0(event_count.vaccinated, "/", format(round(person_years.vaccinated,1), big.mark=",", scientific=FALSE))) %>%
-  mutate(count_pr.infected = paste0(event_count.infected, "/", format(round(person_years.infected,1), big.mark=",", scientific=FALSE)))
+df <- df %>% mutate(count_pr.all = paste0(event_count.all, "/", format(round(person_years.all/1000,1), big.mark=",", scientific=FALSE))) %>%
+  mutate(count_pr.prevax = paste0(event_count.all_vax_c, "/", format(round(person_years.all_vax_c/1000,1), big.mark=",", scientific=FALSE))) %>%
+  mutate(count_pr.vax = paste0(event_count.vaccinated, "/", format(round(person_years.vaccinated/1000,1), big.mark=",", scientific=FALSE))) %>%
+  mutate(count_pr.infected = paste0(event_count.infected, "/", format(round(person_years.infected/1000,1), big.mark=",", scientific=FALSE)))
 
 
 # original table 2: include event count and incidence rate
@@ -50,10 +50,10 @@ df <- df %>% mutate(count_pr.all = paste0(event_count.all, "/", format(round(per
 
 df <- df %>% 
   select("subgrp", "subgrp_level", 
-         "count_pr.all",
-         "count_pr.prevax",
-         "count_pr.vax",
-         "count_pr.infected", everything())
+         "count_pr.all", "ir.all",
+         "count_pr.prevax", "ir.all_vax_c",
+         "count_pr.vax", "ir.vaccinated",
+         "count_pr.infected","ir.infected", everything())
 
 
 
