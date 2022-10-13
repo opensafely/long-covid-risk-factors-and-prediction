@@ -545,11 +545,39 @@ actions_list <- splice(
   comment("Evaluation Cox model"),
   splice(
     unlist(lapply(analysis, function(x) apply_evaluation_cox_model(analysis = x)), recursive = FALSE)
-  )
+  ),
   # comment("Validation Cox model"),
   # splice(
   #   unlist(lapply(analysis, function(x) apply_validation_cox_model_iecv(analysis = x)), recursive = FALSE)
   # )
+  
+  ### combine files for easier review
+  action(
+    name = "combine_outputs",
+    run = "r:latest analysis/combine_outputs.R",
+    needs = list(
+      "development_cox_model_fatigue",
+      "development_cox_model_all",
+      "development_cox_model_all_vax_c",
+      "development_cox_model_vaccinated",
+      "development_cox_model_all_vax_td",
+      "development_cox_model_infected",
+      "development_model_age_sex_all",
+      "development_model_age_sex_all_vax_c",
+      "development_model_age_sex_vaccinated",
+      "development_model_age_sex_all_vax_td",
+      "development_model_age_sex_infected",
+      "development_model_age_sex_adjusted_all",
+      "development_model_age_sex_adjusted_all_vax_c",
+      "development_model_age_sex_adjusted_vaccinated",
+      "development_model_age_sex_adjusted_all_vax_td",
+      "development_model_age_sex_adjusted_infected"
+    ),
+    moderately_sensitive = list(
+      combined_outputs = "output/review/model/combined/*.csv"
+    )
+  )
+  
 )
   ## combine everything ----
   project_list <- splice(
