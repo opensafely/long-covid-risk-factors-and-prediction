@@ -6,11 +6,11 @@
 # https://github.com/adayim/forestploter/blob/dev/tests/testthat/test-forest.R
 
 #install.packages("devtools")
-library(devtools)
+#library(devtools)
 #devtools::install_github("adayim/forestploter@dev")
 library(forestploter)
-
 library(grid)
+library(gridExtra)
 library(dplyr)
 source("analysis/externals/ext_figure_hazard_ratio_read_data_for_v11_plot.R")
 
@@ -29,8 +29,11 @@ tm2 <- forest_theme(base_size = 10,
                     footnote_col = "blue",
                     legend_name = "Cox Model", legend_position = "bottom",
                     legend_value = c("Fully adjusted   ", "Age and sex adjusted"),
-                    vertline_lty = c("dashed", "dotted"),
-                    vertline_col = c("#d6604d", "#bababa"))
+                    # vertline_lty = c("dashed", "dotted"),
+                    # vertline_col = c("#d6604d", "#bababa")
+                    vertline_lty = rep("dashed", 4),
+                    vertline_col = rep("#d6604d", 4)
+                    )
 
 
 v11_plot <- function(df,var_grp, cohort, model){
@@ -44,12 +47,14 @@ v11_plot <- function(df,var_grp, cohort, model){
     hr = list(df$hazard_ratio.x, df$hazard_ratio.y)
     hr_low = list(df$conf.low.x, df$conf.low.y) 
     hr_high = list(df$conf.high.x, df$conf.high.y)
+    fig_lab = "Fully adjsuted"
   }
   if(model == "age_sex"){
     col_to_display = c(1, 21, 19, 23, 22,  20) # 13 - age-sex adjusted HR; # 14 - age-sex adjusted HR
     hr = list(df$as_hr.x, df$as_hr.y)
     hr_low = list(df$as_hr_low.x, df$as_hr_low.y) 
     hr_high = list(df$as_hr_high.x, df$as_hr_high.y)
+    fig_lab = "Age and sex adjsuted"
   }
   p <- forest(
              #df[,c(1, 13, 8, 16, 15,  14,  12, 17)],  
@@ -62,14 +67,18 @@ v11_plot <- function(df,var_grp, cohort, model){
               ci_column = c(2, 5),
               ref_line = 1,
               x_trans = c("log10", "log10"),
-              vert_line = c(0.5, 2),
+              vert_line = c(0.25, 0.5, 2, 4),
               xlim = c(0, 10),
-              ticks_at = c(0.1, 0.5, 1, 2, 6, 10),
+              ticks_digits = 2L,
+              ticks_at = c(0.1, 0.25, 0.5, 1, 2, 4, 10),
               nudge_y = 0.2,
-              xlab = c("\nFully adjusted hazard ratio", "\nFully adjusted hazard ratio"),
+             # xlab = c(paste0("\n", fig_lab, " hazard ratio"), 
+             #          paste0("\n", fig_lab, " hazard ratio")),
+             xlab = c("\nHazard ratio", "\nHazard ratio"),
               theme = tm2)
   ggsave(file=paste0("v11_plot_HR_",cohort, "_", var_grp,"_", model, ".svg"), path = paste0(output_dir, "figures"),
          plot=p, width=30, height=20)
+  p
 }
 
 # Set-up theme for one cohort
@@ -113,7 +122,8 @@ v11_plot_one_cohort <- function(df,var_grp, cohort, model){
     x_trans = "log10",
     vert_line = c(0.5, 2),
     xlim = c(0, 10),
-    ticks_at = c(0.1, 0.5, 1, 2, 6, 10),
+    ticks_digits = 2L,
+    ticks_at = c(0.1, 0.25, 0.5, 1, 2, 6, 10),
     nudge_y = 0.2,
     xlab = "\nFully adjusted hazard ratio",
     theme = tm1)
@@ -148,9 +158,9 @@ df <- df %>% select(c(term,row.num,variable.x, subgroup.x, hazard_ratio.x, conf.
   rename(Characteristic = term)
 
 # Add two blank column for CI
-df$`Pre-Vaccination` <- paste(rep(" ", 25), collapse = " ")
-df$`Post-Vaccination` <- paste(rep(" ", 25), collapse = " ")
-df$` ` <- paste(rep(" ", 5), collapse = " ")
+df$`                                   Pre-Vaccination` <- paste(rep(" ", 60), collapse = " ")
+df$`                                   Post-Vaccination` <- paste(rep(" ", 60), collapse = " ")
+df$` ` <- paste(rep(" ", 10), collapse = " ")
 
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
 
@@ -160,12 +170,25 @@ df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
   rename("Age-sex aHR (95% CI) " = age_sex_aHR.y) 
 
 model = "full"
-v11_plot(df,var_grp="demographics", cohort, model)
-v11_plot(df,var_grp="non_demographics", cohort, model)
+p1 <- v11_plot(df,var_grp="demographics", cohort, model)
+p2 <- v11_plot(df,var_grp="non_demographics", cohort, model)
 
 model = "age_sex"
-v11_plot(df,var_grp="demographics", cohort, model)
-v11_plot(df,var_grp="non_demographics", cohort, model)
+p3 <- v11_plot(df,var_grp="demographics", cohort, model)
+p4 <- v11_plot(df,var_grp="non_demographics", cohort, model)
+
+# create two panel plots
+var_grp = "demographics"
+p <- grid.arrange(p3, p1, ncol=1)
+ggsave(file=paste0("v11_two_panel_plot_HR_",cohort,"_", var_grp,".svg"), 
+       path = paste0(output_dir, "figures"),
+       plot=p, width=30, height=20)
+
+var_grp = "non_demographics"
+p <- grid.arrange(p4, p2, ncol=1)
+ggsave(file=paste0("v11_two_panel_plot_HR_",cohort,"_" , var_grp,".svg"), 
+       path = paste0(output_dir, "figures"),
+       plot=p, width=30, height=20)
 
 #################################################################################
 ## Part 3. Primary and infected                                                ##
@@ -193,10 +216,10 @@ df <- df %>% select(c(term,row.num,variable.y, subgroup.y, hazard_ratio.x, conf.
   rename(Characteristic = term) 
 
 # Add two blank column for CI
-df$`   Primary` <- paste(rep(" ", 25), collapse = " ")
-df$`   Post-COVID` <- paste(rep(" ", 25), collapse = " ")
+df$`                                  Primary` <- paste(rep(" ", 60), collapse = " ")
+df$`                                  Post-COVID` <- paste(rep(" ", 60), collapse = " ")
 #df$` ` <- paste(rep(" ", nrow(df)), collapse = " ") # add empty space
-df$` ` <- paste(rep(" ", 5), collapse = " ")
+df$` ` <- paste(rep(" ", 10), collapse = " ")
 
 # df <- df %>% filter(variable=="Demographics")
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
@@ -211,12 +234,25 @@ df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
   rename("Age-sex aHR (95% CI) " = age_sex_aHR.y) 
 
 model = "full"
-v11_plot(df,var_grp="demographics", cohort, model)
-v11_plot(df,var_grp="non_demographics", cohort, model)
+p1 <- v11_plot(df,var_grp="demographics", cohort, model)
+p2 <- v11_plot(df,var_grp="non_demographics", cohort, model)
 
 model = "age_sex"
-v11_plot(df,var_grp="demographics", cohort, model)
-v11_plot(df,var_grp="non_demographics", cohort, model)
+p3 <- v11_plot(df,var_grp="demographics", cohort, model)
+p4 <- v11_plot(df,var_grp="non_demographics", cohort, model)
+
+# create two panel plots
+var_grp = "demographics"
+p <- grid.arrange(p3, p1, ncol=1)
+ggsave(file=paste0("v11_two_panel_plot_HR_",cohort,"_", var_grp,".svg"), 
+       path = paste0(output_dir, "figures"),
+       plot=p, width=30, height=20)
+
+var_grp = "non_demographics"
+p <- grid.arrange(p4, p2, ncol=1)
+ggsave(file=paste0("v11_two_panel_plot_HR_",cohort,"_" , var_grp,".svg"), 
+       path = paste0(output_dir, "figures"),
+       plot=p, width=30, height=20)
 
 #################################################################################
 ## Part 4. Vaccination time-dependent                                          ##
@@ -240,8 +276,8 @@ df <- df %>% select(c(term, row.num, variable, subgroup, hazard_ratio, conf.low,
   rename(Characteristic = term) 
 
 # Add two blank column for CI
-df$`Vaccination time-dependent` <- paste(rep(" ", 25), collapse = " ")
-df$` ` <- paste(rep(" ", 5), collapse = " ")
+df$`Vaccination time-dependent` <- paste(rep(" ", 60), collapse = " ")
+df$` ` <- paste(rep(" ", 10), collapse = " ")
 
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
 
