@@ -24,15 +24,15 @@ function_combine_as_hr <- function(df_list_age_sex_adjusted, df_list_age_sex, df
       filter(term != "cov_num_age") %>% filter(term != "cov_num_age'") %>%
       filter(term != "cov_cat_ie.status=1")
   }
-
+  
   df_hr_as_adj <- df_hr_as_adj %>% select(!c(model, predictor))
   
   # To obtain HR for sex using age-sex model with age spline
   df_hr_as_spl <- as.data.frame(df_list_age_sex[csv_index])
-
+  
   df_hr_as_spl <- df_hr_as_spl %>% filter(term != "cov_num_age") %>% 
     filter(term != "cov_num_age'")
- 
+  
   # To obtain HR for categorical age using age-sex model with age categorical
   df_hr_as_cat <- as.data.frame(df_list_age_sex_categorical[csv_index])
   df_hr_as_cat <- df_hr_as_cat %>% filter(term != "cov_cat_sex=F")
@@ -45,6 +45,40 @@ function_combine_as_hr <- function(df_list_age_sex_adjusted, df_list_age_sex, df
     mutate(term = sub("80_105", "80 to 105", term))
   return(df_hr_as)
 }
+
+function_combine_as_hr_v2 <- function(df_list_age_sex_adjusted, df_list_age_sex, df_list_age_sex_categorical, csv_index, cohort){
+  # To obtain age sex adjusted hazard ratios for all other covariates apart from age and sex
+  df_hr_as_adj <- as.data.frame(df_list_age_sex_adjusted[csv_index])
+  if(cohort != "Vaccination time-dependent"){
+    df_hr_as_adj <- df_hr_as_adj %>% filter(term != "cov_cat_sex=F") %>%
+      filter(term != "cov_num_age") %>% filter(term != "cov_num_age'")
+  }else{
+    df_hr_as_adj <- df_hr_as_adj %>% filter(term != "cov_cat_sex=F") %>%
+      filter(term != "cov_num_age") %>% filter(term != "cov_num_age'") %>%
+      filter(term != "cov_cat_ie.status=1")
+  }
+  
+  # df_hr_as_adj <- df_hr_as_adj %>% select(!c(model, predictor))
+  
+  # To obtain HR for sex using age-sex model with age spline
+  df_hr_as_spl <- as.data.frame(df_list_age_sex[csv_index])
+  
+  df_hr_as_spl <- df_hr_as_spl %>% filter(term != "cov_num_age") %>% 
+    filter(term != "cov_num_age'")
+  
+  # To obtain HR for categorical age using age-sex model with age categorical
+  df_hr_as_cat <- as.data.frame(df_list_age_sex_categorical[csv_index])
+  df_hr_as_cat <- df_hr_as_cat %>% filter(term != "cov_cat_sex=F")
+  
+  # combine hr from age-sex adjusted models
+  df_hr_as <- rbind(df_hr_as_adj, df_hr_as_spl, df_hr_as_cat)
+  df_hr_as$cohort = cohort
+  df_hr_as <- df_hr_as %>% mutate(term = sub("40_59", "40 to 59", term)) %>%
+    mutate(term = sub("60_79", "60 to 79", term)) %>%
+    mutate(term = sub("80_105", "80 to 105", term))
+  return(df_hr_as)
+}
+
 
 function_HR_df_v2 <- function(df_hr, csv_hr_order, cohort, common_dir){
   hr <- df_hr
@@ -72,7 +106,7 @@ function_HR_df_v2 <- function(df_hr, csv_hr_order, cohort, common_dir){
     mutate(term = gsub("_", " ", term)) %>%
     mutate(term = gsub("=TRUE", "", term)) 
   hr <- hr %>% rename(conf.low=robust.conf.low) %>%
-     rename(conf.high = robust.conf.high)
+    rename(conf.high = robust.conf.high)
   hr <- hr[order(hr$variable, hr$term),]
   hr <- hr %>% mutate('HR (95% CI)' = paste0(format(round(hazard_ratio,2), nsmall = 2), 
                                              " (", format(round(conf.low,2),nsmall=2), ", ", 

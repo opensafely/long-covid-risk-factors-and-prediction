@@ -5,7 +5,7 @@
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
 common_dir = "C:/Users/yingh_/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/"
-output_dir <- paste0(common_dir, "2022-09-22/")
+output_dir <- paste0(common_dir, "2022-10-10/")
 
 df <- read.csv(file=paste0(output_dir,"table_2_combined.csv"), header=T)
 
