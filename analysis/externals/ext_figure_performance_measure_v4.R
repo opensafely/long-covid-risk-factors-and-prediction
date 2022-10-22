@@ -1,15 +1,25 @@
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
 common_dir = "C:/Users/yingh_/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/"
-results_dir = paste0(common_dir, "2022-08-31/")
-output_dir <- paste0(common_dir, "2022-08-31/")
+results_dir = paste0(common_dir, "2022-10-10/")
+output_dir <- paste0(common_dir, "2022-10-10/")
 
-file_list=list.files(path = results_dir, pattern = "PM_*")
-for (i in 1:length(file_list)){
-  assign(file_list[i], 
-         read.csv(paste(results_dir, file_list[i], sep=''))
-  )
-}
+#-------------------------------------------------------------------------------------------------------------------
+#- read in data
+PM <- read.csv(paste0(results_dir, "PM_combined.csv"))
+#- separate out data - full model with age categorical (comments: should find out with age as spline)
+PM_full_all.csv        <- PM[PM$file =="full_model_categorical_all",]           # primary
+PM_full_all_vax_c.csv  <- PM[PM$file =="full_model_categorical_all_vax_c",]     # pre-vax
+PM_full_vaccinated.csv <- PM[PM$file =="full_model_categorical_vaccinated",]    # post-vax                                                # post-vax
+PM_full_infected.csv   <- PM[PM$file =="full_model_categorical_infected",]      # post-covid
+PM_full_all_vax_td.csv <- PM[PM$file =="full_model_categorical_all_vax_td",]    # vaccination time-dependent
+
+#- separate out data - age sex model with age spline
+PM_age_sex_model_all.csv        <- PM[PM$file =="age_sex_model_all",]                # primary
+PM_age_sex_model_all_vax_c.csv  <- PM[PM$file =="age_sex_model_all_vax_c",]    # pre-vax
+PM_age_sex_model_vaccinated.csv <- PM[PM$file =="age_sex_model_vaccinated",]  # post-vax                                                # post-vax
+PM_age_sex_model_infected.csv   <- PM[PM$file =="age_sex_model_infected",]      # post-covid
+PM_age_sex_model_all_vax_td.csv <- PM[PM$file =="age_sex_model_all_vax_td",]      # vaccination time-dependent
 
 df_list <- list(PM_full_all.csv,          # primary
                 PM_full_all_vax_c.csv,    # pre-vaccination
