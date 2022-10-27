@@ -76,8 +76,8 @@ v12_plot <- function(df,var_grp, cohort, model){
     #          paste0("\n", fig_lab, " hazard ratio")),
     xlab = c("\nHazard ratio", "\nHazard ratio"),
     theme = tm2)
-  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model, ".png"), path = paste0(output_dir, "figures"),
-         plot=p, width=25, height=15)
+  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model, ".svg"), path = paste0(output_dir, "figures"),
+         plot=p,  height = 500, width = 300, unit = "mm", dpi = 600, scale = 1)
   p
 }
 
@@ -127,9 +127,9 @@ v12_plot_one_cohort <- function(df,var_grp, cohort, model){
     nudge_y = 0.2,
     xlab = "\nFully adjusted hazard ratio",
     theme = tm1)
-  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model,".png"), 
+  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model,".svg"), 
          path = paste0(output_dir, "figures"),
-         plot=p, width=25, height=15)
+         plot=p,  height = 500, width = 300, unit = "mm", dpi = 600, scale = 1)
 }
 
 #################################################################################
@@ -180,15 +180,15 @@ p4 <- v12_plot(df,var_grp="non_demographics", cohort, model)
 # create two panel plots
 var_grp = "demographics"
 p <- grid.arrange(p3, p1, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".png"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".svg"), 
        path = paste0(output_dir, "figures"),
-       plot=p, width=30, height=20)
+       plot=p,  height = 500, width = 300, unit = "mm", dpi = 600, scale = 1)
 
 var_grp = "non_demographics"
 p <- grid.arrange(p4, p2, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".png"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".svg"), 
        path = paste0(output_dir, "figures"),
-       plot=p, width=30, height=20)
+       plot=p,  height = 500, width = 300, unit = "mm", dpi = 600, scale = 1)
 
 #################################################################################
 ## Part 3. Primary and infected                                                ##
@@ -244,15 +244,15 @@ p4 <- v12_plot(df,var_grp="non_demographics", cohort, model)
 # create two panel plots
 var_grp = "demographics"
 p <- grid.arrange(p3, p1, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".png"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".svg"), 
        path = paste0(output_dir, "figures"),
-       plot=p, width=30, height=20)
+       plot=p,  height = 500, width = 300, unit = "mm", dpi = 600, scale = 1)
 
 var_grp = "non_demographics"
 p <- grid.arrange(p4, p2, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".png"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".svg"), 
        path = paste0(output_dir, "figures"),
-       plot=p, width=30, height=20)
+       plot=p,  height = 500, width = 300, unit = "mm", dpi = 600, scale = 1)
 
 #################################################################################
 ## Part 4. Vaccination time-dependent                                          ##

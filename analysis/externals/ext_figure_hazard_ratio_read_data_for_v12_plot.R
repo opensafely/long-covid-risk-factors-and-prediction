@@ -5,7 +5,7 @@
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
 source("analysis/externals/ext_function_HR_df_v2.R")
-common_dir = "C:/Users/yingh_/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/"
+common_dir = "C:/Users/ywei3/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/"
 results_dir = paste0(common_dir, "2022-10-10/")
 output_dir <- paste0(common_dir, "2022-10-10/")
 
@@ -47,11 +47,11 @@ file_name3 <- c("HR_age_sex_adjusted_all.csv", "HR_age_sex_adjusted_all_vax_c.cs
                 "HR_age_sex_adjusted_all_vax_td.csv")
 
 # - separate out data - age-sex model with age splines
-HR_age_sex_model_all.csv <- HR[HR$file =="age_sex_all",]                    # primary
-HR_age_sex_model_all_vax_c.csv  <- HR[HR$file =="age_sex_all_vax_c",]       # pre-vax
-HR_age_sex_model_vaccinated.csv <- HR[HR$file =="age_sex_vaccinated",]      # post-vax
-HR_age_sex_model_infected.csv   <- HR[HR$file =="age_sex_infected",]        # post-covid
-HR_age_sex_model_all_vax_td.csv <- HR[HR$file =="age_sex_all_vax_td",]      # vaccination time-dependent
+HR_age_sex_model_all.csv <- HR[HR$file =="age_sex_model_all",]                    # primary
+HR_age_sex_model_all_vax_c.csv  <- HR[HR$file =="age_sex_model_all_vax_c",]       # pre-vax
+HR_age_sex_model_vaccinated.csv <- HR[HR$file =="age_sex_model_vaccinated",]      # post-vax
+HR_age_sex_model_infected.csv   <- HR[HR$file =="age_sex_model_infected",]        # post-covid
+HR_age_sex_model_all_vax_td.csv <- HR[HR$file =="age_sex_model_all_vax_td",]      # vaccination time-dependent
 
 file_name4 <- c("HR_age_sex_model_all.csv", "HR_age_sex_model_all_vax_c.csv",
                 "HR_age_sex_model_vaccinated.csv", "HR_age_sex_model_infected.csv",
