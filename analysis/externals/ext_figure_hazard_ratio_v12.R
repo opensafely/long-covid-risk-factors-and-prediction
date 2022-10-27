@@ -32,7 +32,8 @@ tm2 <- forest_theme(base_size = 10,
                     # vertline_lty = c("dashed", "dotted"),
                     # vertline_col = c("#d6604d", "#bababa")
                     vertline_lty = rep("dashed", 4),
-                    vertline_col = rep("#d6604d", 4)
+                    vertline_col = rep("#d6604d", 4),
+                    plot.margin=grid::unit(c(0,0,0,0), "mm")
 )
 
 
@@ -90,7 +91,9 @@ tm1 <- forest_theme(base_size = 10,
                     legend_name = "Cox Model", legend_position = "bottom",
                     legend_value = c("Fully adjusted   ", "Age and sex adjusted"),
                     vertline_lty = c("dashed", "dotted"),
-                    vertline_col = c("#d6604d", "#bababa"))
+                    vertline_col = c("#d6604d", "#bababa"),
+                    plot.margin=grid::unit(c(0,0,0,0), "mm")
+                    )
 
 
 v12_plot_one_cohort <- function(df,var_grp, cohort, model){
