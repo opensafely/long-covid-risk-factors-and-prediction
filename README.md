@@ -1,4 +1,4 @@
-# Risk factors for long COVID: analysis using OpenSAFELY
+# Risk factors for clinically diagnosed long COVID: an OpenSAFELY cohort study using linked electronic health records
 
 This is the code and configuration for long-COVID-risk-factors.
 
