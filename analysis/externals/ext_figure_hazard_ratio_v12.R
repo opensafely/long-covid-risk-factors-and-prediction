@@ -32,7 +32,8 @@ tm2 <- forest_theme(base_size = 10,
                     # vertline_lty = c("dashed", "dotted"),
                     # vertline_col = c("#d6604d", "#bababa")
                     vertline_lty = rep("dashed", 4),
-                    vertline_col = rep("#d6604d", 4)
+                    vertline_col = rep("#d6604d", 4),
+                    plot.margin=grid::unit(c(0,0,0,0), "mm")
 )
 
 
@@ -76,8 +77,8 @@ v12_plot <- function(df,var_grp, cohort, model){
     #          paste0("\n", fig_lab, " hazard ratio")),
     xlab = c("\nHazard ratio", "\nHazard ratio"),
     theme = tm2)
-  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model, ".svg"), path = paste0(output_dir, "figures"),
-         plot=p, width=30, height=20)
+  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model, ".png"), path = paste0(output_dir, "figures"),
+         plot=p, width=25, height=15)
   p
 }
 
@@ -90,7 +91,9 @@ tm1 <- forest_theme(base_size = 10,
                     legend_name = "Cox Model", legend_position = "bottom",
                     legend_value = c("Fully adjusted   ", "Age and sex adjusted"),
                     vertline_lty = c("dashed", "dotted"),
-                    vertline_col = c("#d6604d", "#bababa"))
+                    vertline_col = c("#d6604d", "#bababa"),
+                    plot.margin=grid::unit(c(0,0,0,0), "mm")
+                    )
 
 
 v12_plot_one_cohort <- function(df,var_grp, cohort, model){
@@ -127,9 +130,9 @@ v12_plot_one_cohort <- function(df,var_grp, cohort, model){
     nudge_y = 0.2,
     xlab = "\nFully adjusted hazard ratio",
     theme = tm1)
-  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model,".svg"), 
+  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model,".png"), 
          path = paste0(output_dir, "figures"),
-         plot=p, width=30, height=20)
+         plot=p, width=25, height=15)
 }
 
 #################################################################################
@@ -180,13 +183,13 @@ p4 <- v12_plot(df,var_grp="non_demographics", cohort, model)
 # create two panel plots
 var_grp = "demographics"
 p <- grid.arrange(p3, p1, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".svg"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".png"), 
        path = paste0(output_dir, "figures"),
        plot=p, width=30, height=20)
 
 var_grp = "non_demographics"
 p <- grid.arrange(p4, p2, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".svg"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
        plot=p, width=30, height=20)
 
@@ -244,13 +247,13 @@ p4 <- v12_plot(df,var_grp="non_demographics", cohort, model)
 # create two panel plots
 var_grp = "demographics"
 p <- grid.arrange(p3, p1, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".svg"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_", var_grp,".png"), 
        path = paste0(output_dir, "figures"),
        plot=p, width=30, height=20)
 
 var_grp = "non_demographics"
 p <- grid.arrange(p4, p2, ncol=1)
-ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".svg"), 
+ggsave(file=paste0("v12_two_panel_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
        plot=p, width=30, height=20)
 
