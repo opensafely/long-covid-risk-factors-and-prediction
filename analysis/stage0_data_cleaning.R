@@ -32,6 +32,10 @@ stage0_data_cleaning <- function(cohort){
   # remove ra-sle-psoriasis because they have been included individually
   input <- input %>% dplyr::select(-cov_cat_ra_sle_psoriasis) %>%
     rename(cov_num_gp_patient_interaction = cov_num_gp_consultation)
+  
+  # Remove Healthcare Workers 
+  input <- input %>% select(!cov_cat_healthcare_worker)
+  
   ################################################################################
   ## Part 1. define index date and remove variables, specify date variable       #
   ################################################################################
