@@ -1,6 +1,6 @@
 # Purpose: Forest plot for hazard ratios with numerical numbers
 # Programmed by Yinghui Wei
-# 1822-10-18
+# 2022-10-31
 # Use Alimu Dyimu's package: 
 # https://cran.r-project.org/web/packages/forestploter/vignettes/forestploter-intro.html
 # https://github.com/adayim/forestploter/blob/dev/tests/testthat/test-forest.R

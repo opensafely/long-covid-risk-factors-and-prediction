@@ -1,6 +1,6 @@
 # Purpose: to extract hazard ratios: 1) fully adjusted; 2) age-sex adjusted
 # Programmed by Yinghui Wei
-# Date: 2022-10-10
+# Date: 2022-10-31
 
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
