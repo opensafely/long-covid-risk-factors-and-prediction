@@ -24,8 +24,8 @@ source("analysis/externals/ext_figure_hazard_ratio_read_data_for_v12_plot.R")
 # Set-up theme
 tm2 <- forest_theme(base_size = 10,
                     refline_lty = "solid",
-                    ci_pch = c(15,18),
-                    ci_col = c("#377eb8", "#4daf4a"),
+                    ci_pch = c(5,15),
+                    ci_col = c("#FF8000", "#377eb8"),
                     footnote_col = "blue",
                     legend_name = "Cox Model", legend_position = "bottom",
                     legend_value = c("Age-and-sex adjusted   ", "Fully adjusted"),
@@ -69,6 +69,7 @@ v13_plot <- function(df,var_grp, cohort){
     est = hr,
     lower = hr_low, 
     upper = hr_high,
+    sizes = 0.45,
     ci_column = c(2, 6),
     ref_line = 1,
     x_trans = c("log10", "log10"),
@@ -112,9 +113,9 @@ df <- df %>% select(c(term,row.num,variable.x, subgroup.x, hazard_ratio.x, conf.
   rename(Characteristic = term)
 
 # Add two blank column for CI
-df$`                                   Pre-Vaccination` <- paste(rep(" ", 60), collapse = " ")
-df$`                                   Post-Vaccination` <- paste(rep(" ", 60), collapse = " ")
-df$` ` <- paste(rep(" ", 2), collapse = " ")
+df$`                                   Pre-vaccination` <- paste(rep(" ", 60), collapse = " ")
+df$`                                   Post-vaccination` <- paste(rep(" ", 60), collapse = " ")
+df$` ` <- paste(rep(" ", 0.1), collapse = " ")
 
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
 
@@ -123,17 +124,53 @@ df <- df %>% rename("Fully aHR" = "HR (95% CI)") %>%
   rename("Age-sex aHR" = age_sex_aHR.x) %>%
   rename("Age-sex aHR " = age_sex_aHR.y) 
 
+
+#--Capitalise Region
+
+vars_names_formatting <- function(df){
+  # Region name
+  df$Characteristic[which(df$Characteristic== "       East midlands")] = "       East Midlands"                                
+  df$Characteristic[which(df$Characteristic== "       North east")] = "       North East"                                
+  df$Characteristic[which(df$Characteristic== "       North west")] = "       North west"
+  df$Characteristic[which(df$Characteristic== "       South east")] = "       South East"
+  df$Characteristic[which(df$Characteristic== "       South west")] = "       South West"  
+  df$Characteristic[which(df$Characteristic== "       West midlands")] = "       West Midlands" 
+  df$Characteristic[which(df$Characteristic== "       West midlands")] = "       Yorkshire and the humber" 
+  
+  # ethnic group name
+  df$Characteristic[which(df$Characteristic== "       Asian or asian british")] = "       Asian or Asian British"                              
+  df$Characteristic[which(df$Characteristic== "       Black or black british")] = "       Black or Black British"                                
+  
+  # GP-patient interaction
+  df$Characteristic[which(df$Characteristic== "GP patient interaction")] = "GP-Patient interaction"                              
+  
+  # History of disease
+  df$Characteristic[which(df$Characteristic== "History of diseases")] = "History of disease"                             
+  
+  # BMI to obesity
+  df$Characteristic[which(df$Characteristic== "BMI")] = "Obesity" 
+  df$Characteristic[which(df$Characteristic== "       Obese i (30-34.9)")] = "Obese class I" 
+  df$Characteristic[which(df$Characteristic== "       Obese ii (35-39.9)")] = "Obese class II"
+  df$Characteristic[which(df$Characteristic== "       Obese iii (40+)")] = "Obese class III"
+  
+  # Pre-pandemic post-viral fatigue
+  df$Characteristic[which(df$Characteristic== "       Post viral fatigue pre pandemic" )] = "       Pre-pandemic post-viral fatigue" 
+  
+  df
+}
+
+df <- vars_names_formatting(df)
 var_grp="demographics"
 p1 <- v13_plot(df,var_grp="demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p1, width=30, height=20)
+       plot=p1, width=17, height=13)
 
 var_grp="non_demographics"
 p2 <- v13_plot(df,var_grp="non_demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p2, width=30, height=20)
+       plot=p2, width=18, height=13)
 
 #################################################################################
 ## Part 3. Primary and infected                                                ##
@@ -164,7 +201,7 @@ df <- df %>% select(c(term,row.num,variable.y, subgroup.y, hazard_ratio.x, conf.
 df$`                                  Primary` <- paste(rep(" ", 60), collapse = " ")
 df$`                                  Post-COVID` <- paste(rep(" ", 60), collapse = " ")
 #df$` ` <- paste(rep(" ", nrow(df)), collapse = " ") # add empty space
-df$` ` <- paste(rep(" ", 2), collapse = " ")
+df$` ` <- paste(rep(" ", 0.1), collapse = " ")
 
 # df <- df %>% filter(variable=="Demographics")
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
@@ -178,14 +215,15 @@ df <- df %>% rename("Fully aHR" = "HR (95% CI)") %>%
   rename("Age-sex aHR" = age_sex_aHR.x) %>%
   rename("Age-sex aHR " = age_sex_aHR.y) 
 
+df <- vars_names_formatting(df)
 var_grp="demographics"
 p3 <- v13_plot(df,var_grp="demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p3, width=30, height=20)
+       plot=p3, width=17, height=13)
 
 var_grp="non_demographics"
 p4 <- v13_plot(df,var_grp="non_demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p4, width=30, height=20)
+       plot=p4, width=18, height=13)
