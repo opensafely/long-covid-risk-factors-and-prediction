@@ -1,4 +1,4 @@
-# Risk factors for long COVID: analysis using OpenSAFELY
+# Risk factors for clinically diagnosed long COVID: an OpenSAFELY cohort study using linked electronic health records
 
 This is the code and configuration for long-COVID-risk-factors.
 
@@ -6,7 +6,7 @@ You can run this project via [Gitpod](https://gitpod.io) in a web browser by cli
 
 * The paper is [here]()
 * Raw model outputs, including charts, crosstabs, etc, are in `released_outputs/`
-* If you are interested in how we defined our variables, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
+* If you are interested in how we defined our variables, take a look at the study definitions for [primary and pre-vaccination cohorts](analysis/study_definition_all.py), [post-vaccination cohort](analysis/study_definition_vaccinated.py) and [post-COVID cohort](analysis/study_definition_infected.py); these are written in `python`.
 * If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
 * Developers and epidemiologists interested in the framework should review [the OpenSAFELY documentation](https://docs.opensafely.org)
 
