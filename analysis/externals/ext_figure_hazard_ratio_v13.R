@@ -1,6 +1,6 @@
 # Purpose: Forest plot for hazard ratios with numerical numbers
 # Programmed by Yinghui Wei
-# 2022-10-18
+# 1822-10-18
 # Use Alimu Dyimu's package: 
 # https://cran.r-project.org/web/packages/forestploter/vignettes/forestploter-intro.html
 # https://github.com/adayim/forestploter/blob/dev/tests/testthat/test-forest.R
@@ -12,7 +12,7 @@ library(forestploter)
 library(grid)
 library(gridExtra)
 library(dplyr)
-source("analysis/externals/ext_figure_hazard_ratio_read_data_for_v12_plot.R")
+source("analysis/externals/ext_figure_hazard_ratio_read_data_for_v13_plot.R")
 
 #################################################################################
 ## Part 1. Version 13                                                         ##
@@ -28,7 +28,7 @@ tm2 <- forest_theme(base_size = 10,
                     ci_col = c("#FF8000", "#377eb8"),
                     footnote_col = "blue",
                     legend_name = "Cox Model", legend_position = "bottom",
-                    legend_value = c("Age-and-sex adjusted   ", "Fully adjusted"),
+                    legend_value = c(" Age-and-sex adjusted   ", " Fully adjusted"),
                     # vertline_lty = c("dashed", "dotted"),
                     # vertline_col = c("#d6604d", "#bababa")
                     vertline_lty = rep("dashed", 4),
@@ -113,9 +113,9 @@ df <- df %>% select(c(term,row.num,variable.x, subgroup.x, hazard_ratio.x, conf.
   rename(Characteristic = term)
 
 # Add two blank column for CI
-df$`                                   Pre-vaccination` <- paste(rep(" ", 60), collapse = " ")
-df$`                                   Post-vaccination` <- paste(rep(" ", 60), collapse = " ")
-df$` ` <- paste(rep(" ", 0.1), collapse = " ")
+df$`      Pre-vaccination` <- paste(rep(" ", 25), collapse = " ")
+df$`      Post-vaccination` <- paste(rep(" ", 25), collapse = " ")
+df$` ` <- paste(rep(" ", 0.01), collapse = " ")
 
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
 
@@ -149,12 +149,15 @@ vars_names_formatting <- function(df){
   
   # BMI to obesity
   df$Characteristic[which(df$Characteristic== "BMI")] = "Obesity" 
-  df$Characteristic[which(df$Characteristic== "       Obese i (30-34.9)")] = "Obese class I" 
-  df$Characteristic[which(df$Characteristic== "       Obese ii (35-39.9)")] = "Obese class II"
-  df$Characteristic[which(df$Characteristic== "       Obese iii (40+)")] = "Obese class III"
+  df$Characteristic[which(df$Characteristic== "       Obese i (30-34.9)")] = "       Obese class I" 
+  df$Characteristic[which(df$Characteristic== "       Obese ii (35-39.9)")] = "       Obese class II"
+  df$Characteristic[which(df$Characteristic== "       Obese iii (40+)")] = "       Obese class III"
   
   # Pre-pandemic post-viral fatigue
   df$Characteristic[which(df$Characteristic== "       Post viral fatigue pre pandemic" )] = "       Pre-pandemic post-viral fatigue" 
+  
+  # IMD
+  df$Characteristic[which(df$Characteristic== "IMD" )] = "Deprivation (IMD) quintile" 
   
   df
 }
@@ -164,13 +167,13 @@ var_grp="demographics"
 p1 <- v13_plot(df,var_grp="demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p1, width=17, height=13)
+       plot=p1, width=11.5, height=13)
 
 var_grp="non_demographics"
 p2 <- v13_plot(df,var_grp="non_demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p2, width=18, height=13)
+       plot=p2, width=12, height=12)
 
 #################################################################################
 ## Part 3. Primary and infected                                                ##
@@ -198,10 +201,10 @@ df <- df %>% select(c(term,row.num,variable.y, subgroup.y, hazard_ratio.x, conf.
   rename(Characteristic = term) 
 
 # Add two blank column for CI
-df$`                                  Primary` <- paste(rep(" ", 60), collapse = " ")
-df$`                                  Post-COVID` <- paste(rep(" ", 60), collapse = " ")
+df$`              Primary` <- paste(rep(" ", 25), collapse = " ")
+df$`      Post-COVID infection` <- paste(rep(" ", 25), collapse = " ")
 #df$` ` <- paste(rep(" ", nrow(df)), collapse = " ") # add empty space
-df$` ` <- paste(rep(" ", 0.1), collapse = " ")
+df$` ` <- paste(rep(" ", 0.01), collapse = " ")
 
 # df <- df %>% filter(variable=="Demographics")
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
@@ -220,10 +223,10 @@ var_grp="demographics"
 p3 <- v13_plot(df,var_grp="demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p3, width=17, height=13)
+       plot=p3, width=11.5, height=13)
 
 var_grp="non_demographics"
 p4 <- v13_plot(df,var_grp="non_demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
-       plot=p4, width=18, height=13)
+       plot=p4, width=12, height=13)
