@@ -15,9 +15,9 @@ library(dplyr)
 source("analysis/externals/ext_figure_hazard_ratio_read_data_for_v12_plot.R")
 
 #################################################################################
-## Part 1. Version 12                                                         ##
+## Part 1. Version 13                                                         ##
 #################################################################################
-# Version 12: Demographics one graph; non-demographics another graph
+# Version 13: Demographics one graph; non-demographics another graph
 #             fully adjusted HR on the plot; 
 #             and age-sex-adjusted HR on a separate plot
 
@@ -86,59 +86,6 @@ v13_plot <- function(df,var_grp, cohort){
   p
 }
 
-# Set-up theme for one cohort
-tm1 <- forest_theme(base_size = 10,
-                    refline_lty = "solid",
-                    ci_pch = 15,
-                    ci_col = c("#377eb8", "#4daf4a"),
-                    footnote_col = "blue",
-                    legend_name = "Cox Model", legend_position = "bottom",
-                    legend_value = c("Fully adjusted   ", "Age and sex adjusted"),
-                    vertline_lty = c("dashed", "dotted"),
-                    vertline_col = c("#d6604d", "#bababa"),
-                    plot.margin=grid::unit(c(0,0,0,0), "mm")
-)
-
-
-v12_plot_one_cohort <- function(df,var_grp, cohort, model){
-  # show in order: 1 Characteristic, 13 Space for CI, 8 = HR.x, and 14 Space for CI, 12 = HR.y
-  # 16 age-sex adjusted HR; 17 age-sex adjusted HR
-  
-  df <- df %>% filter(variable==var_grp)
-  if(model == "full"){
-    col_to_display = c(1, 13, 8) # 8 - fully adjusted HR; 12 - fully adjusted HR
-    hr = df$hazard_ratio
-    hr_low = df$conf.low
-    hr_high = df$conf.high
-  }
-  if(model == "age_sex"){
-    col_to_display = c(1, 13, 12) # 13 - age-sex adjusted HR; # 14 - age-sex adjusted HR
-    hr = df$as_hr
-    hr_low = df$as_hr_low
-    hr_high = df$as_hr_high
-  }
-  p <- forest(
-    # 1-characteristic; 10-space for CI; 8-HR;9: age-sex adjusted HR pre-vax
-    #df[,c(1, 10, 8, 9)],  
-    df[,col_to_display],
-    est   = df$hazard_ratio,
-    lower = df$conf.low,
-    upper = df$conf.high,
-    ci_column = 2,
-    ref_line = 1,
-    x_trans = "log10",
-    vert_line = c(0.5, 2),
-    xlim = c(0, 10),
-    ticks_digits = 2L,
-    ticks_at = c(0.1, 0.25, 0.5, 1, 2, 6, 10),
-    nudge_y = 0.2,
-    xlab = "\nFully adjusted hazard ratio",
-    theme = tm1)
-  ggsave(file=paste0("v12_plot_HR_",cohort, "_", var_grp,"_", model,".png"),
-         path = paste0(output_dir, "figures"),
-         plot=p, width=25, height=15)
-}
-
 #################################################################################
 ## Part 2. Pre-vax and vax                                                     ##
 #################################################################################
@@ -167,14 +114,14 @@ df <- df %>% select(c(term,row.num,variable.x, subgroup.x, hazard_ratio.x, conf.
 # Add two blank column for CI
 df$`                                   Pre-Vaccination` <- paste(rep(" ", 60), collapse = " ")
 df$`                                   Post-Vaccination` <- paste(rep(" ", 60), collapse = " ")
-df$` ` <- paste(rep(" ", 5), collapse = " ")
+df$` ` <- paste(rep(" ", 2), collapse = " ")
 
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
 
-df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
-  rename("Fully aHR (95% CI) " = "HR (95% CI) ") %>%
-  rename("Age-sex aHR (95% CI)" = age_sex_aHR.x) %>%
-  rename("Age-sex aHR (95% CI) " = age_sex_aHR.y) 
+df <- df %>% rename("Fully aHR" = "HR (95% CI)") %>%
+  rename("Fully aHR " = "HR (95% CI) ") %>%
+  rename("Age-sex aHR" = age_sex_aHR.x) %>%
+  rename("Age-sex aHR " = age_sex_aHR.y) 
 
 var_grp="demographics"
 p1 <- v13_plot(df,var_grp="demographics", cohort)
@@ -217,7 +164,7 @@ df <- df %>% select(c(term,row.num,variable.y, subgroup.y, hazard_ratio.x, conf.
 df$`                                  Primary` <- paste(rep(" ", 60), collapse = " ")
 df$`                                  Post-COVID` <- paste(rep(" ", 60), collapse = " ")
 #df$` ` <- paste(rep(" ", nrow(df)), collapse = " ") # add empty space
-df$` ` <- paste(rep(" ", 5), collapse = " ")
+df$` ` <- paste(rep(" ", 2), collapse = " ")
 
 # df <- df %>% filter(variable=="Demographics")
 df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
@@ -226,10 +173,10 @@ df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics"
 # df$age_sex_aHR <- df$`HR (95% CI)`
 # df$age_sex_aHR2 <- df$`HR (95% CI) `
 
-df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
-  rename("Fully aHR (95% CI) " = "HR (95% CI) ") %>%
-  rename("Age-sex aHR (95% CI)" = age_sex_aHR.x) %>%
-  rename("Age-sex aHR (95% CI) " = age_sex_aHR.y) 
+df <- df %>% rename("Fully aHR" = "HR (95% CI)") %>%
+  rename("Fully aHR " = "HR (95% CI) ") %>%
+  rename("Age-sex aHR" = age_sex_aHR.x) %>%
+  rename("Age-sex aHR " = age_sex_aHR.y) 
 
 var_grp="demographics"
 p3 <- v13_plot(df,var_grp="demographics", cohort)
@@ -242,44 +189,3 @@ p4 <- v13_plot(df,var_grp="non_demographics", cohort)
 ggsave(file=paste0("v13_plot_HR_",cohort,"_" , var_grp,".png"), 
        path = paste0(output_dir, "figures"),
        plot=p4, width=30, height=20)
-
-#################################################################################
-## Part 4. Vaccination time-dependent                                          ##
-#################################################################################
-
-cohort = "Vaccination time-dependent"
-
-df <- tbl_hr_vaxtd_combined
-
-df <- arrange(df,row.num)
-
-# replace na with empty space
-df[is.na(df$age_sex_aHR),"age_sex_aHR"] <- ""
-df[is.na(df$`HR (95% CI)`),"HR (95% CI)"] <- ""
-
-
-df <- df %>% select(c(term, row.num, variable, subgroup, hazard_ratio, conf.low, conf.high,
-                      "HR (95% CI)", hazard_ratio, conf.low, conf.high, "HR (95% CI)",
-                      as_hr, as_hr_low, as_hr_high, age_sex_aHR)) %>%
-  rename(variable = variable) %>% rename(subgroup = subgroup) %>%
-  rename(Characteristic = term) 
-
-# Add two blank column for CI
-df$`Vaccination time-dependent` <- paste(rep(" ", 60), collapse = " ")
-df$` ` <- paste(rep(" ", 5), collapse = " ")
-
-df <- df %>% mutate(variable = ifelse(variable == "Demographics", "demographics", "non_demographics"))
-
-df <- df %>% rename("Fully aHR (95% CI)" = "HR (95% CI)") %>%
-  rename("Age-sex aHR (95% CI)" = age_sex_aHR)
-
-df = df
-var_grp="demographics"
-cohort = "vtd"
-model = "full"
-v12_plot_one_cohort(df,var_grp="demographics", cohort, model)
-v12_plot_one_cohort(df,var_grp="non_demographics", cohort, model)
-
-model = "age_sex"
-v12_plot_one_cohort(df,var_grp="demographics", cohort, model)
-v12_plot_one_cohort(df,var_grp="non_demographics", cohort, model)
