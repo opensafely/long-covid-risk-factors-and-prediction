@@ -131,11 +131,11 @@ vars_names_formatting <- function(df){
   # Region name
   df$Characteristic[which(df$Characteristic== "       East midlands")] = "       East Midlands"                                
   df$Characteristic[which(df$Characteristic== "       North east")] = "       North East"                                
-  df$Characteristic[which(df$Characteristic== "       North west")] = "       North west"
+  df$Characteristic[which(df$Characteristic== "       North west")] = "       North West"
   df$Characteristic[which(df$Characteristic== "       South east")] = "       South East"
   df$Characteristic[which(df$Characteristic== "       South west")] = "       South West"  
   df$Characteristic[which(df$Characteristic== "       West midlands")] = "       West Midlands" 
-  df$Characteristic[which(df$Characteristic== "       West midlands")] = "       Yorkshire and the humber" 
+  df$Characteristic[which(df$Characteristic== "       Yorkshire and the humber")] = "       Yorkshire and the Humber" 
   
   # ethnic group name
   df$Characteristic[which(df$Characteristic== "       Asian or asian british")] = "       Asian or Asian British"                              
