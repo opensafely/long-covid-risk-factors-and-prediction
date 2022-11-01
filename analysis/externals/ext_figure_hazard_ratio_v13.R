@@ -159,6 +159,9 @@ vars_names_formatting <- function(df){
   # IMD
   df$Characteristic[which(df$Characteristic== "IMD" )] = "Deprivation (IMD) quintile" 
   
+  # Non-hospitalised
+  df$Characteristic[which(df$Characteristic== "       Non hospitalised (reference)")] = "       Non-hospitalised (reference)"
+  
   df
 }
 
