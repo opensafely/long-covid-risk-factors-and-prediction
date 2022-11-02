@@ -845,17 +845,14 @@ actions:
     - development_cox_model_all
     - development_cox_model_all_vax_c
     - development_cox_model_vaccinated
-    - development_cox_model_all_vax_td
     - development_cox_model_infected
     - development_model_age_sex_all
     - development_model_age_sex_all_vax_c
     - development_model_age_sex_vaccinated
-    - development_model_age_sex_all_vax_td
     - development_model_age_sex_infected
     - development_model_age_sex_adjusted_all
     - development_model_age_sex_adjusted_all_vax_c
     - development_model_age_sex_adjusted_vaccinated
-    - development_model_age_sex_adjusted_all_vax_td
     - development_model_age_sex_adjusted_infected
     outputs:
       moderately_sensitive:
