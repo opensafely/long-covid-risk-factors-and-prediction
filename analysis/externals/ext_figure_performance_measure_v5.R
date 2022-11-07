@@ -75,6 +75,8 @@ df$`C-Statistic from \n age and sex model` <- paste0(format(round(df$c_stat.as,d
 #df <- df %>% rename('Calibration Slope' = "cali_slope")
 #pm$model = c(rep("Full model", 5), rep("Age and sex model", 5))
 
+df <- df %>% filter(Cohort!= "Vaccination time-dependent")
+
 tm2 <- forest_theme(base_size = 10,
                    refline_lty = "solid",
                    ci_pch = c(15, 18),
