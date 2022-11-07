@@ -13,7 +13,9 @@ output_dir <- paste0(common_dir, "2022-11-02/")
 dat_age <- read.csv(paste0(results_dir, "tbl_km_dat_age.csv"))
 dat_age <- dat_age %>% mutate(x_date = as.Date(x_date))
 # Create cumulative incidence plot -----------------------------------------------------------
-svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_incidence.svg", width = 9, height = 5,)
+#svglite::svglite("output/review/descriptives/figure_kaplan_meier_age_sex_cum_incidence.svg", width = 9, height = 5,)
+
+svglite::svglite(paste0(results_dir,"figures/km_incipende_plot.svg"), width = 10, height = 8)
 
 ggplot(dat_age, 
        aes(x_date,y, group = cov_cat_age_group, color=cov_cat_age_group, 
@@ -45,12 +47,12 @@ ggplot(dat_age,
 dev.off()
 
 # Create cumulative probability plot -----------------------------------------------------------
-svglite::svglite(paste0(results_dir,"figures/km_plot.svg"), width = 3, height = 5)
+svglite::svglite(paste0(results_dir,"figures/km_plot.svg"), width = 10, height = 8)
 
-p2 <- ggplot(dat_age, 
+ggplot(dat_age, 
        aes(x_date,y_prob, group = cov_cat_age_group, color=cov_cat_age_group, 
            linetype = cov_cat_age_group)) +
-  geom_path() + #Ploting
+  geom_path() + #Plotting
   geom_line(aes(linetype=cov_cat_age_group),size=1)+
   scale_linetype_manual(values=c("18-39" = "longdash",
                                  "40-59" = "dotted",
