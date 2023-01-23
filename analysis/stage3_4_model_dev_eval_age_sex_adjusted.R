@@ -64,8 +64,8 @@ for(i in 1:length(cov_names)){
   results$model <- "age_sex_adjusted"
   results$predictor <- cov_factor_names[i]
   combined_results_hr <- rbind(combined_results_hr, results)
-  saveRDS(fit_cox_model, file=paste0("output/not_for_review/model/fit_cox_model_age_sex_adjusted_", cov_names[i],"_", analysis,".rds"))
-  
+  # saveRDS(fit_cox_model, file=paste0("output/not_for_review/model/cox_as_adj_", cov_names[i],"_", analysis,".rds"))
+  # 
   ################################################################################
   ## Part 4: Model evaluation                                                   ##
   ################################################################################
