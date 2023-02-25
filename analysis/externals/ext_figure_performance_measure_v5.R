@@ -59,7 +59,8 @@ for(csv_index in 1:10){
 # pm$cohort[4]="Post-COVID"
 # pm$cohort[5]="Vaccination time-dependent"
 
-pm$cohort = rep(c("Primary", "Pre-Vaccination", "Post-Vaccination", "Post-COVID", "Vaccination time-dependent") ,2)
+pm$cohort = rep(c("Primary", "Pre-vaccination", "Post-vaccination", 
+                  "Post-COVID infection", "Vaccination time-dependent") ,2)
 pm <- pm%>%rename(Cohort = cohort)
 pm$model = c(rep("full", 5), rep("as", 5))
 pm <- reshape(pm, idvar = "Cohort", timevar = "model", direction = "wide")
