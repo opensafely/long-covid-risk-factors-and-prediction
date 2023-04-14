@@ -60,17 +60,17 @@ for(csv_index in 1:10){
 # pm$cohort[5]="Vaccination time-dependent"
 
 pm$cohort = rep(c("Primary", "Pre-vaccination", "Post-vaccination", 
-                  "Post-COVID infection", "Vaccination time-dependent") ,2)
+                  "Post-COVID diagnosis", "Vaccination time-dependent") ,2)
 pm <- pm%>%rename(Cohort = cohort)
 pm$model = c(rep("full", 5), rep("as", 5))
 pm <- reshape(pm, idvar = "Cohort", timevar = "model", direction = "wide")
 df <-pm
 df$` ` <- paste(rep("            ", nrow(df)), collapse = " ")
 dec_pl = 3
-df$`C-Statistic from \n the full model` <- paste0(format(round(df$c_stat.full,dec_pl),nsmall=dec_pl), " (", 
+df$`C-Statistics from \n the full model` <- paste0(format(round(df$c_stat.full,dec_pl),nsmall=dec_pl), " (", 
                                      format(round(df$c_stat_lower.full,dec_pl),nsmall=dec_pl),", ", 
                                      format(round(df$c_stat_upper.full,dec_pl),nsmall=dec_pl), ")")
-df$`C-Statistic from \n age and sex model` <- paste0(format(round(df$c_stat.as,dec_pl),nsmall=dec_pl), " (", 
+df$`C-Statistics from \n age and sex model` <- paste0(format(round(df$c_stat.as,dec_pl),nsmall=dec_pl), " (", 
                                     format(round(df$c_stat_lower.as,dec_pl),nsmall=dec_pl),", ", 
                                     format(round(df$c_stat_upper.as,dec_pl),nsmall=dec_pl), ")")
 #df <- df %>% rename('Calibration Slope' = "cali_slope")
