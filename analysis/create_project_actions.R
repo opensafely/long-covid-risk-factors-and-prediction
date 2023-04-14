@@ -18,6 +18,7 @@ defaults_list <- list(
 analysis <- c("all", "all_vax_c", "vaccinated", "all_vax_td", "infected") 
 cohort <- c("all", "vaccinated", "infected")
 cohort2 <- c("all", "all_vax_c" , "vaccinated", "infected")
+cohort3 <- c("all", "infected")
 analysis_to_run <- c("all", "all_vax_c", "all_vax_td", "infected") 
 
 # create action functions ----
@@ -123,7 +124,21 @@ apply_table2 <- function(cohort){
     )
   )
 }
-
+apply_km <- function(cohort){
+  splice(
+    comment(glue("Kaplan Meier Curves - {cohort}")),
+    action(
+      name = glue("figure_km_{cohort}"),
+      run = "r:latest analysis/figure_kaplan_meier_cohorts.R",
+      arguments = c(cohort),
+      needs = list(glue("stage1_define_eligible_population_{cohort}")),
+      moderately_sensitive = list(
+        plot_km = glue("output/review/descriptives/figure_kaplan_meier_*_{cohort}*"),
+        data_km = glue("output/review/descriptives/tbl_km_*_{cohort}*")
+      )
+    )
+  )
+}
 apply_table_contingency <- function(cohort){
   splice(
     comment(glue("Table. GP-Patient interaction and Smoking Status - {cohort}")),
@@ -421,6 +436,12 @@ actions_list <- splice(
       table = glue("output/review/descriptives/table_2_combined*")
     )
   ),
+  
+  # Kaplan-Meier curves by cohort - primary and post-covid diagnosis
+  comment("Kaplan-Meier curves"),
+  splice(
+    unlist(lapply(cohort3, function(x) apply_km(cohort = x)), recursive = FALSE)
+  ),
   # Contingency table 
   comment("Table - GP-Patient interaction and smoking status"),
   splice(
@@ -459,16 +480,16 @@ actions_list <- splice(
       table_bin_count= glue("output/review/descriptives/supporting_doc_hist_*")
     )
   ),
-  comment("Figure - Kaplan Meier plot"),
-  action(
-    name = "figure_km_all",
-    run = "r:latest analysis/figure_kaplan_meier.R",
-    needs = list("stage1_define_eligible_population_all"),
-    moderately_sensitive = list(
-      plot_km = glue("output/review/descriptives/figure_kaplan_meier_*"),
-      data_km = glue("output/review/descriptives/tbl_km_*")
-    )
-  ),
+  # comment("Figure - Kaplan Meier plot"),
+  # action(
+  #   name = "figure_km_all",
+  #   run = "r:latest analysis/figure_kaplan_meier.R",
+  #   needs = list("stage1_define_eligible_population_all"),
+  #   moderately_sensitive = list(
+  #     plot_km = glue("output/review/descriptives/figure_kaplan_meier_*"),
+  #     data_km = glue("output/review/descriptives/tbl_km_*")
+  #   )
+  # ),
   comment("Table - frequencies of snomed code for long covid diagnosis"),
   action(
     name = "table_snomed_codes_all",

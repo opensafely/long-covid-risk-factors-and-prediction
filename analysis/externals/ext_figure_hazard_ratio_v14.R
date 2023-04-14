@@ -206,7 +206,7 @@ df <- df %>% select(c(term,row.num,variable.y, subgroup.y, hazard_ratio.x, conf.
 
 # Add two blank column for CI
 df$`              Primary` <- paste(rep(" ", 25), collapse = " ")
-df$`      Post-COVID infection` <- paste(rep(" ", 25), collapse = " ")
+df$`      Post-COVID diagnosis` <- paste(rep(" ", 25), collapse = " ")
 #df$` ` <- paste(rep(" ", nrow(df)), collapse = " ") # add empty space
 df$` ` <- paste(rep(" ", 0.01), collapse = " ")
 
