@@ -145,7 +145,7 @@ vars_names_formatting <- function(df){
   df$Characteristic[which(df$Characteristic== "GP patient interaction")] = "GP-Patient interaction"                              
   
   # History of disease
-  df$Characteristic[which(df$Characteristic== "History of diseases")] = "History of disease"                             
+  df$Characteristic[which(df$Characteristic== "History of diseases")] = "History of disease diagnosis"                             
   
   # # BMI to obesity
   # df$Characteristic[which(df$Characteristic== "BMI")] = "Obesity" 
