@@ -5,7 +5,7 @@
 library(readr); library(dplyr); library(tidyverse); library(ggplot2); library(data.table)
 library(stringr); library(grid); library(forestploter)
 
-common_dir = "C:/Users/yingh_/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/"
+common_dir = "C:/Users/ywei3/University of Bristol/grp-EHR - Documents/Projects/long-covid-risk-factors/OS-outputs/"
 
 results_dir = paste0(common_dir, "2022-11-02/")
 output_dir <- paste0(common_dir, "2022-11-02/")

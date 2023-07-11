@@ -145,14 +145,14 @@ vars_names_formatting <- function(df){
   df$Characteristic[which(df$Characteristic== "GP patient interaction")] = "GP-Patient interaction"                              
   
   # History of disease
-  df$Characteristic[which(df$Characteristic== "History of diseases")] = "History of disease"                             
+  df$Characteristic[which(df$Characteristic== "History of diseases")] = "History of disease diagnosis"                             
   
-  # BMI to obesity
-  df$Characteristic[which(df$Characteristic== "BMI")] = "Obesity" 
-  df$Characteristic[which(df$Characteristic== "       Obese i (30-34.9)")] = "       Obese class I" 
-  df$Characteristic[which(df$Characteristic== "       Obese ii (35-39.9)")] = "       Obese class II"
-  df$Characteristic[which(df$Characteristic== "       Obese iii (40+)")] = "       Obese class III"
-  
+  # # BMI to obesity
+  # df$Characteristic[which(df$Characteristic== "BMI")] = "Obesity" 
+  # df$Characteristic[which(df$Characteristic== "       Obese i (30-34.9)")] = "       Obese class I" 
+  # df$Characteristic[which(df$Characteristic== "       Obese ii (35-39.9)")] = "       Obese class II"
+  # df$Characteristic[which(df$Characteristic== "       Obese iii (40+)")] = "       Obese class III"
+  # 
   # Pre-pandemic post-viral fatigue
   df$Characteristic[which(df$Characteristic== "       Post viral fatigue pre pandemic" )] = "       Pre-pandemic post-viral fatigue" 
   
